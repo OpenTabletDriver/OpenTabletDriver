@@ -109,7 +109,7 @@ namespace OpenTabletDriver.UX
         private const int DEFAULT_CLIENT_HEIGHT = 760;
 
         private MenuBar menu;
-        private Placeholder placeholder;
+        private readonly Placeholder placeholder;
         private TrayIcon trayIcon;
 
         public bool SilenceDaemonShutdown { get; set; }
@@ -450,8 +450,8 @@ namespace OpenTabletDriver.UX
                 SetTitle(tablets);
         });
 
-        private Button saveButton;
-        private Button applyButton;
+        private readonly Button saveButton;
+        private readonly Button applyButton;
 
         private async void LogToDriver(object sender, LogMessage message)
         {

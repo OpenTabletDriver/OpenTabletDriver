@@ -75,8 +75,8 @@ namespace OpenTabletDriver.UX.Windows.Bindings
             settingStoreEditor.Store = currentBinding;
         }
 
-        private TypeDropDown<IBinding> bindingTypeDropDown;
-        private PluginSettingStoreEditor<IBinding> settingStoreEditor = new PluginSettingStoreEditor<IBinding>();
+        private readonly TypeDropDown<IBinding> bindingTypeDropDown;
+        private readonly PluginSettingStoreEditor<IBinding> settingStoreEditor = new PluginSettingStoreEditor<IBinding>();
 
         private void ClearBinding(object sender, EventArgs e)
         {

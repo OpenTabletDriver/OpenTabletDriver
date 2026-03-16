@@ -48,6 +48,7 @@ resharper_can_simplify_dictionary_lookup_with_try_get_value_highlighting=warning
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/language-rules#net-style-rules
 
 dotnet_style_require_accessibility_modifiers = for_non_interface_members:warning
+dotnet_style_readonly_field = true:warning
 
 [*.{sh,md,csproj,json,yml}]
 indent_size = 2

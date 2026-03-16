@@ -158,7 +158,7 @@ namespace OpenTabletDriver.UX.MacOS
                 _url = url;
             }
 
-            private string _url;
+            private readonly string _url;
 
             [Export("onClick:")]
             private void onClick(NSObject target)

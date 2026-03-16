@@ -93,14 +93,14 @@ namespace OpenTabletDriver.UX.Controls
             });
         }
 
-        private TabControl tabControl;
-        private Placeholder placeholder;
-        private LogView logView;
-        private OutputModeEditor outputModeEditor;
-        private BindingEditor penBindingEditor, auxBindingEditor, mouseBindingEditor;
-        private List<BindingEditor> wheelBindingEditors = [];
-        private PluginSettingStoreCollectionEditor<IPositionedPipelineElement<IDeviceReport>> filterEditor;
-        private PluginSettingStoreCollectionEditor<ITool> toolEditor;
+        private readonly TabControl tabControl;
+        private readonly Placeholder placeholder;
+        private readonly LogView logView;
+        private readonly OutputModeEditor outputModeEditor;
+        private readonly BindingEditor penBindingEditor, auxBindingEditor, mouseBindingEditor;
+        private readonly List<BindingEditor> wheelBindingEditors = [];
+        private readonly PluginSettingStoreCollectionEditor<IPositionedPipelineElement<IDeviceReport>> filterEditor;
+        private readonly PluginSettingStoreCollectionEditor<ITool> toolEditor;
 
         private Profile profile;
         public Profile Profile

@@ -98,10 +98,10 @@ namespace OpenTabletDriver.UX.Controls.Output
         private bool handlingSettingsChanging;
         private float? prevDisplayWidth;
         private float? prevDisplayHeight;
-        private DirectBinding<float> displayWidth;
-        private DirectBinding<float> displayHeight;
-        private DirectBinding<float> tabletWidth;
-        private DirectBinding<float> tabletHeight;
+        private readonly DirectBinding<float> displayWidth;
+        private readonly DirectBinding<float> displayHeight;
+        private readonly DirectBinding<float> tabletWidth;
+        private readonly DirectBinding<float> tabletHeight;
 
         private AbsoluteModeSettings settings;
         public AbsoluteModeSettings Settings

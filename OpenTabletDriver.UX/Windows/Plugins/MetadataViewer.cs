@@ -157,15 +157,15 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             AppInfo.PluginManager.AssembliesChanged += HandleAssembliesChanged;
         }
 
-        private Control content;
-        private StackLayout actions;
+        private readonly Control content;
+        private readonly StackLayout actions;
         private Placeholder placeholder;
 
-        private Label name, owner, description, driverVersion, maxDriverVersion, pluginVersion, license;
-        private Button sourceCode, wiki;
+        private readonly Label name, owner, description, driverVersion, maxDriverVersion, pluginVersion, license;
+        private readonly Button sourceCode, wiki;
 
-        private Version CurrentDriverVersion = Assembly.GetExecutingAssembly().GetName().Version;
-        private Button uninstallButton, installButton;
+        private readonly Version CurrentDriverVersion = Assembly.GetExecutingAssembly().GetName().Version;
+        private readonly Button uninstallButton, installButton;
 
         public event Func<PluginMetadata, Task<bool>> RequestPluginInstall;
         public event Func<PluginMetadata, Task<bool>> RequestPluginUninstall;
@@ -264,8 +264,8 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                 this.Orientation = Orientation.Horizontal;
             }
 
-            private StackLayout panel;
-            private Panel container;
+            private readonly StackLayout panel;
+            private readonly Panel container;
 
             public new Control Content
             {

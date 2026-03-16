@@ -147,9 +147,9 @@ namespace OpenTabletDriver.UX.Controls.Bindings
                 Binding.Property((WheelBindingSettings wbs) => wbs.WheelButtons).Convert(x => x is { Count: > 0 }));
         }
 
-        private Group wheelButtonGroup;
-        private BindingDisplay clockwiseButton, counterClockwiseButton;
-        private FloatSlider clockwiseThreshold, counterClockwiseThreshold;
-        private BindingDisplayList wheelButtons;
+        private readonly Group wheelButtonGroup;
+        private readonly BindingDisplay clockwiseButton, counterClockwiseButton;
+        private readonly FloatSlider clockwiseThreshold, counterClockwiseThreshold;
+        private readonly BindingDisplayList wheelButtons;
     }
 }

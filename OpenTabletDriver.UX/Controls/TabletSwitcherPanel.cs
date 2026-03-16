@@ -57,10 +57,10 @@ namespace OpenTabletDriver.UX.Controls
             Application.Instance.AsyncInvoke(async void () => HandleTabletsChanged(this, await App.Driver.Instance.GetTablets()));
         }
 
-        private StackLayout layout;
-        private TabletSwitcher tabletSwitcher;
-        private ControlPanel controlPanel;
-        private Panel commandsPanel;
+        private readonly StackLayout layout;
+        private readonly TabletSwitcher tabletSwitcher;
+        private readonly ControlPanel controlPanel;
+        private readonly Panel commandsPanel;
 
         public Control CommandsControl
         {

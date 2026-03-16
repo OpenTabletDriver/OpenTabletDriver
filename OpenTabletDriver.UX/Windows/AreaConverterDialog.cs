@@ -123,9 +123,9 @@ namespace OpenTabletDriver.UX.Windows
         }
 
         private readonly TypeDropDown<IAreaConverter> converterList = new TypeDropDown<IAreaConverter>();
-        private Group topGroup, leftGroup, bottomGroup, rightGroup;
-        private FloatNumberBox top, left, bottom, right;
-        private Button applyButton;
+        private readonly Group topGroup, leftGroup, bottomGroup, rightGroup;
+        private readonly FloatNumberBox top, left, bottom, right;
+        private readonly Button applyButton;
         private TabletReference selectedTablet;
 
         protected void OnSelectionChanged()

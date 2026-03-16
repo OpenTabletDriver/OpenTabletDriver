@@ -24,7 +24,7 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
             "Pentablet",
         ];
 
-        private string[] Exclusions =
+        private readonly string[] Exclusions =
         [
             "Huion",
             "Gaomon",

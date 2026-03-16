@@ -11,7 +11,7 @@ namespace OpenTabletDriver.Plugin.Output
     public abstract class AsyncPositionedPipelineElement<T> : IPositionedPipelineElement<T>, IDisposable
     {
         private readonly object synchronizationObject = new object();
-        private HPETDeltaStopwatch consumeWatch = new HPETDeltaStopwatch(false);
+        private readonly HPETDeltaStopwatch consumeWatch = new HPETDeltaStopwatch(false);
         private ITimer scheduler;
         private float? reportMsAvg;
         private float frequency;

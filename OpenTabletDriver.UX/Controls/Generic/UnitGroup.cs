@@ -39,7 +39,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
             }
         }
 
-        private Label unitLabel = new Label();
+        private readonly Label unitLabel = new Label();
 
         private Control content;
         public new Control Content

@@ -48,7 +48,7 @@ namespace OpenTabletDriver.UX.Controls
             };
         }
 
-        private Button mainButton, advancedButton;
+        private readonly Button mainButton, advancedButton;
 
         public event EventHandler<EventArgs> StoreChanged;
 

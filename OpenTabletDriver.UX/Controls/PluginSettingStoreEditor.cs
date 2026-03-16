@@ -19,7 +19,7 @@ namespace OpenTabletDriver.UX.Controls
             };
         }
 
-        private StackLayout layout;
+        private readonly StackLayout layout;
 
         private PluginSettingStore store;
         public PluginSettingStore Store

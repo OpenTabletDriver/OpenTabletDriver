@@ -13,7 +13,7 @@ namespace OpenTabletDriver.Plugin.Output
     [PluginIgnore]
     public abstract class RelativeOutputMode : OutputMode
     {
-        private HPETDeltaStopwatch stopwatch = new HPETDeltaStopwatch();
+        private readonly HPETDeltaStopwatch stopwatch = new HPETDeltaStopwatch();
         private Vector2? lastTransformedPos;
         private Vector2 lastReadPos;
         private bool outOfRange;

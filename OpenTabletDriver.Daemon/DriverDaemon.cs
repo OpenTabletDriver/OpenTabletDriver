@@ -140,12 +140,12 @@ namespace OpenTabletDriver.Daemon
         public Driver Driver { get; }
         private Settings? Settings { set; get; }
         private Collection<ITool> Tools { set; get; } = new Collection<ITool>();
-        private IUpdater Updater = DesktopInterop.Updater;
+        private readonly IUpdater Updater = DesktopInterop.Updater;
         private readonly ISleepDetector? SleepDetector = new SleepDetector();
         private Settings? lastValidSettings;
 
         private UpdateInfo? _updateInfo;
-        private LogFile _logFile;
+        private readonly LogFile _logFile;
 
         private bool debugging;
 

@@ -29,7 +29,7 @@ namespace OpenTabletDriver.UX
         }
 
         public TrayIndicator Indicator { get; }
-        private MainForm window;
+        private readonly MainForm window;
 
         public void Dispose()
         {

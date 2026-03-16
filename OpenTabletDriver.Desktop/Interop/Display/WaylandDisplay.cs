@@ -10,7 +10,7 @@ namespace OpenTabletDriver.Desktop.Interop.Display
 {
     public class WaylandDisplay : IVirtualScreen
     {
-        private List<WaylandOutput> _outputs;
+        private readonly List<WaylandOutput> _outputs;
 
         public WaylandDisplay()
         {

@@ -12,7 +12,7 @@ namespace OpenTabletDriver.Console
 {
     internal partial class Program
     {
-        private static SHA256 sha256 = SHA256.Create();
+        private static readonly SHA256 sha256 = SHA256.Create();
 
         private static async Task<Settings> GetSettings()
         {

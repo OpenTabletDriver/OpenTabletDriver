@@ -16,7 +16,7 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
             this.device = device;
         }
 
-        private HidDevice device;
+        private readonly HidDevice device;
 
         public int ProductID => device.ProductID;
         public int VendorID => device.VendorID;

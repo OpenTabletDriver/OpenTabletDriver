@@ -7,8 +7,8 @@ namespace OpenTabletDriver.Benchmarks.Output
 {
     public class MacOSInteropBenchmark
     {
-        private MacOSAbsolutePointer absolutePointer = new MacOSAbsolutePointer();
-        private MacOSRelativePointer relativePointer = new MacOSRelativePointer();
+        private readonly MacOSAbsolutePointer absolutePointer = new MacOSAbsolutePointer();
+        private readonly MacOSRelativePointer relativePointer = new MacOSRelativePointer();
 
         [Benchmark]
         public void CoreGraphicsAbsolute()

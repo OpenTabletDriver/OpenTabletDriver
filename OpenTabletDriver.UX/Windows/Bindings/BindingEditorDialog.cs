@@ -60,7 +60,7 @@ namespace OpenTabletDriver.UX.Windows.Bindings
             };
         }
 
-        private BindingController bindingController;
+        private readonly BindingController bindingController;
 
         private void ClearBinding(object sender, EventArgs e)
         {

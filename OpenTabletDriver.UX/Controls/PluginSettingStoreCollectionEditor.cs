@@ -52,10 +52,10 @@ namespace OpenTabletDriver.UX.Controls
             AppInfo.PluginManager.AssembliesChanged += HandleAssembliesChanged;
         }
 
-        private Placeholder placeholder;
-        private Splitter mainContent;
-        private TypeListBox<TSource> sourceSelector;
-        private ToggleablePluginSettingStoreEditor settingStoreEditor;
+        private readonly Placeholder placeholder;
+        private readonly Splitter mainContent;
+        private readonly TypeListBox<TSource> sourceSelector;
+        private readonly ToggleablePluginSettingStoreEditor settingStoreEditor;
 
         private PluginSettingStoreCollection storeCollection;
         public PluginSettingStoreCollection StoreCollection

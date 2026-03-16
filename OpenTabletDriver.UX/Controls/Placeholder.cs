@@ -31,8 +31,8 @@ namespace OpenTabletDriver.UX.Controls
             label.TextBinding.Bind(TextBinding);
         }
 
-        private Label label;
-        private Panel extraPanel;
+        private readonly Label label;
+        private readonly Panel extraPanel;
 
         private string text;
         public string Text
