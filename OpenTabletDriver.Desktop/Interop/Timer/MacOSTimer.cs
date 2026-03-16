@@ -71,8 +71,10 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
                         return;
                     }
 
-                    thread = new Thread(ThreadMain);
-                    thread.IsBackground = true;
+                    thread = new Thread(ThreadMain)
+                    {
+                        IsBackground = true
+                    };
                     thread!.Start();
                     Enabled = true;
                 }

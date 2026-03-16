@@ -57,6 +57,8 @@ dotnet_style_parentheses_in_relational_binary_operators = always_for_clarity:war
 dotnet_style_parentheses_in_other_binary_operators = always_for_clarity:warning
 dotnet_style_parentheses_in_other_operators = never_if_unnecessary:warning
 
+dotnet_style_object_initializer = true:warning
+
 [*.{sh,md,csproj,json,yml}]
 indent_size = 2
 

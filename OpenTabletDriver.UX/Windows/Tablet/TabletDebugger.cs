@@ -270,8 +270,10 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             {
                 string modeName = decodingMode.ToString();
 
-                var item = new RadioMenuItem(rootRadioButton);
-                item.Text = modeName;
+                var item = new RadioMenuItem(rootRadioButton)
+                {
+                    Text = modeName
+                };
                 item.BindDataContext(x => x.Checked,
                     Binding.Property((TDVM vm) => vm.DecodingMode).ToBool(decodingMode));
 
