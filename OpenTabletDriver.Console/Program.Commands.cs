@@ -16,7 +16,7 @@ using static System.Console;
 
 namespace OpenTabletDriver.Console
 {
-    partial class Program
+    internal partial class Program
     {
         #region Update
 

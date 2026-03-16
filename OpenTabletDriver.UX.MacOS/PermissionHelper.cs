@@ -132,7 +132,7 @@ namespace OpenTabletDriver.UX.MacOS
 
         private class KillOnQuitHandler : NSObject
         {
-            static KillOnQuitHandler handler;
+            private static KillOnQuitHandler handler;
 
 #pragma warning disable CA1822
             [Export("handleQuitEvent:withReplyEvent:")]

@@ -2,7 +2,7 @@ using System;
 
 namespace OpenTabletDriver.UX.Gtk
 {
-    class Program
+    internal class Program
     {
         [STAThread]
         public static void Main(string[] args)

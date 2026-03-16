@@ -21,7 +21,7 @@ using OpenTabletDriver.UX.Windows.Updater;
 
 namespace OpenTabletDriver.UX
 {
-    class CommandLineOptions
+    internal class CommandLineOptions
     {
         public bool StartMinimized { get; set; }
         public bool SkipUpdate { get; set; }

@@ -208,7 +208,7 @@ namespace OpenTabletDriver.Desktop.Updater
             return Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         }
 
-        record Rollback(string Directory, string Binary, string AppData);
+        private record Rollback(string Directory, string Binary, string AppData);
     }
 
     public class UpdateException : Exception

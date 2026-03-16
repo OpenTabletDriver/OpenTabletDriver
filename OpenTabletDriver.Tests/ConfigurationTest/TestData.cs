@@ -75,7 +75,7 @@ namespace OpenTabletDriver.Tests.ConfigurationTest
         private static JSchema? tabletConfigurationSchema;
         public static JSchema TabletConfigurationSchema => tabletConfigurationSchema ??= GetTabletConfigSchema();
 
-        static JSchema GetTabletConfigSchema()
+        private static JSchema GetTabletConfigSchema()
         {
             var gen = new JSchemaGenerator
             {

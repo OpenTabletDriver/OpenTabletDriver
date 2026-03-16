@@ -15,15 +15,15 @@ using OpenTabletDriver.Plugin.Components;
 
 namespace OpenTabletDriver.Daemon
 {
-    class CommandLineOptions
+    internal class CommandLineOptions
     {
         public DirectoryInfo AppDataDirectory { get; set; }
         public DirectoryInfo ConfigurationDirectory { get; set; }
     }
 
-    partial class Program
+    internal partial class Program
     {
-        static async Task Main(string[] args)
+        private static async Task Main(string[] args)
         {
             Log.Output += (sender, message) =>
             {
@@ -40,7 +40,7 @@ namespace OpenTabletDriver.Daemon
             await StartDaemon();
         }
 
-        static async Task StartDaemon()
+        private static async Task StartDaemon()
         {
             using var instance = new Instance("OpenTabletDriver.Daemon");
             if (instance.AlreadyExists)
@@ -134,7 +134,7 @@ namespace OpenTabletDriver.Daemon
             return host;
         }
 
-        static CommandLineOptions ParseCmdLineOptions(string[] args)
+        private static CommandLineOptions ParseCmdLineOptions(string[] args)
         {
             var cmdLineOptions = new CommandLineOptions();
 
@@ -175,7 +175,7 @@ namespace OpenTabletDriver.Daemon
             return cmdLineOptions;
         }
 
-        static DriverDaemon BuildDaemon()
+        private static DriverDaemon BuildDaemon()
         {
             return new DriverDaemon(new DriverBuilder()
                 .ConfigureServices(serviceCollection =>

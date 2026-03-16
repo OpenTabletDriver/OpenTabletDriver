@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace OpenTabletDriver.Console
 {
-    static class CommandTools
+    internal static class CommandTools
     {
         private static Command SetupCommand<T>(T action, string description, params string[] aliases)
             where T : Delegate
