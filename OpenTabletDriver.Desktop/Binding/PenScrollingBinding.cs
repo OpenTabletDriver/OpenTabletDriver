@@ -16,9 +16,8 @@ namespace OpenTabletDriver.Desktop.Binding
     {
         private const string PLUGIN_NAME = "Pen Scrolling Binding";
 
-        private Vector2 _initialPosition = default;
-        private int _scrollAmountHorizontal = 0;
-        private int _scrollAmountVertical = 0;
+        private Vector2 _initialPosition;
+        private int _scrollAmountHorizontal, _scrollAmountVertical;
 
         [Resolved]
         public IMouseScrollHandler? Pointer { set; get; }
@@ -48,7 +47,7 @@ namespace OpenTabletDriver.Desktop.Binding
         }
 
         [BooleanPropertyAttribute("Scroll horizontally", "pen movement scrolls horizontally"), DefaultPropertyValue(true)]
-        public bool HorziontalScrollingEnabled { get; set; }
+        public bool HorizontalScrollingEnabled { get; set; }
 
         [BooleanPropertyAttribute("Scroll vertically", "pen movement scrolls vertically"), DefaultPropertyValue(true)]
         public bool VerticalScrollingEnabled { get; set; }
@@ -67,14 +66,14 @@ namespace OpenTabletDriver.Desktop.Binding
 
         public void Press(TabletReference tablet, IDeviceReport report)
         {
-            if (report is not IAbsolutePositionReport)
+            if (report is not IAbsolutePositionReport absolutePositionReport)
             {
                 throw new InvalidOperationException("PenScrollingBinding not supported on this device");
             }
 
             ResetScrollingTimer();
 
-            _initialPosition = ((IAbsolutePositionReport)report).Position;
+            _initialPosition = absolutePositionReport.Position;
             _scrollAmountHorizontal = 0;
             _scrollAmountVertical = 0;
 
@@ -84,10 +83,7 @@ namespace OpenTabletDriver.Desktop.Binding
         protected void ResetScrollingTimer()
         {
             if (_scrollingTimer == null)
-            {
-                Log.Write(nameof(PenScrollingBinding), "Timer was not injected, can not scroll", LogLevel.Error);
-                return;
-            }
+                throw new InvalidOperationException("Timer was not injected, can not scroll");
 
             if (_scrollingTimer.Enabled)
                 _scrollingTimer.Stop();
@@ -120,12 +116,9 @@ namespace OpenTabletDriver.Desktop.Binding
         public void Scroll()
         {
             if (Pointer == null)
-            {
-                Log.Write(nameof(PenScrollingBinding), "Pointer was not injected, can not scroll", LogLevel.Error);
-                return;
-            }
+                throw new InvalidOperationException("Pointer was not injected, can not scroll");
 
-            if (HorziontalScrollingEnabled)
+            if (HorizontalScrollingEnabled)
                 Pointer.ScrollHorizontally(_scrollAmountHorizontal);
 
             if (VerticalScrollingEnabled)
