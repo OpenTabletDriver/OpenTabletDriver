@@ -6,6 +6,6 @@ namespace OpenTabletDriver.Plugin
 {
     public interface IStatePositionBinding : IStateBinding
     {
-        public void SetPosition(Vector2 pos);
+        void SetPosition(Vector2 pos);
     }
 }
