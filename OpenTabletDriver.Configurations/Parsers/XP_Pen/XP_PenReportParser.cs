@@ -8,6 +8,9 @@ namespace OpenTabletDriver.Configurations.Parsers.XP_Pen
     {
         public IDeviceReport Parse(byte[] report)
         {
+	    if (report[1] == 0xC0 || report[1] == 0xF2)
+                return new OutOfRangeReport(report);
+
             if (report[1] == 0xC0)
                 return new OutOfRangeReport(report);
 
