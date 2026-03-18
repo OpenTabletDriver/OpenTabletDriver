@@ -28,7 +28,7 @@ namespace OpenTabletDriver
         private readonly IReportParserProvider _reportParserProvider;
         private readonly IDeviceConfigurationProvider _deviceConfigurationProvider;
         private readonly object _detectSync = new object();
-        private ImmutableArray<InputDeviceTree> _inputDeviceTrees = ImmutableArray<InputDeviceTree>.Empty;
+        private ImmutableArray<InputDeviceTree> _inputDeviceTrees = [];
 
         public event EventHandler<IEnumerable<TabletReference>>? TabletsChanged;
 

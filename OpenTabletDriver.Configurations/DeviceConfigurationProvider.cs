@@ -14,10 +14,9 @@ namespace OpenTabletDriver.Configurations
             var asm = typeof(DeviceConfigurationProvider).Assembly;
             var jsonSerializer = new JsonSerializer();
 
-            TabletConfigurations = asm.GetManifestResourceNames()
+            TabletConfigurations = [.. asm.GetManifestResourceNames()
                 .Where(path => path.Contains(".json"))
-                .Select(path => Deserialize(jsonSerializer, asm.GetManifestResourceStream(path)))
-                .ToArray();
+                .Select(path => Deserialize(jsonSerializer, asm.GetManifestResourceStream(path)))];
         }
 
         public IEnumerable<TabletConfiguration> TabletConfigurations { get; }

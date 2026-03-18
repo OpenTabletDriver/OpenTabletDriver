@@ -62,7 +62,7 @@ namespace OpenTabletDriver.UX.MacOS
             {
                 if (selfResponsible)
                 {
-                    var process = Process.Start("open", new[] { NSBundle.MainBundle.BundlePath, "-n" });
+                    var process = Process.Start("open", [NSBundle.MainBundle.BundlePath, "-n"]);
                     process.WaitForExit();
                 }
                 else

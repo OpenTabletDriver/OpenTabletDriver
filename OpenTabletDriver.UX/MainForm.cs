@@ -705,7 +705,7 @@ namespace OpenTabletDriver.UX
                 var diagnosticDump = await App.Driver.Instance.GetDiagnosticInfo();
 
                 var tablets = await App.Driver.Instance.GetTablets();
-                var tabletReferences = tablets as TabletReference[] ?? tablets.ToArray();
+                var tabletReferences = tablets as TabletReference[] ?? [.. tablets];
                 string tabletNames = tabletReferences.Length != 0
                     ? " " + string.Join(", ", tabletReferences.Select(x => x.Properties.Name))
                     : string.Empty;

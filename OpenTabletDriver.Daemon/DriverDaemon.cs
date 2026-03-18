@@ -139,7 +139,7 @@ namespace OpenTabletDriver.Daemon
 
         public Driver Driver { get; }
         private Settings? Settings { set; get; }
-        private Collection<ITool> Tools { set; get; } = new Collection<ITool>();
+        private Collection<ITool> Tools { set; get; } = [];
         private readonly IUpdater Updater = DesktopInterop.Updater;
         private readonly ISleepDetector? SleepDetector = new SleepDetector();
         private Settings? lastValidSettings;
@@ -412,7 +412,7 @@ namespace OpenTabletDriver.Daemon
                             where filter != null
                             select filter!).ToArray();
 
-            outputMode.Elements = elements.Append(bindingHandler).ToList();
+            outputMode.Elements = [.. elements, bindingHandler];
 
             foreach (var filter in elements)
             {

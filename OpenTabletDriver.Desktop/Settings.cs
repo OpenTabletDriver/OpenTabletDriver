@@ -11,9 +11,9 @@ namespace OpenTabletDriver.Desktop
 {
     public class Settings : ViewModel
     {
-        private ProfileCollection profiles = new ProfileCollection();
+        private ProfileCollection profiles = [];
         private bool lockUsableAreaDisplay, lockUsableAreaTablet;
-        private PluginSettingStoreCollection tools = new PluginSettingStoreCollection();
+        private PluginSettingStoreCollection tools = [];
         private string revision = GetVersion();
 
         [JsonProperty(nameof(Revision))]

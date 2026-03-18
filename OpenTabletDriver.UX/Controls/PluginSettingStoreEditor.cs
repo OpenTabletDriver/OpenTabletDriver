@@ -64,7 +64,7 @@ namespace OpenTabletDriver.UX.Controls
 
         protected virtual IEnumerable<Control> GetHeaderControlsForStore(PluginSettingStore store)
         {
-            return Array.Empty<Control>();
+            return [];
         }
 
         private static IEnumerable<Control> GetControlsForStore(PluginSettingStore store)
@@ -82,7 +82,7 @@ namespace OpenTabletDriver.UX.Controls
                 }
             }
 
-            return Array.Empty<Control>();
+            return [];
         }
 
         private static IEnumerable<Control> GetControlsForType(PluginSettingStore store, Type type)

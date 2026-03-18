@@ -29,7 +29,7 @@ namespace OpenTabletDriver.Desktop.ViewModels.Utility
         // null: valid (full 'false -> true -> false' transition happened)
         // false: only seen false
         // true: have seen false and then true but haven't seen false after true
-        private readonly Dictionary<int, bool?> _seenButtons = new();
+        private readonly Dictionary<int, bool?> _seenButtons = [];
 
         internal Statistic(string name, object? value = null, string? unit = null, string? valueStringFormat = null)
         {

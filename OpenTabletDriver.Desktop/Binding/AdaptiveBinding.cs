@@ -39,7 +39,7 @@ namespace OpenTabletDriver.Desktop.Binding
             Binding = ActionToString(action);
         }
 
-        public static string[] ButtonNames => ValidButtons.Keys.ToArray();
+        public static string[] ButtonNames => [.. ValidButtons.Keys];
 
         private string _binding = string.Empty;
 

@@ -20,7 +20,7 @@ namespace OpenTabletDriver.Desktop
             int bucketCount = (int)Math.Ceiling((double)count / maxValuePerBucket);
 
             // initialize number of elements
-            int[] rv = Enumerable.Repeat(0, bucketCount).ToArray();
+            int[] rv = [.. Enumerable.Repeat(0, bucketCount)];
 
             int remaining = count;
             int index = 0;

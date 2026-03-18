@@ -439,12 +439,11 @@ namespace OpenTabletDriver.UX.Controls.Output
                 };
 
                 base.ContextMenu.Items.AddRange(
-                    new Command[]
-                    {
+                    [
                         lockArCmd,
                         areaClippingCmd,
                         ignoreOutsideAreaCmd
-                    }
+                    ]
                 );
 
                 base.ContextMenu.Items.AddSeparator();

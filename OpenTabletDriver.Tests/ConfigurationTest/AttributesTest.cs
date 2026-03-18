@@ -101,7 +101,7 @@ namespace OpenTabletDriver.Tests.ConfigurationTest
 
             Dictionary<string, string> ExtractValues(Dictionary<string, string>? dict)
             {
-                if (dict == null) return new Dictionary<string, string>();
+                if (dict == null) return [];
                 return dict;
             }
         }

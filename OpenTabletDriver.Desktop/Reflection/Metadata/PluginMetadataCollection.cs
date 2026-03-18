@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
@@ -20,7 +19,7 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
         }
 
         protected PluginMetadataCollection(IEnumerable<PluginMetadata> source)
-            : base(source.ToList())
+            : base([.. source])
         {
         }
 

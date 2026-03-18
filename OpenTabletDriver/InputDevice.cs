@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using OpenTabletDriver.Devices;
 using OpenTabletDriver.Plugin;
@@ -58,13 +57,13 @@ namespace OpenTabletDriver
             if (_featureInitDelayMs != 0)
                 Log.Debug("Device", $"{DELAY_ATTRIBUTE_KEY_NAME} is set in tablet configuration, will sleep for {_featureInitDelayMs}ms between FeatureInitReports");
 
-            foreach (byte index in Identifier.InitializationStrings ?? new List<byte>())
+            foreach (byte index in Identifier.InitializationStrings ?? [])
             {
                 Endpoint.GetDeviceString(index);
                 Log.Debug("Device", $"Initialized string index {index}");
             }
 
-            foreach (var report in Identifier.FeatureInitReport ?? new List<byte[]>())
+            foreach (var report in Identifier.FeatureInitReport ?? [])
             {
                 if (report == null || report.Length == 0)
                     continue;
@@ -82,7 +81,7 @@ namespace OpenTabletDriver
                 }
             }
 
-            foreach (var report in Identifier.OutputInitReport ?? new List<byte[]>())
+            foreach (var report in Identifier.OutputInitReport ?? [])
             {
                 if (report == null || report.Length == 0)
                     continue;

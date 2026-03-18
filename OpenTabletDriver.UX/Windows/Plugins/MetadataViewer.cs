@@ -234,7 +234,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
         private static IEnumerable<PluginMetadata> GetRepoMetadataForPlugin(PluginMetadataCollection repo, PluginMetadata metadata, Version currentDriverVersion)
         {
             if (repo == null)
-                return Enumerable.Empty<PluginMetadata>();
+                return [];
 
             return from meta in repo
                    where PluginMetadata.Match(meta, metadata)

@@ -128,9 +128,7 @@ namespace OpenTabletDriver.Tests.ConfigurationTest
             {
                 VendorID = 1,
                 ProductID = 1,
-                DeviceStrings = new Dictionary<byte, string>
-                {
-                },
+                DeviceStrings = [],
                 InputReportLength = 1,
                 OutputReportLength = 1
             };

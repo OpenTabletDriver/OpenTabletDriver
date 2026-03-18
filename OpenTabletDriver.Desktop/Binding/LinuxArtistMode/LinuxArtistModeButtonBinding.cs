@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using OpenTabletDriver.Desktop.Interop.Input.Absolute;
 using OpenTabletDriver.Native.Linux.Evdev;
 using OpenTabletDriver.Plugin;
@@ -37,7 +36,7 @@ namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
             { "Pen Button 3", EventCode.BTN_STYLUS3 },
         };
 
-        public static string[] ValidButtons => SupportedButtons.Keys.ToArray();
+        public static string[] ValidButtons => [.. SupportedButtons.Keys];
 
         [Property("Button"), PropertyValidated(nameof(ValidButtons))]
         public string? Button { get; set; }

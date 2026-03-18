@@ -32,7 +32,7 @@ namespace OpenTabletDriver.Tests.ConfigurationTest
             var tabletFilename = testTabletConfiguration.File.Name;
             var tabletConfigString = testTabletConfiguration.FileContents.Value;
             var schema = TestData.TabletConfigurationSchema;
-            IList<string> errors = new List<string>();
+            IList<string> errors = [];
 
             var tabletConfig = JObject.Parse(tabletConfigString);
             try
@@ -184,7 +184,7 @@ namespace OpenTabletDriver.Tests.ConfigurationTest
             {
                 decimal? closestLpi = null;
 
-                var validLPIsArr = validLPIs as int[] ?? validLPIs.ToArray();
+                var validLPIsArr = validLPIs as int[] ?? [.. validLPIs];
                 foreach (decimal validLpi in validLPIsArr.OrderBy(x => x))
                 {
                     if (closestLpi == null)

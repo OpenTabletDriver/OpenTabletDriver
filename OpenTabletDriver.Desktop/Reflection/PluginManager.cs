@@ -21,7 +21,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             };
 
 #pragma warning disable CS0618 // Type or member is obsolete
-            libTypes = OpenTabletDriver.Desktop.Extensions.GetLibTypes().ToArray();
+            libTypes = [.. OpenTabletDriver.Desktop.Extensions.GetLibTypes()];
 #pragma warning restore CS0618 // Type or member is obsolete
 
             var internalTypes = from asm in assemblies
@@ -31,7 +31,7 @@ namespace OpenTabletDriver.Desktop.Reflection
                                 where IsPlatformSupported(type)
                                 select type;
 
-            pluginTypes = new ConcurrentBag<TypeInfo>(internalTypes);
+            pluginTypes = [.. internalTypes];
         }
 
         public IReadOnlyCollection<TypeInfo> PluginTypes => pluginTypes;
@@ -94,7 +94,7 @@ namespace OpenTabletDriver.Desktop.Reflection
                            where !IsPluginIgnored(type)
                            select type;
 
-            return children.ToArray();
+            return [.. children];
         }
 
         public virtual string GetFriendlyName(string path)

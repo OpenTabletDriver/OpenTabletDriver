@@ -19,7 +19,7 @@ namespace OpenTabletDriver.Desktop
 
         private IEnumerable<TabletConfiguration> GetTabletConfigurations()
         {
-            IEnumerable<(ConfigurationSource, TabletConfiguration)> jsonConfigurations = Array.Empty<(ConfigurationSource, TabletConfiguration)>();
+            IEnumerable<(ConfigurationSource, TabletConfiguration)> jsonConfigurations = [];
 
             if (Directory.Exists(AppInfo.Current.ConfigurationDirectory))
             {

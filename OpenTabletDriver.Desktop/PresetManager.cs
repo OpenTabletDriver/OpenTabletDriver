@@ -19,7 +19,7 @@ namespace OpenTabletDriver.Desktop
 
         public DirectoryInfo PresetDirectory { get; }
 
-        private List<Preset> Presets { get; } = new List<Preset>();
+        private List<Preset> Presets { get; } = [];
 
         public IReadOnlyCollection<Preset> GetPresets() => Presets;
 

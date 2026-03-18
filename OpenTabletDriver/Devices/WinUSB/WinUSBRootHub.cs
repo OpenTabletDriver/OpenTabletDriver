@@ -29,7 +29,7 @@ namespace OpenTabletDriver.Devices.WinUSB
         private readonly GCHandle _callbackPin;
         private List<WinUSBInterface> _oldDevices;
         private List<WinUSBInterface> _currentDevices;
-        private readonly Dictionary<Guid, SafeCmNotificationHandle> _notificationHandles = new();
+        private readonly Dictionary<Guid, SafeCmNotificationHandle> _notificationHandles = [];
 
         public unsafe WinUSBRootHub()
         {

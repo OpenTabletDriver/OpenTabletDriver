@@ -42,7 +42,7 @@ namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
         };
 
 
-        public static string[] ValidKeys => s_ValidButtons.Keys.ToArray();
+        public static string[] ValidKeys => [.. s_ValidButtons.Keys];
 
         [Property("Button"), PropertyValidated(nameof(ValidKeys))]
         public string? Button

@@ -26,14 +26,14 @@ namespace OpenTabletDriver.Desktop.Binding
         public ThresholdBindingState? Eraser { set; get; }
         private bool _isEraser;
 
-        public Dictionary<int, BindingState?> PenButtons { set; get; } = new Dictionary<int, BindingState?>();
-        public Dictionary<int, BindingState?> AuxButtons { set; get; } = new Dictionary<int, BindingState?>();
-        public Dictionary<int, BindingState?> MouseButtons { set; get; } = new Dictionary<int, BindingState?>();
+        public Dictionary<int, BindingState?> PenButtons { set; get; } = [];
+        public Dictionary<int, BindingState?> AuxButtons { set; get; } = [];
+        public Dictionary<int, BindingState?> MouseButtons { set; get; } = [];
 
         public BindingState? MouseScrollDown { set; get; }
         public BindingState? MouseScrollUp { set; get; }
 
-        public Dictionary<int, WheelBindings> Wheels { get; } = new Dictionary<int, WheelBindings>();
+        public Dictionary<int, WheelBindings> Wheels { get; } = [];
 
         public PipelinePosition Position => PipelinePosition.PostTransform;
 

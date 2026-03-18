@@ -15,7 +15,7 @@ namespace OpenTabletDriver.Desktop.Profiles
         private AbsoluteModeSettings absoluteMode = new AbsoluteModeSettings();
         private RelativeModeSettings relativeMode = new RelativeModeSettings();
         private BindingSettings bindings = new BindingSettings();
-        private PluginSettingStoreCollection filters = new PluginSettingStoreCollection();
+        private PluginSettingStoreCollection filters = [];
 
         [JsonProperty(nameof(Tablet))]
         public string Tablet

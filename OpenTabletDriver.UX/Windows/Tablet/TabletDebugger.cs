@@ -503,7 +503,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
         private void SetTitle(IEnumerable<TabletReference> tablets)
         {
             StringBuilder sb = new StringBuilder("Tablet Debugger");
-            var tabletReferenceArr = tablets as TabletReference[] ?? tablets.ToArray();
+            var tabletReferenceArr = tablets as TabletReference[] ?? [.. tablets];
 
             if (tabletReferenceArr.Length != 0)
             {
@@ -525,7 +525,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             if (DataContext is not TDVM viewmodel) return;
 
             var tabletNames = tablets.Select(x => x.Properties.Name);
-            UpdateFilterList(_debuggedTablets, tabletNames.ToArray(), viewmodel.IgnoredTablets);
+            UpdateFilterList(_debuggedTablets, [.. tabletNames], viewmodel.IgnoredTablets);
         }
 
         private class DebuggerGroup : Group

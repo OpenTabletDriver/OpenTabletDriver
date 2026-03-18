@@ -19,9 +19,9 @@ namespace OpenTabletDriver.Desktop.Profiles
             mouseScrollUp,
             mouseScrollDown;
 
-        private PluginSettingStoreCollection penButtons = new PluginSettingStoreCollection(),
-            auxButtons = new PluginSettingStoreCollection(),
-            mouseButtons = new PluginSettingStoreCollection();
+        private PluginSettingStoreCollection penButtons = [],
+            auxButtons = [],
+            mouseButtons = [];
 
         private List<WheelBindingSettings> wheelBindings = [];
 
@@ -128,9 +128,9 @@ namespace OpenTabletDriver.Desktop.Profiles
                 EraserButton = new PluginSettingStore(
                     new AdaptiveBinding(PenAction.Eraser)
                 ),
-                PenButtons = new PluginSettingStoreCollection(),
-                AuxButtons = new PluginSettingStoreCollection(),
-                MouseButtons = new PluginSettingStoreCollection(),
+                PenButtons = [],
+                AuxButtons = [],
+                MouseButtons = [],
             };
 
             bindingSettings.AddPenButtons(tabletSpecifications);

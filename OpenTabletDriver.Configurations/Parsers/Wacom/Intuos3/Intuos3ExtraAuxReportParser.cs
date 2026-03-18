@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1;
@@ -37,6 +36,6 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos3
 
         private uint _prevPressure;
         private Vector2 _prevTilt;
-        private bool[] _prevPenButtons = Array.Empty<bool>();
+        private bool[] _prevPenButtons = [];
     }
 }

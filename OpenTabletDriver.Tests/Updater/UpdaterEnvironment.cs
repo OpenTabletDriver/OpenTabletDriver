@@ -26,8 +26,8 @@ namespace OpenTabletDriver.Tests.Updater
             InitializeDirectory(RollBackDir);
         }
 
-        public List<FakeFileSystemEntry> BinaryFiles { get; } = new();
-        public List<FakeFileSystemEntry> AppDataFiles { get; } = new();
+        public List<FakeFileSystemEntry> BinaryFiles { get; } = [];
+        public List<FakeFileSystemEntry> AppDataFiles { get; } = [];
 
         internal void HookToUpdater(OTDUpdater updater)
         {
