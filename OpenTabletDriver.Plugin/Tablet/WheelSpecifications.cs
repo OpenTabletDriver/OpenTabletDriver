@@ -11,8 +11,6 @@ namespace OpenTabletDriver.Plugin.Tablet
     /// </summary>
     public class WheelSpecifications
     {
-        private uint? _absoluteWheelMax;
-        private uint? _relativeWheelSteps;
 
         /// <summary>
         /// The number of device steps per 360 degrees of wheel rotation. Used to normalize step size across tablets.
@@ -24,12 +22,12 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// </remarks>
         public uint? RelativeWheelSteps
         {
-            get => _relativeWheelSteps;
+            get;
             set
             {
                 if (AbsoluteWheelMax.HasValue && value != null)
                     throw new InvalidOperationException($"Can't set {nameof(RelativeWheelSteps)} when {nameof(AbsoluteWheelMax)} is set");
-                _relativeWheelSteps = value;
+                field = value;
             }
         }
 
@@ -43,12 +41,12 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// </remarks>
         public uint? AbsoluteWheelMax
         {
-            get => _absoluteWheelMax;
+            get;
             set
             {
                 if (RelativeWheelSteps.HasValue && value != null)
                     throw new InvalidOperationException($"Can't set {nameof(AbsoluteWheelMax)} when {nameof(RelativeWheelSteps)} is set");
-                _absoluteWheelMax = value;
+                field = value;
             }
         }
 

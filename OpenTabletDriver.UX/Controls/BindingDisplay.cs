@@ -52,15 +52,14 @@ namespace OpenTabletDriver.UX.Controls
 
         public event EventHandler<EventArgs> StoreChanged;
 
-        private PluginSettingStore store;
         public PluginSettingStore Store
         {
             set
             {
-                this.store = value;
+                field = value;
                 StoreChanged?.Invoke(this, new EventArgs());
             }
-            get => this.store;
+            get;
         }
 
         public BindableBinding<BindingDisplay, PluginSettingStore> StoreBinding

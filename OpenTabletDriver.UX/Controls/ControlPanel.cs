@@ -102,15 +102,14 @@ namespace OpenTabletDriver.UX.Controls
         private readonly PluginSettingStoreCollectionEditor<IPositionedPipelineElement<IDeviceReport>> filterEditor;
         private readonly PluginSettingStoreCollectionEditor<ITool> toolEditor;
 
-        private Profile profile;
         public Profile Profile
         {
             set
             {
-                this.profile = value;
+                field = value;
                 this.OnProfileChanged();
             }
-            get => this.profile;
+            get;
         }
 
         public event EventHandler<EventArgs> ProfileChanged;

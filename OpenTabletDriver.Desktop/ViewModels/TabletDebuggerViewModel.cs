@@ -31,16 +31,15 @@ public sealed class TabletDebuggerViewModel : ViewModel, IDisposable
 
     public TabletDebuggerViewModel()
     {
-        _additionalStatistics.ChildCollectionChanged += (sender, args) => StatisticsCollectionChanged?.Invoke(sender, args);
+        AdditionalStatistics.ChildCollectionChanged += (sender, args) => StatisticsCollectionChanged?.Invoke(sender, args);
     }
 
     public void HandleReport(object? sender, DebugReportData data) => ReportData = data;
 
     #region View Model Properties (and backing fields)
-    private DebugReportData? _reportData;
     public DebugReportData? ReportData
     {
-        get => _reportData;
+        get;
         // TODO: only gather AdditionalStatistics if enabled
         private set
         {
@@ -48,7 +47,7 @@ public sealed class TabletDebuggerViewModel : ViewModel, IDisposable
             if (value != null && IgnoredReports.Contains(GetNameKeyForFilter(value.Tablet, value.Path))) return;
             if (value != null && IgnoredTablets.Contains(value.Tablet.Properties.Name)) return;
 
-            RaiseAndSetIfChanged(ref _reportData, value);
+            RaiseAndSetIfChanged(ref field, value);
             if (value == null) return;
             RaiseChanged(nameof(DeviceName));
 
@@ -170,13 +169,11 @@ public sealed class TabletDebuggerViewModel : ViewModel, IDisposable
         RaiseChanged(nameof(ReportRateString));
     }
 
-    private readonly Statistic _additionalStatistics = new("Additional Statistics");
-
     public Statistic AdditionalStatistics
     {
-        get => _additionalStatistics;
-        init => RaiseAndSetIfChanged(ref _additionalStatistics, value);
-    }
+        get;
+        init => RaiseAndSetIfChanged(ref field, value);
+    } = new("Additional Statistics");
 
     private double ReportRateAverage => 1000 / (_reportRates.Count > 0 ? _reportRates.Average() : 0);
     public string ReportRateString => $"{ReportRateAverage:0.00}";
@@ -198,52 +195,47 @@ public sealed class TabletDebuggerViewModel : ViewModel, IDisposable
         }
     }
 
-    private string _decodedTabletData = string.Empty;
     public string DecodedTabletData
     {
-        get => _decodedTabletData;
-        private set => RaiseAndSetIfChanged(ref _decodedTabletData, value);
-    }
+        get;
+        private set => RaiseAndSetIfChanged(ref field, value);
+    } = string.Empty;
 
-    private DecodingMode _decodingMode = _DEFAULT_DECODING_MODE;
     public DecodingMode DecodingMode
     {
-        get => _decodingMode;
+        get;
         set
         {
-            RaiseAndSetIfChanged(ref _decodingMode, value);
+            RaiseAndSetIfChanged(ref field, value);
             RaiseChanged(nameof(RawTabletData));
         }
-    }
+    } = _DEFAULT_DECODING_MODE;
 
-    private int _reportsRecorded;
     public int ReportsRecorded
     {
-        get => _reportsRecorded;
+        get;
         private set
         {
-            RaiseAndSetIfChanged(ref _reportsRecorded, value);
+            RaiseAndSetIfChanged(ref field, value);
 
             if (value > 0 && !HasReportsRecorded)
                 HasReportsRecorded = true;
         }
     }
 
-    private bool _hasReportsRecorded;
     public bool HasReportsRecorded
     {
-        get => _hasReportsRecorded;
-        private set => RaiseAndSetIfChanged(ref _hasReportsRecorded, value);
+        get;
+        private set => RaiseAndSetIfChanged(ref field, value);
     }
 
-    private bool _dataRecordingEnabled;
     public bool DataRecordingEnabled
     {
-        get => _dataRecordingEnabled;
+        get;
         [UsedImplicitly]
         set
         {
-            RaiseAndSetIfChanged(ref _dataRecordingEnabled, value);
+            RaiseAndSetIfChanged(ref field, value);
 
             if (value)
             {
@@ -259,18 +251,15 @@ public sealed class TabletDebuggerViewModel : ViewModel, IDisposable
         }
     }
 
-    private bool _isVisualizerEnabled = true;
     public bool IsVisualizerEnabled
     {
-        get => _isVisualizerEnabled;
-        set => RaiseAndSetIfChanged(ref _isVisualizerEnabled, value);
-    }
-
-    private bool _showAdditionalStatistics;
+        get;
+        set => RaiseAndSetIfChanged(ref field, value);
+    } = true;
     public bool ShowAdditionalStatistics
     {
-        get => _showAdditionalStatistics;
-        set => RaiseAndSetIfChanged(ref _showAdditionalStatistics, value);
+        get;
+        set => RaiseAndSetIfChanged(ref field, value);
     }
 
     public ReadOnlyCollection<string> SeenReports => _seenReports.ToArray().AsReadOnly();
@@ -310,14 +299,14 @@ public sealed class TabletDebuggerViewModel : ViewModel, IDisposable
 
     public void ResetStatistics()
     {
-        _additionalStatistics.Children.Clear();
+        AdditionalStatistics.Children.Clear();
     }
 
     private void StopDataRecordingAsNeeded()
     {
         // dump stats
-        if (_tabletRecordingStreamWriter != null && _additionalStatistics.Children.Count > 0)
-            foreach (string s in _additionalStatistics.DumpTreeAsStrings())
+        if (_tabletRecordingStreamWriter != null && AdditionalStatistics.Children.Count > 0)
+            foreach (string s in AdditionalStatistics.DumpTreeAsStrings())
                 _tabletRecordingStreamWriter?.WriteLine(s);
 
         _tabletRecordingStreamWriter?.Dispose();

@@ -19,8 +19,7 @@ namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
 
         [Resolved] public IPressureHandler? PressureHandler;
 
-        private EvdevVirtualTablet? _virtualTablet;
-        private EvdevVirtualTablet? VirtualTablet => _virtualTablet ??= PressureHandler as EvdevVirtualTablet;
+        private EvdevVirtualTablet? VirtualTablet => field ??= PressureHandler as EvdevVirtualTablet;
 
         [OnDependencyLoad]
         public void VerifyInitialization()

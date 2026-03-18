@@ -23,14 +23,6 @@ namespace OpenTabletDriver.Desktop.Interop
         {
         }
 
-        private static IUpdater updater;
-        private static IVirtualScreen virtualScreen;
-        private static IAbsolutePointer absolutePointer;
-        private static IRelativePointer relativePointer;
-        private static IPressureHandler virtualTablet;
-        private static IVirtualKeyboard virtualKeyboard;
-        private static IVirtualPad virtualPad;
-
         public static void Open(string path)
         {
             switch (CurrentPlatform)
@@ -69,8 +61,8 @@ namespace OpenTabletDriver.Desktop.Interop
 
         public static IUpdater Updater => CurrentPlatform switch
         {
-            PluginPlatform.Windows => updater ??= new WindowsUpdater(AppInfo.Current, GitHubClient),
-            PluginPlatform.MacOS => updater ??= new MacOSUpdater(AppInfo.Current, GitHubClient),
+            PluginPlatform.Windows => field ??= new WindowsUpdater(AppInfo.Current, GitHubClient),
+            PluginPlatform.MacOS => field ??= new MacOSUpdater(AppInfo.Current, GitHubClient),
             _ => null
         };
 
@@ -85,7 +77,7 @@ namespace OpenTabletDriver.Desktop.Interop
         public static IAbsolutePointer AbsolutePointer => CurrentPlatform switch
         {
             PluginPlatform.Windows => new WindowsAbsolutePointer(),
-            PluginPlatform.Linux => absolutePointer ??= new EvdevAbsolutePointer(),
+            PluginPlatform.Linux => field ??= new EvdevAbsolutePointer(),
             PluginPlatform.MacOS => new MacOSAbsolutePointer(),
             _ => null
         };
@@ -93,32 +85,32 @@ namespace OpenTabletDriver.Desktop.Interop
         public static IRelativePointer RelativePointer => CurrentPlatform switch
         {
             PluginPlatform.Windows => new WindowsRelativePointer(),
-            PluginPlatform.Linux => relativePointer ??= new EvdevRelativePointer(),
+            PluginPlatform.Linux => field ??= new EvdevRelativePointer(),
             PluginPlatform.MacOS => new MacOSRelativePointer(),
             _ => null
         };
 
         public static IPressureHandler VirtualTablet => CurrentPlatform switch
         {
-            PluginPlatform.Linux => virtualTablet ??= new EvdevVirtualTablet(),
+            PluginPlatform.Linux => field ??= new EvdevVirtualTablet(),
             _ => null
         };
 
         public static IVirtualKeyboard VirtualKeyboard => CurrentPlatform switch
         {
             PluginPlatform.Windows => new WindowsVirtualKeyboard(),
-            PluginPlatform.Linux => virtualKeyboard ??= new EvdevVirtualKeyboard(),
-            PluginPlatform.MacOS => virtualKeyboard ??= new MacOSVirtualKeyboard(),
+            PluginPlatform.Linux => field ??= new EvdevVirtualKeyboard(),
+            PluginPlatform.MacOS => field ??= new MacOSVirtualKeyboard(),
             _ => null
         };
 
         public static IVirtualPad VirtualPad => CurrentPlatform switch
         {
-            PluginPlatform.Linux => virtualPad ??= new EvdevVirtualPad(),
+            PluginPlatform.Linux => field ??= new EvdevVirtualPad(),
             _ => null
         };
 
-        public static IVirtualScreen VirtualScreen => virtualScreen ??= CurrentPlatform switch
+        public static IVirtualScreen VirtualScreen => field ??= CurrentPlatform switch
         {
             PluginPlatform.Windows => new WindowsDisplay(),
             PluginPlatform.Linux => ConstructLinuxDisplay(),

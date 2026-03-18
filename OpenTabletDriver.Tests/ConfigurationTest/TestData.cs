@@ -72,8 +72,7 @@ namespace OpenTabletDriver.Tests.ConfigurationTest
 
         #region Schema
 
-        private static JSchema? tabletConfigurationSchema;
-        public static JSchema TabletConfigurationSchema => tabletConfigurationSchema ??= GetTabletConfigSchema();
+        public static JSchema TabletConfigurationSchema => field ??= GetTabletConfigSchema();
 
         private static JSchema GetTabletConfigSchema()
         {

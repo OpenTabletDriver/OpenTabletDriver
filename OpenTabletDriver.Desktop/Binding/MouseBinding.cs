@@ -43,9 +43,8 @@ namespace OpenTabletDriver.Desktop.Binding
                 Pointer?.MouseUp(mouseButton);
         }
 
-        private static IEnumerable<string>? validButtons;
         public static IEnumerable<string> ValidButtons =>
-            validButtons ??= Enum.GetValues<MouseButton>().Select(Enum.GetName)!;
+            field ??= Enum.GetValues<MouseButton>().Select(Enum.GetName)!;
 
         public override string ToString() => $"{PLUGIN_NAME}: {Button}";
     }

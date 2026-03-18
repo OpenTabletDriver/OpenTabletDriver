@@ -19,7 +19,6 @@ namespace OpenTabletDriver.UX.Controls.Generic
             Spacing = 5
         };
 
-        private IList<T> itemSource;
         public IList<T> ItemSource
         {
             set
@@ -28,14 +27,14 @@ namespace OpenTabletDriver.UX.Controls.Generic
                 if (ItemSource is INotifyCollectionChanged oldNotify)
                     oldNotify.CollectionChanged -= HandleCollectionChanged;
 
-                this.itemSource = value;
+                field = value;
                 this.OnItemSourceChanged();
 
                 // Hook the collection change event if applicable
                 if (ItemSource is INotifyCollectionChanged newNotify)
                     newNotify.CollectionChanged += HandleCollectionChanged;
             }
-            get => this.itemSource;
+            get;
         }
 
         public event EventHandler<EventArgs> ItemSourceChanged;

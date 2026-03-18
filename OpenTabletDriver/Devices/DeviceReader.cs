@@ -22,7 +22,7 @@ namespace OpenTabletDriver.Devices
         }
 
         private readonly Thread workerThread;
-        private bool initialized, connected;
+        private bool initialized;
 
         /// <summary>
         /// The device endpoint in which is reporting data in the <see cref="ReportStream"/>.
@@ -65,10 +65,10 @@ namespace OpenTabletDriver.Devices
         {
             protected set
             {
-                connected = value;
+                field = value;
                 ConnectionStateChanged?.Invoke(this, Connected);
             }
-            get => connected;
+            get;
         }
 
         /// <summary>

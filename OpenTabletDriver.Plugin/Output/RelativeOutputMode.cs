@@ -45,9 +45,6 @@ namespace OpenTabletDriver.Plugin.Output
             get => this.sensitivity;
         }
 
-        private float rotation;
-        private TimeSpan _resetTime;
-
         /// <summary>
         /// The angle of rotation to be applied to the input.
         /// </summary>
@@ -55,10 +52,10 @@ namespace OpenTabletDriver.Plugin.Output
         {
             set
             {
-                this.rotation = value;
+                field = value;
                 this.TransformationMatrix = CreateTransformationMatrix();
             }
-            get => this.rotation;
+            get;
         }
 
         /// <summary>
@@ -68,11 +65,11 @@ namespace OpenTabletDriver.Plugin.Output
         {
             set
             {
-                _resetTime = value;
+                field = value;
                 _resets = 0;
                 _warnedBadResets = false;
             }
-            get => _resetTime;
+            get;
         }
 
         protected override Matrix3x2 CreateTransformationMatrix()

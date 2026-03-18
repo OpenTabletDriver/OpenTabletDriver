@@ -28,26 +28,24 @@ namespace OpenTabletDriver.UX.Controls.Generic
         protected virtual Color HorizontalBackgroundColor => SystemColors.ControlBackground;
         protected virtual Color VerticalBackgroundColor => SystemColors.WindowBackground;
 
-        private string text;
         public string Text
         {
             set
             {
-                this.text = value;
+                field = value;
                 UpdateControlLayout();
             }
-            get => text;
+            get;
         }
 
-        private Control content;
         public new Control Content
         {
             set
             {
-                this.content = value;
+                field = value;
                 UpdateControlLayout();
             }
-            get => content;
+            get;
         }
 
         public Orientation Orientation { set; get; } = DEFAULT_ORIENTATION;

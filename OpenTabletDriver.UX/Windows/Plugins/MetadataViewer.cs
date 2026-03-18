@@ -171,15 +171,15 @@ namespace OpenTabletDriver.UX.Windows.Plugins
         public event Func<PluginMetadata, Task<bool>> RequestPluginUninstall;
 
         private PluginMetadata updatedMetadata;
-        private PluginMetadata metadata;
+
         public PluginMetadata Metadata
         {
             set
             {
-                this.metadata = value;
+                field = value;
                 this.OnMetadataChanged();
             }
-            get => this.metadata;
+            get;
         }
 
         public event EventHandler<EventArgs> MetadataChanged;

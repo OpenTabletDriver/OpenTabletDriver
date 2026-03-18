@@ -57,15 +57,14 @@ namespace OpenTabletDriver.UX.Controls
         private readonly TypeListBox<TSource> sourceSelector;
         private readonly ToggleablePluginSettingStoreEditor settingStoreEditor;
 
-        private PluginSettingStoreCollection storeCollection;
         public PluginSettingStoreCollection StoreCollection
         {
             set
             {
-                this.storeCollection = value;
+                field = value;
                 this.OnStoreCollectionChanged();
             }
-            get => this.storeCollection;
+            get;
         }
 
         public event EventHandler<EventArgs> StoreCollectionChanged;

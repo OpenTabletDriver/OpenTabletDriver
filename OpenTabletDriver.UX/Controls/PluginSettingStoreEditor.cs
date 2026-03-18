@@ -21,15 +21,14 @@ namespace OpenTabletDriver.UX.Controls
 
         private readonly StackLayout layout;
 
-        private PluginSettingStore store;
         public PluginSettingStore Store
         {
             set
             {
-                this.store = value;
+                field = value;
                 this.OnStoreChanged();
             }
-            get => this.store;
+            get;
         }
 
         public event EventHandler<EventArgs> StoreChanged;

@@ -153,12 +153,10 @@ namespace OpenTabletDriver.UX
 
         public static Uri Website { get; } = new Uri(@"https://github.com/OpenTabletDriver/OpenTabletDriver");
         public static string License { get; } = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.LICENSE")).ReadToEnd();
-
-        private Settings settings;
         public Settings Settings
         {
-            set => this.RaiseAndSetIfChanged(ref this.settings, value);
-            get => this.settings;
+            set => this.RaiseAndSetIfChanged(ref field, value);
+            get;
         }
 
         private const string APPNAME = "OpenTabletDriver.UX";

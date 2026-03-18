@@ -21,10 +21,8 @@ namespace OpenTabletDriver.Desktop.ViewModels.Utility
 
     public class Statistic : INotifyPropertyChanged, IComparable
     {
-        private object? _value;
         private string? _unit;
         private string _valueStringFormat;
-        private bool _hidden;
 
         // null: valid (full 'false -> true -> false' transition happened)
         // false: only seen false
@@ -57,10 +55,10 @@ namespace OpenTabletDriver.Desktop.ViewModels.Utility
         /// </summary>
         public object? Value
         {
-            get => _value;
+            get;
             set
             {
-                SetField(ref _value, value);
+                SetField(ref field, value);
                 OnPropertyChanged(nameof(ValueString));
             }
         }
@@ -93,8 +91,8 @@ namespace OpenTabletDriver.Desktop.ViewModels.Utility
         /// </summary>
         public bool Hidden
         {
-            get => _hidden;
-            set => SetField(ref _hidden, value);
+            get;
+            set => SetField(ref field, value);
         }
 
         /// <summary>
