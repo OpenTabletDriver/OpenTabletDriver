@@ -64,6 +64,7 @@ dotnet_style_explicit_tuple_names = true:warning
 dotnet_style_prefer_inferred_tuple_names = true:warning
 dotnet_style_prefer_inferred_anonymous_type_member_names = true:warning
 dotnet_style_prefer_auto_properties = true:warning
+dotnet_style_prefer_compound_assignment = true:warning
 
 [*.{sh,md,csproj,json,yml}]
 indent_size = 2
