@@ -61,6 +61,8 @@ dotnet_style_object_initializer = true:warning
 dotnet_style_collection_initializer = true:warning
 dotnet_style_prefer_collection_expression = when_types_loosely_match:warning
 dotnet_style_explicit_tuple_names = true:warning
+dotnet_style_prefer_inferred_tuple_names = true:warning
+dotnet_style_prefer_inferred_anonymous_type_member_names = true:warning
 
 [*.{sh,md,csproj,json,yml}]
 indent_size = 2
