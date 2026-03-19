@@ -68,6 +68,7 @@ dotnet_style_prefer_compound_assignment = true:warning
 dotnet_style_prefer_simplified_interpolation = true:warning
 dotnet_style_prefer_simplified_boolean_expressions = true:warning
 dotnet_style_null_propagation = true:warning
+dotnet_style_prefer_is_null_check_over_reference_equality_method = true:warning
 
 [*.{sh,md,csproj,json,yml}]
 indent_size = 2
