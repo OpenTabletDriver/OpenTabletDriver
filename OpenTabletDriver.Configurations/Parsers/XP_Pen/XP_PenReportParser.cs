@@ -12,7 +12,7 @@ namespace OpenTabletDriver.Configurations.Parsers.XP_Pen
                 return new OutOfRangeReport(report);
 
 	    if (report[1] == 0xF2)
-                return new TabletReport(report);
+                return new DeviceReport(report);
 
             if (report[1].IsBitSet(4))
                 return new XP_PenAuxReport(report);
