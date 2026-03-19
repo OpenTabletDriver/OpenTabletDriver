@@ -83,8 +83,7 @@ namespace OpenTabletDriver.Desktop.Binding
             set
             {
                 field = Math.Max(1, value);
-                if (Timer != null)
-                    Timer.Interval = field;
+                Timer?.Interval = field;
             }
         } = 1;
 

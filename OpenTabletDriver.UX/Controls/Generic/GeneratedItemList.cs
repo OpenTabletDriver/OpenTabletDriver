@@ -114,8 +114,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
                 () => ItemSource[index],
                 (v) =>
                 {
-                    if (ItemSource != null)
-                        ItemSource[index] = v;
+                    ItemSource?[index] = v;
                 }
             );
 

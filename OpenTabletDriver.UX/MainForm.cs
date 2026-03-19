@@ -624,8 +624,7 @@ namespace OpenTabletDriver.UX
         {
             LoadPresets();
 
-            if (trayIcon != null) // Check non-Linux
-                trayIcon.RefreshMenuItems();
+            trayIcon?.RefreshMenuItems();
 
             // Update File submenu
             var presets = AppInfo.PresetManager.GetPresets();
