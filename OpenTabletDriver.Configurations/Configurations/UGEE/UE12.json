@@ -4,8 +4,8 @@
     "Digitizer": {
       "Width": 256.32,
       "Height": 144.18,
-      "MaxX": 32767,
-      "MaxY": 32767
+      "MaxX": 52644,
+      "MaxY": 29611
     },
     "Pen": {
       "MaxPressure": 16383,
@@ -19,7 +19,8 @@
     {
       "VendorID": 10429,
       "ProductID": 10506,
-      "InputReportLength": 10,
+      "InputReportLength": 12,
+      "OutputReportLength": 20,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
       "OutputInitReport": ["ArAE"]
     }
