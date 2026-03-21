@@ -84,6 +84,7 @@
 | UGEE S1060                         |     Supported     |
 | UGEE U1200                         |     Supported     |
 | UGEE U1600                         |     Supported     |
+| UGEE UE12 Plus                     |     Supported     |
 | VEIKK A15                          |     Supported     |
 | VEIKK A15 V2                       |     Supported     |
 | VEIKK S640                         |     Supported     |
