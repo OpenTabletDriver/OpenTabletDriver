@@ -387,6 +387,14 @@ namespace OpenTabletDriver.Console
             await Out.WriteLineAsync(str);
         }
 
+        private static async Task GetStrings(int vid, int pid)
+        {
+            if (!await EnsureDaemonReady()) return;
+            var strings = (await Driver.Instance.RequestDeviceStrings(vid, pid)).ToList();
+            for (int i = 0; i < strings.Count; i++)
+                await Out.WriteLineAsync($"Index {i + 1}: {strings[i]}");
+        }
+
         #endregion
 
         #region List Types

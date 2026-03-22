@@ -668,6 +668,35 @@ namespace OpenTabletDriver.Daemon
             return Task.FromResult(tablet.GetDeviceString((byte)index));
         }
 
+        public async Task<IEnumerable<string>> RequestDeviceStrings(int vid, int pid)
+        {
+            var tablet = Driver.CompositeDeviceHub.GetDevices().Where(d => d.VendorID == vid && d.ProductID == pid).FirstOrDefault();
+            if (tablet == null)
+                throw new IOException("Device not found");
+
+            var results = new List<string>();
+
+            for (int i = 1; i < 256; i++)
+            {
+                try
+                {
+                    var request = Task.Run(() => tablet.GetDeviceString((byte)i));
+                    var completed = await Task.WhenAny(request, Task.Delay(TimeSpan.FromSeconds(5)));
+
+                    if (completed == request)
+                        results.Add(await request);
+                    else
+                        results.Add(null);
+                }
+                catch
+                {
+                    results.Add(null);
+                }
+            }
+
+            return results;
+        }
+
         public Task<IEnumerable<LogMessage>> GetCurrentLog()
         {
             return Task.FromResult(_logFile.Read());

@@ -76,6 +76,7 @@ namespace OpenTabletDriver.Console
         private static readonly IEnumerable<Command> DebugCommands =
         [
             CreateCommand<int, int, int>(GetString, "Requests a device string"),
+            CreateCommand<int, int>(GetStrings, "Requests all device strings"),
         ];
 
         private static readonly IEnumerable<Command> ModifyCommands =
