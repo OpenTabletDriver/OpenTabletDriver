@@ -659,13 +659,31 @@ namespace OpenTabletDriver.Daemon
             return Task.CompletedTask;
         }
 
-        public Task<string> RequestDeviceString(int vid, int pid, int index)
+        public async Task<string> RequestDeviceString(int vid, int pid, int index)
         {
             var tablet = Driver.CompositeDeviceHub.GetDevices().Where(d => d.VendorID == vid && d.ProductID == pid).FirstOrDefault();
             if (tablet == null)
                 throw new IOException("Device not found");
 
-            return Task.FromResult(tablet.GetDeviceString((byte)index));
+            try
+            {
+                var request = Task.Run(() => tablet.GetDeviceString((byte)index));
+                var completed = await Task.WhenAny(request, Task.Delay(TimeSpan.FromSeconds(5)));
+
+                if (completed == request)
+                    return await request;
+                else
+                    return "{ OTD: Operation timed-out }";
+            }
+            catch
+            {
+                var stillPresent = Driver.CompositeDeviceHub.GetDevices()
+                    .Any(d => d.VendorID == vid && d.ProductID == pid);
+
+                return !stillPresent
+                    ? "{ OTD: Device disconnected }"
+                    : "{ OTD: Operation failed }";
+            }
         }
 
         public async Task<IEnumerable<string>> RequestDeviceStrings(int vid, int pid)
