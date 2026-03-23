@@ -24,11 +24,29 @@ namespace OpenTabletDriver.UX.Windows
                 Text = "Send Request",
             };
 
-            sendRequestButton.Click += async (_, _) => await SendRequestWithTimeout(stringIndexText.Text,
-                (s) => deviceStringText.Text = !string.IsNullOrEmpty(s) ? System.Text.Json.JsonEncodedText.Encode(s).ToString() : "(no value at this index)",
-                (e) => deviceStringText.Text = $"Error: {e.Message}",
-                () => deviceStringText.Text = OperationTimedOut
-            );
+            sendRequestButton.Click += async (_, _) =>
+            {
+                if (!int.TryParse(vendorIdText.Text, out var vid) ||
+                    !int.TryParse(productIdText.Text, out var pid) ||
+                    !int.TryParse(stringIndexText.Text, out var index) ||
+                    index < 1 || index > 255)
+                {
+                    deviceStringText.Text = "Invalid input: enter a VendorID, ProductID, and string index between 1 and 255";
+                    return;
+                }
+
+                try
+                {
+                    var str = await App.Driver.Instance.RequestDeviceString(vid, pid, index);
+                    deviceStringText.Text = !string.IsNullOrEmpty(str)
+                        ? System.Text.Json.JsonEncodedText.Encode(str).ToString()
+                        : "(no value at this index)";
+                }
+                catch (Exception ex)
+                {
+                    deviceStringText.Text = $"Error: {ex.Message}";
+                }
+            };
 
             var sendRequestAllStringsButton = new Button
             {
@@ -124,8 +142,6 @@ namespace OpenTabletDriver.UX.Windows
         private const int NUMERICBOX_WIDTH = 150;
         private const string DecimalStyle = "Decimal Value";
         private const string StringIndex = "Index";
-        private const string OperationTimedOut = "Operation timed-out";
-        private const string OperationFailed = "Operation failed";
 
         private async void SendRequestAllStrings(object sender, EventArgs args)
         {
@@ -165,41 +181,6 @@ namespace OpenTabletDriver.UX.Windows
                         await sw.WriteAsync(stringDump);
                     break;
             }
-        }
-
-        private async Task SendRequestWithTimeout(string strIndex, Action<string> action, Action<Exception> error, Action timeoutAction)
-        {
-            var strVid = vendorIdText.Text;
-            var strPid = productIdText.Text;
-            var request = SendRequest(strIndex, strVid, strPid);
-            var timeout = Task.Delay(TimeSpan.FromSeconds(5));
-            var completed = await Task.WhenAny(request, timeout);
-            if (completed == timeout)
-            {
-                timeoutAction();
-            }
-            else
-            {
-                try
-                {
-                    var str = await request;
-                    action(str);
-                }
-                catch (Exception e)
-                {
-                    error(e);
-                }
-            }
-        }
-
-        private static async Task<string> SendRequest(string strIndex, string strVid, string strPid)
-        {
-            if (int.TryParse(strIndex, out var index) && index < 256 && index > 0)
-            {
-                if (int.TryParse(strVid, out var vid) && int.TryParse(strPid, out var pid))
-                    return await App.Driver.Instance.RequestDeviceString(vid, pid, index);
-            }
-            throw new ArgumentException("Invalid input: enter a VendorID, ProductID, and string index between 1 and 255");
         }
 
         private readonly DropDown<SerializedDeviceEndpoint> deviceDropDown = new();
