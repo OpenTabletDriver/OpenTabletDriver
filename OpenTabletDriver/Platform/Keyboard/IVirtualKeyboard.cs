@@ -15,7 +15,7 @@ namespace OpenTabletDriver.Platform.Keyboard
         /// <param name="key">
         /// The key to press.
         /// </param>
-        void Press(string key);
+        void Press(BindableKey key);
 
         /// <summary>
         /// Invokes a key release.
@@ -23,7 +23,7 @@ namespace OpenTabletDriver.Platform.Keyboard
         /// <param name="key">
         /// The key to release.
         /// </param>
-        void Release(string key);
+        void Release(BindableKey key);
 
         /// <summary>
         /// Invokes multiple keys being pressed at once.
@@ -31,7 +31,7 @@ namespace OpenTabletDriver.Platform.Keyboard
         /// <param name="keys">
         /// The keys to press.
         /// </param>
-        void Press(IEnumerable<string> keys);
+        void Press(IEnumerable<BindableKey> keys);
 
         /// <summary>
         /// Invokes multiple keys being released at once.
@@ -39,14 +39,11 @@ namespace OpenTabletDriver.Platform.Keyboard
         /// <param name="keys">
         /// The keys to release.
         /// </param>
-        void Release(IEnumerable<string> keys);
+        void Release(IEnumerable<BindableKey> keys);
 
         /// <summary>
         /// A list of all supported keys in this virtual keyboard.
         /// </summary>
-        /// <remarks>
-        /// This is sourced from <see cref="IKeysProvider.EtoToNative"/>, so it will only include platform supported keys.
-        /// </remarks>
-        IEnumerable<string> SupportedKeys { get; }
+        IEnumerable<BindableKey> SupportedKeys { get; }
     }
 }

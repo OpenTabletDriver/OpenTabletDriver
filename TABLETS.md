@@ -6,8 +6,10 @@
 | Gaomon 1060 Pro               |     Supported     |
 | Gaomon GM116HD                |     Supported     |
 | Gaomon GM156HD                |     Supported     |
+| Gaomon M5                     |     Supported     |
 | Gaomon M106K                  |     Supported     |
 | Gaomon M106K Pro              |     Supported     |
+| Gaomon M5 V2                  |     Supported     |
 | Gaomon PD1161                 |     Supported     |
 | Gaomon PD1560                 |     Supported     |
 | Gaomon PD1561                 |     Supported     |
@@ -16,6 +18,7 @@
 | Genius G-Pen 560              |     Supported     | Soft-buttons are bindable as aux buttons.
 | Huion 1060 Plus               |     Supported     |
 | Huion G930L                   |     Supported     |
+| Huion GT-191 V2               |     Supported     |
 | Huion GT-220 V2               |     Supported     |
 | Huion H1060P                  |     Supported     |
 | Huion H320M                   |     Supported     |
@@ -108,6 +111,7 @@
 | Wacom CTL-690                 |     Supported     |
 | Wacom DTC-133                 |     Supported     |
 | Wacom DTK-1660                |     Supported     |
+| Wacom DTK-2100                |     Supported     |
 | Wacom ET-0405-U               |     Supported     |
 | Wacom ET-0405A-U              |     Supported     |
 | Wacom FT-0405-U               |     Supported     |
@@ -132,10 +136,14 @@
 | XP-Pen Artist 13 (2nd Gen)    |     Supported     |
 | XP-Pen Artist 13.3            |     Supported     |
 | XP-Pen Artist 15.6            |     Supported     |
+| XP-Pen Artist 15.6 Pro V2     |     Supported     |
 | XP-Pen Artist 16 (2nd Gen)    |     Supported     |
 | XP-Pen Artist 22 (2nd Gen)    |     Supported     |
+| XP-Pen Artist 24              |     Supported     |
 | XP-Pen Artist Pro 16 (Gen2)   |     Supported     |
 | XP-Pen Deco 01                |     Supported     |
+| XP-Pen Deco 01 V3             |     Supported     |
+| XP-Pen Deco 640 (IT640)       |     Supported     |
 | XP-Pen Deco Fun L (CT1060)    |     Supported     |
 | XP-Pen Deco Fun S (CT640)     |     Supported     |
 | XP-Pen Deco Fun XS (CT430)    |     Supported     |
@@ -143,6 +151,8 @@
 | XP-Pen Deco L                 |     Supported     |
 | XP-Pen Deco mini4             |     Supported     |
 | XP-Pen Deco mini7             |     Supported     |
+| XP-Pen Deco mini7 V2          |     Supported     |
+| XP-Pen Deco Pro MW Gen2       |     Supported     |
 | XP-Pen Deco Pro LW Gen2       |     Supported     |
 | XP-Pen Deco Pro XLW Gen2      |     Supported     |
 | XP-Pen Star 03                |     Supported     | Older variants may use the same configuration as the UC-Logic 1060N.
@@ -157,7 +167,6 @@
 | XP-Pen Star G960              |     Supported     |
 | XP-Pen Star G960S             |     Supported     |
 | XP-Pen Star G960S Plus        |     Supported     |
-| 10moon 1060N                  |    Has Quirks     | Doesn't meet any of its advertised specs, pressure is not parsed correctly.
 | FlooGoo FMA100                |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 1. Might also need to change the configuration depending on the tablet used.
 | Gaomon S56K                   |    Has Quirks     | Windows: Might need Zadig's WinUSB to be installed on interface 0 or 1
 | Gaomon S630                   |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
@@ -195,6 +204,7 @@
 | Gaomon M6                     |  Missing Features | Wheel and touch bar are not yet supported.
 | Gaomon M8                     |  Missing Features | Wheel is not yet supported.
 | Gaomon PD156 Pro              |  Missing Features | Wheel is not yet supported.
+| Gaomon WH851                  |  Missing Features | Wheel is not yet supported. Wireless is not yet supported.
 | Huion G10T                    |  Missing Features | Touchpad is not yet supported.
 | Huion GC610                   |  Missing Features | Touchpad is not yet supported.
 | Huion GT-156HD V2             |  Missing Features | Touch bar is not yet supported.
@@ -241,6 +251,7 @@
 | Wacom CTL-6100WL              |  Missing Features | Wireless is not yet supported.
 | Wacom DTH-1320                |  Missing Features | Touch is not yet supported.
 | Wacom DTH-135                 |  Missing Features | Touch is not yet supported.
+| Wacom DTH-227                 |  Missing Features | Touch is not yet supported.
 | Wacom DTH-271                 |  Missing Features | Aux buttons are not yet supported.
 | Wacom DTK-1300                |  Missing Features | Center button is not yet supported.
 | Wacom DTK-2200                |  Missing Features | Touch Strips are not yet supported.
@@ -258,10 +269,13 @@
 | Wacom PTK-1240                |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-440                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-450                 |  Missing Features | Wheel is not yet supported.
+| Wacom PTK-470                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-540WL               |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-640                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-650                 |  Missing Features | Wheel is not yet supported.
+| Wacom PTK-670                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-840                 |  Missing Features | Wheel is not yet supported.
+| Wacom PTK-870                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTZ-1230                |  Missing Features | Touch bars are not yet supported.
 | Wacom PTZ-1231W               |  Missing Features | Touch bars are not yet supported.
 | Wacom PTZ-431W                |  Missing Features | Touch bars are not yet supported.
@@ -284,5 +298,6 @@
 | XP-Pen Deco Pro Small         |  Missing Features | Tilt and wheel are not yet supported.
 | XP-Pen Deco Pro SW            |  Missing Features | Wheel is not yet supported.
 | XP-Pen Innovator 16           |  Missing Features | Wheel is not yet supported.
+| XP-Pen Star 02                |  Missing Features | Pen and auxiliary buttons may produce malformed reports. Windows: Requires Zadig's WinUSB to be installed on interface 0.
 | XP-Pen Star 06                |  Missing Features | Wheel is not yet supported.
 | XP-Pen Star 06C               |  Missing Features | Wheel is not yet supported.

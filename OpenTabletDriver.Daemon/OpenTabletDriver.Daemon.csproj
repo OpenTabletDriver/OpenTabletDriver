@@ -1,16 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup Label="Project Properties">
+  <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>$(FrameworkLatest)</TargetFramework>
-    <NoWarn>VSTHRD100; VSTHRD101; VSTHRD110; VSTHRD200</NoWarn>
-    <Nullable>enable</Nullable>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <TieredPGO>true</TieredPGO>
   </PropertyGroup>
 
-  <ItemGroup Label="Project References">
-    <ProjectReference Include="..\OpenTabletDriver.Desktop\OpenTabletDriver.Desktop.csproj" />
+  <ItemGroup>
+    <ProjectReference Include="..\OpenTabletDriver.Daemon.Library\OpenTabletDriver.Daemon.Library.csproj" />
   </ItemGroup>
 
 </Project>

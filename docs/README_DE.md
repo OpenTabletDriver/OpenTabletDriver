@@ -26,9 +26,7 @@ Der Status aller unterstützten, ungetesteten und zur Unterstützung geplanten T
 
 # OpenTabletDriver ausführen
 
-OpenTabletDriver besteht aus zwei unabhängigen Prozessen, welche nahtlos miteinander interagieren. Der aktive Prozess `OpenTabletDriver.Daemon` geht mit allen Tabletdaten um, während der `OpenTabletDriver.UX.*` Prozess die grafische Benutzeroberfläche darstellt, wobei `*` plattformabhängig ist <sup>1</sup>. Der Daemon muss laufen, damit OpenTabletDriver funktioniert, die Benutzeroberfläche allerdings nicht. Bestehende Einstellungen werden angewendet, wenn der Daemon startet.
-
-> <sup>1</sup> `Wpf` für Windows, `Gtk` für Linux, und `MacOS` für MacOS. Dies kann jedoch bei nicht selbst kompilierten Versionen ignoriert werden, da nur die richtige Datei im Download enthalten ist.
+OpenTabletDriver besteht aus zwei unabhängigen Prozessen, welche nahtlos miteinander interagieren. Der aktive Prozess `OpenTabletDriver.Daemon` geht mit allen Tabletdaten um, während der `OpenTabletDriver.UI`. Der Daemon muss laufen, damit OpenTabletDriver funktioniert, die Benutzeroberfläche allerdings nicht. Bestehende Einstellungen werden angewendet, wenn der Daemon startet.
 
 ## OpenTabletDriver selbst kompilieren
 

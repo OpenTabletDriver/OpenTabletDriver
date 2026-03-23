@@ -1,0 +1,145 @@
+﻿<Window
+    Name="VIEW_MainWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:OpenTabletDriver.UI"
+    xmlns:vm="using:OpenTabletDriver.UI.ViewModels"
+    xmlns:c="using:OpenTabletDriver.UI.Controls"
+    xmlns:msg="using:OpenTabletDriver.UI.Messages"
+    mc:Ignorable="d"
+    d:DesignWidth="800"
+    d:DesignHeight="450"
+    x:Class="OpenTabletDriver.UI.Views.MainWindowView"
+    x:DataType="vm:MainWindowViewModel"
+    x:CompileBindings="True"
+    Icon="/Assets/otd.ico"
+    Title="{Binding Title}"
+    Background="Transparent"
+    ExtendClientAreaChromeHints="PreferSystemChrome"
+    ExtendClientAreaToDecorationsHint="True"
+    MinWidth="560"
+    MinHeight="200">
+  <Window.Resources>
+    <MenuFlyout
+        x:Key="VIEW_Resource_MenuFlyout"
+        FlyoutPresenterClasses="MainMenu"
+        Placement="BottomEdgeAlignedLeft">
+      <MenuItem
+          Header="_Tablets"
+          Command="{Binding NavigateToCommand}"
+          CommandParameter="{x:Static msg:NavigationItemSelection.Tablet}" />
+      <MenuItem
+          Header="Tools"
+          Command="{Binding NavigateToCommand}"
+          CommandParameter="{x:Static msg:NavigationItemSelection.Tool}" />
+      <MenuItem
+          Header="_Plugin Manager"
+          Command="{Binding NavigateToCommand}"
+          CommandParameter="{x:Static msg:NavigationItemSelection.PluginManager}" />
+      <MenuItem
+          Header="_Diagnostics"
+          Command="{Binding NavigateToCommand}"
+          CommandParameter="{x:Static msg:NavigationItemSelection.Diagnostics}" />
+      <MenuItem
+          Header="_Settings"
+          Command="{Binding NavigateToCommand}"
+          CommandParameter="{x:Static msg:NavigationItemSelection.Settings}" />
+    </MenuFlyout>
+  </Window.Resources>
+
+  <Panel>
+
+    <!-- Noisy stuff -->
+    <!-- TODO: fine-grain control over the material opacity of the noise for different
+        controls-->
+    <ExperimentalAcrylicBorder
+        Name="VIEW_AcrylicBorder"
+        IsHitTestVisible="False">
+      <ExperimentalAcrylicBorder.Material>
+        <ExperimentalAcrylicMaterial
+            BackgroundSource="Digger"
+            TintColor="Black"
+            TintOpacity="0.5"
+            MaterialOpacity="0.05"
+            FallbackColor="{DynamicResource OTD_BackgroundColor}" />
+      </ExperimentalAcrylicBorder.Material>
+    </ExperimentalAcrylicBorder>
+
+    <!-- Focus thingy, lose transparency when focus is lost -->
+    <Rectangle
+        Name="VIEW_WindowBg"
+        IsHitTestVisible="False"
+        Fill="{DynamicResource OTD_BackgroundBrush}">
+      <Rectangle.Transitions>
+        <Transitions>
+          <DoubleTransition
+              Property="Opacity"
+              Duration="0:0:0.2" />
+        </Transitions>
+      </Rectangle.Transitions>
+    </Rectangle>
+
+    <!-- This panel margin ensures that all content is visible when the window is maximized on
+    Windows. -->
+    <Panel Margin="{Binding #VIEW_MainWindow.OffScreenMargin}">
+      <Grid
+          RowDefinitions="Auto,*"
+          IsVisible="{Binding IsSettingsLoaded}">
+        <!-- Header -->
+        <StackPanel
+            Grid.Row="0"
+            Height="48"
+            Orientation="Horizontal"
+            Margin="16,0,0,0"
+            Spacing="8">
+          <Button
+              Name="VIEW_MenuButton"
+              Classes="Icon"
+              Flyout="{StaticResource VIEW_Resource_MenuFlyout}"
+              IsVisible="False">
+            <PathIcon Data="{StaticResource menu}" />
+          </Button>
+          <Button
+              Name="VIEW_BackButton"
+              Classes="Icon"
+              Command="{Binding GoBackCommand}"
+              Margin="0">
+            <PathIcon Data="{StaticResource arrow_back}" />
+          </Button>
+          <TextBlock
+              Text="{Binding Title}"
+              FontSize="12"
+              VerticalAlignment="Center"
+              Margin="8,0" />
+        </StackPanel>
+
+        <!-- Content -->
+        <SplitView
+            Name="VIEW_SplitView"
+            Grid.Row="1"
+            IsPaneOpen="True"
+            DisplayMode="Inline"
+            OpenPaneLength="200"
+            PaneBackground="Transparent">
+          <SplitView.Pane>
+            <c:NavigationPaneView Margin="12, 20, 0, 12" />
+          </SplitView.Pane>
+          <c:NavigationHost
+              Name="VIEW_NavigationHost"
+              NavigationHostName="{x:Static ui:AppRoutes.MainHost}" />
+        </SplitView>
+      </Grid>
+
+      <Image
+          Source="/Assets/otd.png"
+          Width="120"
+          Height="120"
+          Stretch="Uniform"
+          VerticalAlignment="Center"
+          HorizontalAlignment="Center"
+          IsVisible="{Binding !IsSettingsLoaded}" />
+    </Panel>
+  </Panel>
+</Window>

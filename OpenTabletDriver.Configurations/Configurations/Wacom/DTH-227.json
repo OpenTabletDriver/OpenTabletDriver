@@ -1,0 +1,29 @@
+{
+  "Name": "Wacom Cintiq Pro 22 (DTH-227)",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 480.06,
+      "Height": 271.78,
+      "MaxX": 96012,
+      "MaxY": 54356
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "ButtonCount": 3
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 8
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 976,
+      "InputReportLength": 192,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2.IntuosV2ReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ]
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "Name": "Wacom PTK-470",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 187,
+      "Height": 105,
+      "MaxX": 37400,
+      "MaxY": 21000
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "ButtonCount": 3
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 5
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 1013,
+      "InputReportLength": 192,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV3.IntuosV3ReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ]
+    }
+  ]
+}

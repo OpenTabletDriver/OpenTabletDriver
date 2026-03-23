@@ -26,9 +26,7 @@ OpenTabletDriver에서 지원하거나, 아직 테스트가 부족하거나, 아
 
 # OpenTabletDriver 실행하기
 
-OpenTabletDriver는 두 개의 서로 다른 프로세스로 이루어져, 그 두 프로세스가 서로 소통하면서 작동합니다. 타블렛 데이터를 다루는 프로그램은 `OpenTabletDriver.Daemon`이며, GUI는 `OpenTabletDriver.UX.*`가 담당하는데, 여기서 `*`는 플랫폼에 따라 다릅니다<sup>1</sup>. 작동 그 자체에 있어서 UX는 불필요하고, 데몬만 있어도 작동합니다. UX 등으로 이미 설정을 마치셨다면, 데몬이 그 설정을 가져와서 적용합니다.
-
-> <sup>1</sup>각각 Windows는 `Wpf`, Linux는 `Gtk`, 그리고 MacOS는 `MacOS`입니다. 이 부분은 소스로 직접 빌드할 때 필요한 부분이지만, 실제 사용에 있어서는 필요한 버전만 제공되므로 중요하지는 않습니다.
+OpenTabletDriver는 두 개의 서로 다른 프로세스로 이루어져, 그 두 프로세스가 서로 소통하면서 작동합니다. 타블렛 데이터를 다루는 프로그램은 `OpenTabletDriver.Daemon`이며, GUI는 `OpenTabletDriver.UI`. 작동 그 자체에 있어서 UX는 불필요하고, 데몬만 있어도 작동합니다. UX 등으로 이미 설정을 마치셨다면, 데몬이 그 설정을 가져와서 적용합니다.
 
 ## OpenTabletDriver를 소스로부터 빌드하기
 

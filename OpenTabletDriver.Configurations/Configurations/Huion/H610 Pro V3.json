@@ -19,7 +19,7 @@
       "InputReportLength": 16,
       "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
       "DeviceStrings": {
-        "121": "^HA60$"
+        "121": "^HA60\\x00*$"
       }
     },
     {
@@ -28,7 +28,7 @@
       "InputReportLength": 8,
       "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
       "DeviceStrings": {
-        "121": "^HA60$"
+        "121": "^HA60\\x00*$"
       }
     }
   ],

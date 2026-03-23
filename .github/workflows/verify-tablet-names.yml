@@ -1,0 +1,29 @@
+name: Verify Correct Tablet Names
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verify-names:
+    runs-on: ubuntu-latest
+    name: Verify Tablet Names
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check changed configs match TABLETS.md
+        env:
+          TABLETS: TABLETS.md
+        run: |
+          IFS=$'\n'
+          mapfile -t configs < <(git diff --name-only --diff-filter=AM HEAD^ HEAD | grep '^OpenTabletDriver\.Configurations/Configurations/.*\.json')
+          if [ ${#configs[@]} -ne 0 ]; then
+            for conf in "${configs[@]}"; do
+              name=$(cat $conf| jq -r '.Name')
+              if ! grep -q "| $name " $TABLETS; then
+                echo "Failure: '$name' was not found in $TABLETS - was it spelled correctly?"
+                exit 1
+              fi
+            done
+          fi

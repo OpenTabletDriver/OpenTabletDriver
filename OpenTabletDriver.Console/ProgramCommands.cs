@@ -1,15 +1,14 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using OpenTabletDriver.Console.Attributes;
-using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Contracts;
-using OpenTabletDriver.Desktop.Profiles;
-using OpenTabletDriver.Desktop.Reflection;
-using OpenTabletDriver.Desktop.Updater;
+using OpenTabletDriver.Daemon.Contracts;
+using OpenTabletDriver.Daemon.Contracts.Persistence;
 using OpenTabletDriver.Output;
 using static System.Console;
 
@@ -107,8 +106,8 @@ namespace OpenTabletDriver.Console
             await ModifyProfile(tablet, async p =>
             {
                 var binding = await _driverDaemon.GetDefaults(name);
-                p.BindingSettings.TipButton = binding;
-                p.BindingSettings.TipActivationThreshold = threshold;
+                p.Bindings.TipButton = binding;
+                p.Bindings.TipActivationThreshold = threshold;
             });
         }
 
@@ -119,7 +118,7 @@ namespace OpenTabletDriver.Console
             {
                 var binding = await _driverDaemon.GetDefaults(name);
 
-                p.BindingSettings.PenButtons[index] = binding;
+                p.Bindings.PenButtons[index] = binding;
             });
         }
 
@@ -130,7 +129,7 @@ namespace OpenTabletDriver.Console
             {
                 var binding = await _driverDaemon.GetDefaults(name);
 
-                p.BindingSettings.AuxButtons[index] = binding;
+                p.Bindings.AuxButtons[index] = binding;
             });
         }
 
@@ -228,9 +227,9 @@ namespace OpenTabletDriver.Console
         {
             var settings = await GetSettings();
             var profile = GetProfile(settings, tablet);
-            await Out.WriteLineAsync($"Tip Binding: {profile.BindingSettings.TipButton.Format()}@{profile.BindingSettings.TipActivationThreshold}%");
-            await Out.WriteLineAsync($"Pen Bindings: {profile.BindingSettings.PenButtons.Format()}");
-            await Out.WriteLineAsync($"Express Key Bindings: {profile.BindingSettings.AuxButtons.Format()}");
+            await Out.WriteLineAsync($"Tip Binding: {profile.Bindings.TipButton.Format()}@{profile.Bindings.TipActivationThreshold}%");
+            await Out.WriteLineAsync($"Pen Bindings: {profile.Bindings.PenButtons.Format()}");
+            await Out.WriteLineAsync($"Express Key Bindings: {profile.Bindings.AuxButtons.Format()}");
         }
 
         [Command("get-output-mode", "Gets the output mode")]
@@ -280,10 +279,19 @@ namespace OpenTabletDriver.Console
         [Command("list-tablets", "Lists all connected tablets")]
         public async Task ListTablets()
         {
-            var tablets = await _driverDaemon.GetTablets();
-            var tabletNames = tablets.Select(t => t.Name);
-            var output = string.Join(", ", tabletNames);
-            await Out.WriteLineAsync(output);
+            var tablets = new List<(int, string, InputDeviceState)>();
+            foreach (var tablet in await _driverDaemon.GetTablets())
+            {
+                var id = tablet;
+                var name = (await _driverDaemon.GetTabletConfiguration(id)).Name;
+                var state = await _driverDaemon.GetTabletState(id);
+                tablets.Add((id, name, state));
+            }
+
+            var stringBuilder = new StringBuilder();
+            foreach (var (id, name, state) in tablets)
+                stringBuilder.AppendLine($"{id}: {name} ({state})");
+            await Out.WriteLineAsync(stringBuilder.ToString());
         }
 
         [Command("list-output-modes", "Lists all output modes")]

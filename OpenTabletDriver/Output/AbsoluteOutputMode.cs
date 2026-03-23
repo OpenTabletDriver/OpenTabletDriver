@@ -3,7 +3,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using JetBrains.Annotations;
 using OpenTabletDriver.Attributes;
-using OpenTabletDriver.Attributes.UI;
 using OpenTabletDriver.Platform.Display;
 using OpenTabletDriver.Platform.Pointer;
 using OpenTabletDriver.Tablet;
@@ -13,8 +12,8 @@ namespace OpenTabletDriver.Output
     /// <summary>
     /// An absolute positioned output mode.
     /// </summary>
-    [PluginIgnore]
     [PublicAPI]
+    [PluginInterface]
     public abstract class AbsoluteOutputMode : OutputMode
     {
         protected AbsoluteOutputMode(InputDevice tablet, IAbsolutePointer absolutePointer)
@@ -32,7 +31,6 @@ namespace OpenTabletDriver.Output
         /// </summary>
         [Setting("Input Area")]
         [MemberSourcedDefaults(nameof(GetDefaultInputArea))]
-        [LinkedSetting(nameof(Output), nameof(LockAspectRatio))]
         public AngledArea? Input
         {
             set
@@ -48,7 +46,6 @@ namespace OpenTabletDriver.Output
         /// </summary>
         [Setting("Output Area")]
         [MemberSourcedDefaults(nameof(GetDefaultOutputArea))]
-        [LinkedSetting(nameof(Input), nameof(LockAspectRatio))]
         public Area? Output
         {
             set
@@ -63,7 +60,6 @@ namespace OpenTabletDriver.Output
         /// Whether to lock aspect ratio when applying area settings.
         /// </summary>
         [Setting("Lock Aspect Ratio", "Locks area aspect ratios from changing."), DefaultValue(false)]
-        [LinkedSettingSource]
         public bool LockAspectRatio { set; get; }
 
         /// <summary>

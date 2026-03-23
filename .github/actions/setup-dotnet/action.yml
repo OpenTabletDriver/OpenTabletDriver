@@ -1,0 +1,16 @@
+name: 'Setup .NET'
+description: 'Sets up .NET with the preferred OpenTabletDriver defaults'
+inputs:
+  dotnet-version:
+    description: "The .NET version to use. See actions/setup-dotnet"
+    default: '8.0'
+    required: false
+    type: string
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-dotnet@v3.2.0
+      with:
+        dotnet-version: ${{ inputs.dotnet-version }}
+        # cache: true # uncomment when we start using package.lock.json
+        # cache-dependency-path: '**/packages.lock.json'

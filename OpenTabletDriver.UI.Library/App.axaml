@@ -1,0 +1,12 @@
+<Application
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:Class="OpenTabletDriver.UI.App"
+    RequestedThemeVariant="Dark">
+  <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available
+  options. -->
+  <Application.Styles>
+    <FluentTheme />
+    <StyleInclude Source="Styles/DefaultDark/DefaultDark.axaml" />
+  </Application.Styles>
+</Application>

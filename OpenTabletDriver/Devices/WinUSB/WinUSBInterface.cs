@@ -234,6 +234,13 @@ namespace OpenTabletDriver.Devices.WinUSB
             }
         }
 
+        public bool IsSibling(IDeviceEndpoint other)
+        {
+            // TODO: For now we assume that all WinUSB interfaces are not siblings.
+            //       Can probably be implemented with CM_Get_Parent until a USB device is found.
+            return false;
+        }
+
         private IDictionary<string, string> GetDeviceAttributes()
         {
             var deviceAttributes = new Dictionary<string, string>

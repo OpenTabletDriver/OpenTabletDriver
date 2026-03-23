@@ -26,9 +26,7 @@ Alle statussen van tablets die ondersteund, ongetest of waarvan ondersteuning ge
 
 # OpenTabletDriver uitvoeren
 
-OpenTabletDriver functioneert als twee aparte processen die onmerkbaar met elkaar communiceren. Het actieve programma dat de data van de tablet verwerkt is `OpenTabletDriver.Daemon`, de GUI is `OpenTabletDriver.UX.*`, waar `*` afhankelijk is van uw platform<sup>1</sup>. De daemon moet aan staan om het programma te laten werken, de GUI is optioneel. Als u bestaande instellingen heeft, zouden ze moeten worden toegepast wanneer de daemon start.
-
-> <sup>1</sup>Windows gebruikt `Wpf`, Linux gebruikt `Gtk` en MacOS gebruikt `MacOS`. Dit kan voor het grootste deel genegeerd worden als u het niet van de broncode bouwt, aangezien de juiste versie zal worden gegeven.
+OpenTabletDriver functioneert als twee aparte processen die onmerkbaar met elkaar communiceren. Het actieve programma dat de data van de tablet verwerkt is `OpenTabletDriver.Daemon`, de GUI is `OpenTabletDriver.UI`. De daemon moet aan staan om het programma te laten werken, de GUI is optioneel. Als u bestaande instellingen heeft, zouden ze moeten worden toegepast wanneer de daemon start.
 
 ## OpenTabletDriver bouwen van de broncode
 

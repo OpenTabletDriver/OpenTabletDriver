@@ -1,0 +1,13 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Color x:Key="OTD_ControlAccentColor">#0078D7</Color>
+  <Color x:Key="OTD_ControlBackgroundColor">#28000000</Color>
+  <Color x:Key="OTD_BackgroundColor">#202020</Color>
+  <Color x:Key="OTD_ContainerColor">#323232</Color>
+  <Color x:Key="OTD_ControlSelectedColor">#33FFFFFF</Color>
+  <SolidColorBrush x:Key="OTD_ControlAccentBrush" Color="{DynamicResource OTD_ControlAccentColor}" />
+  <SolidColorBrush x:Key="OTD_ControlBackgroundBrush" Color="{DynamicResource OTD_ControlBackgroundColor}" />
+  <SolidColorBrush x:Key="OTD_BackgroundBrush" Color="{DynamicResource OTD_BackgroundColor}" />
+  <SolidColorBrush x:Key="OTD_ContainerBrush" Color="{DynamicResource OTD_ContainerColor}" />
+  <SolidColorBrush x:Key="OTD_ControlSelectedBrush" Color="{DynamicResource OTD_ControlSelectedColor}" />
+</ResourceDictionary>
