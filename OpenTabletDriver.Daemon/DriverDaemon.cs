@@ -678,6 +678,17 @@ namespace OpenTabletDriver.Daemon
 
             for (int i = 1; i < 256; i++)
             {
+                // Check if device is still connected
+                var stillConnected = Driver.CompositeDeviceHub.GetDevices()
+                    .Any(d => d.VendorID == vid && d.ProductID == pid);
+
+                if (!stillConnected)
+                {
+                    for (int j = i; j < 256; j++)
+                        results.Add("{ OTD: Device disconnected }");
+                    break;
+                }
+
                 try
                 {
                     var request = Task.Run(() => tablet.GetDeviceString((byte)i));
@@ -686,11 +697,22 @@ namespace OpenTabletDriver.Daemon
                     if (completed == request)
                         results.Add(await request);
                     else
-                        results.Add(null);
+                        results.Add("{ OTD: Operation timed-out }");
                 }
                 catch
                 {
-                    results.Add(null);
+                    var stillPresent = Driver.CompositeDeviceHub.GetDevices()
+                        .Any(d => d.VendorID == vid && d.ProductID == pid);
+
+                    if (!stillPresent)
+                    {
+                        results.Add("{ OTD: Device disconnected }");
+                        for (int j = i + 1; j < 256; j++)
+                            results.Add("{ OTD: Device disconnected }");
+                        break;
+                    }
+
+                    results.Add("{ OTD: Operation failed }");
                 }
             }
 
