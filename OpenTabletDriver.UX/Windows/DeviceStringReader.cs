@@ -25,9 +25,9 @@ namespace OpenTabletDriver.UX.Windows
             };
 
             sendRequestButton.Click += async (_, _) => await SendRequestWithTimeout(stringIndexText.Text,
-                (s) => deviceStringText.Text = s != null ? System.Text.Json.JsonEncodedText.Encode(s).ToString() : s,
-                (e) => MessageBox.Show($"Error: {e.Message}", MessageBoxType.Error),
-                () => MessageBox.Show(OperationTimedOut)
+                (s) => deviceStringText.Text = !string.IsNullOrEmpty(s) ? System.Text.Json.JsonEncodedText.Encode(s).ToString() : "(no value at this index)",
+                (e) => deviceStringText.Text = $"Error: {e.Message}",
+                () => deviceStringText.Text = OperationTimedOut
             );
 
             var sendRequestAllStringsButton = new Button
@@ -57,13 +57,6 @@ namespace OpenTabletDriver.UX.Windows
                 PlaceholderText = "Device String",
                 ReadOnly = true
             };
-            this.requireReconnect = new CheckBox
-            {
-                Text = "Require reconnect on fail",
-                Checked = false,
-                ToolTip = "Pauses string dump with a pop-up box if any string dump errors occur",
-            };
-
             this.vendorIdCtrl = new Group("VendorID", vendorIdText, Orientation.Horizontal, false);
             this.productIdCtrl = new Group("ProductID", productIdText, Orientation.Horizontal, false);
             this.stringIndexCtrl = new Group("String Index", stringIndexText, Orientation.Horizontal, false);
@@ -79,7 +72,6 @@ namespace OpenTabletDriver.UX.Windows
                     vendorIdCtrl,
                     productIdCtrl,
                     stringIndexCtrl,
-                    requireReconnect,
                     new StackLayoutItem(
                         new StackLayout
                         {
@@ -132,8 +124,6 @@ namespace OpenTabletDriver.UX.Windows
         private const int NUMERICBOX_WIDTH = 150;
         private const string DecimalStyle = "Decimal Value";
         private const string StringIndex = "Index";
-        private const string RequestTabletReplug = "Please replug the tablet, and then press OK to continue";
-        private const string DisconnectionIndex = "Device disconnected";
         private const string OperationTimedOut = "Operation timed-out";
         private const string OperationFailed = "Operation failed";
 
@@ -145,35 +135,15 @@ namespace OpenTabletDriver.UX.Windows
             // ensure requested device exists/is found
             if (!validVid || !validPid || !matchingDeviceFound)
             {
-                MessageBox.Show($"Error: Device not found", MessageBoxType.Error);
+                deviceStringText.Text = "Error: Device not found";
                 return;
             }
 
+            var strings = (await App.Driver.Instance.RequestDeviceStrings(vid, pid)).ToList();
             var stringDump = new StringBuilder();
 
-            for (int i = 1; i < 256; i++)
-            {
-                bool shouldRead = true;
-                await SendRequestWithTimeout($"{i}",
-                    (str) => stringDump.AppendLine($"{StringIndex} {i}: {str}"),
-                    (e) =>
-                    {
-                        if ((bool)requireReconnect.Checked)
-                        {
-                            shouldRead = AskReconnection(stringDump, i);
-                        }
-                        else
-                        {
-                            stringDump.AppendLine($"{StringIndex} {i}: {{ OTD: {OperationFailed} }}");
-                        }
-                    },
-                    () => stringDump.AppendLine($"{StringIndex} {i}: {{ OTD: {OperationTimedOut} }}")
-                );
-
-                // If user pressed "Cancel" return immediately
-                if (!shouldRead)
-                    return;
-            }
+            for (int i = 0; i < strings.Count; i++)
+                stringDump.AppendLine($"{StringIndex} {i + 1}: {strings[i]}");
 
             var fileDialog = Extensions.SaveFileDialog(
                 "Save string dump to...",
@@ -229,20 +199,12 @@ namespace OpenTabletDriver.UX.Windows
                 if (int.TryParse(strVid, out var vid) && int.TryParse(strPid, out var pid))
                     return await App.Driver.Instance.RequestDeviceString(vid, pid, index);
             }
-            throw new ArgumentException("Invalid index");
-        }
-
-        private static bool AskReconnection(StringBuilder stringDump, int i)
-        {
-            stringDump.AppendLine($"{StringIndex} {i}: {{ OTD: {DisconnectionIndex} }}");
-            var result = MessageBox.Show(RequestTabletReplug, MessageBoxButtons.OKCancel);
-            return result == DialogResult.Ok;
+            throw new ArgumentException("Invalid input: enter a VendorID, ProductID, and string index between 1 and 255");
         }
 
         private readonly DropDown<SerializedDeviceEndpoint> deviceDropDown = new();
         private readonly NumericMaskedTextBox<ushort> vendorIdText, productIdText, stringIndexText;
         private readonly TextBox deviceStringText;
         private readonly Group vendorIdCtrl, productIdCtrl, stringIndexCtrl;
-        private readonly CheckBox requireReconnect;
     }
 }
