@@ -18,6 +18,7 @@ namespace OpenTabletDriver.Desktop.Binding
         private const char KEYS_SPLITTER = '+';
 
         private string[] keys = Array.Empty<string>();
+        private MouseButton? mouseButton;
 
         [Resolved]
         public IVirtualKeyboard Keyboard { set; get; }
@@ -39,20 +40,30 @@ namespace OpenTabletDriver.Desktop.Binding
         private string keysString;
 
         [Property("Button"), PropertyValidated(nameof(ValidButtons))]
-        public string Button { set; get; }
+        public string Button
+        {
+            set
+            {
+                this.buttonString = value;
+                this.mouseButton = Enum.TryParse<MouseButton>(value, true, out var parsed) ? parsed : null;
+            }
+            get => this.buttonString;
+        }
+
+        private string buttonString;
 
         public void Press(TabletReference tablet, IDeviceReport report)
         {
             if (keys.Length > 0)
                 Keyboard.Press(keys);
-            if (Enum.TryParse<MouseButton>(Button, true, out var mouseButton))
-                Pointer?.MouseDown(mouseButton);
+            if (mouseButton.HasValue)
+                Pointer?.MouseDown(mouseButton.Value);
         }
 
         public void Release(TabletReference tablet, IDeviceReport report)
         {
-            if (Enum.TryParse<MouseButton>(Button, true, out var mouseButton))
-                Pointer?.MouseUp(mouseButton);
+            if (mouseButton.HasValue)
+                Pointer?.MouseUp(mouseButton.Value);
             if (keys.Length > 0)
                 Keyboard.Release(keys);
         }
