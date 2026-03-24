@@ -125,6 +125,7 @@ namespace OpenTabletDriver.Console
             CreateCommand(ListFilters, "Lists all available filters"),
             CreateCommand(ListTools, "Lists all available tools"),
             CreateCommand(ListBindings, "Lists all available binding types"),
+            CreateCommand(ListKeys, "Lists all valid key names for use in key bindings"),
             CreateCommand(ListPresets, "Lists all available presets"),
             CreateCommand(ListDisplays, "Lists all available displays"),
         ];

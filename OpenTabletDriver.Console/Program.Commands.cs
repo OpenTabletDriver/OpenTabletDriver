@@ -426,6 +426,12 @@ namespace OpenTabletDriver.Console
                 await Out.WriteLineAsync(dir.Name);
         }
 
+        private static async Task ListKeys()
+        {
+            foreach (var key in DesktopInterop.VirtualKeyboard.SupportedKeys)
+                await Out.WriteLineAsync(key);
+        }
+
         // BUG: DesktopInterop takes the CLI's view of the display layout - this may be desynched
         private static async Task ListDisplays()
         {
