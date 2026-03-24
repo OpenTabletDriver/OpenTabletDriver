@@ -4,6 +4,7 @@
 | Acepen AP1060                      |     Supported     |
 | Adesso Cybertablet K8              |     Supported     |
 | Artisul D22S                       |     Supported     |
+| Bosto BT-13HD                      |     Supported     |
 | Gaomon 1060 Pro                    |     Supported     |
 | Gaomon GM116HD                     |     Supported     |
 | Gaomon GM156HD                     |     Supported     |
