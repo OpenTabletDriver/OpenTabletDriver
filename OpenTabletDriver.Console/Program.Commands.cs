@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Diagnostics;
+using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
@@ -428,7 +429,7 @@ namespace OpenTabletDriver.Console
 
         private static async Task ListKeys()
         {
-            foreach (var key in DesktopInterop.VirtualKeyboard.SupportedKeys)
+            foreach (var key in KeyBinding.ValidKeys)
                 await Out.WriteLineAsync(key);
         }
 
