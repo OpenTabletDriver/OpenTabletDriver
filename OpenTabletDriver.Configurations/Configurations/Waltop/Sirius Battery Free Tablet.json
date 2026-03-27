@@ -1,0 +1,26 @@
+{
+  "Name": "Waltop Sirius Battery Free Tablet",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 254,
+      "Height": 152.4,
+      "MaxX": 20000,
+      "MaxY": 12000
+    },
+    "Pen": {
+      "MaxPressure": 1023,
+      "ButtonCount": 2
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 5935,
+      "ProductID": 1282,
+      "InputReportLength": 10,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Waltop.WaltopSiriusReportParser"
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
