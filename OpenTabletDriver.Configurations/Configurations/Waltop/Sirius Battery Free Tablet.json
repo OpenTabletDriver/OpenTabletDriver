@@ -9,7 +9,7 @@
     },
     "Pen": {
       "MaxPressure": 1023,
-      "ButtonCount": 1
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": {
       "ButtonCount": 14
