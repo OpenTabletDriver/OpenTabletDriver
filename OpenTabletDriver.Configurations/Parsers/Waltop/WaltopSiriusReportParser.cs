@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics.CodeAnalysis;
 using OpenTabletDriver.Plugin.Tablet;
 
@@ -27,9 +26,11 @@ namespace OpenTabletDriver.Configurations.Parsers.Waltop
     ///   - Pick button (lower physical):   produces bit 3 ~8% of the time, bit 4 ~92%
     ///
     /// When a button press begins (any button bit set after idle), the classifier accumulates
-    /// a log-likelihood ratio from each report. Once the ratio exceeds a confidence threshold,
-    /// the button identity is locked until release (all button bits clear). This typically
-    /// converges within 2-5 reports (~10-25ms at 200 RPS), well below perceptible latency.
+    /// a log-likelihood ratio from each report. Until the ratio exceeds a confidence threshold,
+    /// side-button output is intentionally suppressed to avoid false binding edges. Once the
+    /// threshold is crossed, the button identity is locked until release (all button bits clear).
+    /// This typically converges within 2-5 reports (~10-25ms at 200 RPS), well below
+    /// perceptible latency.
     /// </summary>
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
     public class WaltopSiriusReportParser : IReportParser<IDeviceReport>
@@ -58,7 +59,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Waltop
 
                     if (!inRange)
                     {
-                        _state = ButtonState.Idle;
+                        ResetClassifier();
                         return new OutOfRangeReport(data);
                     }
 
@@ -83,7 +84,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Waltop
                         case ButtonState.Classifying:
                             if (!anyButton)
                             {
-                                _state = ButtonState.Idle;
+                                ResetClassifier();
                                 break;
                             }
                             _llr += bit4 ? LlrBit4 : LlrBit3;
@@ -97,24 +98,18 @@ namespace OpenTabletDriver.Configurations.Parsers.Waltop
                                 _state = ButtonState.LockedPick;
                                 reportPick = true;
                             }
-                            else
-                            {
-                                // Not yet decided — provisionally report the more likely button
-                                reportBarrel = _llr > 0;
-                                reportPick = _llr <= 0;
-                            }
                             break;
 
                         case ButtonState.LockedBarrel:
                             if (!anyButton)
-                                _state = ButtonState.Idle;
+                                ResetClassifier();
                             else
                                 reportBarrel = true;
                             break;
 
                         case ButtonState.LockedPick:
                             if (!anyButton)
-                                _state = ButtonState.Idle;
+                                ResetClassifier();
                             else
                                 reportPick = true;
                             break;
@@ -136,6 +131,12 @@ namespace OpenTabletDriver.Configurations.Parsers.Waltop
                 default:
                     return new DeviceReport(data);
             }
+        }
+
+        private void ResetClassifier()
+        {
+            _state = ButtonState.Idle;
+            _llr = 0;
         }
     }
 }
