@@ -4,12 +4,15 @@
     "Digitizer": {
       "Width": 254,
       "Height": 152.4,
-      "MaxX": 20000,
-      "MaxY": 12000
+      "MaxX": 40000,
+      "MaxY": 24000
     },
     "Pen": {
       "MaxPressure": 1023,
-      "ButtonCount": 2
+      "ButtonCount": 1
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 14
     }
   },
   "DigitizerIdentifiers": [
@@ -17,7 +20,10 @@
       "VendorID": 5935,
       "ProductID": 1282,
       "InputReportLength": 10,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Waltop.WaltopSiriusReportParser"
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Waltop.WaltopSiriusReportParser",
+      "FeatureInitReport": [
+        "AhAB"
+      ]
     }
   ],
   "Attributes": {

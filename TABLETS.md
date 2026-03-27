@@ -159,7 +159,7 @@
 | Wacom XD-0912-U                    |     Supported     |
 | Wacom XD-1212-U                    |     Supported     |
 | Wacom XD-1218-U                    |     Supported     |
-| Waltop Sirius Battery Free Tablet   |     Supported     |
+| Waltop Sirius Battery Free Tablet   | Missing Features  | Touch dials not supported |
 | Waltop Slim Tablet 5.8"            |     Supported     |
 | XenceLabs Pen Tablet Medium        |     Supported     |
 | XenceLabs Pen Tablet Small         |     Supported     |
