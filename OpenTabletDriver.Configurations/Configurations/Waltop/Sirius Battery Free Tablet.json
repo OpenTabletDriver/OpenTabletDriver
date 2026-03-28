@@ -22,7 +22,11 @@
       "InputReportLength": 10,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Waltop.WaltopSiriusReportParser",
       "FeatureInitReport": [
-        "AhAB"
+        "AhAB",
+        "AhEP",
+        "AhgE",
+        "AhL/",
+        "AhcA"
       ]
     }
   ],
