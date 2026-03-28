@@ -13,10 +13,9 @@ namespace OpenTabletDriver.Configurations.Parsers.Waltop
     /// the firmware correctly encodes this as a 2-bit enumeration (values 2=barrel, 3=pick).
     ///
     /// However, in tablet mode (Report ID 0x02, required for 4000 LPI), the firmware encodes
-    /// buttons as individual bits (data[5] bit 3 and bit 4). Because the EMR signal is
-    /// inherently ambiguous between the two button states, the firmware produces a noisy
-    /// alternating pattern on both bits — making it appear as if neither button can be
-    /// reliably identified from a single report.
+    /// buttons as individual bits (data[5] bit 3 and bit 4). In practice the pen can still
+    /// emit mixed frames at press onset (including both bits set), so button identity cannot
+    /// be trusted from a single report.
     ///
     /// Solution:
     /// A Sequential Probability Ratio Test (SPRT) classifier exploits the statistical
@@ -25,17 +24,18 @@ namespace OpenTabletDriver.Configurations.Parsers.Waltop
     ///   - Barrel button (upper physical): produces bit 3 ~99% of the time, bit 4 ~1%
     ///   - Pick button (lower physical):   produces bit 3 ~8% of the time, bit 4 ~92%
     ///
-    /// When a button press begins (any button bit set after idle), the classifier accumulates
-    /// a log-likelihood ratio from each report. Until the ratio exceeds a confidence threshold,
-    /// side-button output is intentionally suppressed to avoid false binding edges. Once the
-    /// threshold is crossed, the button identity is locked until release (all button bits clear).
-    /// This typically converges within 2-5 reports (~10-25ms at 200 RPS), well below
-    /// perceptible latency.
+    /// When a button press begins (any side-button bit set after idle), the classifier accumulates
+    /// a log-likelihood ratio from decisive reports only. Mixed frames (both bits set) are treated
+    /// as ambiguous and do not bias the decision. Until enough decisive observations are gathered
+    /// and the ratio exceeds the confidence threshold, side-button output is intentionally
+    /// suppressed to avoid false binding edges. Once the threshold is crossed, the button identity
+    /// is locked until a short release hysteresis expires or the pen leaves range.
     /// </summary>
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
     public class WaltopSiriusReportParser : IReportParser<IDeviceReport>
     {
         private enum ButtonState { Idle, Classifying, LockedBarrel, LockedPick }
+        private enum Observation { None, Bit3Only, Bit4Only, Ambiguous }
 
         // Log-likelihood ratio increments per observation, derived from empirical
         // button signal distributions measured in default mode:
@@ -45,9 +45,13 @@ namespace OpenTabletDriver.Configurations.Parsers.Waltop
         private const double LlrBit3 = 2.516;
         private const double LlrBit4 = -4.522;
         private const double Threshold = 4.6; // ln(99) ≈ 4.6, corresponds to ~99% confidence
+        private const int MinimumDecisiveObservations = 3;
+        private const int ReleaseHysteresisFrames = 2;
 
         private ButtonState _state = ButtonState.Idle;
         private double _llr;
+        private int _decisiveObservations;
+        private int _clearFrames;
 
         public IDeviceReport Parse(byte[] data)
         {
@@ -63,9 +67,8 @@ namespace OpenTabletDriver.Configurations.Parsers.Waltop
                         return new OutOfRangeReport(data);
                     }
 
-                    bool bit3 = (data[5] & 0x08) != 0;
-                    bool bit4 = (data[5] & 0x10) != 0;
-                    bool anyButton = bit3 || bit4;
+                    var observation = GetObservation(data[5]);
+                    bool anyButton = observation != Observation.None;
 
                     bool reportBarrel = false;
                     bool reportPick = false;
@@ -82,18 +85,27 @@ namespace OpenTabletDriver.Configurations.Parsers.Waltop
                             break;
 
                         case ButtonState.Classifying:
-                            if (!anyButton)
+                            if (observation == Observation.None)
                             {
-                                ResetClassifier();
+                                if (++_clearFrames >= ReleaseHysteresisFrames)
+                                    ResetClassifier();
                                 break;
                             }
-                            _llr += bit4 ? LlrBit4 : LlrBit3;
-                            if (_llr >= Threshold)
+
+                            _clearFrames = 0;
+
+                            if (observation == Observation.Ambiguous)
+                                break;
+
+                            _decisiveObservations++;
+                            _llr += observation == Observation.Bit4Only ? LlrBit4 : LlrBit3;
+
+                            if (_decisiveObservations >= MinimumDecisiveObservations && _llr >= Threshold)
                             {
                                 _state = ButtonState.LockedBarrel;
                                 reportBarrel = true;
                             }
-                            else if (_llr <= -Threshold)
+                            else if (_decisiveObservations >= MinimumDecisiveObservations && _llr <= -Threshold)
                             {
                                 _state = ButtonState.LockedPick;
                                 reportPick = true;
@@ -101,17 +113,33 @@ namespace OpenTabletDriver.Configurations.Parsers.Waltop
                             break;
 
                         case ButtonState.LockedBarrel:
-                            if (!anyButton)
-                                ResetClassifier();
+                            if (observation == Observation.None)
+                            {
+                                if (++_clearFrames >= ReleaseHysteresisFrames)
+                                    ResetClassifier();
+                                else
+                                    reportBarrel = true;
+                            }
                             else
+                            {
+                                _clearFrames = 0;
                                 reportBarrel = true;
+                            }
                             break;
 
                         case ButtonState.LockedPick:
-                            if (!anyButton)
-                                ResetClassifier();
+                            if (observation == Observation.None)
+                            {
+                                if (++_clearFrames >= ReleaseHysteresisFrames)
+                                    ResetClassifier();
+                                else
+                                    reportPick = true;
+                            }
                             else
+                            {
+                                _clearFrames = 0;
                                 reportPick = true;
+                            }
                             break;
                     }
 
@@ -137,6 +165,19 @@ namespace OpenTabletDriver.Configurations.Parsers.Waltop
         {
             _state = ButtonState.Idle;
             _llr = 0;
+            _decisiveObservations = 0;
+            _clearFrames = 0;
+        }
+
+        private static Observation GetObservation(byte flags)
+        {
+            return (flags & 0x18) switch
+            {
+                0x08 => Observation.Bit3Only,
+                0x10 => Observation.Bit4Only,
+                0x18 => Observation.Ambiguous,
+                _ => Observation.None
+            };
         }
     }
 }
