@@ -15,30 +15,32 @@ namespace OpenTabletDriver.Configurations.Parsers.Waltop
     ///   data[3] = bit 0: Right Alt,    bit 1: Right Ctrl,
     ///             bit 2: V/H scroll,   bit 3: Zoom/volume,
     ///             bit 4: KB direction,  bit 5: Dial subfunction switch
+    ///
+    /// Aux button indices 0-13 in the shared 32-element layout.
     /// </summary>
     public struct WaltopSiriusAuxReport : IAuxReport
     {
+        private const int TotalAuxButtons = 32;
+
         public WaltopSiriusAuxReport(byte[] report)
         {
             Raw = report;
+            AuxButtons = new bool[TotalAuxButtons];
 
-            AuxButtons = new bool[]
-            {
-                (report[2] & 0x01) != 0, // Left eraser
-                (report[2] & 0x02) != 0, // Left Shift
-                (report[2] & 0x04) != 0, // Left Tab
-                (report[2] & 0x08) != 0, // Left Alt
-                (report[2] & 0x10) != 0, // Left Ctrl
-                (report[2] & 0x20) != 0, // Right eraser
-                (report[2] & 0x40) != 0, // Right Shift
-                (report[2] & 0x80) != 0, // Right Tab
-                (report[3] & 0x01) != 0, // Right Alt
-                (report[3] & 0x02) != 0, // Right Ctrl
-                (report[3] & 0x04) != 0, // V/H scroll select
-                (report[3] & 0x08) != 0, // Zoom/volume select
-                (report[3] & 0x10) != 0, // KB direction select
-                (report[3] & 0x20) != 0, // Dial subfunction switch
-            };
+            AuxButtons[0]  = (report[2] & 0x01) != 0; // Left eraser
+            AuxButtons[1]  = (report[2] & 0x02) != 0; // Left Shift
+            AuxButtons[2]  = (report[2] & 0x04) != 0; // Left Tab
+            AuxButtons[3]  = (report[2] & 0x08) != 0; // Left Alt
+            AuxButtons[4]  = (report[2] & 0x10) != 0; // Left Ctrl
+            AuxButtons[5]  = (report[2] & 0x20) != 0; // Right eraser
+            AuxButtons[6]  = (report[2] & 0x40) != 0; // Right Shift
+            AuxButtons[7]  = (report[2] & 0x80) != 0; // Right Tab
+            AuxButtons[8]  = (report[3] & 0x01) != 0; // Right Alt
+            AuxButtons[9]  = (report[3] & 0x02) != 0; // Right Ctrl
+            AuxButtons[10] = (report[3] & 0x04) != 0; // V/H scroll select
+            AuxButtons[11] = (report[3] & 0x08) != 0; // Zoom/volume select
+            AuxButtons[12] = (report[3] & 0x10) != 0; // KB direction select
+            AuxButtons[13] = (report[3] & 0x20) != 0; // Dial subfunction switch
         }
 
         public byte[] Raw { set; get; }

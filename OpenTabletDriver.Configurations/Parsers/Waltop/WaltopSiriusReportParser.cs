@@ -141,6 +141,19 @@ namespace OpenTabletDriver.Configurations.Parsers.Waltop
                 case 0x0A when data[1] == 0x0E:
                     return new WaltopSiriusAuxReport(data);
 
+                // Dial reports: scroll (0x02), zoom (0x03), volume (0x04)
+                // Same data layout, firmware switches subreport based on mode
+                case 0x0A when data[1] >= 0x02 && data[1] <= 0x04:
+                    return new WaltopSiriusDialReport(data);
+
+                // Keyboard-direction dial report (arrow keys / navigation keys)
+                case 0x0D:
+                    return new WaltopSiriusKeyDialReport(data);
+
+                // Border location report (K1-K10 virtual buttons on top edge)
+                case 0x05:
+                    return new WaltopSiriusBorderReport(data);
+
                 default:
                     return new DeviceReport(data);
             }
