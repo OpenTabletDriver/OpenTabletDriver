@@ -25,8 +25,21 @@ namespace OpenTabletDriver.Desktop.RPC
 
         public object ToObject()
         {
-            var type = AppInfo.PluginManager.PluginTypes.First(t => t.FullName == Path);
-            return Data.ToObject(type);
+            var type = AppInfo.PluginManager.PluginTypes.FirstOrDefault(t => t.FullName == Path);
+
+            // Debug captures can outlive the plugin/parser assembly that produced them.
+            // If the concrete report type is no longer available locally, keep the debugger
+            // usable by falling back to a raw DeviceReport instead of throwing.
+            if (type == null)
+                return ToFallbackDeviceReport();
+
+            return Data.ToObject(type) ?? ToFallbackDeviceReport();
+        }
+
+        private DeviceReport ToFallbackDeviceReport()
+        {
+            var raw = Data[nameof(IDeviceReport.Raw)]?.ToObject<byte[]>();
+            return new DeviceReport(raw ?? []);
         }
     }
 }
