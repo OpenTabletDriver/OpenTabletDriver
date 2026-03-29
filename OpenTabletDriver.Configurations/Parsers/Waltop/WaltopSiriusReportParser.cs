@@ -24,12 +24,17 @@ namespace OpenTabletDriver.Configurations.Parsers.Waltop
     ///
     /// A simple majority-vote over the first few decisive frames locks the button
     /// identity until release. This converges within 2-3 frames (~10-15ms at 200 RPS).
+    ///
+    /// The parser also tracks the "subfunction switch" toggle from frame reports (0x0E)
+    /// and routes dial positions to different wheel indices based on subreport ID and
+    /// switch state, allowing users to assign separate wheel bindings per mode.
     /// </summary>
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
     public class WaltopSiriusReportParser : IReportParser<IDeviceReport>
     {
         private enum ButtonState { Idle, Classifying, LockedBarrel, LockedPick }
 
+        // SPRT button classifier
         private const int VotesNeeded = 3;
         private const int ReleaseFrames = 2;
 
@@ -37,6 +42,8 @@ namespace OpenTabletDriver.Configurations.Parsers.Waltop
         private int _bit3Count;
         private int _bit4Count;
         private int _clearCount;
+        private bool _subfunctionSwitch;
+        private bool _subfunctionBitPrev;
 
         public IDeviceReport Parse(byte[] data)
         {
@@ -139,12 +146,18 @@ namespace OpenTabletDriver.Configurations.Parsers.Waltop
 
                 // Frame button report (tablet mode only)
                 case 0x0A when data[1] == 0x0E:
+                {
+                    bool subfunctionBit = (data[3] & 0x20) != 0;
+                    if (subfunctionBit && !_subfunctionBitPrev)
+                        _subfunctionSwitch = !_subfunctionSwitch;
+                    _subfunctionBitPrev = subfunctionBit;
                     return new WaltopSiriusAuxReport(data);
+                }
 
                 // Dial reports: scroll (0x02), zoom (0x03), volume (0x04)
                 // Same data layout, firmware switches subreport based on mode
                 case 0x0A when data[1] >= 0x02 && data[1] <= 0x04:
-                    return new WaltopSiriusDialReport(data);
+                    return new WaltopSiriusDialReport(data, _subfunctionSwitch);
 
                 // Keyboard-direction dial report (arrow keys / navigation keys)
                 case 0x0D:
