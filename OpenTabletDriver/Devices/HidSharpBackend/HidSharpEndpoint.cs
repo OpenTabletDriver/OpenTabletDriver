@@ -34,7 +34,26 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
         public bool CanOpen => device.SafeGet(d => d.CanOpen, false);
         public IDictionary<string, string> DeviceAttributes => GetDeviceAttributes(DevicePath, () => device.GetReportDescriptor());
 
-        public IDeviceEndpointStream Open() => device.TryOpen(out var stream) ? new HidSharpEndpointStream(stream) : null;
+        public IDeviceEndpointStream Open()
+        {
+            if (device.TryOpen(out var stream))
+                return new HidSharpEndpointStream(stream);
+
+            // Fallback for devices with HID descriptors that HidSharp cannot parse
+            // (e.g. UnitExponent encoded as a signed byte instead of a 4-bit nibble).
+            // The kernel's hidraw interface exposes raw reports without requiring a
+            // parseable descriptor, so we can still read from the device via file I/O.
+            if (SystemInterop.CurrentPlatform == PluginPlatform.Linux)
+            {
+                try
+                {
+                    return new LinuxRawHidStream(device.GetFileSystemName());
+                }
+                catch { }
+            }
+
+            return null;
+        }
         public string GetDeviceString(byte index) => device.GetDeviceString(index);
 
         private static Dictionary<string, string> GetDeviceAttributes(string devicePath, Func<ReportDescriptor> reportDescriptorFunc)
