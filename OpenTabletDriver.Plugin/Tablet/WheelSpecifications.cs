@@ -62,6 +62,17 @@ namespace OpenTabletDriver.Plugin.Tablet
         public float? AngleOfZeroReading { get; set; }
 
         /// <summary>
+        /// Optional human-readable name for this wheel, displayed in the UI.
+        /// </summary>
+        public string? Name { get; set; }
+
+        /// <summary>
+        /// Optional group name for this wheel. Wheels sharing a group are displayed
+        /// together under a single tab in the UI. When unset, each wheel gets its own tab.
+        /// </summary>
+        public string? Group { get; set; }
+
+        /// <summary>
         /// Amount of buttons present on the wheel (usually between 0 and 2, inclusive)
         /// </summary>
         [Required(ErrorMessage = $"{nameof(ButtonCount)} must be defined")]

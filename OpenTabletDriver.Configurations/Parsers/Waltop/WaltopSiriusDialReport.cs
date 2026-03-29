@@ -9,15 +9,15 @@ namespace OpenTabletDriver.Configurations.Parsers.Waltop
     /// The firmware sends different subreport IDs depending on the active dial mode
     /// (selected via frame buttons), but the byte layout is identical:
     ///   0x02 = Scroll mode
-    ///   0x03 = Zoom/volume mode (subfunction switch OFF)
-    ///   0x04 = Zoom/volume mode (subfunction switch ON)
+    ///   0x03 = Multimedia mode (auxiliary OFF)
+    ///   0x04 = Multimedia mode (auxiliary ON)
     ///
-    /// Each subreport ID and subfunction switch combination maps to a different pair
+    /// Each subreport ID and auxiliary toggle combination maps to a different pair
     /// of wheel indices, allowing users to assign separate wheel bindings per mode:
-    ///   0x02 + subfunc OFF (Scroll):     positions at indices [0, 1]
-    ///   0x02 + subfunc ON  (Scroll alt): positions at indices [2, 3]
-    ///   0x03 (Zoom/volume, subfunc OFF): positions at indices [4, 5]
-    ///   0x04 (Zoom/volume, subfunc ON):  positions at indices [6, 7]
+    ///   0x02 + aux OFF (Scroll):         positions at indices [0, 1]
+    ///   0x02 + aux ON  (Scroll Aux):     positions at indices [2, 3]
+    ///   0x03 (Multimedia):               positions at indices [4, 5]
+    ///   0x04 (Multimedia Aux):           positions at indices [6, 7]
     /// Raw positions (1-8) are converted to 0-based (0-7); 0 means no finger (null).
     /// Inactive indices are null, which resets the corresponding WheelBindings.
     /// Direction mode (Report 0x0D) is handled separately by WaltopSiriusKeyDialReport.

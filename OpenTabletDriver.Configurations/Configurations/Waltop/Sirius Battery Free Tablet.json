@@ -52,41 +52,57 @@
       {
         "AbsoluteWheelMax": 7,
         "AngleOfZeroReading": 90.0,
+        "Name": "Scroll",
+        "Group": "Left Dial",
         "ButtonCount": 0
       },
       {
         "AbsoluteWheelMax": 7,
         "AngleOfZeroReading": 90.0,
+        "Name": "Scroll",
+        "Group": "Right Dial",
         "ButtonCount": 0
       },
       {
         "AbsoluteWheelMax": 7,
         "AngleOfZeroReading": 90.0,
+        "Name": "Scroll Aux",
+        "Group": "Left Dial",
         "ButtonCount": 0
       },
       {
         "AbsoluteWheelMax": 7,
         "AngleOfZeroReading": 90.0,
+        "Name": "Scroll Aux",
+        "Group": "Right Dial",
         "ButtonCount": 0
       },
       {
         "AbsoluteWheelMax": 7,
         "AngleOfZeroReading": 90.0,
+        "Name": "Multimedia",
+        "Group": "Left Dial",
         "ButtonCount": 0
       },
       {
         "AbsoluteWheelMax": 7,
         "AngleOfZeroReading": 90.0,
+        "Name": "Multimedia",
+        "Group": "Right Dial",
         "ButtonCount": 0
       },
       {
         "AbsoluteWheelMax": 7,
         "AngleOfZeroReading": 90.0,
+        "Name": "Multimedia Aux",
+        "Group": "Left Dial",
         "ButtonCount": 0
       },
       {
         "AbsoluteWheelMax": 7,
         "AngleOfZeroReading": 90.0,
+        "Name": "Multimedia Aux",
+        "Group": "Right Dial",
         "ButtonCount": 0
       }
     ]

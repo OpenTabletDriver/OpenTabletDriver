@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Profiles;
@@ -8,6 +9,7 @@ using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls.Bindings;
+using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Controls.Output;
 
 namespace OpenTabletDriver.UX.Controls
@@ -105,6 +107,7 @@ namespace OpenTabletDriver.UX.Controls
         private AuxiliaryBindingEditor auxBindingEditor;
         private MouseBindingEditor mouseBindingEditor;
         private List<BindingEditor> wheelBindingEditors = [];
+        private List<TabPage> wheelTabPages = [];
         private PluginSettingStoreCollectionEditor<IPositionedPipelineElement<IDeviceReport>> filterEditor;
         private PluginSettingStoreCollectionEditor<ITool> toolEditor;
 
@@ -143,8 +146,8 @@ namespace OpenTabletDriver.UX.Controls
                 SetPageVisibility(penBindingEditor, tablet.Properties.Specifications.Pen != null);
                 SetPageVisibility(auxBindingEditor, tablet.Properties.Specifications.AuxiliaryButtons != null);
 
-                for (int i = 0; i < wheelBindingEditors.Count; i++)
-                    SetPageVisibility(wheelBindingEditors[i], (tablet.Properties.Specifications.Wheels?.Count ?? 0) > i);
+                foreach (var page in wheelTabPages)
+                    SetPageVisibility(page.Content, true);
 
                 SetPageVisibility(mouseBindingEditor, tablet.Properties.Specifications.MouseButtons != null);
                 SetPageVisibility(toolEditor, true);
@@ -163,8 +166,8 @@ namespace OpenTabletDriver.UX.Controls
                 SetPageVisibility(filterEditor, false);
                 SetPageVisibility(penBindingEditor, false);
                 SetPageVisibility(auxBindingEditor, false);
-                foreach (var controlItem in wheelBindingEditors)
-                    SetPageVisibility(controlItem, false);
+                foreach (var page in wheelTabPages)
+                    SetPageVisibility(page.Content, false);
                 SetPageVisibility(mouseBindingEditor, false);
                 SetPageVisibility(toolEditor, false);
 
@@ -185,21 +188,96 @@ namespace OpenTabletDriver.UX.Controls
 
         public void OnTabletChanged(TabletReference tablet)
         {
-            // ensure we have enough wheel binding editors
-            int tabletWheels = tablet?.Properties.Specifications.Wheels?.Count ?? 0;
-            if (tabletWheels > wheelBindingEditors.Count)
+            foreach (var page in wheelTabPages)
+                tabControl.Pages.Remove(page);
+            wheelTabPages.Clear();
+            wheelBindingEditors.Clear();
+
+            var wheels = tablet?.Properties.Specifications.Wheels;
+            if (wheels == null || wheels.Count == 0) return;
+
+            bool hasGroups = wheels.Any(w => w.Group != null);
+
+            for (int i = 0; i < wheels.Count; i++)
             {
-                for (int i = wheelBindingEditors.Count; i < tabletWheels; i++)
+                var editor = new WheelBindingEditor(i, scrollable: !hasGroups);
+                editor.ProfileBinding.Bind(ProfileBinding);
+                wheelBindingEditors.Add(editor);
+            }
+
+            int insertAt = tabControl.Pages.IndexOf(mouseBindingEditor.Parent as TabPage);
+
+            if (hasGroups)
+            {
+                var groupOrder = new List<string>();
+                foreach (var w in wheels)
                 {
-                    var wheelBindingEditor = new WheelBindingEditor(i);
-                    wheelBindingEditor.ProfileBinding.Bind(ProfileBinding);
-                    var pageIndex = tabControl.Pages.IndexOf(mouseBindingEditor.Parent as TabPage);
-                    wheelBindingEditors.Add(wheelBindingEditor);
-                    var wheelPage = new TabPage(wheelBindingEditor) { Text = $"Wheel {i + 1} Bindings" };
-                    if (pageIndex >= 0)
-                        tabControl.Pages.Insert(pageIndex, wheelPage);
+                    if (w.Group != null && !groupOrder.Contains(w.Group))
+                        groupOrder.Add(w.Group);
+                }
+
+                foreach (var groupName in groupOrder)
+                {
+                    var stackLayout = new StackLayout
+                    {
+                        HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                        Spacing = 5
+                    };
+
+                    for (int i = 0; i < wheels.Count; i++)
+                    {
+                        if (wheels[i].Group != groupName) continue;
+                        stackLayout.Items.Add(new StackLayout
+                        {
+                            HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                            Spacing = 5,
+                            Padding = new Padding(0, 8, 0, 0),
+                            Items =
+                            {
+                                new Label
+                                {
+                                    Text = wheels[i].Name ?? $"Wheel {i + 1}",
+                                    Font = SystemFonts.Bold(14),
+                                    TextColor = SystemColors.HighlightText
+                                },
+                                wheelBindingEditors[i]
+                            }
+                        });
+                    }
+
+                    var page = new TabPage
+                    {
+                        Text = groupName,
+                        Content = new Scrollable
+                        {
+                            Border = BorderType.None,
+                            Content = stackLayout
+                        }
+                    };
+
+                    wheelTabPages.Add(page);
+
+                    if (insertAt >= 0)
+                        tabControl.Pages.Insert(insertAt++, page);
                     else
-                        tabControl.Pages.Add(wheelPage);
+                        tabControl.Pages.Add(page);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < wheels.Count; i++)
+                {
+                    var name = wheels[i].Name != null
+                        ? $"{wheels[i].Name} Bindings"
+                        : $"Wheel {i + 1} Bindings";
+                    var page = new TabPage(wheelBindingEditors[i]) { Text = name };
+
+                    wheelTabPages.Add(page);
+
+                    if (insertAt >= 0)
+                        tabControl.Pages.Insert(insertAt++, page);
+                    else
+                        tabControl.Pages.Add(page);
                 }
             }
         }
