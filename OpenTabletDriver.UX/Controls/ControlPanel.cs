@@ -9,7 +9,6 @@ using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls.Bindings;
-using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Controls.Output;
 
 namespace OpenTabletDriver.UX.Controls
@@ -106,7 +105,7 @@ namespace OpenTabletDriver.UX.Controls
         private PenBindingEditor penBindingEditor;
         private AuxiliaryBindingEditor auxBindingEditor;
         private MouseBindingEditor mouseBindingEditor;
-        private List<BindingEditor> wheelBindingEditors = [];
+        private List<WheelBindingEditor> wheelBindingEditors = [];
         private List<TabPage> wheelTabPages = [];
         private PluginSettingStoreCollectionEditor<IPositionedPipelineElement<IDeviceReport>> filterEditor;
         private PluginSettingStoreCollectionEditor<ITool> toolEditor;
@@ -196,90 +195,86 @@ namespace OpenTabletDriver.UX.Controls
             var wheels = tablet?.Properties.Specifications.Wheels;
             if (wheels == null || wheels.Count == 0) return;
 
-            bool hasGroups = wheels.Any(w => w.Group != null);
-
             for (int i = 0; i < wheels.Count; i++)
             {
-                var editor = new WheelBindingEditor(i, scrollable: !hasGroups);
+                var editor = new WheelBindingEditor(i);
                 editor.ProfileBinding.Bind(ProfileBinding);
                 wheelBindingEditors.Add(editor);
             }
 
             int insertAt = tabControl.Pages.IndexOf(mouseBindingEditor.Parent as TabPage);
 
-            if (hasGroups)
+            foreach (var tabDefinition in WheelTabLayout.Create(wheels))
             {
-                var groupOrder = new List<string>();
-                foreach (var w in wheels)
-                {
-                    if (w.Group != null && !groupOrder.Contains(w.Group))
-                        groupOrder.Add(w.Group);
-                }
+                var page = CreateWheelTabPage(tabDefinition);
+                wheelTabPages.Add(page);
 
-                foreach (var groupName in groupOrder)
-                {
-                    var stackLayout = new StackLayout
-                    {
-                        HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                        Spacing = 5
-                    };
+                if (insertAt >= 0)
+                    tabControl.Pages.Insert(insertAt++, page);
+                else
+                    tabControl.Pages.Add(page);
+            }
+        }
 
-                    for (int i = 0; i < wheels.Count; i++)
+        private TabPage CreateWheelTabPage(WheelTabDefinition tabDefinition)
+        {
+            return tabDefinition.IsGrouped
+                ? CreateGroupedWheelTabPage(tabDefinition)
+                : CreateStandaloneWheelTabPage(tabDefinition);
+        }
+
+        private TabPage CreateGroupedWheelTabPage(WheelTabDefinition tabDefinition)
+        {
+            var stackLayout = new StackLayout
+            {
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                Spacing = 5
+            };
+
+            foreach (var wheel in tabDefinition.Wheels)
+            {
+                stackLayout.Items.Add(new StackLayout
+                {
+                    HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                    Spacing = 5,
+                    Padding = new Padding(0, 8, 0, 0),
+                    Items =
                     {
-                        if (wheels[i].Group != groupName) continue;
-                        stackLayout.Items.Add(new StackLayout
+                        new Label
                         {
-                            HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                            Spacing = 5,
-                            Padding = new Padding(0, 8, 0, 0),
-                            Items =
-                            {
-                                new Label
-                                {
-                                    Text = wheels[i].Name ?? $"Wheel {i + 1}",
-                                    Font = SystemFonts.Bold(14),
-                                    TextColor = SystemColors.HighlightText
-                                },
-                                wheelBindingEditors[i]
-                            }
-                        });
+                            Text = wheel.Title,
+                            Font = SystemFonts.Bold(14),
+                            TextColor = SystemColors.ControlText
+                        },
+                        wheelBindingEditors[wheel.WheelIndex]
                     }
-
-                    var page = new TabPage
-                    {
-                        Text = groupName,
-                        Content = new Scrollable
-                        {
-                            Border = BorderType.None,
-                            Content = stackLayout
-                        }
-                    };
-
-                    wheelTabPages.Add(page);
-
-                    if (insertAt >= 0)
-                        tabControl.Pages.Insert(insertAt++, page);
-                    else
-                        tabControl.Pages.Add(page);
-                }
+                });
             }
-            else
+
+            return new TabPage
             {
-                for (int i = 0; i < wheels.Count; i++)
-                {
-                    var name = wheels[i].Name != null
-                        ? $"{wheels[i].Name} Bindings"
-                        : $"Wheel {i + 1} Bindings";
-                    var page = new TabPage(wheelBindingEditors[i]) { Text = name };
+                Text = tabDefinition.Text,
+                Content = CreateScrollable(stackLayout)
+            };
+        }
 
-                    wheelTabPages.Add(page);
+        private TabPage CreateStandaloneWheelTabPage(WheelTabDefinition tabDefinition)
+        {
+            var wheel = tabDefinition.Wheels.Single();
+            return new TabPage
+            {
+                Text = tabDefinition.Text,
+                Content = CreateScrollable(wheelBindingEditors[wheel.WheelIndex])
+            };
+        }
 
-                    if (insertAt >= 0)
-                        tabControl.Pages.Insert(insertAt++, page);
-                    else
-                        tabControl.Pages.Add(page);
-                }
-            }
+        private static Scrollable CreateScrollable(Control content)
+        {
+            return new Scrollable
+            {
+                Border = BorderType.None,
+                Content = content
+            };
         }
 
         public BindableBinding<ControlPanel, Profile> ProfileBinding

@@ -10,7 +10,7 @@ namespace OpenTabletDriver.UX.Controls.Bindings
 {
     public sealed class WheelBindingEditor : BindingEditor
     {
-        public WheelBindingEditor(int wheelIndex, bool scrollable = true)
+        public WheelBindingEditor(int wheelIndex)
         {
             wheelButtonGroup = new Group
             {
@@ -97,9 +97,7 @@ namespace OpenTabletDriver.UX.Controls.Bindings
                     }
                 };
 
-            this.Content = scrollable
-                ? new Scrollable { Border = BorderType.None, Content = stackLayout }
-                : (Control)stackLayout;
+            this.Content = stackLayout;
 
             SettingsBinding.DataValueChanged += (sender, args) =>
             {
