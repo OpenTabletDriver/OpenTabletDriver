@@ -85,6 +85,9 @@ namespace OpenTabletDriver.UX.Controls
 
             outputModeEditor.SetDisplaySize(DesktopInterop.VirtualScreen.Displays);
 
+            control.SelectedIndexChanged += (_, __) =>
+                auxBindingEditor.SetVisible(control.SelectedPage?.Content == auxBindingEditor);
+
             Log.Output += (_, message) => Application.Instance.AsyncInvoke(() =>
             {
                 if (message.Level > LogLevel.Info)

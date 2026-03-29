@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.UX.Controls.Generic;
+using OpenTabletDriver.UX.Tools;
 
 namespace OpenTabletDriver.UX.Controls.Bindings
 {
@@ -43,5 +46,83 @@ namespace OpenTabletDriver.UX.Controls.Bindings
                 Content = display
             };
         }
+
+        #region Highlight Animation
+
+        private const float DecayRate = 0.03f;
+
+        private float[] _highlightAlpha;
+        private bool _animating;
+
+        public void HighlightItem(int index)
+        {
+            if (index < 0 || index >= layout.Items.Count)
+                return;
+
+            if (_highlightAlpha == null || _highlightAlpha.Length != layout.Items.Count)
+                _highlightAlpha = new float[layout.Items.Count];
+
+            _highlightAlpha[index] = 1.0f;
+            UpdateItemColor(index);
+
+            if (!_animating)
+            {
+                _animating = true;
+                CompositionScheduler.Register(OnHighlightTick);
+            }
+        }
+
+        private void OnHighlightTick(object sender, EventArgs e)
+        {
+            if (_highlightAlpha == null)
+            {
+                StopAnimation();
+                return;
+            }
+
+            bool anyActive = false;
+            for (int i = 0; i < _highlightAlpha.Length && i < layout.Items.Count; i++)
+            {
+                if (_highlightAlpha[i] > 0)
+                {
+                    _highlightAlpha[i] = Math.Max(0, _highlightAlpha[i] - DecayRate);
+                    UpdateItemColor(i);
+                    if (_highlightAlpha[i] > 0)
+                        anyActive = true;
+                }
+            }
+
+            if (!anyActive)
+                StopAnimation();
+        }
+
+        private void UpdateItemColor(int index)
+        {
+            var control = layout.Items[index].Control;
+
+            if (_highlightAlpha[index] > 0.01f)
+            {
+                var bg = SystemColors.ControlBackground;
+                control.BackgroundColor = new Color(
+                    1f - bg.R, 1f - bg.G, 1f - bg.B,
+                    _highlightAlpha[index] * 0.5f
+                );
+            }
+            else
+            {
+                control.BackgroundColor = Colors.Transparent;
+            }
+        }
+
+        private void StopAnimation()
+        {
+            if (_animating)
+            {
+                _animating = false;
+                CompositionScheduler.Unregister(OnHighlightTick);
+            }
+        }
+
+        #endregion
     }
 }
