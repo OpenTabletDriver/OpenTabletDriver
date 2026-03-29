@@ -9,6 +9,10 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
     /// A raw Linux hidraw stream for devices whose HID report descriptors cannot be parsed by HidSharp.
     /// Falls back to direct file I/O since the kernel's hidraw interface exposes raw reports without
     /// requiring the report descriptor to be parseable.
+    ///
+    /// The important constraint is that callers still expect HidSharp-style report
+    /// buffers. In particular, OpenTabletDriver parsers expect a leading report-ID
+    /// slot even for devices whose descriptor defines only unnumbered reports.
     /// </summary>
     internal sealed class LinuxRawHidStream : IDeviceEndpointStream
     {
@@ -45,6 +49,8 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
                 return buffer;
             }
 
+            // HidSharp prepends a synthetic 0x00 report ID for unnumbered devices;
+            // keep that shape so existing parsers do not need a Linux-specific path.
             var payloadLength = Math.Max(0, _descriptorInfo.InputReportLength - 1);
             var payload = new byte[payloadLength];
             var countRead = _stream.Read(payload, 0, payload.Length);
@@ -75,12 +81,17 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
                 var requestBuffer = _descriptorInfo.ReportsUseID ? (IntPtr)ptr : (IntPtr)(ptr + 1);
 
                 if (!_descriptorInfo.ReportsUseID)
+                    // The kernel buffer starts at the payload for unnumbered reports.
+                    // Mirror HidSharp by shifting the caller's synthetic report ID out
+                    // of the ioctl buffer before issuing HIDIOCGFEATURE.
                     buffer[1] = buffer[0];
 
                 int result = _ioctl(GetFd(), LinuxHidrawInterop.HIDIOCGFEATURE(requestLength), requestBuffer);
                 if (result < 0)
                     throw new IOException("GetFeature failed.");
 
+                // HidSharp clears the unread tail of the feature buffer; keep that
+                // behavior so initialization reports remain deterministic.
                 var clearOffset = _descriptorInfo.ReportsUseID ? result : result + 1;
                 if (clearOffset < buffer.Length)
                     Array.Clear(buffer, clearOffset, buffer.Length - clearOffset);

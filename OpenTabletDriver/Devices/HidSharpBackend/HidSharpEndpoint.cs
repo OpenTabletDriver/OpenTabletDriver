@@ -67,6 +67,8 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
         }
         public string GetDeviceString(byte index) => device.GetDeviceString(index);
 
+        // Device matching happens before Open(), so Linux needs a second source of
+        // report-length metadata when HidSharp's descriptor parser throws.
         private int GetReportLength(Func<HidDevice, int> getter, Func<LinuxRawHidDescriptorInfo, int> fallbackSelector)
         {
             if (device.TryGet(getter, out var length))
@@ -77,6 +79,8 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
                 : -1;
         }
 
+        // Cache the raw hidraw descriptor parse so the metadata path and the stream
+        // fallback both operate on the same view of the device's report layout.
         private bool TryGetLinuxFallbackInfo(out LinuxRawHidDescriptorInfo fallbackInfo)
         {
             fallbackInfo = null;

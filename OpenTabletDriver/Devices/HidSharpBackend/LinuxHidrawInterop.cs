@@ -3,10 +3,18 @@ using System.Runtime.InteropServices;
 
 namespace OpenTabletDriver.Devices.HidSharpBackend
 {
+    /// <summary>
+    /// Minimal hidraw interop used by the Linux fallback. The fallback bypasses
+    /// HidSharp's descriptor parser, so it needs direct access to the raw hidraw
+    /// descriptor ioctls and feature-report ioctls.
+    /// </summary>
     internal static class LinuxHidrawInterop
     {
         internal const int HidMaxDescriptorSize = 4096;
 
+        /// <summary>
+        /// Mirrors <c>struct hidraw_report_descriptor</c> from <c>linux/hidraw.h</c>.
+        /// </summary>
         [StructLayout(LayoutKind.Sequential)]
         internal struct HidrawReportDescriptor
         {
@@ -25,6 +33,8 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
         [DllImport("libc", SetLastError = true)]
         internal static extern int ioctl(int fd, nuint request, ref HidrawReportDescriptor data);
 
+        // We only need the descriptor-size and descriptor read commands here; the
+        // stream uses the feature-report commands further below.
         internal static readonly nuint HIDIOCGRDESCSIZE = IOR(72, 0x01, sizeof(int));
         internal static readonly nuint HIDIOCGRDESC = IOR(72, 0x02, Marshal.SizeOf(typeof(HidrawReportDescriptor)));
 

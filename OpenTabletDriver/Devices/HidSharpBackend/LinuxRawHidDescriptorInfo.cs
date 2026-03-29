@@ -4,6 +4,13 @@ using System.IO;
 
 namespace OpenTabletDriver.Devices.HidSharpBackend
 {
+    /// <summary>
+    /// Report-shape metadata extracted from hidraw without constructing HidSharp's
+    /// <see cref="HidSharp.Reports.ReportDescriptor"/>. This is intentionally a
+    /// tolerant parser: it only reconstructs the parts needed for matching and raw
+    /// streaming, so malformed items such as the signed-byte UnitExponent variant
+    /// do not block the fallback.
+    /// </summary>
     internal sealed class LinuxRawHidDescriptorInfo
     {
         internal LinuxRawHidDescriptorInfo(int inputReportLength, int outputReportLength, int featureReportLength, bool reportsUseID)
@@ -19,6 +26,10 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
         public int FeatureReportLength { get; }
         public bool ReportsUseID { get; }
 
+        /// <summary>
+        /// Reads the raw hidraw descriptor directly from the kernel and extracts
+        /// only the report lengths and report-ID usage required by the fallback.
+        /// </summary>
         internal static LinuxRawHidDescriptorInfo TryCreateFromDevice(string devicePath)
         {
             if (string.IsNullOrWhiteSpace(devicePath))
@@ -54,6 +65,11 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
             }
         }
 
+        /// <summary>
+        /// Parses enough of the HID descriptor to recover the maximum report
+        /// lengths. Global items that affect report sizing are honored; metadata
+        /// items that do not affect layout are ignored.
+        /// </summary>
         internal static bool TryParse(byte[] descriptor, out LinuxRawHidDescriptorInfo info)
         {
             info = null;
@@ -116,6 +132,8 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
                                 break;
 
                             case 0x08:
+                                // The public stream contract expects a leading report-ID slot
+                                // even when the kernel delivers unnumbered reports directly.
                                 if (value == 0 || value > int.MaxValue)
                                     return false;
 
@@ -242,6 +260,7 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
             if (bits == 0)
                 return 0;
 
+            // Match HidSharp's public contract: lengths include the report ID byte.
             return ((bits + 7) / 8) + 1;
         }
 
