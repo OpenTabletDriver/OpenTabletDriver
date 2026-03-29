@@ -12,10 +12,15 @@ namespace OpenTabletDriver.Configurations.Parsers.Waltop
     ///   0x03 = Zoom/volume mode (subfunction switch OFF)
     ///   0x04 = Zoom/volume mode (subfunction switch ON)
     ///
-    /// Limitation: all three subreports map to the same wheel report type, so the
-    /// Scroll/Multimedia mode toggle on the tablet has no effect — the user-configured
-    /// wheel bindings apply regardless of mode. Direction mode (Report 0x0D) is
-    /// handled separately by WaltopSiriusKeyDialReport and IS distinguishable.
+    /// Each subreport ID and subfunction switch combination maps to a different pair
+    /// of wheel indices, allowing users to assign separate wheel bindings per mode:
+    ///   0x02 + subfunc OFF (Scroll):     positions at indices [0, 1]
+    ///   0x02 + subfunc ON  (Scroll alt): positions at indices [2, 3]
+    ///   0x03 (Zoom/volume, subfunc OFF): positions at indices [4, 5]
+    ///   0x04 (Zoom/volume, subfunc ON):  positions at indices [6, 7]
+    /// Raw positions (1-8) are converted to 0-based (0-7); 0 means no finger (null).
+    /// Inactive indices are null, which resets the corresponding WheelBindings.
+    /// Direction mode (Report 0x0D) is handled separately by WaltopSiriusKeyDialReport.
     ///
     /// Byte layout:
     ///   data[0] = Report ID (0x0A)
@@ -30,18 +35,26 @@ namespace OpenTabletDriver.Configurations.Parsers.Waltop
     /// </summary>
     public struct WaltopSiriusDialReport : IAbsoluteWheelReport
     {
-        public WaltopSiriusDialReport(byte[] data)
+        public WaltopSiriusDialReport(byte[] data, bool subfunctionSwitch)
         {
             Raw = data;
 
-            byte leftPos = data[7];
-            byte rightPos = data[6];
+            int offset = data[1] switch
+            {
+                0x02 => subfunctionSwitch ? 2 : 0,
+                0x03 => 4,
+                0x04 => 6,
+                _ => 0
+            };
 
-            AnalogPositions =
-            [
-                leftPos != 0 ? leftPos - 1u : null,
-                rightPos != 0 ? rightPos - 1u : null
-            ];
+            AnalogPositions = new uint?[8];
+            AnalogPositions[offset] = RawToPosition(data[7]);
+            AnalogPositions[offset + 1] = RawToPosition(data[6]);
+        }
+
+        private static uint? RawToPosition(byte raw)
+        {
+            return raw == 0 ? null : (uint)(raw - 1);
         }
 
         public byte[] Raw { set; get; }
