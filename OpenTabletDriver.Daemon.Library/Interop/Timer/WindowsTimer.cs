@@ -2,11 +2,10 @@ using System;
 using System.Runtime.InteropServices;
 using OpenTabletDriver.Native.Windows;
 using OpenTabletDriver.Native.Windows.Timers;
+using static OpenTabletDriver.Native.Windows.WindowsAPI;
 
 namespace OpenTabletDriver.Daemon.Library.Interop.Timer
 {
-    using static Windows;
-
     internal class WindowsTimer : ITimer, IDisposable
     {
         public WindowsTimer()

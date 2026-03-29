@@ -3,11 +3,10 @@ using OpenTabletDriver.Attributes;
 using OpenTabletDriver.Native.Windows;
 using OpenTabletDriver.Native.Windows.Input;
 using OpenTabletDriver.Platform.Pointer;
+using static OpenTabletDriver.Native.Windows.WindowsAPI;
 
 namespace OpenTabletDriver.Daemon.Library.Interop.Input
 {
-    using static Windows;
-
     [PluginIgnore]
     public abstract class WindowsVirtualMouse : IMouseButtonHandler, ISynchronousPointer
     {
