@@ -98,7 +98,9 @@ namespace OpenTabletDriver.UX.Controls
         private Placeholder placeholder;
         private LogView logView;
         private OutputModeEditor outputModeEditor;
-        private BindingEditor penBindingEditor, auxBindingEditor, mouseBindingEditor;
+        private PenBindingEditor penBindingEditor;
+        private AuxiliaryBindingEditor auxBindingEditor;
+        private MouseBindingEditor mouseBindingEditor;
         private List<BindingEditor> wheelBindingEditors = [];
         private PluginSettingStoreCollectionEditor<IPositionedPipelineElement<IDeviceReport>> filterEditor;
         private PluginSettingStoreCollectionEditor<ITool> toolEditor;
@@ -144,6 +146,10 @@ namespace OpenTabletDriver.UX.Controls
                 SetPageVisibility(mouseBindingEditor, tablet.Properties.Specifications.MouseButtons != null);
                 SetPageVisibility(toolEditor, true);
 
+                penBindingEditor.SetButtonNames(tablet.Properties.Specifications.Pen);
+                auxBindingEditor.SetButtonNames(tablet.Properties.Specifications.AuxiliaryButtons);
+                mouseBindingEditor.SetButtonNames(tablet.Properties.Specifications.MouseButtons);
+
                 if (switchToOutput)
                     tabControl.SelectedIndex = 0;
             }
@@ -158,6 +164,10 @@ namespace OpenTabletDriver.UX.Controls
                     SetPageVisibility(controlItem, false);
                 SetPageVisibility(mouseBindingEditor, false);
                 SetPageVisibility(toolEditor, false);
+
+                penBindingEditor.SetButtonNames(null);
+                auxBindingEditor.SetButtonNames(null);
+                mouseBindingEditor.SetButtonNames(null);
 
                 if (tabControl.SelectedPage != logView.Parent)
                 {

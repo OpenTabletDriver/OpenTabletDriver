@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Reflection;
+using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls.Generic;
 
 namespace OpenTabletDriver.UX.Controls.Bindings
@@ -60,6 +61,11 @@ namespace OpenTabletDriver.UX.Controls.Bindings
             scrollDown.StoreBinding.Bind(SettingsBinding.Child(c => c.MouseScrollDown));
         }
 
+        public void SetButtonNames(ButtonSpecifications specs)
+        {
+            mouseButtons.ButtonNames = specs?.ButtonNames;
+        }
+
         private MouseBindingDisplayList mouseButtons;
         private BindingDisplay scrollUp, scrollDown;
 
@@ -67,6 +73,10 @@ namespace OpenTabletDriver.UX.Controls.Bindings
         {
             protected override string GetTextForIndex(int index)
             {
+                if (ButtonNames != null && index < ButtonNames.Count
+                    && !string.IsNullOrEmpty(ButtonNames[index]))
+                    return base.GetTextForIndex(index);
+
                 return index switch
                 {
                     0 => "Primary Binding",
