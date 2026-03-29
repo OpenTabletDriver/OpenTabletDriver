@@ -1,3 +1,4 @@
+using System;
 using HidSharp;
 
 namespace OpenTabletDriver.Tests.Fakes
@@ -15,6 +16,11 @@ namespace OpenTabletDriver.Tests.Fakes
         private int _productId;
         private int _vendorId;
         private int _releaseNumberBcd;
+        private byte[] _rawReportDescriptor = Array.Empty<byte>();
+        private Exception? _openException;
+        private Exception? _maxInputReportLengthException;
+        private Exception? _maxOutputReportLengthException;
+        private Exception? _maxFeatureReportLengthException;
 
         public override string DevicePath => _devicePath;
         public override bool CanOpen => _canOpen;
@@ -57,9 +63,21 @@ namespace OpenTabletDriver.Tests.Fakes
             return this;
         }
 
+        public FakeHidDevice WithOpenException(Exception? exception)
+        {
+            _openException = exception;
+            return this;
+        }
+
         public FakeHidDevice WithMaxInputReportLength(int length)
         {
             _maxInputReportLength = length;
+            return this;
+        }
+
+        public FakeHidDevice WithMaxInputReportLengthException(Exception? exception)
+        {
+            _maxInputReportLengthException = exception;
             return this;
         }
 
@@ -69,9 +87,21 @@ namespace OpenTabletDriver.Tests.Fakes
             return this;
         }
 
+        public FakeHidDevice WithMaxOutputReportLengthException(Exception? exception)
+        {
+            _maxOutputReportLengthException = exception;
+            return this;
+        }
+
         public FakeHidDevice WithMaxFeatureReportLength(int length)
         {
             _maxFeatureReportLength = length;
+            return this;
+        }
+
+        public FakeHidDevice WithMaxFeatureReportLengthException(Exception? exception)
+        {
+            _maxFeatureReportLengthException = exception;
             return this;
         }
 
@@ -93,9 +123,15 @@ namespace OpenTabletDriver.Tests.Fakes
             return this;
         }
 
+        public FakeHidDevice WithRawReportDescriptor(byte[] rawReportDescriptor)
+        {
+            _rawReportDescriptor = (byte[])rawReportDescriptor.Clone();
+            return this;
+        }
+
         protected override DeviceStream OpenDeviceDirectly(OpenConfiguration openConfig)
         {
-            return null!;
+            throw _openException ?? new NotSupportedException();
         }
 
         public override string GetFileSystemName() => _devicePath;
@@ -106,11 +142,19 @@ namespace OpenTabletDriver.Tests.Fakes
 
         public override string GetSerialNumber() => _serialNumber;
 
-        public override int GetMaxInputReportLength() => _maxInputReportLength;
+        public override int GetMaxInputReportLength() => _maxInputReportLengthException == null
+            ? _maxInputReportLength
+            : throw _maxInputReportLengthException;
 
-        public override int GetMaxOutputReportLength() => _maxOutputReportLength;
+        public override int GetMaxOutputReportLength() => _maxOutputReportLengthException == null
+            ? _maxOutputReportLength
+            : throw _maxOutputReportLengthException;
 
-        public override int GetMaxFeatureReportLength() => _maxFeatureReportLength;
+        public override int GetMaxFeatureReportLength() => _maxFeatureReportLengthException == null
+            ? _maxFeatureReportLength
+            : throw _maxFeatureReportLengthException;
+
+        public override byte[] GetRawReportDescriptor() => (byte[])_rawReportDescriptor.Clone();
 
         public override string GetDeviceString(int index) => $"DeviceString{index}";
     }

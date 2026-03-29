@@ -1,4 +1,8 @@
+using System;
+using System.IO;
 using OpenTabletDriver.Devices.HidSharpBackend;
+using OpenTabletDriver.Interop;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Tests.Fakes;
 using Xunit;
 
@@ -67,6 +71,51 @@ namespace OpenTabletDriver.Tests
 
             Assert.True(attributes.ContainsKey("USB_INTERFACE_NUMBER"));
             Assert.Equal(expectedInterface, attributes["USB_INTERFACE_NUMBER"]);
+        }
+
+        [Fact]
+        public void ReportLengths_FallBackToLinuxRawDescriptorInfo_WhenHidSharpParsingFails()
+        {
+            Skip.IfNot(SystemInterop.CurrentPlatform == PluginPlatform.Linux, "Linux-only fallback behavior.");
+
+            var fakeDevice = new FakeHidDevice()
+                .WithMaxInputReportLengthException(new InvalidOperationException("broken descriptor"))
+                .WithMaxOutputReportLengthException(new InvalidOperationException("broken descriptor"))
+                .WithMaxFeatureReportLengthException(new InvalidOperationException("broken descriptor"));
+
+            var fallbackInfo = new LinuxRawHidDescriptorInfo(192, 33, 17, false);
+            var endpoint = new HidSharpEndpoint(fakeDevice, _ => fallbackInfo);
+
+            Assert.Equal(192, endpoint.InputReportLength);
+            Assert.Equal(33, endpoint.OutputReportLength);
+            Assert.Equal(17, endpoint.FeatureReportLength);
+        }
+
+        [Fact]
+        public void Open_FallsBackToLinuxRawHidStream_WhenHidSharpOpenFails()
+        {
+            Skip.IfNot(SystemInterop.CurrentPlatform == PluginPlatform.Linux, "Linux-only fallback behavior.");
+
+            var path = Path.GetTempFileName();
+            try
+            {
+                File.WriteAllBytes(path, new byte[] { 0x01, 0x02, 0x03 });
+
+                var fakeDevice = new FakeHidDevice()
+                    .WithDevicePath(path)
+                    .WithOpenException(new IOException("broken descriptor"));
+
+                var fallbackInfo = new LinuxRawHidDescriptorInfo(3, 0, 0, true);
+                var endpoint = new HidSharpEndpoint(fakeDevice, _ => fallbackInfo);
+
+                using var stream = endpoint.Open();
+
+                Assert.IsType<LinuxRawHidStream>(stream);
+            }
+            finally
+            {
+                File.Delete(path);
+            }
         }
     }
 }
