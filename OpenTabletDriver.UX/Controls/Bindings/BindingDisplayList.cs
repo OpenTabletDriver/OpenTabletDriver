@@ -99,18 +99,35 @@ namespace OpenTabletDriver.UX.Controls.Bindings
         private void UpdateItemColor(int index)
         {
             var control = layout.Items[index].Control;
+            var bg = SystemColors.ControlBackground;
 
             if (_highlightAlpha[index] > 0.01f)
             {
-                var bg = SystemColors.ControlBackground;
-                control.BackgroundColor = new Color(
-                    1f - bg.R, 1f - bg.G, 1f - bg.B,
-                    _highlightAlpha[index] * 0.5f
+                var a = _highlightAlpha[index] * 0.5f;
+
+                // Pre-blend against background — GTK ignores alpha on BackgroundColor
+                var blended = new Color(
+                    bg.R + (1f - bg.R) * a,
+                    bg.G + (1f - bg.G) * a,
+                    bg.B + (1f - bg.B) * a
                 );
+
+                // Group wraps content in a GroupBox; target that instead of the outer Panel
+                if (control is Panel panel && panel.Content is GroupBox innerBox)
+                    innerBox.BackgroundColor = blended;
+                else if (control is Panel panel2 && panel2.Content is Panel innerPanel)
+                    innerPanel.BackgroundColor = blended;
+                else
+                    control.BackgroundColor = blended;
             }
             else
             {
-                control.BackgroundColor = Colors.Transparent;
+                if (control is Panel panel && panel.Content is GroupBox innerBox)
+                    innerBox.BackgroundColor = bg;
+                else if (control is Panel panel2 && panel2.Content is Panel innerPanel)
+                    innerPanel.BackgroundColor = Colors.Transparent;
+                else
+                    control.BackgroundColor = Colors.Transparent;
             }
         }
 
