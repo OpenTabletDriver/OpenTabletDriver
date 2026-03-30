@@ -52,6 +52,7 @@ namespace OpenTabletDriver.UX.Controls.Bindings
         private const float DecayRate = 0.03f;
 
         private float[] _highlightAlpha;
+        private Color[] _originalColors;
         private bool _animating;
 
         public void HighlightItem(int index)
@@ -96,38 +97,44 @@ namespace OpenTabletDriver.UX.Controls.Bindings
                 StopAnimation();
         }
 
+        private Control GetColorTarget(Control control)
+        {
+            if (control is Panel panel && panel.Content is GroupBox innerBox)
+                return innerBox;
+            if (control is Panel panel2 && panel2.Content is Panel innerPanel)
+                return innerPanel;
+            return control;
+        }
+
+        private void CaptureOriginalColors()
+        {
+            _originalColors = new Color[layout.Items.Count];
+            for (int i = 0; i < layout.Items.Count; i++)
+                _originalColors[i] = GetColorTarget(layout.Items[i].Control).BackgroundColor;
+        }
+
         private void UpdateItemColor(int index)
         {
-            var control = layout.Items[index].Control;
-            var bg = SystemColors.ControlBackground;
+            if (_originalColors == null || _originalColors.Length != layout.Items.Count)
+                CaptureOriginalColors();
+
+            var target = GetColorTarget(layout.Items[index].Control);
+            var bg = _originalColors[index];
 
             if (_highlightAlpha[index] > 0.01f)
             {
                 var a = _highlightAlpha[index] * 0.5f;
 
                 // Pre-blend against background — GTK ignores alpha on BackgroundColor
-                var blended = new Color(
+                target.BackgroundColor = new Color(
                     bg.R + (1f - bg.R) * a,
                     bg.G + (1f - bg.G) * a,
                     bg.B + (1f - bg.B) * a
                 );
-
-                // Group wraps content in a GroupBox; target that instead of the outer Panel
-                if (control is Panel panel && panel.Content is GroupBox innerBox)
-                    innerBox.BackgroundColor = blended;
-                else if (control is Panel panel2 && panel2.Content is Panel innerPanel)
-                    innerPanel.BackgroundColor = blended;
-                else
-                    control.BackgroundColor = blended;
             }
             else
             {
-                if (control is Panel panel && panel.Content is GroupBox innerBox)
-                    innerBox.BackgroundColor = bg;
-                else if (control is Panel panel2 && panel2.Content is Panel innerPanel)
-                    innerPanel.BackgroundColor = Colors.Transparent;
-                else
-                    control.BackgroundColor = Colors.Transparent;
+                target.BackgroundColor = bg;
             }
         }
 
