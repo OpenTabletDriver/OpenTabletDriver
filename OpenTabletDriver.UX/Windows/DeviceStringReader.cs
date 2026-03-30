@@ -102,13 +102,23 @@ namespace OpenTabletDriver.UX.Windows
                     this.Close();
             };
 
-            deviceDropDown.SelectedItemBinding
-                .Convert(x => x?.VendorID.ToString())
-                .Bind(vendorIdText.TextBinding);
+            deviceDropDown.SelectedValueChanged += (_, _) =>
+            {
+                if (deviceDropDown.SelectedItem != null)
+                {
+                    productIdText.Text = deviceDropDown.SelectedItem?.ProductID.ToString();
+                    vendorIdText.Text = deviceDropDown.SelectedItem?.VendorID.ToString();
+                }
+            };
 
-            deviceDropDown.SelectedItemBinding
-                .Convert(x => x?.ProductID.ToString())
-                .Bind(productIdText.TextBinding);
+            this.vendorIdText.KeyDown += (_, _) =>
+            {
+                deviceDropDown.SelectedItem = null;
+            };
+            this.productIdText.KeyDown += (_, _) =>
+            {
+                deviceDropDown.SelectedItem = null;
+            };
 
             this.deviceDropDown.DataStore =
                 App.Driver.Instance.GetDevices().Result
