@@ -2,9 +2,9 @@
   "Name": "Monoprice 21826",
   "Specifications": {
     "Digitizer": {
-      "Width": 327.675,
+      "Width": 344.17,
       "Height": 193.55,
-      "MaxX": 65535,
+      "MaxX": 68834,
       "MaxY": 38710
     },
     "Pen": {
@@ -20,7 +20,7 @@
       "VendorID": 9580,
       "ProductID": 110,
       "InputReportLength": 64,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.GianoReportParser",
       "DeviceStrings": {
         "201": "OEM00_M166_\\d{6}$"
       },
