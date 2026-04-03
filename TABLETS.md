@@ -216,6 +216,7 @@
 | XP-Pen Star G960S                  |     Supported     |
 | XP-Pen Star G960S Plus             |     Supported     |
 | XP-Pen Deco 03                     |     Supported     |
+| Artisul D16                        |    Has Quirks     | Wheel button reports as 8th aux button.
 | Bosto BT-12HD                      |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0.
 | FlooGoo FMA100                     |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 1. Might also need to change the configuration depending on the tablet used.
 | Gaomon S56K                        |    Has Quirks     | Windows: Might need Zadig's WinUSB to be installed on interface 0 or 1
