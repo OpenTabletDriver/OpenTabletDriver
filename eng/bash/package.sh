@@ -81,6 +81,7 @@ if [[ "${NET_RUNTIME}" =~ ^osx-.*$ ]]; then
   # the following vars are imported from old packaging script
   SINGLE_FILE="false"
   SELF_CONTAINED="true"
+  extra_args=("-p:MacBuildBundle=false ${extra_args[@]}")
 
   PACKAGE_GEN=${PACKAGE_GEN:-"macos"}
   PROJECTS+=('OpenTabletDriver.UX.MacOS')
