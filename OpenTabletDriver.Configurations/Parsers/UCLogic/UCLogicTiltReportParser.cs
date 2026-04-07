@@ -8,10 +8,12 @@ namespace OpenTabletDriver.Configurations.Parsers.UCLogic
     {
         public IDeviceReport Parse(byte[] data)
         {
-            if (data[1].IsBitSet(6))
-                return new UCLogicAuxReport(data);
-            else
-                return new TiltTabletReport(data, false, true);
+            return data[1] switch
+            {
+                0xe0 => new UCLogicAuxReport(data),
+                0xf0 => new DeviceReport(data),
+                _ => new TiltTabletReport(data, false, true)
+            };
         }
     }
 }

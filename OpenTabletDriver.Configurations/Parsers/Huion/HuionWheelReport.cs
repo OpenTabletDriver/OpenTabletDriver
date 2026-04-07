@@ -9,7 +9,7 @@ public struct HuionWheelReport : IAbsoluteWheelReport
         Raw = data;
         var wheelData = data[5];
 
-        AnalogPositions = [wheelData != 0 ? wheelData - 1u : null];
+        AnalogPositions = [wheelData != 0 ? (4u - wheelData + 12u) % 12u : null];
     }
 
     public byte[] Raw { get; set; }
