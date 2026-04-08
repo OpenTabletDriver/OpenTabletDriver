@@ -22,7 +22,9 @@
       "InputReportLength": 12,
       "OutputReportLength": 20,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
-      "OutputInitReport": ["ArAE"]
+      "OutputInitReport": [
+        "ArAE"
+      ]
     }
   ],
   "Attributes": {
