@@ -125,7 +125,7 @@ ideally want an IDE capable of working with C# and .NET projects, such as:
 Note that OpenTabletDriver being an open source project means a [yearly free license to use
 Rider](https://www.jetbrains.com/community/opensource/#support) can be obtained.
 
-To get started, create a fork of the repository on GitHub. Then, clone the fork you made, and ensure
+To get started, create a full fork (ie: not only the 0.6.x branch) of the repository on GitHub. Then, clone the fork you made, and ensure
 you're capable of building OpenTabletDriver, by running either `build.ps1` (for Windows), or
 `build.sh` (for Linux and MacOS). If successful, these scripts will produce executables in a newly created
 `bin` subdirectory. You can then run OpenTabletDriver by running the executable for the Daemon and
