@@ -50,7 +50,7 @@ if [ -z "$VERSION_SUFFIX" ]; then
   hash sed &>/dev/null && \
   git rev-parse --is-inside-work-tree &>/dev/null
   then
-    GIT_DESCRIBE="$(git describe --long --tags --dirty)"
+    GIT_DESCRIBE="$(git describe --long --tags --dirty --always)"
 
     # don't set suffix if this is a tagged commit
     COMMIT_DISTANCE_FROM_TAG="$(sed -E s/"${GIT_TAG_REGEX}"/\\8/ <<< "$GIT_DESCRIBE")"
