@@ -1,5 +1,5 @@
 {
-  "Name": "XP-Pen Deco LW",
+  "Name": "XP-Pen Deco LW (Variant 2)",
   "Specifications": {
     "Digitizer": {
       "Width": 254,
@@ -8,7 +8,7 @@
       "MaxY": 30480
     },
     "Pen": {
-      "MaxPressure": 8191,
+      "MaxPressure": 16383,
       "ButtonCount": 2
     },
     "AuxiliaryButtons": {
@@ -19,8 +19,9 @@
     {
       "VendorID": 10429,
       "ProductID": 2357,
-      "InputReportLength": 12,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenOffsetPressureReportParser",
+      "InputReportLength": 14,
+      "OutputReportLength": 33,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenGen2ReportParser",
       "OutputInitReport": [
         "ArAE"
       ]
