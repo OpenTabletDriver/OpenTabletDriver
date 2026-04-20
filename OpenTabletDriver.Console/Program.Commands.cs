@@ -114,6 +114,7 @@ namespace OpenTabletDriver.Console
                 p.AbsoluteModeSettings.Display.Height = height;
                 p.AbsoluteModeSettings.Display.X = x;
                 p.AbsoluteModeSettings.Display.Y = y;
+                return Task.CompletedTask;
             });
         }
 
@@ -159,6 +160,7 @@ namespace OpenTabletDriver.Console
                 p.AbsoluteModeSettings.Tablet.X = x;
                 p.AbsoluteModeSettings.Tablet.Y = y;
                 p.AbsoluteModeSettings.Tablet.Rotation = rotation;
+                return Task.CompletedTask;
             });
         }
 
@@ -169,12 +171,13 @@ namespace OpenTabletDriver.Console
                 p.RelativeModeSettings.XSensitivity = xSens;
                 p.RelativeModeSettings.YSensitivity = ySens;
                 p.RelativeModeSettings.RelativeRotation = rotation;
+                return Task.CompletedTask;
             });
         }
 
         private static async Task SetResetTime(string tablet, int ms)
         {
-            await ModifyProfile(tablet, p => p.RelativeModeSettings.ResetTime = TimeSpan.FromMilliseconds(ms));
+            await ModifyProfile(tablet, p => Task.FromResult(p.RelativeModeSettings.ResetTime = TimeSpan.FromMilliseconds(ms)));
         }
 
         private static async Task SetTipBinding(string tablet, string name, float threshold)
@@ -185,6 +188,7 @@ namespace OpenTabletDriver.Console
 
                 p.BindingSettings.TipButton = new PluginSettingStore(tipBinding);
                 p.BindingSettings.TipActivationThreshold = threshold;
+                return Task.CompletedTask;
             });
         }
 
@@ -195,6 +199,7 @@ namespace OpenTabletDriver.Console
                 var binding = AppInfo.PluginManager.ConstructObject<IBinding>(name);
 
                 p.BindingSettings.PenButtons[index] = new PluginSettingStore(binding);
+                return Task.CompletedTask;
             });
         }
 
@@ -205,22 +210,23 @@ namespace OpenTabletDriver.Console
                 var binding = AppInfo.PluginManager.ConstructObject<IBinding>(name);
 
                 p.BindingSettings.AuxButtons[index] = new PluginSettingStore(binding);
+                return Task.CompletedTask;
             });
         }
 
         private static async Task SetEnableClipping(string tablet, bool isEnabled)
         {
-            await ModifyProfile(tablet, p => p.AbsoluteModeSettings.EnableClipping = isEnabled);
+            await ModifyProfile(tablet, p => Task.FromResult(p.AbsoluteModeSettings.EnableClipping = isEnabled));
         }
 
         private static async Task SetEnableAreaLimiting(string tablet, bool isEnabled)
         {
-            await ModifyProfile(tablet, p => p.AbsoluteModeSettings.EnableAreaLimiting = isEnabled);
+            await ModifyProfile(tablet, p => Task.FromResult(p.AbsoluteModeSettings.EnableAreaLimiting = isEnabled));
         }
 
         private static async Task SetLockAspectRatio(string tablet, bool isEnabled)
         {
-            await ModifyProfile(tablet, p => p.AbsoluteModeSettings.LockAspectRatio = isEnabled);
+            await ModifyProfile(tablet, p => Task.FromResult(p.AbsoluteModeSettings.LockAspectRatio = isEnabled));
         }
 
         private static async Task SetOutputMode(string tablet, string path)
@@ -229,43 +235,43 @@ namespace OpenTabletDriver.Console
             if (outputMode == null)
                 await Out.WriteLineAsync($"Invalid output mode '{path}'. Use paths like in '{nameof(ListOutputModes).ToLower()}'");
             else
-                await ModifyProfile(tablet, p => p.OutputMode = outputMode);
+                await ModifyProfile(tablet, p => Task.FromResult(p.OutputMode = outputMode));
         }
 
         private static async Task EnableTabletFilters(string tablet, params string[] filters)
         {
             await ModifyProfile(tablet,
-                s => AppendPluginStoreSettingsCollectionByPaths<IPositionedPipelineElement<IDeviceReport>>(s.Filters, filters));
+                async s => await AppendPluginStoreSettingsCollectionByPaths<IPositionedPipelineElement<IDeviceReport>>(s.Filters, filters));
         }
 
         private static async Task EnableTools(params string[] tools)
         {
-            await ModifySettings(s => AppendPluginStoreSettingsCollectionByPaths<ITool>(s.Tools, tools));
+            await ModifySettings(async s => await AppendPluginStoreSettingsCollectionByPaths<ITool>(s.Tools, tools));
         }
 
         private static async Task DisableTabletFilters(string tablet, params string[] filters)
         {
-            await ModifyProfile(tablet, s =>
+            await ModifyProfile(tablet, async s =>
             {
-                DisableAllInPluginStoreSettingsCollectionByPaths(s.Filters, filters);
+                await DisableAllInPluginStoreSettingsCollectionByPaths(s.Filters, filters);
             });
         }
 
         private static async Task DisableTools(string[] tools)
         {
-            await ModifySettings(s =>
+            await ModifySettings(async s =>
             {
-                DisableAllInPluginStoreSettingsCollectionByPaths(s.Tools, tools);
+                await DisableAllInPluginStoreSettingsCollectionByPaths(s.Tools, tools);
             });
         }
 
         private static async Task ResetTabletFilters(string tablet, params string[] filtersToReset)
         {
-            await ModifyProfile(tablet, s =>
+            await ModifyProfile(tablet, async s =>
             {
                 foreach (var filterToReset in filtersToReset)
                     s.Filters = new PluginSettingStoreCollection(s.Filters.Where(filter => filter.Path != filterToReset));
-                AppendPluginStoreSettingsCollectionByPaths<IPositionedPipelineElement<IDeviceReport>>(s.Filters, filtersToReset);
+                await AppendPluginStoreSettingsCollectionByPaths<IPositionedPipelineElement<IDeviceReport>>(s.Filters, filtersToReset);
             });
         }
 
@@ -399,7 +405,7 @@ namespace OpenTabletDriver.Console
         private static async Task ListFilters()
         {
             // Using the predicate stops output mode types from being listed.
-            await ListTypes<IPipelineElement<IDeviceReport>>(t => !t.IsAssignableTo(typeof(IOutputMode)));
+            await ListTypes<IPipelineElement<IDeviceReport>>(t => Task.FromResult(!t.IsAssignableTo(typeof(IOutputMode))));
         }
 
         private static async Task ListTools()

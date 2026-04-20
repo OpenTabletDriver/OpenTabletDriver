@@ -27,21 +27,21 @@ namespace OpenTabletDriver.Console
             await Driver.Instance.SetSettings(settings);
         }
 
-        static async Task ModifySettings(Action<Settings> func)
+        static async Task ModifySettings(Func<Settings,Task> func)
         {
             var settings = await GetSettings();
-            func.Invoke(settings);
+            await func.Invoke(settings);
             await ApplySettings(settings);
         }
 
-        static async Task ModifyProfile(string profileName, Action<Profile> func)
+        static async Task ModifyProfile(string profileName, Func<Profile,Task> func)
         {
             await ModifySettings(async s =>
             {
                 var profile = await GetProfile(profileName, s);
                 if (profile != null)
                 {
-                    func.Invoke(profile);
+                    await func.Invoke(profile);
                 }
                 else
                 {
@@ -70,7 +70,7 @@ namespace OpenTabletDriver.Console
             return profile ?? throw new ArgumentException($"Cannot find profile for tablet '{profileName}'");
         }
 
-        static async Task ListTypes<T>(Func<Type, bool> predicate = null)
+        static async Task ListTypes<T>(Func<Type, Task<bool>> predicate = null)
         {
             if (!await EnsureDaemonReady()) return;
             var types = AppInfo.PluginManager.GetChildTypes<T>();
@@ -82,7 +82,12 @@ namespace OpenTabletDriver.Console
 
             foreach (var type in types)
             {
-                if (predicate?.Invoke(type) ?? true)
+                bool predicateResult = true;
+
+                if (predicate != null)
+                    predicateResult = await predicate.Invoke(type);
+
+                if (predicateResult)
                 {
                     var name = AppInfo.PluginManager.GetFriendlyName(type.FullName);
                     var output = string.IsNullOrWhiteSpace(name) ? type.FullName : $"{type.FullName} [{name}]";
@@ -98,7 +103,7 @@ namespace OpenTabletDriver.Console
             return string.Join(null, hash.Select(b => b.ToString("X")));
         }
 
-        static void AppendPluginStoreSettingsCollectionByPaths<T>(PluginSettingStoreCollection pssc, params string[] paths) where T : class
+        static Task AppendPluginStoreSettingsCollectionByPaths<T>(PluginSettingStoreCollection pssc, params string[] paths) where T : class
         {
             foreach (var path in paths)
             {
@@ -113,9 +118,11 @@ namespace OpenTabletDriver.Console
                     existing.Enable = true;
                 }
             }
+
+            return Task.CompletedTask;
         }
 
-        static void DisableAllInPluginStoreSettingsCollectionByPaths(PluginSettingStoreCollection pssc, params string[] paths)
+        static Task DisableAllInPluginStoreSettingsCollectionByPaths(PluginSettingStoreCollection pssc, params string[] paths)
         {
             foreach (string path in paths)
             {
@@ -127,6 +134,8 @@ namespace OpenTabletDriver.Console
                 foreach (var plugin in plugins)
                     plugin.Enable = false;
             }
+
+            return Task.CompletedTask;
         }
     }
 }
