@@ -138,6 +138,7 @@
 | Wacom GD-1212-U                    |     Supported     |
 | Wacom GD-1218-U                    |     Supported     |
 | Wacom Cintiq 18SX (PL-800-U)       |     Supported     |
+| Wacom MTE-450                      |     Supported     |
 | Wacom PTH-450                      |     Supported     |
 | Wacom PTH-451                      |     Supported     |
 | Wacom PTH-650                      |     Supported     |
@@ -319,7 +320,6 @@
 | Wacom Cintiq 21UX (DTZ-2100)       |  Missing Features | Touch bars are not yet supported.
 | Wacom Cintiq 22HD (DTK-2200)       |  Missing Features | Touch Strips are not yet supported.
 | Wacom Cintiq 12WX (DTZ-1200W)      |  Missing Features | Touch bars and top side buttons are not yet supported.
-| Wacom MTE-450                      |  Missing Features | Wheel is not yet supported.
 | Wacom PTZ-1230                     |  Missing Features | Touch bars are not yet supported.
 | Wacom PTZ-1231W                    |  Missing Features | Touch bars are not yet supported.
 | Wacom PTZ-431W                     |  Missing Features | Touch bars are not yet supported.
