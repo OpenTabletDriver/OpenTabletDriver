@@ -31,6 +31,9 @@ git_prettyprint_ref() {
   fi
   local text="$(git log --format="%h {{DESCRIBEHERE}} - %aN - %as: %s" -1 "$1")"
   local describe="$(git describe --contains "${1}" 2>/dev/null)"
+  if [ "${describe}" == "" ]; then
+    describe="<untagged>"
+  fi
   sed "s/{{DESCRIBEHERE}}/${describe}/" <<< $text
 }
 
