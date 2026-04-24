@@ -30,7 +30,7 @@ git_prettyprint_ref() {
     return
   fi
   local text="$(git log --format="%h {{DESCRIBEHERE}} - %aN - %as: %s" -1 "$1")"
-  local describe="$(git describe --contains "${1}")"
+  local describe="$(git describe --contains "${1}" 2>/dev/null)"
   sed "s/{{DESCRIBEHERE}}/${describe}/" <<< $text
 }
 
