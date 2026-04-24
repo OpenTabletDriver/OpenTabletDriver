@@ -25,6 +25,10 @@ configs_path="OpenTabletDriver.Configurations/Configurations/"
 ### funcs
 
 git_prettyprint_ref() {
+  if [ "$1" == "" ]; then
+    echo "ERR: Cannot look up empty ref"
+    return
+  fi
   local text="$(git log --format="%h {{DESCRIBEHERE}} - %aN - %as: %s" -1 "$1")"
   local describe="$(git describe --contains "${1}")"
   sed "s/{{DESCRIBEHERE}}/${describe}/" <<< $text
