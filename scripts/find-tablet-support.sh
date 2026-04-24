@@ -117,7 +117,7 @@ echo "Tablet config: ${tablet_config}"
 
 tablet_config="${root_dir}"/"${configs_path}"/"${tablet_config}"
 
-commit_added="$(git log --follow --pretty=format:%H --diff-filter=AC -1 -- "${tablet_config}")"
+commit_added="$(git log --follow --pretty=format:%H --diff-filter=ARC -1 -- "${tablet_config}")"
 
 echo -e "\nAdded in:"
 git_prettyprint_ref "${commit_added}"
