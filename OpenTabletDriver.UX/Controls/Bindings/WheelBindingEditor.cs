@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Plugin.Tablet;
@@ -20,11 +21,8 @@ namespace OpenTabletDriver.UX.Controls.Bindings
                 }
             };
 
-            this.Content = new Scrollable
+            var stackLayout = new StackLayout
             {
-                Border = BorderType.None,
-                Content = new StackLayout
-                {
                     HorizontalContentAlignment = HorizontalAlignment.Stretch,
                     Spacing = 5,
                     Items =
@@ -32,6 +30,8 @@ namespace OpenTabletDriver.UX.Controls.Bindings
                         new Group
                         {
                             Text = "Clockwise Rotation Settings",
+                            TextFont = SystemFonts.Bold(11),
+                            TextColor = SystemColors.ControlText,
                             Content = new StackLayout
                             {
                                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
@@ -64,6 +64,8 @@ namespace OpenTabletDriver.UX.Controls.Bindings
                         new Group
                         {
                             Text = "Counter-Clockwise Rotation Settings",
+                            TextFont = SystemFonts.Bold(11),
+                            TextColor = SystemColors.ControlText,
                             Content = new StackLayout
                             {
                                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
@@ -95,8 +97,9 @@ namespace OpenTabletDriver.UX.Controls.Bindings
                         },
                         wheelButtonGroup
                     }
-                }
-            };
+                };
+
+            this.Content = stackLayout;
 
             SettingsBinding.DataValueChanged += (sender, args) =>
             {

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
@@ -18,6 +19,11 @@ namespace OpenTabletDriver.Plugin.Tablet
         [Required(ErrorMessage = $"{nameof(ButtonCount)} must be defined")]
         public uint ButtonCount { set; get; }
 
+        /// <summary>
+        /// Optional human-readable names for pen buttons, indexed by button number.
+        /// </summary>
+        public List<string> ButtonNames { set; get; }
+
         private bool _legacyButtonsHaveBeenSet;
 
         [Obsolete(Globals.LegacyTabletConfigurationProperty)]
@@ -28,8 +34,9 @@ namespace OpenTabletDriver.Plugin.Tablet
             {
                 _legacyButtonsHaveBeenSet = true;
                 ButtonCount = value.ButtonCount;
+                ButtonNames ??= value.ButtonNames;
             }
-            get => new() { ButtonCount = ButtonCount };
+            get => new() { ButtonCount = ButtonCount, ButtonNames = ButtonNames };
         }
 
         // hack which allows us to deserialize the object for backwards compatibility, but not emit it in serialization

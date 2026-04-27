@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Reflection;
+using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls.Generic;
 
 namespace OpenTabletDriver.UX.Controls.Bindings
@@ -132,6 +133,11 @@ namespace OpenTabletDriver.UX.Controls.Bindings
             disablePressure.CheckedBinding.Cast<bool>().Bind(SettingsBinding.Child(c => c.DisablePressure));
             disableTilt.CheckedBinding.Cast<bool>().Bind(SettingsBinding.Child(c => c.DisableTilt));
             enableDragBindings.CheckedBinding.Cast<bool>().Bind(SettingsBinding.Child(c => c.EnableDragBindings));
+        }
+
+        public void SetButtonNames(PenSpecifications specs)
+        {
+            penButtons.ButtonNames = specs?.ButtonNames;
         }
 
         private BindingDisplay tipButton, eraserButton;

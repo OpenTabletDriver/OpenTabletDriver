@@ -53,6 +53,8 @@ namespace OpenTabletDriver.UX.Controls.Generic
 
         public Orientation Orientation { set; get; } = DEFAULT_ORIENTATION;
         public bool ExpandContent { set; get; } = true;
+        public Font TextFont { set; get; }
+        public Color? TextColor { set; get; }
         public HorizontalAlignment TitleHorizontalAlignment { set; get; } = HorizontalAlignment.Left;
         public VerticalAlignment TitleVerticalAlignment { set; get; } = VerticalAlignment.Center;
 
@@ -65,12 +67,40 @@ namespace OpenTabletDriver.UX.Controls.Generic
             {
                 case (_, PluginPlatform.MacOS):
                 {
-                    base.Content = new GroupBox
+                    if (TextFont != null || TextColor.HasValue)
                     {
-                        Text = this.Text,
-                        Padding = new Padding(0, 2, 0, 0),
-                        Content = this.Content
-                    };
+                        var label = new Label
+                        {
+                            Text = this.Text,
+                            Font = TextFont ?? SystemFonts.Default(),
+                        };
+                        if (TextColor.HasValue)
+                            label.TextColor = TextColor.Value;
+
+                        base.Content = new StackLayout
+                        {
+                            HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                            Spacing = 2,
+                            Items =
+                            {
+                                label,
+                                new GroupBox
+                                {
+                                    Padding = new Padding(0, 2, 0, 0),
+                                    Content = this.Content
+                                }
+                            }
+                        };
+                    }
+                    else
+                    {
+                        base.Content = new GroupBox
+                        {
+                            Text = this.Text,
+                            Padding = new Padding(0, 2, 0, 0),
+                            Content = this.Content
+                        };
+                    }
                     break;
                 }
                 case (Orientation.Horizontal, _):
@@ -90,10 +120,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
                                 new StackLayoutItem
                                 {
                                     VerticalAlignment = TitleVerticalAlignment,
-                                    Control = new Label
-                                    {
-                                        Text = this.Text
-                                    }
+                                    Control = CreateLabel()
                                 },
                                 new StackLayoutItem(this.Content, ExpandContent)
                             }
@@ -116,11 +143,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
                             new StackLayoutItem
                             {
                                 HorizontalAlignment = TitleHorizontalAlignment,
-                                Control = new Label
-                                {
-                                    Text = this.Text,
-                                    Font = SystemFonts.Bold(9)
-                                }
+                                Control = CreateLabel(SystemFonts.Bold(9))
                             },
                             new StackLayoutItem
                             {
@@ -137,6 +160,18 @@ namespace OpenTabletDriver.UX.Controls.Generic
                     break;
                 }
             }
+        }
+
+        private Label CreateLabel(Font defaultFont = null)
+        {
+            var label = new Label
+            {
+                Text = this.Text,
+                Font = TextFont ?? defaultFont ?? SystemFonts.Default(),
+            };
+            if (TextColor.HasValue)
+                label.TextColor = TextColor.Value;
+            return label;
         }
 
         protected override void OnLoadComplete(EventArgs e)

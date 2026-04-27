@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Profiles;
@@ -85,6 +86,9 @@ namespace OpenTabletDriver.UX.Controls
 
             outputModeEditor.SetDisplaySize(DesktopInterop.VirtualScreen.Displays);
 
+            control.SelectedIndexChanged += (_, __) =>
+                auxBindingEditor.SetVisible(control.SelectedPage?.Content == auxBindingEditor);
+
             Log.Output += (_, message) => Application.Instance.AsyncInvoke(() =>
             {
                 if (message.Level > LogLevel.Info)
@@ -98,8 +102,11 @@ namespace OpenTabletDriver.UX.Controls
         private Placeholder placeholder;
         private LogView logView;
         private OutputModeEditor outputModeEditor;
-        private BindingEditor penBindingEditor, auxBindingEditor, mouseBindingEditor;
-        private List<BindingEditor> wheelBindingEditors = [];
+        private PenBindingEditor penBindingEditor;
+        private AuxiliaryBindingEditor auxBindingEditor;
+        private MouseBindingEditor mouseBindingEditor;
+        private List<WheelBindingEditor> wheelBindingEditors = [];
+        private List<TabPage> wheelTabPages = [];
         private PluginSettingStoreCollectionEditor<IPositionedPipelineElement<IDeviceReport>> filterEditor;
         private PluginSettingStoreCollectionEditor<ITool> toolEditor;
 
@@ -138,11 +145,15 @@ namespace OpenTabletDriver.UX.Controls
                 SetPageVisibility(penBindingEditor, tablet.Properties.Specifications.Pen != null);
                 SetPageVisibility(auxBindingEditor, tablet.Properties.Specifications.AuxiliaryButtons != null);
 
-                for (int i = 0; i < wheelBindingEditors.Count; i++)
-                    SetPageVisibility(wheelBindingEditors[i], (tablet.Properties.Specifications.Wheels?.Count ?? 0) > i);
+                foreach (var page in wheelTabPages)
+                    SetPageVisibility(page.Content, true);
 
                 SetPageVisibility(mouseBindingEditor, tablet.Properties.Specifications.MouseButtons != null);
                 SetPageVisibility(toolEditor, true);
+
+                penBindingEditor.SetButtonNames(tablet.Properties.Specifications.Pen);
+                auxBindingEditor.SetButtonNames(tablet.Properties.Specifications.AuxiliaryButtons);
+                mouseBindingEditor.SetButtonNames(tablet.Properties.Specifications.MouseButtons);
 
                 if (switchToOutput)
                     tabControl.SelectedIndex = 0;
@@ -154,10 +165,14 @@ namespace OpenTabletDriver.UX.Controls
                 SetPageVisibility(filterEditor, false);
                 SetPageVisibility(penBindingEditor, false);
                 SetPageVisibility(auxBindingEditor, false);
-                foreach (var controlItem in wheelBindingEditors)
-                    SetPageVisibility(controlItem, false);
+                foreach (var page in wheelTabPages)
+                    SetPageVisibility(page.Content, false);
                 SetPageVisibility(mouseBindingEditor, false);
                 SetPageVisibility(toolEditor, false);
+
+                penBindingEditor.SetButtonNames(null);
+                auxBindingEditor.SetButtonNames(null);
+                mouseBindingEditor.SetButtonNames(null);
 
                 if (tabControl.SelectedPage != logView.Parent)
                 {
@@ -172,23 +187,94 @@ namespace OpenTabletDriver.UX.Controls
 
         public void OnTabletChanged(TabletReference tablet)
         {
-            // ensure we have enough wheel binding editors
-            int tabletWheels = tablet?.Properties.Specifications.Wheels?.Count ?? 0;
-            if (tabletWheels > wheelBindingEditors.Count)
+            foreach (var page in wheelTabPages)
+                tabControl.Pages.Remove(page);
+            wheelTabPages.Clear();
+            wheelBindingEditors.Clear();
+
+            var wheels = tablet?.Properties.Specifications.Wheels;
+            if (wheels == null || wheels.Count == 0) return;
+
+            for (int i = 0; i < wheels.Count; i++)
             {
-                for (int i = wheelBindingEditors.Count; i < tabletWheels; i++)
-                {
-                    var wheelBindingEditor = new WheelBindingEditor(i);
-                    wheelBindingEditor.ProfileBinding.Bind(ProfileBinding);
-                    var pageIndex = tabControl.Pages.IndexOf(mouseBindingEditor.Parent as TabPage);
-                    wheelBindingEditors.Add(wheelBindingEditor);
-                    var wheelPage = new TabPage(wheelBindingEditor) { Text = $"Wheel {i + 1} Bindings" };
-                    if (pageIndex >= 0)
-                        tabControl.Pages.Insert(pageIndex, wheelPage);
-                    else
-                        tabControl.Pages.Add(wheelPage);
-                }
+                var editor = new WheelBindingEditor(i);
+                editor.ProfileBinding.Bind(ProfileBinding);
+                wheelBindingEditors.Add(editor);
             }
+
+            int insertAt = tabControl.Pages.IndexOf(mouseBindingEditor.Parent as TabPage);
+
+            foreach (var tabDefinition in WheelTabLayout.Create(wheels))
+            {
+                var page = CreateWheelTabPage(tabDefinition);
+                wheelTabPages.Add(page);
+
+                if (insertAt >= 0)
+                    tabControl.Pages.Insert(insertAt++, page);
+                else
+                    tabControl.Pages.Add(page);
+            }
+        }
+
+        private TabPage CreateWheelTabPage(WheelTabDefinition tabDefinition)
+        {
+            return tabDefinition.IsGrouped
+                ? CreateGroupedWheelTabPage(tabDefinition)
+                : CreateStandaloneWheelTabPage(tabDefinition);
+        }
+
+        private TabPage CreateGroupedWheelTabPage(WheelTabDefinition tabDefinition)
+        {
+            var stackLayout = new StackLayout
+            {
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                Spacing = 5
+            };
+
+            foreach (var wheel in tabDefinition.Wheels)
+            {
+                stackLayout.Items.Add(new StackLayout
+                {
+                    HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                    Spacing = 5,
+                    Padding = new Padding(0, 8, 0, 0),
+                    Items =
+                    {
+                        new Label
+                        {
+                            Text = wheel.Title,
+                            Font = SystemFonts.Bold(14),
+                            TextColor = SystemColors.ControlText
+                        },
+                        wheelBindingEditors[wheel.WheelIndex]
+                    }
+                });
+            }
+
+            return new TabPage
+            {
+                Text = tabDefinition.Text,
+                Content = CreateScrollable(stackLayout)
+            };
+        }
+
+        private TabPage CreateStandaloneWheelTabPage(WheelTabDefinition tabDefinition)
+        {
+            var wheel = tabDefinition.Wheels.Single();
+            return new TabPage
+            {
+                Text = tabDefinition.Text,
+                Content = CreateScrollable(wheelBindingEditors[wheel.WheelIndex])
+            };
+        }
+
+        private static Scrollable CreateScrollable(Control content)
+        {
+            return new Scrollable
+            {
+                Border = BorderType.None,
+                Content = content
+            };
         }
 
         public BindableBinding<ControlPanel, Profile> ProfileBinding
