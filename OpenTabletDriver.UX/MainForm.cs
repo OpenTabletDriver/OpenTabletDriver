@@ -742,8 +742,13 @@ namespace OpenTabletDriver.UX
         {
             try
             {
-                var log = await App.Driver.Instance.GetCurrentLog();
-                var diagnosticDump = new DiagnosticInfo(log, await App.Driver.Instance.GetDevices());
+                // The diagnostics retrieval methodology changed in #4527 — the
+                // local `new DiagnosticInfo(log, devices)` constructor no longer
+                // returns the full information that `GetDiagnosticInfo()` does
+                // (issue #4777). Match the file-export path at `ExportDiagnostics`
+                // above so the clipboard receives the same payload as a saved
+                // diagnostics .json file.
+                var diagnosticDump = await App.Driver.Instance.GetDiagnosticInfo();
 
                 Clipboard.Instance.Clear();
                 Clipboard.Instance.Text = diagnosticDump.ToString();
