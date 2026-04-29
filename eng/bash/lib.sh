@@ -93,7 +93,7 @@ fi
 
 ### Build Requirements
 
-DOTNET_VERSION="8.0"
+DOTNET_VERSION="10.0"
 
 # could do away with declare -g, but did it anyway for all of them for consistency
 # with NET_RUNTIME (a global variable without initial value in lib.sh)
