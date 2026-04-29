@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,8 @@ namespace OpenTabletDriver.UX.Controls
     {
         public LogView()
         {
+            Debug.Assert(App.Driver.IsConnected, "Tried to initialize log view without an active daemon");
+
             this.Orientation = Orientation.Vertical;
 
             var filterSelector = new FilterDropDown();
@@ -70,6 +73,7 @@ namespace OpenTabletDriver.UX.Controls
 
         private async Task InitializeAsync()
         {
+            Debug.Assert(App.Driver.IsConnected, "Tried to initialize log view without an active daemon");
             var currentMessages = await App.Driver.Instance.GetCurrentLog();
             messageList.DataStore = messageStore = new LogDataStore(currentMessages);
 

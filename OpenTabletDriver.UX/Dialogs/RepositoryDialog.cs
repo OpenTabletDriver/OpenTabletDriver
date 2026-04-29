@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Http;
 using Eto.Drawing;
@@ -106,9 +107,10 @@ namespace OpenTabletDriver.UX.Dialogs
 
         protected class TextBoxGroup : Group
         {
+            [SetsRequiredMembers]
             public TextBoxGroup(string text)
             {
-                base.Text = text;
+                base.Text = DefaultInputText = text;
                 base.Orientation = Orientation.Horizontal;
             }
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using Eto.Drawing;
@@ -161,6 +162,8 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
 
         public Vector2[] GetAreaCorners()
         {
+            Debug.Assert(Area != null, "Tried to get area corners but Area is null");
+
             var origin = new Vector2(Area.X, Area.Y);
             var matrix = Matrix3x2.CreateTranslation(-origin);
             matrix *= Matrix3x2.CreateRotation((float)(Area.Rotation * Math.PI / 180));

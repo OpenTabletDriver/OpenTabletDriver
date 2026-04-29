@@ -108,17 +108,12 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             base.OnDragDrop(args);
             try
             {
-                if (args.Data.ContainsUris && args.Data.Uris != null && args.Data.Uris.Length > 0)
-                {
-                    var uriList = args.Data.Uris;
-                    foreach (var uri in uriList)
-                    {
-                        if (uri.IsFile && File.Exists(uri.LocalPath))
-                        {
-                            await RequestPluginInstall?.Invoke(uri.LocalPath);
-                        }
-                    }
-                }
+                if (!args.Data.ContainsUris || args.Data.Uris is not { Length: > 0 }) return;
+
+                foreach (var uri in args.Data.Uris)
+                    if (uri.IsFile && File.Exists(uri.LocalPath))
+                        if (RequestPluginInstall != null)
+                            await RequestPluginInstall.Invoke(uri.LocalPath);
             }
             catch (Exception ex)
             {
