@@ -26,7 +26,7 @@ namespace OpenTabletDriver.Plugin.Output
         public abstract PipelinePosition Position { get; }
 
         [Resolved]
-        public ITimer Scheduler
+        public ITimer? Scheduler
         {
             set
             {
@@ -41,6 +41,7 @@ namespace OpenTabletDriver.Plugin.Output
                             UpdateState();
                         }
                     };
+                    this.scheduler.Interval = 1000 / Frequency;
                     this.scheduler.Start();
                 }
             }
@@ -53,10 +54,13 @@ namespace OpenTabletDriver.Plugin.Output
             set
             {
                 this.frequency = value;
-                if (Scheduler.Enabled)
-                    Scheduler.Stop();
-                Scheduler.Interval = 1000f / value;
-                Scheduler.Start();
+                if (Scheduler != null)
+                {
+                    if (Scheduler is { Enabled: true })
+                        Scheduler.Stop();
+                    Scheduler.Interval = 1000f / value;
+                    Scheduler.Start();
+                }
             }
             get => this.frequency;
         }

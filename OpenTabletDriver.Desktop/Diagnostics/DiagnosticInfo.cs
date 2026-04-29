@@ -24,7 +24,9 @@ namespace OpenTabletDriver.Desktop.Diagnostics
         public string AppVersion { private set; get; } = GetAppVersion();
 
         [JsonProperty("Build Date")]
-        public string BuildDate { private set; get; } = typeof(BuildDateAttribute).Assembly.GetCustomAttribute<BuildDateAttribute>().BuildDate;
+        public string BuildDate { private set; get; } =
+            typeof(BuildDateAttribute).Assembly.GetCustomAttribute<BuildDateAttribute>()?.BuildDate
+            ?? "<unknown build date>";
 
         [JsonProperty("Operating System")]
         public static OSInfo OperatingSystem => OSInfo.GetOSInfo();

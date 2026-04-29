@@ -115,13 +115,14 @@ namespace OpenTabletDriver.Console
         {
             foreach (string path in paths)
             {
-                var plugins = pssc.Where(x => x.Path == path).ToArray();
+                var plugins =
+                    pssc.Where(x => x != null && x.Path == path).Cast<PluginSettingStore>().ToArray();
 
                 if (plugins.Length == 0)
                     Out.WriteLineAsync("No plugins found matching path");
 
                 foreach (var plugin in plugins)
-                    plugin!.Enable = false;
+                    plugin.Enable = false;
             }
         }
     }

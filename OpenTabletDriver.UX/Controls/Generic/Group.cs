@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Interop;
@@ -29,8 +30,9 @@ namespace OpenTabletDriver.UX.Controls.Generic
         protected virtual Color VerticalBackgroundColor => SystemColors.WindowBackground;
 
         private string text;
-        public string Text
+        public required string Text
         {
+            [MemberNotNull(nameof(text))]
             set
             {
                 this.text = value;

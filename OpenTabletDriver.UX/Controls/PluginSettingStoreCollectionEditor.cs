@@ -43,7 +43,7 @@ namespace OpenTabletDriver.UX.Controls
             };
 
             settingStoreEditor.StoreBinding.Bind(
-                sourceSelector.SelectedItemBinding.Convert(t => StoreCollection?.FromType(t))
+                sourceSelector.SelectedItemBinding.Convert(t => t != null ? StoreCollection?.FromType(t) : null)
             );
 
             if (!Platform.IsMac) // Don't do this on macOS, causes poor UI performance.

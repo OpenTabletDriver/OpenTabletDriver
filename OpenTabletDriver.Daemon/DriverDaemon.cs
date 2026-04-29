@@ -484,6 +484,10 @@ namespace OpenTabletDriver.Daemon
         {
             string group = dev.Properties.Name;
             var tabletReference = outputMode.Tablet;
+
+            Debug.Assert(tabletReference != null,
+                "tabletReference was null. This was expected to be checked by the sender");
+
             var bindingHandler = new BindingHandler(tabletReference);
 
             var bindingServiceProvider = new ServiceManager();
@@ -675,7 +679,7 @@ namespace OpenTabletDriver.Daemon
             if (tablet == null)
                 throw new IOException("Device not found");
 
-            return Task.FromResult(tablet.GetDeviceString((byte)index));
+            return Task.FromResult(tablet.GetDeviceString((byte)index) ?? throw new InvalidOperationException($"Unable to look up device string on index {index}"));
         }
 
         public Task<IEnumerable<LogMessage>> GetCurrentLog()

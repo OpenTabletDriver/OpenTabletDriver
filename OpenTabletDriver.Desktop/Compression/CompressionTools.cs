@@ -40,7 +40,7 @@ namespace OpenTabletDriver.Desktop.Compression
                 // Manipulate the output filename here as desired.
                 var zipPath = Path.Combine(outputDir, entryFileName);
                 var directoryName = Path.GetDirectoryName(zipPath);
-                if (directoryName.Length > 0)
+                if (directoryName is { Length: > 0 })
                     Directory.CreateDirectory(directoryName);
 
                 // Skip directory entry

@@ -775,6 +775,7 @@ namespace OpenTabletDriver.UX
                 ex.ShowMessageBox();
             }
         }
+
         private static void CheckForUpdates()
         {
             // ReSharper disable once AsyncVoidMethod

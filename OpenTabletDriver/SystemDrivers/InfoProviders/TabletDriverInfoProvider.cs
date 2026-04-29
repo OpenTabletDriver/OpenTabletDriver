@@ -22,7 +22,7 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
                     return new DriverInfo
                     {
                         Name = "TabletDriver",
-                        Processes = [ .. processes ],
+                        Processes = [.. processes],
                         Status = DriverStatus.Active | DriverStatus.Blocking // TabletDriver opens tablets in exclusive mode by default
                     };
                 }

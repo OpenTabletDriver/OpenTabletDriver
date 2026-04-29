@@ -24,7 +24,7 @@ namespace OpenTabletDriver.Plugin.Attributes
         public T? GetValue<T>(PropertyInfo property)
         {
             var sourceType = property.ReflectedType;
-            var member = sourceType.GetMember(MemberName).First();
+            var member = sourceType!.GetMember(MemberName).First();
             try
             {
                 return member.MemberType switch

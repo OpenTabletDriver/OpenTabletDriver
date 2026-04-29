@@ -32,6 +32,8 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
 
         protected virtual DriverInfo? GetWinDriverInfo()
         {
+            if (pnpUtil == null) throw new InvalidOperationException($"pnpUtil is null. Run {nameof(Refresh)}() first");
+
             IEnumerable<Process> processes;
             var match = Heuristics.Any(name => Regex.IsMatch(pnpUtil, name, RegexOptions.IgnoreCase));
             if (match)

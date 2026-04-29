@@ -37,11 +37,13 @@ namespace OpenTabletDriver.Desktop.Binding
 
         private readonly TabletReference tablet;
 
-        public event Action<IDeviceReport>? Emit;
+        public event Action<IDeviceReport?>? Emit;
 
         public void Consume(IDeviceReport? report)
         {
-            HandleBinding(report);
+            if (report != null)
+                HandleBinding(report);
+
             Emit?.Invoke(report);
         }
 

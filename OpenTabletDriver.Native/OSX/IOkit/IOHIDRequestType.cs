@@ -1,4 +1,4 @@
-﻿// TODO: remove nullable disable
+// TODO: remove nullable disable
 #nullable disable
 
 namespace OpenTabletDriver.Native.OSX.IOkit

@@ -151,7 +151,7 @@ namespace OpenTabletDriver.Plugin.Output
                 pressureHandler.SetPressure(tabletReport.Pressure / (float)Tablet.Properties.Specifications.Pen.MaxPressure);
 
             // make sure to set the position last
-            if (report is IAbsolutePositionReport absReport)
+            if (Pointer != null && report is IAbsolutePositionReport absReport)
                 Pointer.SetPosition(absReport.Position);
             if (Pointer is ISynchronousPointer synchronousPointer)
             {

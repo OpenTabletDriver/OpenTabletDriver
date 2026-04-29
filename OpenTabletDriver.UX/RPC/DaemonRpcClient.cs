@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.RPC;
@@ -21,6 +22,7 @@ namespace OpenTabletDriver.UX.RPC
 
         protected override void OnConnected()
         {
+            Debug.Assert(IsConnected, $"{nameof(OnConnected)} called without being connected");
             base.OnConnected();
 
             Instance.Message += (sender, e) =>

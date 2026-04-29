@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading;
 using OpenTabletDriver.Plugin;
@@ -76,6 +77,7 @@ namespace OpenTabletDriver.Devices
         /// </summary>
         public event EventHandler<bool>? ConnectionStateChanged;
 
+        [MemberNotNullWhen(true, nameof(ReportStream))]
         protected virtual bool Initialize()
         {
             try
@@ -106,7 +108,7 @@ namespace OpenTabletDriver.Devices
                 Connected = true;
                 while (Connected)
                 {
-                    var data = ReportStream.Read();
+                    var data = ReportStream!.Read();
                     if (Parser.Parse(data) is T report)
                         OnReport(report);
 
