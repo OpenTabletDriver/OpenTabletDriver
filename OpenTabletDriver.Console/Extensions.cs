@@ -57,7 +57,7 @@ namespace OpenTabletDriver.Console
                         if (showIndex)
                             yield return $"[{index}]: {str}";
                         else if (store.Enable)
-                            yield return store.Format()!; // suppress null-check as it's known non-null if store is enabled
+                            yield return str;
                         // else nothing if disabled
                     }
                     index++;
