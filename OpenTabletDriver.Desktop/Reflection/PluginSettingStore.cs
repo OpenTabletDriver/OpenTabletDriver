@@ -25,7 +25,9 @@ namespace OpenTabletDriver.Desktop.Reflection
             if (source != null)
             {
                 var sourceType = source.GetType();
-                Path = sourceType.FullName!;
+
+                Path = sourceType.FullName ??
+                       throw new InvalidOperationException($"Could not look up full name for type {sourceType}");
                 Settings = GetSettingsForType(sourceType, source);
                 Enable = enable;
             }
