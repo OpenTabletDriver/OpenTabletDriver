@@ -1,9 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
 
-// TODO: remove nullable disable
-#nullable disable
-
 namespace OpenTabletDriver.Native.OSX.Timers
 {
     [StructLayout(LayoutKind.Sequential)]
