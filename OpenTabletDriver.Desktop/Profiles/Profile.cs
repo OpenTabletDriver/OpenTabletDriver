@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop.Output;
 using OpenTabletDriver.Desktop.Reflection;
@@ -11,8 +10,6 @@ namespace OpenTabletDriver.Desktop.Profiles
 {
     public class Profile : ViewModel
     {
-        private string tablet;
-        private PluginSettingStore outputMode;
         private AbsoluteModeSettings? absoluteMode;
         private RelativeModeSettings? relativeMode;
         private BindingSettings bindings = new BindingSettings();
@@ -21,17 +18,15 @@ namespace OpenTabletDriver.Desktop.Profiles
         [JsonProperty(nameof(Tablet))]
         public required string Tablet
         {
-            [MemberNotNull(nameof(tablet))]
-            set => this.RaiseAndSetIfChanged(ref tablet!, value);
-            get => tablet;
+            get;
+            set => this.RaiseAndSetIfChanged(ref field, value);
         }
 
         [JsonProperty(nameof(OutputMode))]
         public required PluginSettingStore OutputMode
         {
-            [MemberNotNull(nameof(outputMode))]
-            set => RaiseAndSetIfChanged(ref outputMode!, value);
-            get => outputMode;
+            get;
+            set => RaiseAndSetIfChanged(ref field, value);
         }
 
         [JsonProperty(nameof(Filters))]
