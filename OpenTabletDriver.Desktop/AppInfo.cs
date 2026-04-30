@@ -53,8 +53,8 @@ namespace OpenTabletDriver.Desktop
                 PluginPlatform.MacOS => new AppInfo()
                 {
                     AppDataDirectory = GetExistingPathOrLast(Path.Join(ProgramDirectory, "userdata"), "~/Library/Application Support/OpenTabletDriver"),
-                    TemporaryDirectory = GetPath("$TMPDIR/OpenTabletDriver")!,
-                    CacheDirectory = GetPath("~/Library/Caches/OpenTabletDriver")!,
+                    TemporaryDirectory = GetPath("$TMPDIR/OpenTabletDriver"),
+                    CacheDirectory = GetPath("~/Library/Caches/OpenTabletDriver"),
                 },
                 _ => throw new InvalidOperationException($"Unsupported platform {SystemInterop.CurrentPlatform}"),
             };
