@@ -66,7 +66,11 @@ namespace OpenTabletDriver.Console
             var wheelIndex = 0;
             foreach (var wheelBinding in wheelBindings)
             {
-                yield return $"Wheel {wheelIndex + 1} Button Bindings: [{string.Join(", ", wheelBinding.WheelButtons.Format())}]\nWheel {wheelIndex + 1} Clockwise Rotation: [{wheelBinding.ClockwiseRotation.Format()}]@{wheelBinding.ClockwiseActivationThreshold}°\nWheel {wheelIndex + 1} Counter-Clockwise Rotation: [{wheelBinding.CounterClockwiseRotation.Format()}]@{wheelBinding.CounterClockwiseActivationThreshold}°";
+                yield return $"""
+                            Wheel {wheelIndex + 1} Button Bindings: [{string.Join(", ", wheelBinding.WheelButtons.Format())}]
+                            Wheel {wheelIndex + 1} Clockwise Rotation: [{wheelBinding.ClockwiseRotation.Format()}]@{wheelBinding.ClockwiseActivationThreshold}°
+                            Wheel {wheelIndex + 1} Counter-Clockwise Rotation: [{wheelBinding.CounterClockwiseRotation.Format()}]@{wheelBinding.CounterClockwiseActivationThreshold}°
+                            """;
                 wheelIndex++;
             }
         }
