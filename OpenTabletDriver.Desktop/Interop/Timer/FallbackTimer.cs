@@ -45,7 +45,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
             float nextNotification = 0;
             float elapsedMilliseconds;
 
-            Stopwatch stopWatch = new Stopwatch();
+            var stopWatch = new Stopwatch();
             stopWatch.Start();
 
             while (this.runTimer)

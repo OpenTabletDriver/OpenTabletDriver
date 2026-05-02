@@ -70,6 +70,15 @@ dotnet_style_prefer_simplified_boolean_expressions = true:warning
 dotnet_style_null_propagation = true:warning
 dotnet_style_prefer_is_null_check_over_reference_equality_method = true:warning
 
+# C# Style Rules
+# https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/language-rules#c-style-rules
+
+## prefer 'var' usage
+csharp_style_var_when_type_is_apparent = true:warning
+csharp_style_var_elsewhere = true:suggestion
+### except for built-in types where not using var can be more clear
+csharp_style_var_for_built_in_types = false:suggestion
+
 [*.{sh,md,csproj,json,yml}]
 indent_size = 2
 

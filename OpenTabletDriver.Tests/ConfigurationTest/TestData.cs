@@ -25,7 +25,7 @@ namespace OpenTabletDriver.Tests.ConfigurationTest
             var result = new TheoryData<TestTabletConfiguration>();
             foreach (var configFile in Directory.EnumerateFiles(GetConfigDir(), "*.json", SearchOption.AllDirectories))
             {
-                FileInfo configFileInfo = new FileInfo(configFile);
+                var configFileInfo = new FileInfo(configFile);
                 var ttc = new TestTabletConfiguration
                 {
                     Configuration = new Lazy<TabletConfiguration>(() => Deserialize(configFileInfo)),

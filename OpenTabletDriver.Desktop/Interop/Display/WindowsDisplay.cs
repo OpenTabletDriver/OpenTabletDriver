@@ -48,7 +48,7 @@ namespace OpenTabletDriver.Desktop.Interop.Display
             List<DisplayInfo> displayCollection = [];
             MonitorEnumDelegate monitorDelegate = delegate (IntPtr hMonitor, IntPtr hdcMonitor, ref Rect lprcMonitor, IntPtr dwData)
             {
-                MonitorInfoEx monitorInfo = new MonitorInfoEx();
+                var monitorInfo = new MonitorInfoEx();
                 monitorInfo.size = (uint)Marshal.SizeOf(monitorInfo);
                 if (GetMonitorInfo(hMonitor, ref monitorInfo))
                 {
@@ -63,7 +63,7 @@ namespace OpenTabletDriver.Desktop.Interop.Display
                         bottom = info.dmPositionY + info.dmPelsHeight
                     };
 
-                    DisplayInfo displayInfo = new DisplayInfo(monitor, monitorInfo.flags);
+                    var displayInfo = new DisplayInfo(monitor, monitorInfo.flags);
                     displayCollection.Add(displayInfo);
                 }
                 return true;

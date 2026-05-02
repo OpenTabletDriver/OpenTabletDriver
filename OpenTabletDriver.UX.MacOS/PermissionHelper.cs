@@ -106,7 +106,7 @@ namespace OpenTabletDriver.UX.MacOS
             alert.Buttons[2].Target = cancelHandler;
 
             //Prevent our alert obscuring the system permission dialog.
-            Thread thread = new Thread(() =>
+            var thread = new Thread(() =>
             {
                 Thread.Sleep(150);
                 NSApplication.SharedApplication.InvokeOnMainThread(() =>

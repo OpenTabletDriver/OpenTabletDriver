@@ -153,7 +153,7 @@ namespace OpenTabletDriver.UX.Controls
         {
             if (messages.Any())
             {
-                StringBuilder sb = new StringBuilder();
+                var sb = new StringBuilder();
                 foreach (var message in messages)
                 {
                     var line = Log.GetStringFormat(message);

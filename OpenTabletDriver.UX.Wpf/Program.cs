@@ -9,7 +9,7 @@ namespace OpenTabletDriver.UX.Wpf
         [STAThread]
         public static void Main(string[] args)
         {
-            WindowsIdentity identity = WindowsIdentity.GetCurrent();
+            var identity = WindowsIdentity.GetCurrent();
             WindowsPrincipal principal = new(identity);
             if (principal.IsInRole(WindowsBuiltInRole.Administrator))
             {

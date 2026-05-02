@@ -502,7 +502,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
 
         private void SetTitle(IEnumerable<TabletReference> tablets)
         {
-            StringBuilder sb = new StringBuilder("Tablet Debugger");
+            var sb = new StringBuilder("Tablet Debugger");
             var tabletReferenceArr = tablets as TabletReference[] ?? [.. tablets];
 
             if (tabletReferenceArr.Length != 0)
