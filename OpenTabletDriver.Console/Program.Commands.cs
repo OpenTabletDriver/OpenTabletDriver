@@ -322,6 +322,7 @@ namespace OpenTabletDriver.Console
             await Out.WriteLineAsync($"Tip Binding: {profile.BindingSettings.TipButton.Format() ?? "None"}@{profile.BindingSettings.TipActivationThreshold}%");
             await Out.WriteLineAsync($"Pen Bindings: {string.Join(", ", profile.BindingSettings.PenButtons.Format())}");
             await Out.WriteLineAsync($"Express Key Bindings: {string.Join(", ", profile.BindingSettings.AuxButtons.Format())}");
+            await Out.WriteLineAsync($"Wheel Bindings:\n{string.Join("\n", profile.BindingSettings.WheelBindings.Format())}");
         }
 
         private static async Task GetMiscSettings(string tablet)
