@@ -398,7 +398,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             // don't do anything if there isn't anything to do anyway
             if (viewmodel.AdditionalStatistics.Children.Count == 0) return;
 
-            await Task.Run(async () =>
+            await Application.Instance.InvokeAsync(async () =>
             {
                 var outerContainer = new StackLayout
                 {
