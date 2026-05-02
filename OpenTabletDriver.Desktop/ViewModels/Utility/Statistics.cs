@@ -246,7 +246,7 @@ namespace OpenTabletDriver.Desktop.ViewModels.Utility
                 button.Value switch
                 { // add 1 to key number to display human-friendly number
                     null => $"{button.Key + 1}✔",
-                    false => $"{button.Key + 1}↓️️",
+                    false => $"{button.Key + 1}↓",
                     true => $"{button.Key + 1}↑",
                 };
         }
