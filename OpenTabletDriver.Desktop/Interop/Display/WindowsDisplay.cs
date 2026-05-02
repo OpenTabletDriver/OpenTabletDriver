@@ -17,10 +17,16 @@ namespace OpenTabletDriver.Desktop.Interop.Display
         {
             try
             {
-                SetProcessDpiAwareness(2);
-                Log.Debug("Display", "DPI Awareness enabled");
+                int dpiResult = SetProcessDpiAwareness(2);
+                if (dpiResult == 0) // S_OK
+                    Log.Debug("Display", "DPI Awareness enabled");
+                else
+                    Log.Write("Display", $"Could not enable DPI awareness (HRESULT: 0x{dpiResult:X8})");
             }
-            catch { }
+            catch
+            {
+                Log.Write("Display", "Silently catching exception while setting DPI awareness");
+            }
 
             var monitors = GetDisplays();
             var primary = monitors.FirstOrDefault(m => m.IsPrimary);
