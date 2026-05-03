@@ -266,6 +266,7 @@ namespace OpenTabletDriver.Daemon
 
                         outputMode.DisablePressure = profile.BindingSettings.DisablePressure;
                         outputMode.DisableTilt = profile.BindingSettings.DisableTilt;
+                        outputMode.DisableRotation = profile.BindingSettings.DisableRotation;
                     }
                 }
 
@@ -293,6 +294,12 @@ namespace OpenTabletDriver.Daemon
                 Resynchronize?.Invoke(this, EventArgs.Empty);
                 return Task.CompletedTask;
             }
+        }
+
+        private static void LogRotationState(string group, Profile profile)
+        {
+            Log.Write(group,
+                $"Rotation: {(profile.BindingSettings.DisableRotation ? "Disabled" : "Enabled")}");
         }
 
         private static void LogTiltState(string group, Profile profile)
