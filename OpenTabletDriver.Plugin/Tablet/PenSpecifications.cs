@@ -13,6 +13,11 @@ namespace OpenTabletDriver.Plugin.Tablet
         public uint MaxPressure { set; get; }
 
         /// <summary>
+        /// The maximum rotation that the pen supports.
+        /// </summary>
+        public uint MaxRotation { set; get; }
+
+        /// <summary>
         /// Specifications for the pen buttons.
         /// </summary>
         [Required(ErrorMessage = $"{nameof(ButtonCount)} must be defined")]

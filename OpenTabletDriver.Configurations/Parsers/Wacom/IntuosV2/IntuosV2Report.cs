@@ -32,8 +32,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2
             NearProximity = report[1].IsBitSet(5);
             HoverDistance = report[16];
 
-            const uint MAX_ROTATION = 2047;
-            Rotation = (double)(report[12] | ((report[13] & 0x07) << 8)) / MAX_ROTATION * 360;
+            Rotation = report[12] | ((report[13] & 0x07) << 8);
         }
 
         public byte[] Raw { set; get; }
