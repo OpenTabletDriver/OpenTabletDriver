@@ -16,7 +16,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
     {
         public PluginMetadataList()
         {
-            ItemTextBinding = Binding.Property<PluginMetadata, string>(m => m.Installed ? $"✔ {m.Name}" : m.Name);
+            ItemTextBinding = Binding.Property<PluginMetadata, string>(m => m.Installed ? $"✓ {m.Name}" : m.Name);
 
             Refresh();
             AppInfo.PluginManager.AssembliesChanged += (sender, e) => Refresh();
