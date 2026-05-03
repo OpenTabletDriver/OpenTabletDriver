@@ -15,7 +15,7 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// <summary>
         /// The maximum rotation that the pen supports.
         /// </summary>
-        public uint MaxRotation { set; get; }
+        public uint? MaxRotation { set; get; }
 
         /// <summary>
         /// Specifications for the pen buttons.
