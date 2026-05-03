@@ -79,6 +79,13 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             input_absinfo* yTiltPtr = &yTilt;
             Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_TILT_Y, (IntPtr)yTiltPtr);
 
+            var rotation = new input_absinfo
+            {
+                maximum = MaxRotation
+            };
+            input_absinfo* rotationPtr = &rotation;
+            Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_Z, (IntPtr)rotationPtr);
+
             Device.EnableTypeCodes(
                 EventType.EV_KEY,
                 supportedEventCodes
