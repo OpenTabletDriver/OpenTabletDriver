@@ -32,7 +32,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2
             NearProximity = report[1].IsBitSet(5);
             HoverDistance = report[16];
 
-            Rotation = report[12] | ((report[13] & 0x07) << 8);
+            Rotation = (uint)(report[12] | ((report[13] & 0x07) << 8));
         }
 
         public byte[] Raw { set; get; }
@@ -43,6 +43,6 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2
         public bool[] PenButtons { set; get; }
         public bool NearProximity { set; get; }
         public uint HoverDistance { set; get; }
-        public double Rotation { set; get; }
+        public uint Rotation { set; get; }
     }
 }
