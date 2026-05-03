@@ -145,6 +145,8 @@ namespace OpenTabletDriver.Plugin.Output
                 eraserHandler.SetEraser(eraserReport.Eraser);
             if (report is ITiltReport tiltReport && Pointer is ITiltHandler tiltHandler && !DisableTilt)
                 tiltHandler.SetTilt(tiltReport.Tilt);
+            if (report is IRotationReport rotationReport && Pointer is IRotationHandler rotationHandler)
+                rotationHandler.SetRotation(rotationReport.Rotation / (float)Tablet.Properties.Specifications.Pen.MaxRotation);
             if (report is ITabletReport tabletReport && Pointer is IPressureHandler pressureHandler &&
                 !DisablePressure && Tablet?.Properties.Specifications.Pen != null)
                 pressureHandler.SetPressure(tabletReport.Pressure / (float)Tablet.Properties.Specifications.Pen.MaxPressure);
