@@ -13,14 +13,20 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 11
-    }
+    },
+    "Wheels": [
+      {
+        "RelativeWheelSteps": 12,
+        "ButtonCount": 0
+      }
+    ]
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 9580,
       "ProductID": 104,
       "InputReportLength": 12,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.InspiroyReportParser",
       "DeviceStrings": {
         "201": "HUION_T(21m|255)_\\d{6}$"
       },
