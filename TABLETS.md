@@ -229,6 +229,7 @@
 | Huion H420                         |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | Huion H580X                        |    Has Quirks     | User may have to replug their tablet until it is detected.
 | Huion H690                         |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
+| Huion H1061P                       |    Has Quirks     | Group keys act like auxiliary buttons.
 | Huion Kamvas 13 (Gen 3)            |    Has Quirks     | Function-switch buttons act as regular auxiliary keys.
 | Huion New 1060 Plus (2048)         |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 1
 | Huion osu! Tablet                  |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0. Uses the same configuration as the Huion 420.
@@ -269,7 +270,6 @@
 | Huion GT-156HD V2                  |  Missing Features | Touch bar is not yet supported.
 | Huion GT-221                       |  Missing Features | Touch bar is not yet supported.
 | Huion GT-221 Pro                   |  Missing Features | Touch bar is not yet supported.
-| Huion H1061P                       |  Missing Features | Roller is not yet supported. Group keys act like auxiliary buttons.
 | Huion H1161                        |  Missing Features | Tablet buttons are not yet supported.
 | Huion H610 Pro V3                  |  Missing Features | Tablet buttons are not yet supported. Windows: Requires Zadig's WinUSB to be installed on interface 1. Current tablet configuration has very low resolution.
 | Huion HC16                         |  Missing Features | Wheel is not yet supported.
