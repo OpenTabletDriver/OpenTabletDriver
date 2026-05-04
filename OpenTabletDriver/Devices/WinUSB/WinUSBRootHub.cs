@@ -109,9 +109,10 @@ namespace OpenTabletDriver.Devices.WinUSB
                 var winUsbInterface = new WinUSBInterface(devicePath);
                 list.Add(winUsbInterface);
             }
-            catch
+            catch (Exception ex)
             {
                 Log.Write("WinUSB", $"Cannot create device for '{devicePath}'");
+                Log.Exception(ex);
             }
         }
 
