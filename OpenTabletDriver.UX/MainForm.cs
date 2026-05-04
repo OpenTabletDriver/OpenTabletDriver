@@ -742,8 +742,7 @@ namespace OpenTabletDriver.UX
         {
             try
             {
-                var log = await App.Driver.Instance.GetCurrentLog();
-                var diagnosticDump = new DiagnosticInfo(log, await App.Driver.Instance.GetDevices());
+                var diagnosticDump = await App.Driver.Instance.GetDiagnosticInfo();
 
                 Clipboard.Instance.Clear();
                 Clipboard.Instance.Text = diagnosticDump.ToString();
