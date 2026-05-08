@@ -1,5 +1,4 @@
 
-using OpenTabletDriver.Plugin.Tablet;
 using System.Numerics;
 
 namespace OpenTabletDriver.Plugin
