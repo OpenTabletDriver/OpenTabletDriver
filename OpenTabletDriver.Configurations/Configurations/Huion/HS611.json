@@ -12,7 +12,7 @@
       "ButtonCount": 2
     },
     "AuxiliaryButtons": {
-      "ButtonCount": 10
+      "ButtonCount": 18
     },
     "Wheels": [
       {
@@ -46,6 +46,24 @@
       "InitializationStrings": [
         200
       ]
+    }
+  ],
+  "AuxiliaryDeviceIdentifiers": [
+    {
+      "VendorID": 9580,
+      "ProductID": 109,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.HS611MediaAuxReportParser",
+      "Attributes": {
+        "Interface": "2"
+      }
+    },
+    {
+      "VendorID": 9580,
+      "ProductID": 111,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.HS611MediaAuxReportParser",
+      "Attributes": {
+        "Interface": "2"
+      }
     }
   ],
   "Attributes": {

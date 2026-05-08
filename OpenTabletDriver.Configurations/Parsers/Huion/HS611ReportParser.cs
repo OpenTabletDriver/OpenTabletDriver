@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using OpenTabletDriver.Configurations.Parsers.UCLogic;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.Huion
@@ -15,7 +14,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Huion
             return data[1] switch
             {
                 TOUCH_STRIP => new HuionWheelReport(data),
-                _ when data[1].IsBitSet(6) => new UCLogicAuxReport(data),
+                _ when data[1].IsBitSet(6) => new HS611AuxReport(data),
                 _ => new TiltTabletReport(data, false, true)
             };
         }
