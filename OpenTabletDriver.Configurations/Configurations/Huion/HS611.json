@@ -13,14 +13,21 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 10
-    }
+    },
+    "Wheels": [
+      {
+        "AbsoluteWheelMax": 7,
+        "AngleOfZeroReading": 90.0,
+        "ButtonCount": 0
+      }
+    ]
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 9580,
       "ProductID": 109,
       "InputReportLength": 12,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.HS611ReportParser",
       "DeviceStrings": {
         "201": "HUION_T19c_\\d{6}$"
       },
@@ -32,7 +39,7 @@
       "VendorID": 9580,
       "ProductID": 111,
       "InputReportLength": 12,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.HS611ReportParser",
       "DeviceStrings": {
         "201": "HUION_T19c_\\d{6}$"
       },
