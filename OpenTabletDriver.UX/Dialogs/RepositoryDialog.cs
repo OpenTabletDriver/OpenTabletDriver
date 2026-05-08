@@ -112,11 +112,10 @@ namespace OpenTabletDriver.UX.Dialogs
                 base.Orientation = Orientation.Horizontal;
             }
 
-            private string inputText;
             public string InputText
             {
-                protected set => this.inputText = value;
-                get => this.inputText == null || this.inputText?.Length == 0 ? DefaultInputText : this.inputText;
+                protected set;
+                get => field == null || field?.Length == 0 ? DefaultInputText : field;
             }
 
             public string DefaultInputText { set; get; }

@@ -11,45 +11,40 @@ namespace OpenTabletDriver.Desktop
 {
     public class Settings : ViewModel
     {
-        private ProfileCollection profiles = new ProfileCollection();
-        private bool lockUsableAreaDisplay, lockUsableAreaTablet;
-        private PluginSettingStoreCollection tools = new PluginSettingStoreCollection();
-        private string revision = GetVersion();
-
         [JsonProperty(nameof(Revision))]
         public string Revision
         {
-            set => this.RaiseAndSetIfChanged(ref revision, value);
-            get => revision;
-        }
+            set => this.RaiseAndSetIfChanged(ref field, value);
+            get;
+        } = GetVersion();
 
         [JsonProperty(nameof(Profiles))]
         public ProfileCollection Profiles
         {
-            set => this.RaiseAndSetIfChanged(ref profiles, value);
-            get => profiles;
-        }
+            set => this.RaiseAndSetIfChanged(ref field, value);
+            get;
+        } = [];
 
         [JsonProperty(nameof(LockUsableAreaDisplay))]
         public bool LockUsableAreaDisplay
         {
-            set => this.RaiseAndSetIfChanged(ref this.lockUsableAreaDisplay, value);
-            get => this.lockUsableAreaDisplay;
+            set => this.RaiseAndSetIfChanged(ref field, value);
+            get;
         }
 
         [JsonProperty(nameof(LockUsableAreaTablet))]
         public bool LockUsableAreaTablet
         {
-            set => this.RaiseAndSetIfChanged(ref this.lockUsableAreaTablet, value);
-            get => this.lockUsableAreaTablet;
+            set => this.RaiseAndSetIfChanged(ref field, value);
+            get;
         }
 
         [JsonProperty(nameof(Tools))]
         public PluginSettingStoreCollection Tools
         {
-            set => RaiseAndSetIfChanged(ref this.tools, value);
-            get => this.tools;
-        }
+            set => RaiseAndSetIfChanged(ref field, value);
+            get;
+        } = [];
 
         public static Settings GetDefaults()
         {

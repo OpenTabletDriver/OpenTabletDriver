@@ -7,8 +7,8 @@ namespace OpenTabletDriver.Benchmarks.Parser
 {
     public class ReportParserBenchmark
     {
-        private TabletReportParser parser = new TabletReportParser();
-        private SkipByteTabletReportParser skipParser = new SkipByteTabletReportParser();
+        private readonly TabletReportParser parser = new TabletReportParser();
+        private readonly SkipByteTabletReportParser skipParser = new SkipByteTabletReportParser();
         private byte[] data;
 
         [GlobalSetup]

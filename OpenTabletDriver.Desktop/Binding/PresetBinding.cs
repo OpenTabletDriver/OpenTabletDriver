@@ -13,10 +13,10 @@ namespace OpenTabletDriver.Desktop.Binding
     public class PresetBinding : IStateBinding
     {
         private const int TIMEOUT = 50;
-        private readonly static HPETDeltaStopwatch _stopwatch = new();
+        private static readonly HPETDeltaStopwatch _stopwatch = new();
 
-        public readonly static IReadOnlyCollection<Preset> Presets = AppInfo.PresetManager.GetPresets();
-        public static string[] ValidPresets => Presets.Select(x => x.Name).ToArray();
+        public static readonly IReadOnlyCollection<Preset> Presets = AppInfo.PresetManager.GetPresets();
+        public static string[] ValidPresets => [.. Presets.Select(x => x.Name)];
 
         [Property("Preset"), PropertyValidated(nameof(ValidPresets))]
         public string Preset { set; get; }

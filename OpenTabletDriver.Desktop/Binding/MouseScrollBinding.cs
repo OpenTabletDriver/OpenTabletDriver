@@ -16,10 +16,7 @@ namespace OpenTabletDriver.Desktop.Binding
     public class MouseScrollBinding : IStateBinding
     {
         private const string PLUGIN_NAME = "Mouse Scroll Binding";
-
-        private ITimer? _timer;
         private ScrollDirection _direction;
-        private int _interval = 1;
 
         [Resolved]
         public IMouseScrollHandler? Pointer { set; get; }
@@ -27,18 +24,18 @@ namespace OpenTabletDriver.Desktop.Binding
         [Resolved]
         public ITimer? Timer
         {
-            get => _timer;
+            get;
             set
             {
-                if (_timer != null)
-                    _timer.Elapsed -= Scroll;
+                if (field != null)
+                    field.Elapsed -= Scroll;
 
-                _timer = value;
+                field = value;
 
-                if (_timer != null)
+                if (field != null)
                 {
-                    _timer.Interval = _interval;
-                    _timer.Elapsed += Scroll;
+                    field.Interval = Interval;
+                    field.Elapsed += Scroll;
                 }
             }
         }
@@ -65,8 +62,6 @@ namespace OpenTabletDriver.Desktop.Binding
             }
         }
 
-        private int _amount = 120;
-
         [Property("Amount"),
          DefaultPropertyValue(120),
          ToolTip("The amount to scroll. A negative value will scroll up or left " +
@@ -74,9 +69,9 @@ namespace OpenTabletDriver.Desktop.Binding
                  "Note: A tick equals to 120 on Windows & Linux.")]
         public int Amount
         {
-            get => _amount;
-            set => _amount = value != 0 ? value : 1;
-        }
+            get;
+            set => field = value != 0 ? value : 1;
+        } = 120;
 
         [Property("Interval"),
          DefaultPropertyValue(300),
@@ -84,14 +79,13 @@ namespace OpenTabletDriver.Desktop.Binding
          ToolTip("The interval at which to scroll.")]
         public int Interval
         {
-            get => _interval;
+            get;
             set
             {
-                _interval = Math.Max(1, value);
-                if (_timer != null)
-                    _timer.Interval = _interval;
+                field = Math.Max(1, value);
+                Timer?.Interval = field;
             }
-        }
+        } = 1;
 
         public void Press(TabletReference tablet, IDeviceReport report)
         {
@@ -112,9 +106,8 @@ namespace OpenTabletDriver.Desktop.Binding
                 synchronousPointer.Flush();
         }
 
-        private static IEnumerable<string>? validDirections;
         public static IEnumerable<string> ValidDirections =>
-            validDirections ??= Enum.GetValues<ScrollDirection>().Select(Enum.GetName)!;
+            field ??= Enum.GetValues<ScrollDirection>().Select(Enum.GetName)!;
 
         public override string ToString() => $"{PLUGIN_NAME}: Direction: {Direction}, Amount: {Amount}, Interval: {Interval}";
     }

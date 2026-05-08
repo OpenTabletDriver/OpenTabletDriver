@@ -13,12 +13,11 @@ namespace OpenTabletDriver.ComponentProviders
     {
         public DeviceHubsProvider(IServiceProvider serviceProvider)
         {
-            DeviceHubs = Assembly.GetExecutingAssembly().DefinedTypes
+            DeviceHubs = [.. Assembly.GetExecutingAssembly().DefinedTypes
                 .Where(type => type.IsAssignableTo(typeof(IDeviceHub))
                     && type.GetCustomAttribute<DeviceHubAttribute>() != null
                     && (type.GetCustomAttribute<SupportedPlatformAttribute>()?.IsCurrentPlatform ?? true))
-                .Select(type => (IDeviceHub)ActivatorUtilities.CreateInstance(serviceProvider, type))
-                .ToArray();
+                .Select(type => (IDeviceHub)ActivatorUtilities.CreateInstance(serviceProvider, type))];
         }
 
         public IEnumerable<IDeviceHub> DeviceHubs { get; }

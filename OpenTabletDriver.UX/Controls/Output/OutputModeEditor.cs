@@ -52,15 +52,14 @@ namespace OpenTabletDriver.UX.Controls.Output
                 SetTabletSize(selectedTablet);
         });
 
-        private Profile profile;
         public Profile Profile
         {
             set
             {
-                this.profile = value;
+                field = value;
                 this.OnProfileChanged();
             }
-            get => this.profile;
+            get;
         }
 
         public event EventHandler<EventArgs> ProfileChanged;
@@ -87,12 +86,12 @@ namespace OpenTabletDriver.UX.Controls.Output
             }
         }
 
-        private Panel editorContainer = new Panel();
-        private AbsoluteModeEditor absoluteModeEditor = new AbsoluteModeEditor();
-        private RelativeModeEditor relativeModeEditor = new RelativeModeEditor();
-        private TypeDropDown<IOutputMode> outputModeSelector = new TypeDropDown<IOutputMode> { Width = 300 };
-        private Label outputModeUnsupported = new Label { Text = "No supported output mode selected.", TextAlignment = TextAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
-        private Label tabletUnavailable = new Label { Text = "No tablets were detected or selected.", TextAlignment = TextAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
+        private readonly Panel editorContainer = new Panel();
+        private readonly AbsoluteModeEditor absoluteModeEditor = new AbsoluteModeEditor();
+        private readonly RelativeModeEditor relativeModeEditor = new RelativeModeEditor();
+        private readonly TypeDropDown<IOutputMode> outputModeSelector = new TypeDropDown<IOutputMode> { Width = 300 };
+        private readonly Label outputModeUnsupported = new Label { Text = "No supported output mode selected.", TextAlignment = TextAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
+        private readonly Label tabletUnavailable = new Label { Text = "No tablets were detected or selected.", TextAlignment = TextAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
 
         public void SetTabletSize(TabletReference tablet)
         {

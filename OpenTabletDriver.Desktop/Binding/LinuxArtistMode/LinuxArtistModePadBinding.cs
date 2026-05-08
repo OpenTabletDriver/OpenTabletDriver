@@ -42,15 +42,15 @@ namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
         };
 
 
-        public static string[] ValidKeys => s_ValidButtons.Keys.ToArray();
+        public static string[] ValidKeys => [.. s_ValidButtons.Keys];
 
         [Property("Button"), PropertyValidated(nameof(ValidKeys))]
         public string? Button
         {
-            get => _button;
+            get;
             set
             {
-                _button = value;
+                field = value;
                 if (value != null)
                     _buttonPadEvent = s_ValidButtons.First(x => x.Key == value).Value;
                 else
@@ -58,7 +58,6 @@ namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
             }
         }
 
-        private string? _button;
         private TabletPadEvent? _buttonPadEvent;
 
         public void Press(TabletReference tablet, IDeviceReport report)

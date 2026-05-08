@@ -31,8 +31,7 @@ namespace OpenTabletDriver.Desktop.Interop.Display
             var monitors = GetDisplays();
             var primary = monitors.FirstOrDefault(m => m.IsPrimary);
 
-            var displays = new List<IDisplay>();
-            displays.Add(this);
+            var displays = new List<IDisplay> { this };
             foreach (var monitor in monitors)
             {
                 var display = new Display(
@@ -52,10 +51,10 @@ namespace OpenTabletDriver.Desktop.Interop.Display
 
         private static List<DisplayInfo> GetDisplays()
         {
-            List<DisplayInfo> displayCollection = new List<DisplayInfo>();
+            List<DisplayInfo> displayCollection = [];
             MonitorEnumDelegate monitorDelegate = delegate (IntPtr hMonitor, IntPtr hdcMonitor, ref Rect lprcMonitor, IntPtr dwData)
             {
-                MonitorInfoEx monitorInfo = new MonitorInfoEx();
+                var monitorInfo = new MonitorInfoEx();
                 monitorInfo.size = (uint)Marshal.SizeOf(monitorInfo);
                 if (GetMonitorInfo(hMonitor, ref monitorInfo))
                 {
@@ -70,7 +69,7 @@ namespace OpenTabletDriver.Desktop.Interop.Display
                         bottom = info.dmPositionY + info.dmPelsHeight
                     };
 
-                    DisplayInfo displayInfo = new DisplayInfo(monitor, monitorInfo.flags);
+                    var displayInfo = new DisplayInfo(monitor, monitorInfo.flags);
                     displayCollection.Add(displayInfo);
                 }
                 return true;

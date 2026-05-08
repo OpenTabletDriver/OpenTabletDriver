@@ -32,15 +32,14 @@ namespace OpenTabletDriver.UX.Windows.Plugins
 
         public event Func<string, Task> RequestPluginInstall;
 
-        private Control content;
         public new Control Content
         {
             set
             {
-                this.content = value;
+                field = value;
                 base.Content = this.Content;
             }
-            get => this.content;
+            get;
         }
 
         private readonly Label dropTextLabel = new Label

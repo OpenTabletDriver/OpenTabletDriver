@@ -12,7 +12,6 @@ namespace OpenTabletDriver.Plugin.Output
     public abstract class AbsoluteOutputMode : OutputMode
     {
         private Vector2 min, max;
-        private Area outputArea, inputArea;
 
         /// <summary>
         /// The area in which the tablet's input is transformed to.
@@ -21,10 +20,10 @@ namespace OpenTabletDriver.Plugin.Output
         {
             set
             {
-                this.inputArea = value;
+                field = value;
                 this.TransformationMatrix = CreateTransformationMatrix();
             }
-            get => this.inputArea;
+            get;
         }
 
         /// <summary>
@@ -34,10 +33,10 @@ namespace OpenTabletDriver.Plugin.Output
         {
             set
             {
-                this.outputArea = value;
+                field = value;
                 this.TransformationMatrix = CreateTransformationMatrix();
             }
-            get => this.outputArea;
+            get;
         }
 
         /// <summary>
@@ -68,13 +67,13 @@ namespace OpenTabletDriver.Plugin.Output
             {
                 var transform = CalculateTransformation(Input, Output, Tablet.Properties.Specifications.Digitizer);
 
-                var halfDisplayWidth = Output?.Width / 2 ?? 0;
-                var halfDisplayHeight = Output?.Height / 2 ?? 0;
+                var halfDisplayWidth = (Output?.Width / 2) ?? 0;
+                var halfDisplayHeight = (Output?.Height / 2) ?? 0;
 
-                var minX = Output?.Position.X - halfDisplayWidth ?? 0;
-                var maxX = Output?.Position.X + Output?.Width - halfDisplayWidth ?? 0;
-                var minY = Output?.Position.Y - halfDisplayHeight ?? 0;
-                var maxY = Output?.Position.Y + Output?.Height - halfDisplayHeight ?? 0;
+                var minX = (Output?.Position.X - halfDisplayWidth) ?? 0;
+                var maxX = (Output?.Position.X + Output?.Width - halfDisplayWidth) ?? 0;
+                var minY = (Output?.Position.Y - halfDisplayHeight) ?? 0;
+                var maxY = (Output?.Position.Y + Output?.Height - halfDisplayHeight) ?? 0;
 
                 this.min = new Vector2(minX, minY);
                 this.max = new Vector2(maxX, maxY);

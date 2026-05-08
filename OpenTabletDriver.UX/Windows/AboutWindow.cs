@@ -9,9 +9,9 @@ namespace OpenTabletDriver.UX.Windows
 {
     public class AboutWindow : DesktopForm
     {
-        const int LARGE_FONTSIZE = 14;
-        const int SPACING = 10;
-        const int TAB_CONTENT_WIDTH = 500;
+        private const int LARGE_FONTSIZE = 14;
+        private const int SPACING = 10;
+        private const int TAB_CONTENT_WIDTH = 500;
 
         private readonly string[] Developers = ["InfinityGhost", "X9VoiD", "gonX", "jamesbt365", "Kuuube", "AkiSakurai"];
         private readonly string[] Designers = ["InfinityGhost"];

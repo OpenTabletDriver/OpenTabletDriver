@@ -60,8 +60,8 @@ namespace OpenTabletDriver.UX.Controls.Bindings
             scrollDown.StoreBinding.Bind(SettingsBinding.Child(c => c.MouseScrollDown));
         }
 
-        private MouseBindingDisplayList mouseButtons;
-        private BindingDisplay scrollUp, scrollDown;
+        private readonly MouseBindingDisplayList mouseButtons;
+        private readonly BindingDisplay scrollUp, scrollDown;
 
         private class MouseBindingDisplayList : BindingDisplayList
         {

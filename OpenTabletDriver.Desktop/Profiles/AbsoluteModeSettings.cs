@@ -6,42 +6,39 @@ namespace OpenTabletDriver.Desktop.Profiles
 {
     public class AbsoluteModeSettings : ViewModel
     {
-        private AreaSettings display, tablet;
-        private bool _lockar, _clipping, _areaLimiting;
-
         [JsonProperty(nameof(Display))]
         public AreaSettings Display
         {
-            set => this.RaiseAndSetIfChanged(ref this.display, value);
-            get => this.display;
+            set => this.RaiseAndSetIfChanged(ref field, value);
+            get;
         }
 
         [JsonProperty(nameof(Tablet))]
         public AreaSettings Tablet
         {
-            set => this.RaiseAndSetIfChanged(ref this.tablet, value);
-            get => this.tablet;
+            set => this.RaiseAndSetIfChanged(ref field, value);
+            get;
         }
 
         [JsonProperty(nameof(EnableClipping))]
         public bool EnableClipping
         {
-            set => RaiseAndSetIfChanged(ref _clipping, value);
-            get => _clipping;
+            set => RaiseAndSetIfChanged(ref field, value);
+            get;
         }
 
         [JsonProperty(nameof(EnableAreaLimiting))]
         public bool EnableAreaLimiting
         {
-            set => RaiseAndSetIfChanged(ref _areaLimiting, value);
-            get => _areaLimiting;
+            set => RaiseAndSetIfChanged(ref field, value);
+            get;
         }
 
         [JsonProperty(nameof(LockAspectRatio))]
         public bool LockAspectRatio
         {
-            set => RaiseAndSetIfChanged(ref _lockar, value);
-            get => _lockar;
+            set => RaiseAndSetIfChanged(ref field, value);
+            get;
         }
 
         public static AbsoluteModeSettings GetDefaults(DigitizerSpecifications digitizer)

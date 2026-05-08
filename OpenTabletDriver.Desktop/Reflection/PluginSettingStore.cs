@@ -16,7 +16,7 @@ namespace OpenTabletDriver.Desktop.Reflection
         public PluginSettingStore(Type type, bool enable = true)
         {
             Path = type?.FullName;
-            Settings = type != null ? GetSettingsForType(type) : new ObservableCollection<PluginSetting>();
+            Settings = type != null ? GetSettingsForType(type) : [];
             Enable = enable;
         }
 
@@ -176,7 +176,7 @@ namespace OpenTabletDriver.Desktop.Reflection
                           select method;
 
             foreach (var method in methods)
-                method.Invoke(obj, Array.Empty<object>());
+                method.Invoke(obj, []);
         }
     }
 }

@@ -3,10 +3,10 @@ using System.Runtime.InteropServices;
 
 namespace OpenTabletDriver.Native.OSX
 {
-    static public class CoreFoundation
+    public static class CoreFoundation
     {
         private const string CFLib = "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation";
-        private static IntPtr handle = LibSystem.dlopen(CFLib, 0);
+        private static readonly IntPtr handle = LibSystem.dlopen(CFLib, 0);
 
         public static IntPtr kCFBooleanTrue = LibSystem.GetConstant(handle, "kCFBooleanTrue");
         public static IntPtr kCFBooleanFalse = LibSystem.GetConstant(handle, "kCFBooleanFalse");

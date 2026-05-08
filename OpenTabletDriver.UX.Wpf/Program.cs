@@ -4,12 +4,12 @@ using Eto.Forms;
 
 namespace OpenTabletDriver.UX.Wpf
 {
-    class Program
+    internal class Program
     {
         [STAThread]
         public static void Main(string[] args)
         {
-            WindowsIdentity identity = WindowsIdentity.GetCurrent();
+            var identity = WindowsIdentity.GetCurrent();
             WindowsPrincipal principal = new(identity);
             if (principal.IsInRole(WindowsBuiltInRole.Administrator))
             {

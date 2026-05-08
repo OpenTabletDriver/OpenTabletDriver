@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using OpenTabletDriver.Desktop.Interop.Input.Absolute;
 using OpenTabletDriver.Native.Linux.Evdev;
 using OpenTabletDriver.Plugin;
@@ -20,8 +19,7 @@ namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
 
         [Resolved] public IPressureHandler? PressureHandler;
 
-        private EvdevVirtualTablet? _virtualTablet;
-        private EvdevVirtualTablet? VirtualTablet => _virtualTablet ??= PressureHandler as EvdevVirtualTablet;
+        private EvdevVirtualTablet? VirtualTablet => field ??= PressureHandler as EvdevVirtualTablet;
 
         [OnDependencyLoad]
         public void VerifyInitialization()
@@ -37,7 +35,7 @@ namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
             { "Pen Button 3", EventCode.BTN_STYLUS3 },
         };
 
-        public static string[] ValidButtons => SupportedButtons.Keys.ToArray();
+        public static string[] ValidButtons => [.. SupportedButtons.Keys];
 
         [Property("Button"), PropertyValidated(nameof(ValidButtons))]
         public string? Button { get; set; }

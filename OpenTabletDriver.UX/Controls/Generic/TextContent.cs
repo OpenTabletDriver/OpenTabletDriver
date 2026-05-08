@@ -40,7 +40,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
 
         public static implicit operator TextContent(string[] lines)
         {
-            return new TextContent(lines);
+            return [.. lines];
         }
     }
 }

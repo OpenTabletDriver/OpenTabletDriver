@@ -32,11 +32,11 @@ namespace OpenTabletDriver.Plugin.Output
         /// <summary>
         /// Whether to disable pressure
         /// </summary>
-        public bool DisablePressure { set; get; }
+        bool DisablePressure { set; get; }
 
         /// <summary>
         /// Whether to disable tilt
         /// </summary>
-        public bool DisableTilt { set; get; }
+        bool DisableTilt { set; get; }
     }
 }

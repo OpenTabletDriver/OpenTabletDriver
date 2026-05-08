@@ -42,10 +42,9 @@ namespace OpenTabletDriver.Desktop.Binding
                 Keyboard?.Release(Key);
         }
 
-        private static IEnumerable<string>? validKeys;
         public static IEnumerable<string>? ValidKeys
         {
-            get => validKeys ??= SystemInterop.CurrentPlatform switch
+            get => field ??= SystemInterop.CurrentPlatform switch
             {
                 PluginPlatform.Windows => WindowsVirtualKeyboard.EtoKeysymToVK.Keys,
                 PluginPlatform.Linux => EvdevVirtualKeyboard.EtoKeysymToEventCode.Keys,

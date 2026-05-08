@@ -19,17 +19,16 @@ namespace OpenTabletDriver.UX.Controls
             };
         }
 
-        private StackLayout layout;
+        private readonly StackLayout layout;
 
-        private PluginSettingStore store;
         public PluginSettingStore Store
         {
             set
             {
-                this.store = value;
+                field = value;
                 this.OnStoreChanged();
             }
-            get => this.store;
+            get;
         }
 
         public event EventHandler<EventArgs> StoreChanged;
@@ -64,7 +63,7 @@ namespace OpenTabletDriver.UX.Controls
 
         protected virtual IEnumerable<Control> GetHeaderControlsForStore(PluginSettingStore store)
         {
-            return Array.Empty<Control>();
+            return [];
         }
 
         private static IEnumerable<Control> GetControlsForStore(PluginSettingStore store)
@@ -82,7 +81,7 @@ namespace OpenTabletDriver.UX.Controls
                 }
             }
 
-            return Array.Empty<Control>();
+            return [];
         }
 
         private static IEnumerable<Control> GetControlsForType(PluginSettingStore store, Type type)

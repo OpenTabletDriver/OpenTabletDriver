@@ -10,7 +10,7 @@ using OpenTabletDriver.Native.OSX.IOkit;
 
 namespace OpenTabletDriver.UX.MacOS
 {
-    static public class PermissionHelper
+    public static class PermissionHelper
     {
         public static bool HasPermissions()
         {
@@ -62,7 +62,7 @@ namespace OpenTabletDriver.UX.MacOS
             {
                 if (selfResponsible)
                 {
-                    var process = Process.Start("open", new[] { NSBundle.MainBundle.BundlePath, "-n" });
+                    var process = Process.Start("open", [NSBundle.MainBundle.BundlePath, "-n"]);
                     process.WaitForExit();
                 }
                 else
@@ -106,7 +106,7 @@ namespace OpenTabletDriver.UX.MacOS
             alert.Buttons[2].Target = cancelHandler;
 
             //Prevent our alert obscuring the system permission dialog.
-            Thread thread = new Thread(() =>
+            var thread = new Thread(() =>
             {
                 Thread.Sleep(150);
                 NSApplication.SharedApplication.InvokeOnMainThread(() =>
@@ -132,7 +132,7 @@ namespace OpenTabletDriver.UX.MacOS
 
         private class KillOnQuitHandler : NSObject
         {
-            static KillOnQuitHandler handler;
+            private static KillOnQuitHandler handler;
 
 #pragma warning disable CA1822
             [Export("handleQuitEvent:withReplyEvent:")]
@@ -158,7 +158,7 @@ namespace OpenTabletDriver.UX.MacOS
                 _url = url;
             }
 
-            private string _url;
+            private readonly string _url;
 
             [Export("onClick:")]
             private void onClick(NSObject target)

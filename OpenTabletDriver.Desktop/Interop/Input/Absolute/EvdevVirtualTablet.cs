@@ -16,7 +16,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
         private EvdevDevice Device { set; get; }
 
-        private EventCode[] supportedEventCodes =
+        private readonly EventCode[] supportedEventCodes =
         [
             EventCode.BTN_TOUCH,
             EventCode.BTN_STYLUS,

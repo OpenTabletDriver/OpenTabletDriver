@@ -28,7 +28,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             rotation.ValueChanged += (_, _) => Display.Invalidate();
         }
 
-        private MaskedTextBox<float> rotation;
+        private readonly MaskedTextBox<float> rotation;
 
         protected override void CreateMenu()
         {

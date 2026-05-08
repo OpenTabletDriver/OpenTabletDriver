@@ -109,7 +109,7 @@ namespace OpenTabletDriver.UX
         private const int DEFAULT_CLIENT_HEIGHT = 760;
 
         private MenuBar menu;
-        private Placeholder placeholder;
+        private readonly Placeholder placeholder;
         private TrayIcon trayIcon;
 
         public bool SilenceDaemonShutdown { get; set; }
@@ -450,8 +450,8 @@ namespace OpenTabletDriver.UX
                 SetTitle(tablets);
         });
 
-        private Button saveButton;
-        private Button applyButton;
+        private readonly Button saveButton;
+        private readonly Button applyButton;
 
         private async void LogToDriver(object sender, LogMessage message)
         {
@@ -624,8 +624,7 @@ namespace OpenTabletDriver.UX
         {
             LoadPresets();
 
-            if (trayIcon != null) // Check non-Linux
-                trayIcon.RefreshMenuItems();
+            trayIcon?.RefreshMenuItems();
 
             // Update File submenu
             var presets = AppInfo.PresetManager.GetPresets();
@@ -705,7 +704,7 @@ namespace OpenTabletDriver.UX
                 var diagnosticDump = await App.Driver.Instance.GetDiagnosticInfo();
 
                 var tablets = await App.Driver.Instance.GetTablets();
-                var tabletReferences = tablets as TabletReference[] ?? tablets.ToArray();
+                var tabletReferences = tablets as TabletReference[] ?? [.. tablets];
                 string tabletNames = tabletReferences.Length != 0
                     ? " " + string.Join(", ", tabletReferences.Select(x => x.Properties.Name))
                     : string.Empty;

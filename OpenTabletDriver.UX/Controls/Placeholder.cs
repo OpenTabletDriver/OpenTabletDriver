@@ -31,18 +31,17 @@ namespace OpenTabletDriver.UX.Controls
             label.TextBinding.Bind(TextBinding);
         }
 
-        private Label label;
-        private Panel extraPanel;
+        private readonly Label label;
+        private readonly Panel extraPanel;
 
-        private string text;
         public string Text
         {
             set
             {
-                this.text = value;
+                field = value;
                 this.OnTextChanged();
             }
-            get => this.text;
+            get;
         }
 
         public event EventHandler<EventArgs> TextChanged;
@@ -63,15 +62,14 @@ namespace OpenTabletDriver.UX.Controls
             }
         }
 
-        private Control extraContent;
         public Control ExtraContent
         {
             set
             {
-                this.extraContent = value;
+                field = value;
                 extraPanel.Content = value;
             }
-            get => this.extraContent;
+            get;
         }
     }
 }

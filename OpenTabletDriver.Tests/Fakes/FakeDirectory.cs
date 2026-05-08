@@ -4,6 +4,6 @@ namespace OpenTabletDriver.Tests.Fakes
 {
     public class FakeDirectory : FakeFileSystemEntry
     {
-        public List<FakeFileSystemEntry> Entries { get; } = new();
+        public List<FakeFileSystemEntry> Entries { get; } = [];
     }
 }

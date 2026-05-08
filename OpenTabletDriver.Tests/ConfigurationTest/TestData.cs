@@ -25,7 +25,7 @@ namespace OpenTabletDriver.Tests.ConfigurationTest
             var result = new TheoryData<TestTabletConfiguration>();
             foreach (var configFile in Directory.EnumerateFiles(GetConfigDir(), "*.json", SearchOption.AllDirectories))
             {
-                FileInfo configFileInfo = new FileInfo(configFile);
+                var configFileInfo = new FileInfo(configFile);
                 var ttc = new TestTabletConfiguration
                 {
                     Configuration = new Lazy<TabletConfiguration>(() => Deserialize(configFileInfo)),
@@ -72,10 +72,9 @@ namespace OpenTabletDriver.Tests.ConfigurationTest
 
         #region Schema
 
-        private static JSchema? tabletConfigurationSchema;
-        public static JSchema TabletConfigurationSchema => tabletConfigurationSchema ??= GetTabletConfigSchema();
+        public static JSchema TabletConfigurationSchema => field ??= GetTabletConfigSchema();
 
-        static JSchema GetTabletConfigSchema()
+        private static JSchema GetTabletConfigSchema()
         {
             var gen = new JSchemaGenerator
             {

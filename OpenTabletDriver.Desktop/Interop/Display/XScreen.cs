@@ -20,8 +20,7 @@ namespace OpenTabletDriver.Desktop.Interop.Display
             var monitors = GetXRandrDisplays().ToList();
             var primary = monitors.FirstOrDefault(d => d.Primary != 0);
 
-            var displays = new List<IDisplay>();
-            displays.Add(this);
+            var displays = new List<IDisplay> { this };
             foreach (var monitor in monitors)
             {
                 var display = new Interop.Display.Display(

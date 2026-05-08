@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -47,7 +46,7 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
                 return new DriverInfo
                 {
                     Name = FriendlyName,
-                    Processes = processes.Any() ? processes.ToArray() : Array.Empty<Process>(),
+                    Processes = processes.Any() ? [.. processes] : [],
                     Status = status
                 };
             }

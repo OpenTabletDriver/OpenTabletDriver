@@ -8,7 +8,7 @@ namespace OpenTabletDriver.Plugin
 {
     public static class Log
     {
-        private static List<LogMessage>? _backlog = new();
+        private static List<LogMessage>? _backlog = [];
         private static Action<LogMessage> _logAction = WriteBacklog;
         private static event EventHandler<LogMessage>? _output;
 
@@ -34,7 +34,7 @@ namespace OpenTabletDriver.Plugin
                 _output -= value;
                 if (_output == null)
                 {
-                    _backlog = new List<LogMessage>();
+                    _backlog = [];
                     _logAction = WriteBacklog;
                 }
             }

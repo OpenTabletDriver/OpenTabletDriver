@@ -17,7 +17,6 @@ namespace OpenTabletDriver.Desktop.Binding
         private const char KEYS_SPLITTER = '+';
 
         private string[] keys = [];
-        private string? keysString;
 
         [Resolved]
         public IVirtualKeyboard? Keyboard { set; get; }
@@ -35,10 +34,10 @@ namespace OpenTabletDriver.Desktop.Binding
         {
             set
             {
-                this.keysString = value;
+                field = value;
                 this.keys = ParseKeys(Keys);
             }
-            get => this.keysString;
+            get;
         }
 
         public void Press(TabletReference tablet, IDeviceReport report)

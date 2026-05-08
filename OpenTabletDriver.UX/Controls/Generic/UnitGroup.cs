@@ -10,15 +10,14 @@ namespace OpenTabletDriver.UX.Controls.Generic
             unitLabel.TextBinding.Bind(UnitBinding);
         }
 
-        private string unit;
         public string Unit
         {
             set
             {
-                this.unit = value;
+                field = value;
                 this.OnUnitChanged();
             }
-            get => this.unit;
+            get;
         }
 
         public event EventHandler<EventArgs> UnitChanged;
@@ -39,14 +38,13 @@ namespace OpenTabletDriver.UX.Controls.Generic
             }
         }
 
-        private Label unitLabel = new Label();
+        private readonly Label unitLabel = new Label();
 
-        private Control content;
         public new Control Content
         {
             set
             {
-                this.content = value;
+                field = value;
                 base.Content = new StackLayout
                 {
                     Spacing = 5,
@@ -62,7 +60,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
                     }
                 };
             }
-            get => this.content;
+            get;
         }
     }
 }

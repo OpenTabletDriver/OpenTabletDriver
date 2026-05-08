@@ -32,9 +32,9 @@ namespace OpenTabletDriver
         }
 
         private const string MUTEX_PREFIX = @"Global\";
-        private readonly static List<Instance> ownedInstances = new List<Instance>();
+        private static readonly List<Instance> ownedInstances = [];
 
-        private Mutex mutex;
+        private readonly Mutex mutex;
 
         public string Name { get; }
         public bool AlreadyExists { protected set; get; }

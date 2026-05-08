@@ -15,6 +15,6 @@ namespace OpenTabletDriver.Plugin.Tablet.Wheel
         /// The buttons per wheel, e.g. <c>[[True], [False]]</c> for multi-wheel.
         /// Or <c>[[True]]</c> for single wheel
         /// </summary>
-        public bool[][] WheelButtons { set; get; }
+        bool[][] WheelButtons { set; get; }
     }
 }

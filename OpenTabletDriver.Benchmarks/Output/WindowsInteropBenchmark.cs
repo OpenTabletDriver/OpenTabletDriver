@@ -7,8 +7,8 @@ namespace OpenTabletDriver.Benchmarks.Output
 {
     public class WindowsInteropBenchmark
     {
-        private WindowsAbsolutePointer absolutePointer = new WindowsAbsolutePointer();
-        private WindowsRelativePointer relativePointer = new WindowsRelativePointer();
+        private readonly WindowsAbsolutePointer absolutePointer = new WindowsAbsolutePointer();
+        private readonly WindowsRelativePointer relativePointer = new WindowsRelativePointer();
 
         [Benchmark]
         public void SendInputAbsolute()

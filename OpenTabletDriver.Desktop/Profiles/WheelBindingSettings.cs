@@ -10,59 +10,51 @@ namespace OpenTabletDriver.Desktop.Profiles
     /// </summary>
     public class WheelBindingSettings : ViewModel
     {
-        private PluginSettingStoreCollection _wheelButtons = [];
-
         // TODO: default values for these are current relied upon by UI StepSize behavior
         //       It should be instead be initialized by TabletReference or similar
-        private float _ct, _cct;
 
-        private PluginSettingStore?
-            _clockwiseRotation,
-            _counterClockwiseRotation;
-
-        private double? _stepSize;
 
         [JsonProperty(nameof(WheelButtons))]
         public PluginSettingStoreCollection WheelButtons
         {
-            set => RaiseAndSetIfChanged(ref _wheelButtons, value);
-            get => _wheelButtons;
-        }
+            set => RaiseAndSetIfChanged(ref field, value);
+            get;
+        } = [];
 
         [JsonProperty(nameof(ClockwiseRotation))]
         public PluginSettingStore? ClockwiseRotation
         {
-            set => RaiseAndSetIfChanged(ref _clockwiseRotation, value);
-            get => _clockwiseRotation;
+            set => RaiseAndSetIfChanged(ref field, value);
+            get;
         }
 
         [JsonProperty(nameof(ClockwiseActivationThreshold))]
         public float ClockwiseActivationThreshold
         {
-            set => RaiseAndSetIfChanged(ref _ct, value);
-            get => _ct;
+            set => RaiseAndSetIfChanged(ref field, value);
+            get;
         }
 
         [JsonProperty(nameof(CounterClockwiseRotation))]
         public PluginSettingStore? CounterClockwiseRotation
         {
-            set => RaiseAndSetIfChanged(ref _counterClockwiseRotation, value);
-            get => _counterClockwiseRotation;
+            set => RaiseAndSetIfChanged(ref field, value);
+            get;
         }
 
         [JsonProperty(nameof(CounterClockwiseActivationThreshold))]
         public float CounterClockwiseActivationThreshold
         {
-            set => RaiseAndSetIfChanged(ref _cct, value);
-            get => _cct;
+            set => RaiseAndSetIfChanged(ref field, value);
+            get;
         }
 
         // should be instantiated by daemon on load
         [JsonProperty(nameof(StepSize))]
         public double? StepSize
         {
-            set => RaiseAndSetIfChanged(ref _stepSize, value);
-            get => _stepSize;
+            set => RaiseAndSetIfChanged(ref field, value);
+            get;
         }
     }
 }

@@ -13,9 +13,7 @@ namespace OpenTabletDriver.Plugin.Output
             Passthrough = true;
         }
 
-        private bool passthrough;
         private TabletReference tablet;
-        private IList<IPositionedPipelineElement<IDeviceReport>> elements;
         private IPipelineElement<IDeviceReport> entryElement;
 
         public event Action<IDeviceReport> Emit;
@@ -25,20 +23,20 @@ namespace OpenTabletDriver.Plugin.Output
             private set
             {
                 Action<IDeviceReport> output = this.OnOutput;
-                if (value && !passthrough)
+                if (value && !field)
                 {
                     this.entryElement = this;
                     Link(this, output);
-                    this.passthrough = true;
+                    field = true;
                 }
-                else if (!value && passthrough)
+                else if (!value && field)
                 {
                     this.entryElement = null;
                     Unlink(this, output);
-                    this.passthrough = false;
+                    field = false;
                 }
             }
-            get => this.passthrough;
+            get;
         }
 
         protected IList<IPositionedPipelineElement<IDeviceReport>> PreTransformElements { private set; get; } =
@@ -57,7 +55,7 @@ namespace OpenTabletDriver.Plugin.Output
         {
             set
             {
-                this.elements = value;
+                field = value;
 
                 Passthrough = false;
                 DestroyInternalLinks();
@@ -82,7 +80,7 @@ namespace OpenTabletDriver.Plugin.Output
                     PostTransformElements = Array.Empty<IPositionedPipelineElement<IDeviceReport>>();
                 }
             }
-            get => this.elements;
+            get;
         }
 
         private List<IPipelineElement<IDeviceReport>> ElementsAsPipeline

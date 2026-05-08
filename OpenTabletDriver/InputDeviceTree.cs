@@ -31,7 +31,7 @@ namespace OpenTabletDriver
         }
 
         private bool connected = true;
-        private object sync = new object();
+        private readonly object sync = new object();
         private IList<InputDevice> inputDevices;
 
         public event EventHandler<EventArgs>? Disconnected;

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using OpenTabletDriver.Native.Linux;
 using OpenTabletDriver.Native.Linux.Evdev;
 using OpenTabletDriver.Native.Linux.Evdev.Structs;
@@ -26,7 +25,7 @@ public sealed class EvdevVirtualPad : IVirtualPad, IDisposable
         { TabletPadEvent.BUTTON_10, EventCode.BTN_9 },
     };
 
-    private static readonly EventCode[] s_SupportedEventCodes = s_ValidButtons.Values.ToArray();
+    private static readonly EventCode[] s_SupportedEventCodes = [.. s_ValidButtons.Values];
 
     public unsafe EvdevVirtualPad()
     {

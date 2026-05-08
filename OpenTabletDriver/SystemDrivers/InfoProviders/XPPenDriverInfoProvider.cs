@@ -24,7 +24,7 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
             "Pentablet",
         ];
 
-        private string[] Exclusions =
+        private readonly string[] Exclusions =
         [
             "Huion",
             "Gaomon",
@@ -44,7 +44,7 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
                 return new DriverInfo
                 {
                     Name = FriendlyName,
-                    Processes = processes.ToArray(),
+                    Processes = [.. processes],
                     Status = DriverStatus.Active | falsePositive
                 };
             }

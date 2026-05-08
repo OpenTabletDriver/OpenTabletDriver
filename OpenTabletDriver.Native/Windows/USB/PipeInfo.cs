@@ -7,8 +7,8 @@ namespace OpenTabletDriver.Native.Windows.USB
     {
         public PipeType PipeType;
         public byte PipeID;
-        private byte sizePacket0;
-        private byte sizePacket1;
+        private readonly byte sizePacket0;
+        private readonly byte sizePacket1;
         public ushort MaximumPacketSize => (ushort)(sizePacket1 | (sizePacket0 << 8));
         public byte Interval;
     }

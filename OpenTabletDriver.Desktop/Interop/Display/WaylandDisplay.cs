@@ -10,11 +10,11 @@ namespace OpenTabletDriver.Desktop.Interop.Display
 {
     public class WaylandDisplay : IVirtualScreen
     {
-        private List<WaylandOutput> _outputs;
+        private readonly List<WaylandOutput> _outputs;
 
         public WaylandDisplay()
         {
-            _outputs = new List<WaylandOutput>();
+            _outputs = [];
             using (var connection = new WaylandClientConnection())
             {
                 ZxdgOutputManagerV1 outputManager = null;
@@ -24,9 +24,11 @@ namespace OpenTabletDriver.Desktop.Interop.Display
                     switch (@interface)
                     {
                         case "wl_output":
-                            var output = new WaylandOutput();
-                            output.Index = _outputs.Count + 1;
-                            output.WlOutput = wlRegistry.Bind<WlOutput>(name, @interface, 1);
+                            var output = new WaylandOutput
+                            {
+                                Index = _outputs.Count + 1,
+                                WlOutput = wlRegistry.Bind<WlOutput>(name, @interface, 1)
+                            };
                             output.WlOutput.Geometry += (wlOutput, x, y, physicalWidth, physicalHeight, subpixel, make, model, transform) =>
                             {
                                 if (output.XdgOutput == null || output.XdgOutput.Version < 2)

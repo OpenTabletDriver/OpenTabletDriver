@@ -10,54 +10,47 @@ namespace OpenTabletDriver.Desktop.Profiles
 {
     public class Profile : ViewModel
     {
-        private string tablet;
-        private PluginSettingStore outputMode;
-        private AbsoluteModeSettings absoluteMode = new AbsoluteModeSettings();
-        private RelativeModeSettings relativeMode = new RelativeModeSettings();
-        private BindingSettings bindings = new BindingSettings();
-        private PluginSettingStoreCollection filters = new PluginSettingStoreCollection();
-
         [JsonProperty(nameof(Tablet))]
         public string Tablet
         {
-            set => this.RaiseAndSetIfChanged(ref tablet, value);
-            get => tablet;
+            set => this.RaiseAndSetIfChanged(ref field, value);
+            get;
         }
 
         [JsonProperty(nameof(OutputMode))]
         public PluginSettingStore OutputMode
         {
-            set => RaiseAndSetIfChanged(ref outputMode, value);
-            get => outputMode;
+            set => RaiseAndSetIfChanged(ref field, value);
+            get;
         }
 
         [JsonProperty(nameof(Filters))]
         public PluginSettingStoreCollection Filters
         {
-            set => RaiseAndSetIfChanged(ref filters, value);
-            get => filters;
-        }
+            set => RaiseAndSetIfChanged(ref field, value);
+            get;
+        } = [];
 
         [JsonProperty(nameof(AbsoluteModeSettings))]
         public AbsoluteModeSettings AbsoluteModeSettings
         {
-            set => this.RaiseAndSetIfChanged(ref absoluteMode, value);
-            get => absoluteMode;
-        }
+            set => this.RaiseAndSetIfChanged(ref field, value);
+            get;
+        } = new AbsoluteModeSettings();
 
         [JsonProperty(nameof(RelativeModeSettings))]
         public RelativeModeSettings RelativeModeSettings
         {
-            set => this.RaiseAndSetIfChanged(ref relativeMode, value);
-            get => relativeMode;
-        }
+            set => this.RaiseAndSetIfChanged(ref field, value);
+            get;
+        } = new RelativeModeSettings();
 
         [JsonProperty("Bindings")]
         public BindingSettings BindingSettings
         {
-            set => this.RaiseAndSetIfChanged(ref bindings, value);
-            get => bindings;
-        }
+            set => this.RaiseAndSetIfChanged(ref field, value);
+            get;
+        } = new BindingSettings();
 
         private static Type DefaultOutputModeType =>
             SystemInterop.CurrentPlatform switch

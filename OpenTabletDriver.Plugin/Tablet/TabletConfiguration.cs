@@ -29,7 +29,7 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// </summary>
         [Required(ErrorMessage = $"Tablet {nameof(DigitizerIdentifiers)} are required")]
         [MinLength(1, ErrorMessage = "Requires at least 1 identifier")]
-        public List<DeviceIdentifier> DigitizerIdentifiers { set; get; } = new List<DeviceIdentifier>();
+        public List<DeviceIdentifier> DigitizerIdentifiers { set; get; } = [];
 
         /// <summary>
         /// The auxiliary device identifier.

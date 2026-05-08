@@ -7,7 +7,7 @@ namespace OpenTabletDriver.Native.OSX.ApplicationServices
     {
         private const string libas = "/System/Library/Frameworks/ApplicationServices.framework/ApplicationServices";
 
-        private static IntPtr handle = LibSystem.dlopen(libas, 0);
+        private static readonly IntPtr handle = LibSystem.dlopen(libas, 0);
 
         public static IntPtr kAXTrustedCheckOptionPrompt = LibSystem.GetConstant(handle, "kAXTrustedCheckOptionPrompt");
 

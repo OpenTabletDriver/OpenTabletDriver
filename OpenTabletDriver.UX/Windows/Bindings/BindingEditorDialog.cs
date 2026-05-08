@@ -60,7 +60,7 @@ namespace OpenTabletDriver.UX.Windows.Bindings
             };
         }
 
-        private BindingController bindingController;
+        private readonly BindingController bindingController;
 
         private void ClearBinding(object sender, EventArgs e)
         {
@@ -99,15 +99,14 @@ namespace OpenTabletDriver.UX.Windows.Bindings
 
             private const string TOOLTIP = "Press a key, combination of keys, or a mouse button.";
 
-            private PluginSettingStore store;
             public PluginSettingStore Store
             {
                 set
                 {
-                    this.store = value;
+                    field = value;
                     Refresh();
                 }
-                get => this.store;
+                get;
             }
 
             public void Refresh()

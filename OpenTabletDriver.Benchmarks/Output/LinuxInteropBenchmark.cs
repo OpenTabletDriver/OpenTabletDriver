@@ -7,8 +7,8 @@ namespace OpenTabletDriver.Benchmarks.Output
 {
     public class LinuxInteropBenchmark
     {
-        EvdevAbsolutePointer absolutePointer = new EvdevAbsolutePointer();
-        EvdevRelativePointer relativePointer = new EvdevRelativePointer();
+        private readonly EvdevAbsolutePointer absolutePointer = new EvdevAbsolutePointer();
+        private readonly EvdevRelativePointer relativePointer = new EvdevRelativePointer();
 
         [Benchmark]
         public void EvdevAbsolute()

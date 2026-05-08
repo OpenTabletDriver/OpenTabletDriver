@@ -21,17 +21,16 @@ namespace OpenTabletDriver.UX.Tools
         private readonly Queue<LogMessage> messages;
         private Queue<LogMessage> filteredMessages;
 
-        private LogLevel filter = LogLevel.Info;
         public LogLevel Filter
         {
             set
             {
-                this.filter = value;
+                field = value;
                 filteredMessages = new Queue<LogMessage>(GetFilteredMessages());
                 OnCollectionChanged();
             }
-            get => this.filter;
-        }
+            get;
+        } = LogLevel.Info;
 
         public int Count => filteredMessages.Count;
 

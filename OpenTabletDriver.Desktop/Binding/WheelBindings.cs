@@ -28,7 +28,7 @@ namespace OpenTabletDriver.Desktop.Binding
             _stepsPerTick = 360d / stepCount;
         }
 
-        public Dictionary<int, BindingState?> WheelButtons { get; } = new();
+        public Dictionary<int, BindingState?> WheelButtons { get; } = [];
 
         public DeltaThresholdBindingState? ClockwiseRotation { set; get; }
         public DeltaThresholdBindingState? CounterClockwiseRotation { set; get; }

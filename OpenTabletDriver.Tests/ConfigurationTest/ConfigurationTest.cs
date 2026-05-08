@@ -32,7 +32,7 @@ namespace OpenTabletDriver.Tests.ConfigurationTest
             var tabletFilename = testTabletConfiguration.File.Name;
             var tabletConfigString = testTabletConfiguration.FileContents.Value;
             var schema = TestData.TabletConfigurationSchema;
-            IList<string> errors = new List<string>();
+            IList<string> errors = [];
 
             var tabletConfig = JObject.Parse(tabletConfigString);
             try
@@ -184,7 +184,7 @@ namespace OpenTabletDriver.Tests.ConfigurationTest
             {
                 decimal? closestLpi = null;
 
-                var validLPIsArr = validLPIs as int[] ?? validLPIs.ToArray();
+                var validLPIsArr = validLPIs as int[] ?? [.. validLPIs];
                 foreach (decimal validLpi in validLPIsArr.OrderBy(x => x))
                 {
                     if (closestLpi == null)
@@ -199,7 +199,7 @@ namespace OpenTabletDriver.Tests.ConfigurationTest
 
                 Debug.Assert(closestLpi.HasValue);
 
-                decimal suggestedSize = (maxLines / closestLpi.Value) * MILLIMETERS_PER_INCH;
+                decimal suggestedSize = maxLines / closestLpi.Value * MILLIMETERS_PER_INCH;
                 suggestedSize = Math.Round(suggestedSize, 8);
 
                 decimal millimetersPerLine = 1 / (closestLpi.Value / MILLIMETERS_PER_INCH);

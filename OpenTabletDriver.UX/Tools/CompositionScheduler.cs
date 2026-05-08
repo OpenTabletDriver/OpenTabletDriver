@@ -10,7 +10,7 @@ namespace OpenTabletDriver.UX.Tools
     /// </summary>
     public static class CompositionScheduler
     {
-        private static Timer scheduler = new Timer(_ => Application.Instance.AsyncInvoke(OnCompose));
+        private static readonly Timer scheduler = new Timer(_ => Application.Instance.AsyncInvoke(OnCompose));
         private const int MAX_FRAMES_PER_SEC = 60;
 
         public static void Register(EventHandler handler)

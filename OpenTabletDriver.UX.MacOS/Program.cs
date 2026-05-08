@@ -2,7 +2,7 @@ using System;
 
 namespace OpenTabletDriver.UX.MacOS
 {
-    class Program
+    internal class Program
     {
         [STAThread]
         public static void Main(string[] args)

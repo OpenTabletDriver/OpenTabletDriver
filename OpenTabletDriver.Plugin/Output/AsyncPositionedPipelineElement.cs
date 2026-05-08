@@ -11,10 +11,8 @@ namespace OpenTabletDriver.Plugin.Output
     public abstract class AsyncPositionedPipelineElement<T> : IPositionedPipelineElement<T>, IDisposable
     {
         private readonly object synchronizationObject = new object();
-        private HPETDeltaStopwatch consumeWatch = new HPETDeltaStopwatch(false);
-        private ITimer scheduler;
+        private readonly HPETDeltaStopwatch consumeWatch = new HPETDeltaStopwatch(false);
         private float? reportMsAvg;
-        private float frequency;
 
         /// <summary>
         /// The current state of the <see cref="AsyncPositionedPipelineElement{T}"/>.
@@ -30,21 +28,21 @@ namespace OpenTabletDriver.Plugin.Output
         {
             set
             {
-                this.scheduler = value;
+                field = value;
 
-                if (this.scheduler != null)
+                if (field != null)
                 {
-                    this.scheduler.Elapsed += () =>
+                    field.Elapsed += () =>
                     {
                         lock (synchronizationObject)
                         {
                             UpdateState();
                         }
                     };
-                    this.scheduler.Start();
+                    field.Start();
                 }
             }
-            get => this.scheduler;
+            get;
         }
 
         [Property("Frequency"), Unit("hz"), DefaultPropertyValue(1000.0f)]
@@ -52,13 +50,13 @@ namespace OpenTabletDriver.Plugin.Output
         {
             set
             {
-                this.frequency = value;
+                field = value;
                 if (Scheduler.Enabled)
                     Scheduler.Stop();
                 Scheduler.Interval = 1000f / value;
                 Scheduler.Start();
             }
-            get => this.frequency;
+            get;
         }
 
         public void Consume(T value)

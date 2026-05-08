@@ -36,7 +36,7 @@ namespace OpenTabletDriver.Desktop
 
         public static string InjectEnvironmentVariables(string str)
         {
-            StringBuilder sb = new StringBuilder(str);
+            var sb = new StringBuilder(str);
             sb.Replace("~", Environment.GetEnvironmentVariable("HOME"));
 
             foreach (DictionaryEntry envVar in Environment.GetEnvironmentVariables())

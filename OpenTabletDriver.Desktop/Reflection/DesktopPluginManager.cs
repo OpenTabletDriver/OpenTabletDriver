@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -39,7 +38,7 @@ namespace OpenTabletDriver.Desktop.Reflection
         protected DirectoryInfo TrashDirectory { get; }
         protected DirectoryInfo TemporaryDirectory { get; }
 
-        protected List<DesktopPluginContext> Plugins { get; } = new List<DesktopPluginContext>();
+        protected List<DesktopPluginContext> Plugins { get; } = [];
 
         public IReadOnlyCollection<DesktopPluginContext> GetLoadedPlugins() => Plugins;
 
@@ -253,7 +252,7 @@ namespace OpenTabletDriver.Desktop.Reflection
                 var types = pluginTypes.Where(t => t.Assembly == asm)
                     .Select(t => t.GetTypeInfo());
 
-                pluginTypes = new ConcurrentBag<TypeInfo>(pluginTypes.Except(types));
+                pluginTypes = [.. pluginTypes.Except(types)];
                 return true;
             }
             catch (Exception ex)

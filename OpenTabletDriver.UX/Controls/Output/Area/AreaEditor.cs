@@ -120,13 +120,13 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             Display.InvalidBackgroundErrorBinding.Bind(InvalidBackgroundErrorBinding);
         }
 
-        private BooleanCommand lockToUsableArea = new BooleanCommand
+        private readonly BooleanCommand lockToUsableArea = new BooleanCommand
         {
             MenuText = "Lock to usable area"
         };
 
-        private UnitGroup widthGroup, heightGroup, xGroup, yGroup;
-        private MaskedTextBox<float> width, height, x, y;
+        private readonly UnitGroup widthGroup, heightGroup, xGroup, yGroup;
+        private readonly MaskedTextBox<float> width, height, x, y;
 
         protected StackLayout settingsPanel;
 

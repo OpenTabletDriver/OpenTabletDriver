@@ -28,6 +28,6 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos4
             };
         }
 
-        private IntuosV1ReportParser _IntuosV1ReportParser = new IntuosV1ReportParser();
+        private readonly IntuosV1ReportParser _IntuosV1ReportParser = new IntuosV1ReportParser();
     }
 }

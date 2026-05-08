@@ -60,7 +60,7 @@ namespace OpenTabletDriver.Plugin.Timing
             return delta;
         }
 
-        private static Stopwatch internalWatch = Stopwatch.StartNew();
+        private static readonly Stopwatch internalWatch = Stopwatch.StartNew();
         protected TimeSpan start;
         protected TimeSpan end;
         protected bool isRunning;

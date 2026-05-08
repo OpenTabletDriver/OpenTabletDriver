@@ -16,8 +16,8 @@ namespace OpenTabletDriver.Devices
     {
         public RootHub(IDeviceHubsProvider hubsProvider)
         {
-            internalHubs = hubsProvider.DeviceHubs.ToHashSet();
-            hubs = new HashSet<IDeviceHub>(internalHubs);
+            internalHubs = [.. hubsProvider.DeviceHubs];
+            hubs = [.. internalHubs];
             ForceEnumeration();
 
             foreach (var hub in hubs)
@@ -32,7 +32,7 @@ namespace OpenTabletDriver.Devices
         private readonly HashSet<IDeviceHub> internalHubs;
         private readonly HashSet<IDeviceHub> hubs;
         private List<IDeviceEndpoint>? oldEndpoints;
-        private readonly List<IDeviceEndpoint> endpoints = new();
+        private readonly List<IDeviceEndpoint> endpoints = [];
         private long version;
         private int currentlyDebouncing;
         private IServiceProvider? serviceProvider;
@@ -102,7 +102,7 @@ namespace OpenTabletDriver.Devices
             if (Interlocked.Increment(ref currentlyDebouncing) == 1)
             {
                 // This event is the first of a potential sequence of events, copy old endpoint list
-                oldEndpoints = new List<IDeviceEndpoint>(endpoints);
+                oldEndpoints = [.. endpoints];
             }
 
             lock (syncObject)
@@ -147,7 +147,7 @@ namespace OpenTabletDriver.Devices
 
         private void CommitHubChange()
         {
-            oldEndpoints = new List<IDeviceEndpoint>(endpoints);
+            oldEndpoints = [.. endpoints];
             ForceEnumeration();
             DevicesChanged?.Invoke(this, new DevicesChangedEventArgs(endpoints, oldEndpoints));
             oldEndpoints = null;

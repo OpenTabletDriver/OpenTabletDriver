@@ -30,52 +30,52 @@ namespace OpenTabletDriver.Native.OSX
         public static extern void CFRelease(IntPtr handle);
 
         [DllImport(Quartz)]
-        public extern static CGEventRef CGEventCreate(CGEventSourceRef source);
+        public static extern CGEventRef CGEventCreate(CGEventSourceRef source);
 
         [DllImport(Quartz)]
-        public extern static CGPoint CGEventGetLocation(CGEventRef eventRef);
+        public static extern CGPoint CGEventGetLocation(CGEventRef eventRef);
 
         [DllImport(Quartz)]
-        public extern static CGEventRef CGEventCreateMouseEvent(CGEventSourceRef source, CGEventType mouseType,
+        public static extern CGEventRef CGEventCreateMouseEvent(CGEventSourceRef source, CGEventType mouseType,
             CGPoint mouseCursorPosition, CGMouseButton mouseButton);
 
         [DllImport(Quartz)]
-        public extern static CGEventRef CGEventCreateKeyboardEvent(CGEventSourceRef source, CGKeyCode virtualKey, bool keyDown);
+        public static extern CGEventRef CGEventCreateKeyboardEvent(CGEventSourceRef source, CGKeyCode virtualKey, bool keyDown);
 
         [DllImport(Quartz)]
-        public extern static CGEventRef CGEventSetType(CGEventRef eventRef, CGEventType type);
+        public static extern CGEventRef CGEventSetType(CGEventRef eventRef, CGEventType type);
 
         [DllImport(Quartz)]
-        public extern static CGEventRef CGEventSetIntegerValueField(CGEventRef eventRef, CGEventField field, long value);
+        public static extern CGEventRef CGEventSetIntegerValueField(CGEventRef eventRef, CGEventField field, long value);
 
         [DllImport(Quartz)]
-        public extern static void CGEventSetDoubleValueField(CGEventRef eventRef, CGEventField field, double value);
+        public static extern void CGEventSetDoubleValueField(CGEventRef eventRef, CGEventField field, double value);
 
         [DllImport(Quartz)]
-        public extern static void CGEventSetLocation(CGEventRef eventRef, CGPoint location);
+        public static extern void CGEventSetLocation(CGEventRef eventRef, CGPoint location);
 
         [DllImport(Quartz)]
-        public extern static CGEventRef CGEventCreateScrollWheelEvent2(CGEventRef eventRef, CGScrollEventUnit units, uint wheelCount, int wheel1, int wheel2, int wheel3);
+        public static extern CGEventRef CGEventCreateScrollWheelEvent2(CGEventRef eventRef, CGScrollEventUnit units, uint wheelCount, int wheel1, int wheel2, int wheel3);
 
         [DllImport(Quartz)]
-        public extern static void CGEventSetFlags(CGEventRef eventRef, ulong flags);
+        public static extern void CGEventSetFlags(CGEventRef eventRef, ulong flags);
 
         [DllImport(Quartz)]
-        public extern static CGEventSourceRef CGEventSourceCreate(int stateID);
+        public static extern CGEventSourceRef CGEventSourceCreate(int stateID);
 
         [DllImport(Quartz)]
-        public extern static ulong CGEventSourceFlagsState(int stateID);
+        public static extern ulong CGEventSourceFlagsState(int stateID);
 
         [DllImport(Quartz, EntryPoint = "CGEventPost")]
-        private extern static void _CGEventPost(CGEventTapLocation tap, CGEventRef eventRef);
+        private static extern void _CGEventPost(CGEventTapLocation tap, CGEventRef eventRef);
 
 
         [DllImport(Quartz)]
-        public extern static CGError CGGetActiveDisplayList(uint maxDisplays,
+        public static extern CGError CGGetActiveDisplayList(uint maxDisplays,
             [In, Out] CGDirectDisplayID[] activeDisplays, out uint displayCount);
 
         [DllImport(Quartz)]
-        public extern static CGRect CGDisplayBounds(CGDirectDisplayID displayID);
+        public static extern CGRect CGDisplayBounds(CGDirectDisplayID displayID);
 
         public static double GetDoubleClickInterval()
         {

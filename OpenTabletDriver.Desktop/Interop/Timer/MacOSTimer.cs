@@ -15,7 +15,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
 {
     internal class MacOSTimer : ITimer, IDisposable
     {
-        const int TIMER_CANCELLED = 1;
+        private const int TIMER_CANCELLED = 1;
 
         private Thread? thread;
         private int kqueue;
@@ -71,8 +71,10 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
                         return;
                     }
 
-                    thread = new Thread(ThreadMain);
-                    thread.IsBackground = true;
+                    thread = new Thread(ThreadMain)
+                    {
+                        IsBackground = true
+                    };
                     thread!.Start();
                     Enabled = true;
                 }

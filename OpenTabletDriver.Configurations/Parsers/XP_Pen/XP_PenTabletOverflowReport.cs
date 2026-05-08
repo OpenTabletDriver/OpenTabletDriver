@@ -12,8 +12,8 @@ namespace OpenTabletDriver.Configurations.Parsers.XP_Pen
 
             Position = new Vector2
             {
-                X = Unsafe.ReadUnaligned<ushort>(ref report[2]) | report[10] << 16,
-                Y = Unsafe.ReadUnaligned<ushort>(ref report[4]) | report[11] << 16
+                X = Unsafe.ReadUnaligned<ushort>(ref report[2]) | (report[10] << 16),
+                Y = Unsafe.ReadUnaligned<ushort>(ref report[4]) | (report[11] << 16)
             };
             Pressure = Unsafe.ReadUnaligned<ushort>(ref report[6]);
             Eraser = report[1].IsBitSet(3);

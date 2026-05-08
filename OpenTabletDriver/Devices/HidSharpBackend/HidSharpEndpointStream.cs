@@ -11,7 +11,7 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
             stream.ReadTimeout = int.MaxValue;
         }
 
-        private HidStream stream;
+        private readonly HidStream stream;
 
         public byte[] Read() => stream.Read();
         public void Write(byte[] buffer) => stream.Write(buffer);

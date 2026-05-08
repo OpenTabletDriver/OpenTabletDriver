@@ -9,7 +9,7 @@ namespace OpenTabletDriver.UX.Controls.Generic.Reflection
 {
     public static class Extensions
     {
-        private static readonly Dictionary<TypeInfo, string> FriendlyNameCache = new();
+        private static readonly Dictionary<TypeInfo, string> FriendlyNameCache = [];
 
         public static string GetFriendlyName(this TypeInfo type)
         {

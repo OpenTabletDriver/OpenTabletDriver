@@ -11,16 +11,6 @@ namespace OpenTabletDriver.Desktop
 
     public class AppInfo
     {
-        private string configurationDirectory,
-            settingsFile,
-            pluginDirectory,
-            presetDirectory,
-            logDirectory,
-            temporaryDirectory,
-            cacheDirectory,
-            backupDirectory,
-            trashDirectory;
-
         public AppInfo()
         {
             // on Linux, verify presence of necessary environment variables (as '~' expands to $HOME environment variable)
@@ -32,11 +22,10 @@ namespace OpenTabletDriver.Desktop
             }
         }
 
-        private static AppInfo current;
         public static AppInfo Current
         {
-            set => current = value;
-            get => current ??= SystemInterop.CurrentPlatform switch
+            set;
+            get => field ??= SystemInterop.CurrentPlatform switch
             {
                 PluginPlatform.Windows => new AppInfo
                 {
@@ -67,56 +56,56 @@ namespace OpenTabletDriver.Desktop
 
         public string ConfigurationDirectory
         {
-            set => this.configurationDirectory = value;
-            get => this.configurationDirectory ?? GetDefaultConfigurationDirectory();
+            set;
+            get => field ?? GetDefaultConfigurationDirectory();
         }
 
         public string SettingsFile
         {
-            set => this.settingsFile = value;
-            get => this.settingsFile ?? GetDefaultSettingsFile();
+            set;
+            get => field ?? GetDefaultSettingsFile();
         }
 
         public string PluginDirectory
         {
-            set => this.pluginDirectory = value;
-            get => this.pluginDirectory ?? GetDefaultPluginDirectory();
+            set;
+            get => field ?? GetDefaultPluginDirectory();
         }
 
         public string PresetDirectory
         {
-            set => this.presetDirectory = value;
-            get => this.presetDirectory ?? GetDefaultPresetDirectory();
+            set;
+            get => field ?? GetDefaultPresetDirectory();
         }
 
         public string LogDirectory
         {
-            set => this.logDirectory = value;
-            get => this.logDirectory ?? GetDefaultLogDirectory();
+            set;
+            get => field ?? GetDefaultLogDirectory();
         }
 
         public string TemporaryDirectory
         {
-            set => this.temporaryDirectory = value;
-            get => this.temporaryDirectory ?? GetDefaultTemporaryDirectory();
+            set;
+            get => field ?? GetDefaultTemporaryDirectory();
         }
 
         public string CacheDirectory
         {
-            set => this.cacheDirectory = value;
-            get => this.cacheDirectory ?? GetDefaultCacheDirectory();
+            set;
+            get => field ?? GetDefaultCacheDirectory();
         }
 
         public string BackupDirectory
         {
-            set => this.backupDirectory = value;
-            get => this.backupDirectory ?? GetDefaultBackupDirectory();
+            set;
+            get => field ?? GetDefaultBackupDirectory();
         }
 
         public string TrashDirectory
         {
-            set => this.trashDirectory = value;
-            get => this.trashDirectory ?? GetDefaultTrashDirectory();
+            set;
+            get => field ?? GetDefaultTrashDirectory();
         }
 
         public static string ProgramDirectory => AppContext.BaseDirectory;

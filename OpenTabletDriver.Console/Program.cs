@@ -9,7 +9,7 @@ namespace OpenTabletDriver.Console
 {
     using static CommandTools;
 
-    partial class Program
+    internal partial class Program
     {
         public static async Task Main(string[] args)
         {

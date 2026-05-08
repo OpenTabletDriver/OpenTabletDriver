@@ -43,7 +43,7 @@ namespace OpenTabletDriver.Desktop.Interop.Display
             return $"VirtualDisplay {Index} ({Width}x{Height}@{Position})";
         }
 
-        private Lazy<IEnumerable<IDisplay>> _displays = new Lazy<IEnumerable<IDisplay>>(() =>
+        private readonly Lazy<IEnumerable<IDisplay>> _displays = new Lazy<IEnumerable<IDisplay>>(() =>
         {
             var displayBounds = GetDisplayBounds().ToList();
             var offsetX = displayBounds.Min(d => d.origin.x);

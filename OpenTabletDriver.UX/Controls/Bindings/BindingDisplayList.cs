@@ -15,7 +15,7 @@ namespace OpenTabletDriver.UX.Controls.Bindings
 
         protected override Control CreateControl(int index, DirectBinding<PluginSettingStore> itemBinding)
         {
-            BindingDisplay display = new BindingDisplay();
+            var display = new BindingDisplay();
             display.StoreBinding.Bind(itemBinding);
 
             return new Group

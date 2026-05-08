@@ -98,20 +98,19 @@ namespace OpenTabletDriver.UX.Controls.Output
         private bool handlingSettingsChanging;
         private float? prevDisplayWidth;
         private float? prevDisplayHeight;
-        private DirectBinding<float> displayWidth;
-        private DirectBinding<float> displayHeight;
-        private DirectBinding<float> tabletWidth;
-        private DirectBinding<float> tabletHeight;
+        private readonly DirectBinding<float> displayWidth;
+        private readonly DirectBinding<float> displayHeight;
+        private readonly DirectBinding<float> tabletWidth;
+        private readonly DirectBinding<float> tabletHeight;
 
-        private AbsoluteModeSettings settings;
         public AbsoluteModeSettings Settings
         {
             set
             {
-                this.settings = value;
+                field = value;
                 this.OnSettingsChanged();
             }
-            get => this.settings;
+            get;
         }
 
         public event EventHandler<EventArgs> SettingsChanged;
@@ -335,7 +334,6 @@ namespace OpenTabletDriver.UX.Controls.Output
             }
 
             private BooleanCommand lockArCmd, areaClippingCmd, ignoreOutsideAreaCmd;
-            private bool lockAspectRatio, areaClipping, ignoreOutsideArea;
 
             public event EventHandler<EventArgs> LockAspectRatioChanged;
             public event EventHandler<EventArgs> AreaClippingChanged;
@@ -349,30 +347,30 @@ namespace OpenTabletDriver.UX.Controls.Output
             {
                 set
                 {
-                    this.lockAspectRatio = value;
+                    field = value;
                     this.OnLockAspectRatioChanged();
                 }
-                get => this.lockAspectRatio;
+                get;
             }
 
             public bool AreaClipping
             {
                 set
                 {
-                    this.areaClipping = value;
+                    field = value;
                     this.OnAreaClippingChanged();
                 }
-                get => this.areaClipping;
+                get;
             }
 
             public bool IgnoreOutsideArea
             {
                 set
                 {
-                    this.ignoreOutsideArea = value;
+                    field = value;
                     this.OnIgnoreOutsideAreaChanged();
                 }
-                get => this.ignoreOutsideArea;
+                get;
             }
 
             public BindableBinding<TabletAreaEditor, bool> LockAspectRatioBinding
@@ -439,12 +437,11 @@ namespace OpenTabletDriver.UX.Controls.Output
                 };
 
                 base.ContextMenu.Items.AddRange(
-                    new Command[]
-                    {
+                    [
                         lockArCmd,
                         areaClippingCmd,
                         ignoreOutsideAreaCmd
-                    }
+                    ]
                 );
 
                 base.ContextMenu.Items.AddSeparator();

@@ -33,7 +33,7 @@ namespace OpenTabletDriver.UX.Windows.Updater
         }
 
         public const string LATEST_RELEASE_URL = "https://github.com/OpenTabletDriver/OpenTabletDriver/releases/latest";
-        private TaskCompletionSource<bool> _updateAvailable = new();
+        private readonly TaskCompletionSource<bool> _updateAvailable = new();
         public Task<bool> HasUpdates() => _updateAvailable.Task;
 
         private async Task InitializeAsync()

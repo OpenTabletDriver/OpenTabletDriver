@@ -8,41 +8,39 @@ namespace OpenTabletDriver.Desktop.Profiles
 {
     public class AreaSettings : ViewModel
     {
-        private float width, height, x, y, rotation;
-
         [JsonProperty(nameof(Width))]
         public float Width
         {
-            set => this.RaiseAndSetIfChanged(ref this.width, value);
-            get => this.width;
+            set => this.RaiseAndSetIfChanged(ref field, value);
+            get;
         }
 
         [JsonProperty(nameof(Height))]
         public float Height
         {
-            set => this.RaiseAndSetIfChanged(ref this.height, value);
-            get => this.height;
+            set => this.RaiseAndSetIfChanged(ref field, value);
+            get;
         }
 
         [JsonProperty(nameof(X))]
         public float X
         {
-            set => this.RaiseAndSetIfChanged(ref this.x, value);
-            get => this.x;
+            set => this.RaiseAndSetIfChanged(ref field, value);
+            get;
         }
 
         [JsonProperty(nameof(Y))]
         public float Y
         {
-            set => this.RaiseAndSetIfChanged(ref this.y, value);
-            get => this.y;
+            set => this.RaiseAndSetIfChanged(ref field, value);
+            get;
         }
 
         [JsonProperty(nameof(Rotation))]
         public float Rotation
         {
-            set => this.RaiseAndSetIfChanged(ref this.rotation, value);
-            get => this.rotation;
+            set => this.RaiseAndSetIfChanged(ref field, value);
+            get;
         }
 
         [JsonIgnore]

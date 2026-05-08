@@ -6,35 +6,32 @@ namespace OpenTabletDriver.Desktop.Profiles
 {
     public class RelativeModeSettings : ViewModel
     {
-        private float xS, yS, relRot;
-        private TimeSpan rT;
-
         [JsonProperty(nameof(XSensitivity))]
         public float XSensitivity
         {
-            set => RaiseAndSetIfChanged(ref this.xS, value);
-            get => this.xS;
+            set => RaiseAndSetIfChanged(ref field, value);
+            get;
         }
 
         [JsonProperty(nameof(YSensitivity))]
         public float YSensitivity
         {
-            set => RaiseAndSetIfChanged(ref this.yS, value);
-            get => this.yS;
+            set => RaiseAndSetIfChanged(ref field, value);
+            get;
         }
 
         [JsonProperty(nameof(RelativeRotation))]
         public float RelativeRotation
         {
-            set => RaiseAndSetIfChanged(ref this.relRot, value);
-            get => this.relRot;
+            set => RaiseAndSetIfChanged(ref field, value);
+            get;
         }
 
         [JsonProperty("RelativeResetDelay")]
         public TimeSpan ResetTime
         {
-            set => RaiseAndSetIfChanged(ref this.rT, value);
-            get => this.rT;
+            set => RaiseAndSetIfChanged(ref field, value);
+            get;
         }
 
         [JsonIgnore]

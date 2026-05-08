@@ -10,7 +10,7 @@ namespace OpenTabletDriver.Desktop.Updater
 {
     public abstract partial class GitHubUpdater : Updater
     {
-        static private readonly string _binaryDirectory = BinaryDirectoryRegex().Match(AppContext.BaseDirectory) switch
+        private static readonly string _binaryDirectory = BinaryDirectoryRegex().Match(AppContext.BaseDirectory) switch
         {
             { Success: true } match => match.Groups[1].ToString(),
             _ => AppContext.BaseDirectory

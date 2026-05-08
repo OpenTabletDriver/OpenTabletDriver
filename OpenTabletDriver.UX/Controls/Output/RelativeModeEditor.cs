@@ -64,17 +64,16 @@ namespace OpenTabletDriver.UX.Controls.Output
             ).Bind(SettingsBinding.Child(s => s.ResetTime));
         }
 
-        private MaskedTextBox<float> xSens, ySens, rotation, resetTime;
+        private readonly MaskedTextBox<float> xSens, ySens, rotation, resetTime;
 
-        private RelativeModeSettings settings;
         public RelativeModeSettings Settings
         {
             set
             {
-                this.settings = value;
+                field = value;
                 this.OnSettingsChanged();
             }
-            get => this.settings;
+            get;
         }
 
         public event EventHandler<EventArgs> SettingsChanged;

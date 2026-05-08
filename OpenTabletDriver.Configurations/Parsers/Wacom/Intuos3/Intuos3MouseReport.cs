@@ -11,8 +11,8 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos3
 
             Position = new Vector2
             {
-                X = (report[3] | report[2] << 8) << 1 | report[9] >> 1 & 1,
-                Y = (report[5] | report[4] << 8) << 1 | report[9] & 1
+                X = ((report[3] | (report[2] << 8)) << 1) | ((report[9] >> 1) & 1),
+                Y = ((report[5] | (report[4] << 8)) << 1) | (report[9] & 1)
             };
             MouseButtons =
             [

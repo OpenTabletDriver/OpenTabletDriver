@@ -10,31 +10,31 @@ using static System.Console;
 
 namespace OpenTabletDriver.Console
 {
-    partial class Program
+    internal partial class Program
     {
-        static SHA256 sha256 = SHA256.Create();
+        private static readonly SHA256 sha256 = SHA256.Create();
 
-        static async Task<Settings> GetSettings()
+        private static async Task<Settings> GetSettings()
         {
             if (!await EnsureDaemonReady())
                 throw new InvalidOperationException("Cannot get settings without a daemon");
             return await Driver.Instance.GetSettings();
         }
 
-        static async Task ApplySettings(Settings settings)
+        private static async Task ApplySettings(Settings settings)
         {
             if (!await EnsureDaemonReady()) return;
             await Driver.Instance.SetSettings(settings);
         }
 
-        static async Task ModifySettings(Action<Settings> func)
+        private static async Task ModifySettings(Action<Settings> func)
         {
             var settings = await GetSettings();
             func.Invoke(settings);
             await ApplySettings(settings);
         }
 
-        static async Task ModifyProfile(string profileName, Action<Profile> func)
+        private static async Task ModifyProfile(string profileName, Action<Profile> func)
         {
             await ModifySettings(async s =>
             {
@@ -50,7 +50,7 @@ namespace OpenTabletDriver.Console
             });
         }
 
-        static async Task<Profile> GetProfile(string profileName, Settings settings = null)
+        private static async Task<Profile> GetProfile(string profileName, Settings settings = null)
         {
             if (!await EnsureDaemonReady())
                 throw new InvalidOperationException("Cannot get a profile without a daemon");
@@ -70,7 +70,7 @@ namespace OpenTabletDriver.Console
             return profile ?? throw new ArgumentException($"Cannot find profile for tablet '{profileName}'");
         }
 
-        static async Task ListTypes<T>(Func<Type, bool> predicate = null)
+        private static async Task ListTypes<T>(Func<Type, bool> predicate = null)
         {
             if (!await EnsureDaemonReady()) return;
             var types = AppInfo.PluginManager.GetChildTypes<T>();
@@ -91,14 +91,14 @@ namespace OpenTabletDriver.Console
             }
         }
 
-        static string GetSHA256(string path)
+        private static string GetSHA256(string path)
         {
             var data = File.ReadAllBytes(path);
             var hash = sha256.ComputeHash(data);
             return string.Join(null, hash.Select(b => b.ToString("X")));
         }
 
-        static void AppendPluginStoreSettingsCollectionByPaths<T>(PluginSettingStoreCollection pssc, params string[] paths) where T : class
+        private static void AppendPluginStoreSettingsCollectionByPaths<T>(PluginSettingStoreCollection pssc, params string[] paths) where T : class
         {
             foreach (var path in paths)
             {
@@ -115,7 +115,7 @@ namespace OpenTabletDriver.Console
             }
         }
 
-        static void DisableAllInPluginStoreSettingsCollectionByPaths(PluginSettingStoreCollection pssc, params string[] paths)
+        private static void DisableAllInPluginStoreSettingsCollectionByPaths(PluginSettingStoreCollection pssc, params string[] paths)
         {
             foreach (string path in paths)
             {

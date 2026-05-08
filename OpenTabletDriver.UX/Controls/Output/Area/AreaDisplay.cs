@@ -27,9 +27,6 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             }
         }
 
-        private AreaSettings area;
-        private bool lockToUsableArea;
-        private string unit, invalidForegroundError, invalidBackgroundError;
         protected IEnumerable<RectangleF> areaBounds;
         private RectangleF fullAreaBounds;
         private readonly TextDrawer textDrawer = new();
@@ -54,30 +51,30 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
         {
             set
             {
-                this.area = value;
+                field = value;
                 this.OnAreaChanged();
             }
-            get => this.area;
+            get;
         }
 
         public bool LockToUsableArea
         {
             set
             {
-                this.lockToUsableArea = value;
+                field = value;
                 this.OnLockToUsableAreaChanged();
             }
-            get => this.lockToUsableArea;
+            get;
         }
 
         public string Unit
         {
             set
             {
-                this.unit = value;
+                field = value;
                 this.OnUnitChanged();
             }
-            get => this.unit;
+            get;
         }
 
         public virtual IEnumerable<RectangleF> AreaBounds
@@ -104,20 +101,20 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
         {
             set
             {
-                this.invalidForegroundError = value;
+                field = value;
                 this.OnInvalidForegroundErrorChanged();
             }
-            get => this.invalidForegroundError;
+            get;
         }
 
         public string InvalidBackgroundError
         {
             set
             {
-                this.invalidBackgroundError = value;
+                field = value;
                 this.OnInvalidBackgroundErrorChanged();
             }
-            get => this.invalidBackgroundError;
+            get;
         }
 
         public BindableBinding<AreaDisplay, AreaSettings> AreaBinding

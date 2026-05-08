@@ -21,7 +21,7 @@ using OpenTabletDriver.UX.Windows.Updater;
 
 namespace OpenTabletDriver.UX
 {
-    class CommandLineOptions
+    internal class CommandLineOptions
     {
         public bool StartMinimized { get; set; }
         public bool SkipUpdate { get; set; }
@@ -153,17 +153,15 @@ namespace OpenTabletDriver.UX
 
         public static Uri Website { get; } = new Uri(@"https://github.com/OpenTabletDriver/OpenTabletDriver");
         public static string License { get; } = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.LICENSE")).ReadToEnd();
-
-        private Settings settings;
         public Settings Settings
         {
-            set => this.RaiseAndSetIfChanged(ref this.settings, value);
-            get => this.settings;
+            set => this.RaiseAndSetIfChanged(ref field, value);
+            get;
         }
 
         private const string APPNAME = "OpenTabletDriver.UX";
-        public readonly static bool EnableTrayIcon = (PluginPlatform.Windows | PluginPlatform.MacOS).HasFlag(SystemInterop.CurrentPlatform);
-        public readonly static bool EnableDaemonWatchdog = (PluginPlatform.Windows | PluginPlatform.MacOS).HasFlag(SystemInterop.CurrentPlatform);
+        public static readonly bool EnableTrayIcon = (PluginPlatform.Windows | PluginPlatform.MacOS).HasFlag(SystemInterop.CurrentPlatform);
+        public static readonly bool EnableDaemonWatchdog = (PluginPlatform.Windows | PluginPlatform.MacOS).HasFlag(SystemInterop.CurrentPlatform);
         public static DaemonWatchdog DaemonWatchdog;
 
         public WindowSingleton<StartupGreeterWindow> StartupGreeterWindow { get; } = new WindowSingleton<StartupGreeterWindow>();

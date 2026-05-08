@@ -8,15 +8,14 @@ namespace OpenTabletDriver.UX.Controls.Bindings
     {
         public DirectBinding<BindingSettings> SettingsBinding => ProfileBinding.Child(b => b.BindingSettings);
 
-        private Profile profile;
         public Profile Profile
         {
             set
             {
-                this.profile = value;
+                field = value;
                 this.OnProfileChanged();
             }
-            get => this.profile;
+            get;
         }
 
         public event EventHandler<EventArgs> ProfileChanged;

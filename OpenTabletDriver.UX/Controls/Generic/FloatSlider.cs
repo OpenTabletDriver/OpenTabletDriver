@@ -39,16 +39,14 @@ namespace OpenTabletDriver.UX.Controls
 
         private readonly Slider slider = new();
 
-        private float _value;
-
         public float Value
         {
             set
             {
-                this._value = value;
+                field = value;
                 ValueChanged?.Invoke(this, new EventArgs());
             }
-            get => this._value;
+            get;
         }
 
         public int Minimum
