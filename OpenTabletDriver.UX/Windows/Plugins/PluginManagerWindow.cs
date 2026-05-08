@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -80,6 +81,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
 
         protected async Task<bool> DownloadAndInstall(PluginMetadata metadata)
         {
+            Debug.Assert(App.Driver.IsConnected);
             try
             {
                 if (await App.Driver.Instance.DownloadPlugin(metadata))
@@ -97,7 +99,9 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             }
             catch (RemoteInvocationException ex)
             {
-                var data = ex.DeserializedErrorData as CommonErrorData;
+                if (ex.DeserializedErrorData is not CommonErrorData data)
+                    throw new InvalidOperationException("Could not deserialize error data");
+
                 if (data.TypeName == typeof(CryptographicException).FullName)
                 {
                     MessageBox.Show(
@@ -123,6 +127,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
 
         protected async Task Install(string path)
         {
+            Debug.Assert(App.Driver.IsConnected);
             if (await App.Driver.Instance.InstallPlugin(path))
             {
                 AppInfo.PluginManager.Load();
@@ -135,6 +140,8 @@ namespace OpenTabletDriver.UX.Windows.Plugins
 
         protected async Task<bool> Uninstall(PluginMetadata metadata)
         {
+            Debug.Assert(App.Driver.IsConnected);
+
             var context = AppInfo.PluginManager.GetLoadedPlugins().First(
                 c => PluginMetadata.Match(c.GetMetadata(), metadata)
             );
@@ -161,10 +168,10 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             refresh.Executed += RefreshHandler;
 
             var alternateSource = new Command { MenuText = "Use alternate source..." };
-            alternateSource.Executed += async (sender, e) => await SwitchRepositorySource();
+            alternateSource.Executed += async (_, _) => await SwitchRepositorySource();
 
             var pluginsDirectory = new Command { MenuText = "Open plugins directory..." };
-            pluginsDirectory.Executed += (sender, e) => DesktopInterop.OpenFolder(AppInfo.Current.PluginDirectory);
+            pluginsDirectory.Executed += (_, _) => DesktopInterop.OpenFolder(AppInfo.Current.PluginDirectory);
 
             return new MenuBar()
             {

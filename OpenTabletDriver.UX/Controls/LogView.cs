@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace OpenTabletDriver.UX.Controls
             this.Orientation = Orientation.Vertical;
 
             var filterSelector = new FilterDropDown();
-            filterSelector.SelectedValueChanged += (sender, filter) => this.messageStore.Filter = filterSelector.SelectedValue;
+            filterSelector.SelectedValueChanged += (_, _) => this.messageStore.Filter = filterSelector.SelectedValue;
 
             var toolbar = new StackLayout
             {
@@ -29,14 +30,14 @@ namespace OpenTabletDriver.UX.Controls
                 Items =
                 {
                     filterSelector,
-                    new Button((sender, e) => Copy(this.messageStore))
+                    new Button((_, _) => Copy(this.messageStore))
                     {
                         Text = "Copy All"
                     }
                 }
             };
 
-            var copyCommand = new Command((sender, e) => Copy(messageList.SelectedItems))
+            var copyCommand = new Command((_, _) => Copy(messageList.SelectedItems))
             {
                 MenuText = "Copy"
             };
@@ -49,7 +50,7 @@ namespace OpenTabletDriver.UX.Controls
                 }
             };
 
-            messageList.KeyDown += (sender, e) =>
+            messageList.KeyDown += (_, e) =>
             {
                 switch (e.Modifiers, e.Key)
                 {
@@ -70,10 +71,11 @@ namespace OpenTabletDriver.UX.Controls
 
         private async Task InitializeAsync()
         {
+            Debug.Assert(App.Driver.IsConnected);
             var currentMessages = await App.Driver.Instance.GetCurrentLog();
             messageList.DataStore = messageStore = new LogDataStore(currentMessages);
 
-            this.messageStore.CollectionChanged += (sender, e) =>
+            this.messageStore.CollectionChanged += (_, _) =>
             {
                 Application.Instance.AsyncInvoke(() =>
                 {
@@ -87,7 +89,7 @@ namespace OpenTabletDriver.UX.Controls
                 });
             };
 
-            App.Driver.Message += (sender, message) => AddMessage(message);
+            App.Driver.Message += (_, message) => AddMessage(message);
         }
 
         private readonly GridView<LogMessage> messageList = new GridView<LogMessage>
@@ -151,10 +153,12 @@ namespace OpenTabletDriver.UX.Controls
 
         private static void Copy(IEnumerable<LogMessage> messages)
         {
-            if (messages.Any())
+            var logMessages = messages as LogMessage[] ?? messages.ToArray();
+
+            if (logMessages.Length != 0)
             {
                 StringBuilder sb = new StringBuilder();
-                foreach (var message in messages)
+                foreach (var message in logMessages)
                 {
                     var line = Log.GetStringFormat(message);
                     sb.AppendLine(line);

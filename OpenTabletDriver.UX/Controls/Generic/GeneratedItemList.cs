@@ -72,7 +72,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
 
         protected virtual void OnItemSourceChanged()
         {
-            ItemSourceChanged?.Invoke(this, new EventArgs());
+            ItemSourceChanged?.Invoke(this, EventArgs.Empty);
             HandleCollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 

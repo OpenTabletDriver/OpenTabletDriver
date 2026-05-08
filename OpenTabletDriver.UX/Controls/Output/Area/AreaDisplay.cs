@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Profiles;
@@ -273,9 +275,11 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
         {
             base.OnMouseMove(e);
 
+            Debug.Assert(Area != null);
+
             if (mouseDragging)
             {
-                if (mouseOffset != null)
+                if (mouseOffset.HasValue && viewModelOffset.HasValue)
                 {
                     var delta = e.Location - mouseOffset.Value;
                     var newX = viewModelOffset.Value.X + (delta.X / PixelScale);
@@ -336,6 +340,8 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
 
         private void DrawBackground(Graphics graphics, float scale)
         {
+            Debug.Assert(AreaBounds != null);
+
             using (graphics.SaveTransformState())
             {
                 graphics.TranslateTransform(-FullAreaBounds.TopLeft * scale);
@@ -350,30 +356,33 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
 
         private void DrawForeground(Graphics graphics, float scale)
         {
+            Debug.Assert(Area != null);
+
             using (graphics.SaveTransformState())
             {
-                var area = ForegroundRect * scale;
+                var foregroundArea = ForegroundRect * scale;
 
-                graphics.TranslateTransform(area.Center);
+                graphics.TranslateTransform(foregroundArea.Center);
                 graphics.RotateTransform(Area.Rotation);
-                graphics.TranslateTransform(-area.Center);
+                graphics.TranslateTransform(-foregroundArea.Center);
 
-                graphics.FillRectangle(AccentColor, area);
-                graphics.DrawRectangle(SystemColors.ControlText, area);
+                graphics.FillRectangle(AccentColor, foregroundArea);
+                graphics.DrawRectangle(SystemColors.ControlText, foregroundArea);
 
                 var originEllipse = new RectangleF(0, 0, 1, 1);
-                originEllipse.Offset(area.Center - (originEllipse.Size / 2));
+                originEllipse.Offset(foregroundArea.Center - (originEllipse.Size / 2));
                 graphics.DrawEllipse(SystemColors.ControlText, originEllipse);
 
-                DrawRatioText(graphics, area);
-                DrawWidthText(graphics, area);
-                DrawHeightText(graphics, area);
+                DrawRatioText(graphics, foregroundArea);
+                DrawWidthText(graphics, foregroundArea);
+                DrawHeightText(graphics, foregroundArea);
             }
         }
 
         private void DrawRatioText(Graphics graphics, RectangleF area)
         {
-            string ratio = Math.Round(Area.Width / Area.Height, 4).ToString();
+            Debug.Assert(Area != null);
+            string ratio = Math.Round(Area.Width / Area.Height, 4).ToString(CultureInfo.InvariantCulture);
             SizeF ratioMeasure = graphics.MeasureString(Font, ratio);
             var offsetY = area.Center.Y + (ratioMeasure.Height / 2);
             if (offsetY + ratioMeasure.Height > area.Y + area.Height)
@@ -388,6 +397,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
 
         private void DrawWidthText(Graphics graphics, RectangleF area)
         {
+            Debug.Assert(Area != null);
             var minDist = area.Center.Y - 40;
             string widthText = $"{MathF.Round(Area.Width, 3)}{Unit}";
             var widthTextSize = graphics.MeasureString(Font, widthText);
@@ -400,6 +410,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
 
         private void DrawHeightText(Graphics graphics, RectangleF area)
         {
+            Debug.Assert(Area != null);
             using (graphics.SaveTransformState())
             {
                 var minDist = area.Center.X - 40;
@@ -416,6 +427,9 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
 
         private void DrawText(Graphics graphics, string errorText)
         {
+            ArgumentNullException.ThrowIfNull(errorText);
+            if (errorText.Length == 0) return;
+
             var errSize = graphics.MeasureString(Font, errorText);
             var errorOffset = new PointF(errSize.Width, errSize.Height) / 2;
             var clientOffset = new PointF(this.ClientSize.Width, this.ClientSize.Height) / 2;

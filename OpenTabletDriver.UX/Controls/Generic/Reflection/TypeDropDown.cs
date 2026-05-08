@@ -17,14 +17,9 @@ namespace OpenTabletDriver.UX.Controls.Generic.Reflection
             AppInfo.PluginManager.AssembliesChanged += HandleAssembliesChanged;
         }
 
-        public T ConstructSelectedType(params object[] args)
+        public T ConstructSelectedType()
         {
-            if (SelectedItem != null)
-            {
-                args ??= Array.Empty<object>();
-                return AppInfo.PluginManager.ConstructObject<T>(SelectedItem.FullName);
-            }
-            return null;
+            return SelectedItem != null ? AppInfo.PluginManager.ConstructObject<T>(SelectedItem.FullName) : null;
         }
 
         public void Select(Func<T, bool> predicate)
@@ -49,8 +44,6 @@ namespace OpenTabletDriver.UX.Controls.Generic.Reflection
         }
 
         private void HandleAssembliesChanged(object sender, EventArgs e) => Application.Instance.AsyncInvoke(() =>
-        {
-            this.DataStore = CreateDefaultDataStore();
-        });
+            this.DataStore = CreateDefaultDataStore());
     }
 }

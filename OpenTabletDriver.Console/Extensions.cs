@@ -24,7 +24,7 @@ namespace OpenTabletDriver.Console
 
         public static string Format(this PluginSettingStore store)
         {
-            if (store == null || !store.Enable)
+            if (store is not { Enable: true })
                 return null;
 
             var storeSettings = store.Settings.Select(setting => setting.Format()).ToList();

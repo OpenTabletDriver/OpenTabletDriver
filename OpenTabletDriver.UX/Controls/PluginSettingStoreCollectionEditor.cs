@@ -15,13 +15,15 @@ namespace OpenTabletDriver.UX.Controls
     {
         public PluginSettingStoreCollectionEditor()
         {
+            ToggleablePluginSettingStoreEditor settingStoreEditor;
+
             this.Content = placeholder = new Placeholder
             {
                 Text = "No plugins containing this type are installed.",
                 ExtraContent = new Button
                 {
                     Text = "Open Plugin Manager",
-                    Command = new Command((s, e) => App.Current.PluginManagerWindow.Show())
+                    Command = new Command((_, _) => App.Current.PluginManagerWindow.Show())
                 }
             };
 
@@ -43,7 +45,7 @@ namespace OpenTabletDriver.UX.Controls
             };
 
             settingStoreEditor.StoreBinding.Bind(
-                sourceSelector.SelectedItemBinding.Convert(t => StoreCollection?.FromType(t))
+                sourceSelector.SelectedItemBinding.Convert(t => t != null ? StoreCollection?.FromType(t) : null)
             );
 
             if (!Platform.IsMac) // Don't do this on macOS, causes poor UI performance.
@@ -52,10 +54,9 @@ namespace OpenTabletDriver.UX.Controls
             AppInfo.PluginManager.AssembliesChanged += HandleAssembliesChanged;
         }
 
-        private Placeholder placeholder;
-        private Splitter mainContent;
-        private TypeListBox<TSource> sourceSelector;
-        private ToggleablePluginSettingStoreEditor settingStoreEditor;
+        private readonly Placeholder placeholder;
+        private readonly Splitter mainContent;
+        private readonly TypeListBox<TSource> sourceSelector;
 
         private PluginSettingStoreCollection storeCollection;
         public PluginSettingStoreCollection StoreCollection
@@ -72,7 +73,7 @@ namespace OpenTabletDriver.UX.Controls
 
         protected virtual void OnStoreCollectionChanged()
         {
-            StoreCollectionChanged?.Invoke(this, new EventArgs());
+            StoreCollectionChanged?.Invoke(this, EventArgs.Empty);
             RefreshContent();
         }
 
@@ -117,7 +118,7 @@ namespace OpenTabletDriver.UX.Controls
                     Text = $"Enable {store.Name ?? store.Path}",
                     Checked = store.Enable
                 };
-                enableButton.CheckedChanged += (sender, e) => store.Enable = enableButton.Checked ?? false;
+                enableButton.CheckedChanged += (_, _) => store.Enable = enableButton.Checked ?? false;
                 yield return enableButton;
             }
         }

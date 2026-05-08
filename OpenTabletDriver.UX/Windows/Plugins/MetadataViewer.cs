@@ -16,7 +16,10 @@ namespace OpenTabletDriver.UX.Windows.Plugins
     {
         public MetadataViewer()
         {
-            actions = new StackLayout
+            Label license, pluginVersion, maxDriverVersion, driverVersion, description, owner, name;
+            Button uninstallButton, installButton;
+
+            var actions = new StackLayout
             {
                 Orientation = Orientation.Horizontal,
                 Spacing = 5,
@@ -149,23 +152,21 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             license.TextBinding.Bind(MetadataBinding.Child(c => c.LicenseIdentifier));
 
             sourceCode.GetEnabledBinding().Bind(MetadataBinding.Child(c => c.RepositoryUrl).Convert(c => c != null));
-            sourceCode.Click += (sender, e) => DesktopInterop.Open(Metadata.RepositoryUrl);
+            sourceCode.Click += (_, _) => DesktopInterop.Open(Metadata.RepositoryUrl!);
 
             wiki.GetEnabledBinding().Bind(MetadataBinding.Child(c => c.WikiUrl).Convert(c => c != null));
-            wiki.Click += (sender, e) => DesktopInterop.Open(Metadata.WikiUrl);
+            wiki.Click += (_, _) => DesktopInterop.Open(Metadata.WikiUrl!);
 
             AppInfo.PluginManager.AssembliesChanged += HandleAssembliesChanged;
         }
 
-        private Control content;
-        private StackLayout actions;
-        private Placeholder placeholder;
+        private readonly Control content;
+        private readonly Placeholder placeholder = new() { Text = "No plugin selected." };
 
-        private Label name, owner, description, driverVersion, maxDriverVersion, pluginVersion, license;
-        private Button sourceCode, wiki;
+        private readonly Button sourceCode, wiki;
 
-        private Version CurrentDriverVersion = Assembly.GetExecutingAssembly().GetName().Version;
-        private Button uninstallButton, installButton;
+        // TODO: CurrentDriverVersion should look up version from daemon?
+        private readonly Version CurrentDriverVersion = Assembly.GetExecutingAssembly().GetName().Version;
 
         public event Func<PluginMetadata, Task<bool>> RequestPluginInstall;
         public event Func<PluginMetadata, Task<bool>> RequestPluginUninstall;
@@ -186,12 +187,9 @@ namespace OpenTabletDriver.UX.Windows.Plugins
 
         protected virtual void OnMetadataChanged()
         {
-            MetadataChanged?.Invoke(this, new EventArgs());
+            MetadataChanged?.Invoke(this, EventArgs.Empty);
 
-            this.Content = Metadata != null ? content : placeholder ??= new Placeholder
-            {
-                Text = "No plugin selected."
-            };
+            this.Content = Metadata != null ? content : placeholder;
         }
 
         public BindableBinding<MetadataViewer, PluginMetadata> MetadataBinding
@@ -217,7 +215,10 @@ namespace OpenTabletDriver.UX.Windows.Plugins
         {
             this.ParentWindow.Enabled = false;
 
-            await RequestPluginInstall?.Invoke(updatedMetadata);
+            ArgumentNullException.ThrowIfNull(updatedMetadata);
+
+            if (RequestPluginInstall != null)
+                await RequestPluginInstall.Invoke(updatedMetadata);
 
             this.ParentWindow.Enabled = true;
         }
@@ -226,15 +227,17 @@ namespace OpenTabletDriver.UX.Windows.Plugins
         {
             this.ParentWindow.Enabled = false;
 
-            await RequestPluginUninstall?.Invoke(Metadata);
+            ArgumentNullException.ThrowIfNull(Metadata);
+
+            if (RequestPluginUninstall != null)
+                await RequestPluginUninstall.Invoke(Metadata);
 
             this.ParentWindow.Enabled = true;
         }
 
         private static IEnumerable<PluginMetadata> GetRepoMetadataForPlugin(PluginMetadataCollection repo, PluginMetadata metadata, Version currentDriverVersion)
         {
-            if (repo == null)
-                return Enumerable.Empty<PluginMetadata>();
+            if (repo == null) return [];
 
             return from meta in repo
                    where PluginMetadata.Match(meta, metadata)
@@ -249,7 +252,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
         {
             public AlignedGroup()
             {
-                base.Content = panel = new StackLayout
+                base.Content = new StackLayout
                 {
                     HorizontalContentAlignment = HorizontalAlignment.Right,
                     Padding = 5,
@@ -264,7 +267,6 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                 this.Orientation = Orientation.Horizontal;
             }
 
-            private StackLayout panel;
             private Panel container;
 
             public new Control Content

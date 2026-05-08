@@ -23,7 +23,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
 
         public event EventHandler<EventArgs> UnitChanged;
 
-        protected virtual void OnUnitChanged() => UnitChanged?.Invoke(this, new EventArgs());
+        protected virtual void OnUnitChanged() => UnitChanged?.Invoke(this, EventArgs.Empty);
 
         public BindableBinding<UnitGroup, string> UnitBinding
         {

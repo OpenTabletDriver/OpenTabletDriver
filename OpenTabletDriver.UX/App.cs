@@ -21,7 +21,7 @@ using OpenTabletDriver.UX.Windows.Updater;
 
 namespace OpenTabletDriver.UX
 {
-    class CommandLineOptions
+    internal class CommandLineOptions
     {
         public bool StartMinimized { get; set; }
         public bool SkipUpdate { get; set; }
@@ -34,13 +34,12 @@ namespace OpenTabletDriver.UX
         }
 
         public CancellationTokenSource Canceler { get; } = new();
-        public bool IsActive { get; private set; } = true;
 
         public static void Run(string platform, string[] args)
         {
             var commandLineOptions = ParseCmdLineOptions(args);
 
-            using (var mutex = new Mutex(true, @$"Global\{APPNAME}.Mutex", out var firstInstance))
+            using (new Mutex(true, @$"Global\{APPNAME}.Mutex", out var firstInstance))
             {
                 if (firstInstance)
                 {
@@ -76,7 +75,7 @@ namespace OpenTabletDriver.UX
 
             app.NotificationActivated += Current.HandleNotification;
             app.UnhandledException += ShowUnhandledException;
-            app.Terminating += async (sender, args) => await Current.Canceler.CancelAsync();
+            app.Terminating += async (_, _) => await Current.Canceler.CancelAsync();
 
             Task.Run(async () =>
             {
@@ -101,7 +100,6 @@ namespace OpenTabletDriver.UX
                     ipcServer.Disconnect();
                 }
                 ipcServer.Close();
-                Current.IsActive = false;
             });
 
             app.Run(mainForm);
@@ -194,7 +192,7 @@ namespace OpenTabletDriver.UX
         {
             try
             {
-                var exception = e.ExceptionObject as Exception;
+                var exception = (Exception)e.ExceptionObject;
                 Log.Exception(exception);
                 exception.ShowMessageBox();
             }

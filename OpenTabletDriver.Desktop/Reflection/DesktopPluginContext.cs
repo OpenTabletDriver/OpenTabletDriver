@@ -67,12 +67,6 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         protected override IntPtr LoadUnmanagedDll(string unmanagedDllName)
         {
-            if (Directory == null)
-            {
-                Log.Write("Plugin", $"Independent plugin does not support loading native library '{unmanagedDllName}'", LogLevel.Warning);
-                throw new NotSupportedException();
-            }
-
             var runtimeFolder = new DirectoryInfo(Path.Join(Directory.FullName, "runtimes"));
             if (runtimeFolder.Exists)
             {
@@ -90,7 +84,7 @@ namespace OpenTabletDriver.Desktop.Reflection
                 PluginPlatform.Windows => $"{dllName}.dll",
                 PluginPlatform.Linux => $"lib{dllName}.so",
                 PluginPlatform.MacOS => $"lib{dllName}.dylib",
-                _ => null
+                _ => throw new InvalidOperationException("Unsupported platform"),
             };
         }
     }

@@ -9,6 +9,9 @@ namespace OpenTabletDriver.UX.Controls.Bindings
     {
         public MouseBindingEditor()
         {
+            MouseBindingDisplayList mouseButtons;
+            BindingDisplay scrollDown, scrollUp;
+
             this.Content = new Scrollable
             {
                 Border = BorderType.None,
@@ -59,9 +62,6 @@ namespace OpenTabletDriver.UX.Controls.Bindings
             scrollUp.StoreBinding.Bind(SettingsBinding.Child(c => c.MouseScrollUp));
             scrollDown.StoreBinding.Bind(SettingsBinding.Child(c => c.MouseScrollDown));
         }
-
-        private MouseBindingDisplayList mouseButtons;
-        private BindingDisplay scrollUp, scrollDown;
 
         private class MouseBindingDisplayList : BindingDisplayList
         {

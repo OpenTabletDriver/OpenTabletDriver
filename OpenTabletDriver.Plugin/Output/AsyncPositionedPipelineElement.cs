@@ -44,7 +44,7 @@ namespace OpenTabletDriver.Plugin.Output
                     this.scheduler.Start();
                 }
             }
-            get => this.scheduler;
+            get => this.scheduler ?? throw new InvalidOperationException($"{nameof(Scheduler)} was not correctly resolved via dependency injection.");
         }
 
         [Property("Frequency"), Unit("hz"), DefaultPropertyValue(1000.0f)]
@@ -64,7 +64,7 @@ namespace OpenTabletDriver.Plugin.Output
         public void Consume(T value)
         {
             // Block DeviceReport and ITouchReport from being consumed for now
-            if (value is DeviceReport or ITouchReport)
+            if (value is null || value is DeviceReport or ITouchReport)
                 return;
 
             lock (synchronizationObject)

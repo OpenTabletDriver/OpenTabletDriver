@@ -10,6 +10,8 @@ namespace OpenTabletDriver.UX.Controls
     {
         public BindingDisplay()
         {
+            Button mainButton, advancedButton;
+
             this.Content = new StackLayout
             {
                 Spacing = 5,
@@ -35,20 +37,18 @@ namespace OpenTabletDriver.UX.Controls
 
             mainButton.TextBinding.Bind(this.StoreBinding.Convert<string>(s => s?.GetHumanReadableString()));
 
-            mainButton.Click += async (sender, e) =>
+            mainButton.Click += async (_, _) =>
             {
                 var dialog = new BindingEditorDialog(Store);
                 this.Store = await dialog.ShowModalAsync(this);
             };
 
-            advancedButton.Click += async (sender, e) =>
+            advancedButton.Click += async (_, _) =>
             {
                 var dialog = new AdvancedBindingEditorDialog(Store);
                 this.Store = await dialog.ShowModalAsync(this);
             };
         }
-
-        private Button mainButton, advancedButton;
 
         public event EventHandler<EventArgs> StoreChanged;
 
@@ -58,7 +58,7 @@ namespace OpenTabletDriver.UX.Controls
             set
             {
                 this.store = value;
-                StoreChanged?.Invoke(this, new EventArgs());
+                StoreChanged?.Invoke(this, EventArgs.Empty);
             }
             get => this.store;
         }

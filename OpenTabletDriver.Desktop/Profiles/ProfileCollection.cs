@@ -40,7 +40,7 @@ namespace OpenTabletDriver.Desktop.Profiles
 
         public Profile GetProfile(TabletReference tablet)
         {
-            return this.FirstOrDefault(t => t.Tablet == tablet.Properties.Name) is Profile profile ? profile : Generate(tablet);
+            return this.FirstOrDefault(t => t.Tablet == tablet.Properties.Name) ?? Generate(tablet);
         }
 
         public Profile? GetProfile(string tablet)

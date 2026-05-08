@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
@@ -43,6 +43,8 @@ namespace OpenTabletDriver.Desktop.Binding
 
         public void Consume(IDeviceReport report)
         {
+            if (report == null) return;
+
             HandleBinding(report);
             Emit?.Invoke(report);
         }

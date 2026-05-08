@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using Eto.Drawing;
@@ -15,6 +16,8 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
     {
         public AreaEditor()
         {
+            UnitGroup yGroup, xGroup, heightGroup, widthGroup;
+
             this.Content = new StackLayout
             {
                 Spacing = 5,
@@ -125,7 +128,6 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             MenuText = "Lock to usable area"
         };
 
-        private UnitGroup widthGroup, heightGroup, xGroup, yGroup;
         private MaskedTextBox<float> width, height, x, y;
 
         protected StackLayout settingsPanel;
@@ -162,6 +164,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
 
         public Vector2[] GetAreaCorners()
         {
+            Debug.Assert(Area != null);
             var origin = new Vector2(Area.X, Area.Y);
             var matrix = Matrix3x2.CreateTranslation(-origin);
             matrix *= Matrix3x2.CreateRotation((float)(Area.Rotation * Math.PI / 180));

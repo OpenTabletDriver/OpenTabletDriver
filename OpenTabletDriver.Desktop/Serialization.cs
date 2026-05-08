@@ -18,7 +18,7 @@ namespace OpenTabletDriver.Desktop
             Formatting = Formatting.Indented
         };
 
-        private static void SerializationErrorHandler(object sender, Newtonsoft.Json.Serialization.ErrorEventArgs args)
+        private static void SerializationErrorHandler(object _, Newtonsoft.Json.Serialization.ErrorEventArgs args)
         {
             Log.Exception(args.ErrorContext.Error);
         }

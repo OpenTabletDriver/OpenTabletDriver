@@ -7,14 +7,9 @@ namespace OpenTabletDriver.Plugin.Attributes
     /// Marks a property to be modified and saved by a client to settings.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
-    [MeansImplicitUse(ImplicitUseKindFlags.Access | ImplicitUseKindFlags.Assign)]
-    public class PropertyAttribute : Attribute
+    [MeansImplicitUse(ImplicitUseKindFlags.Access | ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.Itself)]
+    public class PropertyAttribute(string displayName) : Attribute
     {
-        public PropertyAttribute(string displayName)
-        {
-            DisplayName = displayName;
-        }
-
-        public string DisplayName { set; get; }
+        public string DisplayName { set; get; } = displayName;
     }
 }

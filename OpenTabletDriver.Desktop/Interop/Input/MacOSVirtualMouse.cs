@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Numerics;
 using OpenTabletDriver.Desktop.Interop.Input.Keyboard;
 using OpenTabletDriver.Native.OSX;
+using OpenTabletDriver.Native.OSX.Generic;
 using OpenTabletDriver.Native.OSX.Input;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 

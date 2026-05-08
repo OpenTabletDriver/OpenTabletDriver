@@ -15,7 +15,7 @@ namespace OpenTabletDriver.Desktop.Binding
         private const int TIMEOUT = 50;
         private readonly static HPETDeltaStopwatch _stopwatch = new();
 
-        public readonly static IReadOnlyCollection<Preset> Presets = AppInfo.PresetManager.GetPresets();
+        public static IReadOnlyCollection<Preset> Presets => AppInfo.PresetManager.GetPresets();
         public static string[] ValidPresets => Presets.Select(x => x.Name).ToArray();
 
         [Property("Preset"), PropertyValidated(nameof(ValidPresets))]

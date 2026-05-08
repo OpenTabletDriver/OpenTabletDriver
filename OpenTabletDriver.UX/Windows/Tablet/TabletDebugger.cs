@@ -224,6 +224,15 @@ namespace OpenTabletDriver.UX.Windows.Tablet
 
             App.Driver.DeviceReport += viewmodel.HandleReport;
             App.Driver.TabletsChanged += HandleTabletsChanged;
+            App.Driver.Connected += HandleDriverConnected;
+
+            if (App.Driver.IsConnected)
+                App.Driver.Instance.SetTabletDebug(true);
+        }
+
+        private static void HandleDriverConnected(object? o, EventArgs eventArgs)
+        {
+            Debug.Assert(App.Driver.IsConnected);
             App.Driver.Instance.SetTabletDebug(true);
         }
 
@@ -488,10 +497,13 @@ namespace OpenTabletDriver.UX.Windows.Tablet
         {
             var viewmodel = DataContext as TDVM ?? throw new InvalidOperationException("Invalid data context");
 
-            await App.Driver.Instance.SetTabletDebug(false);
+            if (App.Driver.IsConnected)
+                await App.Driver.Instance.SetTabletDebug(false);
 
             App.Driver.DeviceReport -= viewmodel.HandleReport;
             App.Driver.TabletsChanged -= HandleTabletsChanged;
+            App.Driver.Connected -= HandleDriverConnected;
+
             if (DataContext is IDisposable disposable)
                 disposable.Dispose();
 
@@ -606,7 +618,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                     {
                         var tabletScale = CalculateTabletScale(touchDigitizerSpecification, scale);
 
-                        foreach (TouchPoint touchPoint in touchReport.Touches.Where((t) => t != null))
+                        foreach (var touchPoint in touchReport.Touches.Where(t => t != null))
                         {
                             var position = new PointF(touchPoint.Position.X, touchPoint.Position.Y) * tabletScale;
                             var drawPen = new Pen(s_AccentColor, _SPACING / 2);

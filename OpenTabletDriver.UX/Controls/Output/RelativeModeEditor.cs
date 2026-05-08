@@ -10,6 +10,8 @@ namespace OpenTabletDriver.UX.Controls.Output
     {
         public RelativeModeEditor()
         {
+            MaskedTextBox<float> resetTime, rotation, ySens, xSens;
+
             this.Content = new Group
             {
                 Text = "Relative",
@@ -58,13 +60,11 @@ namespace OpenTabletDriver.UX.Controls.Output
             xSens.ValueBinding.Bind(SettingsBinding.Child(s => s.XSensitivity));
             ySens.ValueBinding.Bind(SettingsBinding.Child(s => s.YSensitivity));
             rotation.ValueBinding.Bind(SettingsBinding.Child(s => s.RelativeRotation));
-            resetTime.ValueBinding.Convert<TimeSpan>(
+            resetTime.ValueBinding.Convert(
                 c => TimeSpan.FromMilliseconds(c),
                 v => (float)v.TotalMilliseconds
             ).Bind(SettingsBinding.Child(s => s.ResetTime));
         }
-
-        private MaskedTextBox<float> xSens, ySens, rotation, resetTime;
 
         private RelativeModeSettings settings;
         public RelativeModeSettings Settings
@@ -79,7 +79,7 @@ namespace OpenTabletDriver.UX.Controls.Output
 
         public event EventHandler<EventArgs> SettingsChanged;
 
-        protected virtual void OnSettingsChanged() => SettingsChanged?.Invoke(this, new EventArgs());
+        protected virtual void OnSettingsChanged() => SettingsChanged?.Invoke(this, EventArgs.Empty);
 
         public BindableBinding<RelativeModeEditor, RelativeModeSettings> SettingsBinding
         {

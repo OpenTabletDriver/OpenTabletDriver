@@ -95,6 +95,9 @@ namespace OpenTabletDriver.Desktop.Binding
 
         public void Press(TabletReference tablet, IDeviceReport report)
         {
+            if (Timer == null)
+                Log.Write(nameof(MouseScrollBinding), $"{nameof(Timer)} not found, key repeat will not work", LogLevel.Warning);
+
             Scroll();
             Timer?.Start();
         }

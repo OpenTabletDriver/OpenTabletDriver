@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
@@ -38,6 +39,7 @@ namespace OpenTabletDriver.UX.Windows.Updater
 
         private async Task InitializeAsync()
         {
+            Debug.Assert(App.Driver.IsConnected);
             var updateAvailable = await App.Driver.Instance.CheckForUpdates();
             if (updateAvailable is not null)
             {

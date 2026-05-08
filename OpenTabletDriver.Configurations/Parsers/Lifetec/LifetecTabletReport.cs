@@ -23,7 +23,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Lifetec
                 report[5].IsBitSet(4),
             ];
 
-            // Tilt is given as azimuth and altitude
+            // TODO: Tilt is given as azimuth and altitude
         }
 
         public byte[] Raw { set; get; }

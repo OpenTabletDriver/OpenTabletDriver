@@ -3,12 +3,8 @@ using static OpenTabletDriver.Native.Windows.WinUsb;
 
 namespace OpenTabletDriver.Native.Windows.USB
 {
-    public class SafeWinUsbInterfaceHandle : SafeHandleZeroOrMinusOneIsInvalid
+    public class SafeWinUsbInterfaceHandle() : SafeHandleZeroOrMinusOneIsInvalid(true)
     {
-        public SafeWinUsbInterfaceHandle() : base(true)
-        {
-        }
-
         protected override bool ReleaseHandle()
         {
             WinUsb_Free(handle);

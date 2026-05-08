@@ -15,7 +15,7 @@ namespace OpenTabletDriver.Plugin.Output
 
         private bool passthrough;
         private TabletReference tablet;
-        private IList<IPositionedPipelineElement<IDeviceReport>> elements;
+        private IList<IPositionedPipelineElement<IDeviceReport>> elements = [];
         private IPipelineElement<IDeviceReport> entryElement;
 
         public event Action<IDeviceReport> Emit;
@@ -41,11 +41,9 @@ namespace OpenTabletDriver.Plugin.Output
             get => this.passthrough;
         }
 
-        protected IList<IPositionedPipelineElement<IDeviceReport>> PreTransformElements { private set; get; } =
-            Array.Empty<IPositionedPipelineElement<IDeviceReport>>();
+        protected IList<IPositionedPipelineElement<IDeviceReport>> PreTransformElements { private set; get; } = [];
 
-        protected IList<IPositionedPipelineElement<IDeviceReport>> PostTransformElements { private set; get; } =
-            Array.Empty<IPositionedPipelineElement<IDeviceReport>>();
+        protected IList<IPositionedPipelineElement<IDeviceReport>> PostTransformElements { private set; get; } = [];
 
         public bool DisablePressure { set; get; }
 
@@ -62,10 +60,10 @@ namespace OpenTabletDriver.Plugin.Output
                 Passthrough = false;
                 DestroyInternalLinks();
 
-                if (Elements != null && Elements.Count > 0)
+                if (elements != null && elements.Count > 0)
                 {
-                    PreTransformElements = GroupElements(Elements, PipelinePosition.PreTransform);
-                    PostTransformElements = GroupElements(Elements, PipelinePosition.PostTransform);
+                    PreTransformElements = GroupElements(elements, PipelinePosition.PreTransform);
+                    PostTransformElements = GroupElements(elements, PipelinePosition.PostTransform);
 
                     Action<IDeviceReport> output = this.OnOutput;
 

@@ -36,7 +36,7 @@ namespace OpenTabletDriver.UX.Controls
 
         protected virtual void OnStoreChanged()
         {
-            StoreChanged?.Invoke(this, new EventArgs());
+            StoreChanged?.Invoke(this, EventArgs.Empty);
 
             layout.Items.Clear();
             if (Store != null)
@@ -62,27 +62,21 @@ namespace OpenTabletDriver.UX.Controls
             }
         }
 
-        protected virtual IEnumerable<Control> GetHeaderControlsForStore(PluginSettingStore store)
-        {
-            return Array.Empty<Control>();
-        }
+        protected virtual IEnumerable<Control> GetHeaderControlsForStore(PluginSettingStore pluginSettingStore) => [];
 
         private static IEnumerable<Control> GetControlsForStore(PluginSettingStore store)
         {
-            if (store != null)
-            {
-                var type = store.GetTypeInfo<TSource>();
+            if (store == null) return [];
 
-                if (type != null)
-                    return GetControlsForType(store, type);
-                else
-                {
-                    var isStorePathNull = store.Path == null ? "(store path is null)" : "";
-                    Log.Write("PluginSettingStoreEditor", $"Failed to get type info. {isStorePathNull}", LogLevel.Error);
-                }
-            }
+            var type = store.GetTypeInfo<TSource>();
 
-            return Array.Empty<Control>();
+            if (type != null)
+                return GetControlsForType(store, type);
+
+            var isStorePathNull = store.Path == null ? "(store path is null)" : "";
+            Log.Write("PluginSettingStoreEditor", $"Failed to get type info. {isStorePathNull}", LogLevel.Error);
+
+            return [];
         }
 
         private static IEnumerable<Control> GetControlsForType(PluginSettingStore store, Type type)

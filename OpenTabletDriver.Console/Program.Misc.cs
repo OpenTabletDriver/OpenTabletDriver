@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
@@ -27,14 +28,14 @@ namespace OpenTabletDriver.Console
             await Driver.Instance.SetSettings(settings);
         }
 
-        static async Task ModifySettings(Action<Settings> func)
+        static async Task ModifySettings([InstantHandle] Action<Settings> func)
         {
             var settings = await GetSettings();
             func.Invoke(settings);
             await ApplySettings(settings);
         }
 
-        static async Task ModifyProfile(string profileName, Action<Profile> func)
+        static async Task ModifyProfile(string profileName, [InstantHandle] Action<Profile> func)
         {
             await ModifySettings(async s =>
             {
@@ -70,7 +71,7 @@ namespace OpenTabletDriver.Console
             return profile ?? throw new ArgumentException($"Cannot find profile for tablet '{profileName}'");
         }
 
-        static async Task ListTypes<T>(Func<Type, bool> predicate = null)
+        static async Task ListTypes<T>([InstantHandle] Func<Type, bool> predicate = null)
         {
             if (!await EnsureDaemonReady()) return;
             var types = AppInfo.PluginManager.GetChildTypes<T>();
@@ -119,7 +120,7 @@ namespace OpenTabletDriver.Console
         {
             foreach (string path in paths)
             {
-                var plugins = pssc.Where(x => x.Path == path).ToArray();
+                var plugins = pssc.Where(x => x != null && x.Path == path).ToArray();
 
                 if (plugins.Length == 0)
                     Out.WriteLineAsync("No plugins found matching path");

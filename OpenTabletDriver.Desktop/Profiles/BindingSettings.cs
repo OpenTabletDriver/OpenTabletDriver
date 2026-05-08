@@ -19,9 +19,9 @@ namespace OpenTabletDriver.Desktop.Profiles
             mouseScrollUp,
             mouseScrollDown;
 
-        private PluginSettingStoreCollection penButtons = new PluginSettingStoreCollection(),
-            auxButtons = new PluginSettingStoreCollection(),
-            mouseButtons = new PluginSettingStoreCollection();
+        private PluginSettingStoreCollection penButtons = [],
+            auxButtons = [],
+            mouseButtons = [];
 
         private List<WheelBindingSettings> wheelBindings = [];
 

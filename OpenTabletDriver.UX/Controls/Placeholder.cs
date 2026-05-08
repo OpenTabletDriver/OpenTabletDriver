@@ -8,6 +8,8 @@ namespace OpenTabletDriver.UX.Controls
     {
         public Placeholder()
         {
+            Label label;
+
             this.Content = new StackLayout
             {
                 Spacing = 5,
@@ -31,7 +33,6 @@ namespace OpenTabletDriver.UX.Controls
             label.TextBinding.Bind(TextBinding);
         }
 
-        private Label label;
         private Panel extraPanel;
 
         private string text;
@@ -47,7 +48,7 @@ namespace OpenTabletDriver.UX.Controls
 
         public event EventHandler<EventArgs> TextChanged;
 
-        protected virtual void OnTextChanged() => TextChanged?.Invoke(this, new EventArgs());
+        protected virtual void OnTextChanged() => TextChanged?.Invoke(this, EventArgs.Empty);
 
         public BindableBinding<Placeholder, string> TextBinding
         {

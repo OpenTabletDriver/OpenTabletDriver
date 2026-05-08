@@ -67,11 +67,10 @@ namespace OpenTabletDriver.Tests.ConfigurationTest
 
             var sb = new StringBuilder();
             using var strw = new StringWriter(sb);
-            using var jtw = new JsonTextWriter(strw)
-            {
-                Formatting = Formatting.Indented,
-                Indentation = 2
-            };
+            using var jtw = new JsonTextWriter(strw);
+
+            jtw.Formatting = Formatting.Indented;
+            jtw.Indentation = 2;
 
             var ourJsonObj = JsonConvert.DeserializeObject<TabletConfiguration>(currentContent);
             serializer.Serialize(jtw, ourJsonObj);

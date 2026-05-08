@@ -22,13 +22,13 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
         public event EventHandler<EventArgs> InvalidForegroundErrorChanged;
         public event EventHandler<EventArgs> InvalidBackgroundErrorChanged;
 
-        protected virtual void OnAreaChanged() => AreaChanged?.Invoke(this, new EventArgs());
-        protected virtual void OnLockToUsableAreaChanged() => LockToUsableAreaChanged?.Invoke(this, new EventArgs());
-        protected virtual void OnUnitChanged() => UnitChanged?.Invoke(this, new EventArgs());
-        protected virtual void OnAreaBoundsChanged() => AreaBoundsChanged?.Invoke(this, new EventArgs());
-        protected virtual void OnFullAreaBoundsChanged() => FullAreaBoundsChanged?.Invoke(this, new EventArgs());
-        protected virtual void OnInvalidForegroundErrorChanged() => InvalidForegroundErrorChanged?.Invoke(this, new EventArgs());
-        protected virtual void OnInvalidBackgroundErrorChanged() => InvalidBackgroundErrorChanged?.Invoke(this, new EventArgs());
+        protected virtual void OnAreaChanged() => AreaChanged?.Invoke(this, EventArgs.Empty);
+        protected virtual void OnLockToUsableAreaChanged() => LockToUsableAreaChanged?.Invoke(this, EventArgs.Empty);
+        protected virtual void OnUnitChanged() => UnitChanged?.Invoke(this, EventArgs.Empty);
+        protected virtual void OnAreaBoundsChanged() => AreaBoundsChanged?.Invoke(this, EventArgs.Empty);
+        protected virtual void OnFullAreaBoundsChanged() => FullAreaBoundsChanged?.Invoke(this, EventArgs.Empty);
+        protected virtual void OnInvalidForegroundErrorChanged() => InvalidForegroundErrorChanged?.Invoke(this, EventArgs.Empty);
+        protected virtual void OnInvalidBackgroundErrorChanged() => InvalidBackgroundErrorChanged?.Invoke(this, EventArgs.Empty);
 
         public AreaSettings Area
         {

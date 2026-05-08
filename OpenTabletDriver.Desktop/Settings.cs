@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using Newtonsoft.Json;
@@ -101,40 +102,6 @@ namespace OpenTabletDriver.Desktop
             return Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
         }
 
-        [Obsolete("Unused and deprecated")]
-        public static void Recover(FileInfo file, Settings settings)
-        {
-            using (var stream = file.OpenRead())
-            using (var sr = new StreamReader(stream))
-            using (var jr = new JsonTextReader(sr))
-            {
-                void propertyWatch(object _, PropertyChangedEventArgs p)
-                {
-                    var prop = settings.GetType().GetProperty(p.PropertyName).GetValue(settings);
-                    Log.Write("Settings", $"Recovered '{p.PropertyName}'", LogLevel.Debug);
-                }
-                settings.PropertyChanged += propertyWatch;
-
-                var serializer = new JsonSerializer
-                {
-                    Formatting = Formatting.Indented
-                };
-
-                try
-                {
-                    serializer.Populate(jr, settings);
-                }
-                catch (JsonException e)
-                {
-                    Log.Write("Settings", $"Recovery ended. Reason: {e.Message}", LogLevel.Debug);
-                }
-                finally
-                {
-                    settings.PropertyChanged -= propertyWatch;
-                }
-            }
-        }
-
         public void Serialize(FileInfo file)
         {
             try
@@ -148,7 +115,7 @@ namespace OpenTabletDriver.Desktop
             }
             catch (UnauthorizedAccessException)
             {
-                Log.Write("Settings", $"OpenTabletDriver doesn't have permission to save persistent settings to {file.DirectoryName}", LogLevel.Error);
+                Log.Write("Settings", $"OpenTabletDriver doesn't have permission to save settings to {file.DirectoryName}", LogLevel.Error);
             }
         }
 

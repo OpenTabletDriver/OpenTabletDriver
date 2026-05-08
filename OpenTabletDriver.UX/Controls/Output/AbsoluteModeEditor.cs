@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -44,7 +45,6 @@ namespace OpenTabletDriver.UX.Controls.Output
                             Text = "Tablet",
                             Content = tabletAreaEditor = new TabletAreaEditor
                             {
-                                InvalidBackgroundError = "No tablet detected.",
                                 InvalidForegroundError = "Invalid tablet area.",
                                 Unit = "mm"
                             }
@@ -119,7 +119,7 @@ namespace OpenTabletDriver.UX.Controls.Output
         protected virtual void OnSettingsChanged()
         {
             handlingSettingsChanging = true;
-            SettingsChanged?.Invoke(this, new EventArgs());
+            SettingsChanged?.Invoke(this, EventArgs.Empty);
             handlingSettingsChanging = false;
         }
 
@@ -221,7 +221,9 @@ namespace OpenTabletDriver.UX.Controls.Output
 
         private void ForceAreaConstraint(object sender, EventArgs args)
         {
+            Debug.Assert(sender != null);
             var display = (AreaDisplay)sender;
+
             if (!handlingForcedArConstraint && !handlingSettingsChanging && display.LockToUsableArea && display.Area != null)
             {
                 handlingForcedArConstraint = true;
@@ -253,6 +255,7 @@ namespace OpenTabletDriver.UX.Controls.Output
             bounds.Y = 0;
 
             var area = display.Area;
+            Debug.Assert(area != null);
             var rect = RectangleF.FromCenter(PointF.Empty, new SizeF(area.Width, area.Height));
 
             var corners = new PointF[]
@@ -292,12 +295,16 @@ namespace OpenTabletDriver.UX.Controls.Output
 
                 var subMenu = base.ContextMenu.Items.GetSubmenu("Set to display");
 
+                Debug.Assert(DesktopInterop.VirtualScreen != null);
+
                 var displays = DesktopInterop.VirtualScreen.Displays.ToArray();
 
                 // account for monitor layouts with negative offsets (e.g. Wayland supports this)
                 // skip IVirtualScreen's as these tend to be normalized to 0,0, which may confuse these methods
-                float xOffset = displays.Where(d => d is not IVirtualScreen).MinBy(d => d.Position.X).Position.X;
-                float yOffset = displays.Where(d => d is not IVirtualScreen).MinBy(d => d.Position.Y).Position.Y;
+                float xOffset = displays.Where(d => d is not IVirtualScreen).MinBy(d => d.Position.X)?.Position.X ??
+                                throw new InvalidOperationException("Unable to look up X offset");
+                float yOffset = displays.Where(d => d is not IVirtualScreen).MinBy(d => d.Position.Y)?.Position.Y ??
+                                throw new InvalidOperationException("Unable to look up Y offset");
 
                 foreach (var display in displays)
                 {
@@ -307,6 +314,8 @@ namespace OpenTabletDriver.UX.Controls.Output
                             MenuText = display.ToString(),
                             Action = () =>
                             {
+                                Debug.Assert(Area != null);
+
                                 this.Area.Width = display.Width;
                                 this.Area.Height = display.Height;
                                 if (display is IVirtualScreen virtualScreen)
@@ -341,9 +350,9 @@ namespace OpenTabletDriver.UX.Controls.Output
             public event EventHandler<EventArgs> AreaClippingChanged;
             public event EventHandler<EventArgs> IgnoreOutsideAreaChanged;
 
-            protected virtual void OnLockAspectRatioChanged() => LockAspectRatioChanged?.Invoke(this, new EventArgs());
-            protected virtual void OnAreaClippingChanged() => AreaClippingChanged?.Invoke(this, new EventArgs());
-            protected virtual void OnIgnoreOutsideAreaChanged() => IgnoreOutsideAreaChanged?.Invoke(this, new EventArgs());
+            protected virtual void OnLockAspectRatioChanged() => LockAspectRatioChanged?.Invoke(this, EventArgs.Empty);
+            protected virtual void OnAreaClippingChanged() => AreaClippingChanged?.Invoke(this, EventArgs.Empty);
+            protected virtual void OnIgnoreOutsideAreaChanged() => IgnoreOutsideAreaChanged?.Invoke(this, EventArgs.Empty);
 
             public bool LockAspectRatio
             {

@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Interop;
+using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.UX
@@ -21,7 +21,7 @@ namespace OpenTabletDriver.UX
 
             RefreshMenuItems();
 
-            Indicator.Activated += (object sender, System.EventArgs e) =>
+            Indicator.Activated += (_, _) =>
             {
                 window.Show();
                 window.BringToFront();
@@ -76,7 +76,7 @@ namespace OpenTabletDriver.UX
             {
                 Text = "Show Window"
             };
-            showWindow.Click += (sender, e) =>
+            showWindow.Click += (_, _) =>
             {
                 window.Show();
                 window.BringToFront();
@@ -86,9 +86,9 @@ namespace OpenTabletDriver.UX
             {
                 Text = "Close"
             };
-            close.Click += (sender, e) => window.Close();
+            close.Click += (_, _) => window.Close();
 
-            if (DesktopInterop.CurrentPlatform == PluginPlatform.MacOS)
+            if (SystemInterop.CurrentPlatform == PluginPlatform.MacOS)
             {
                 // It's more idiomatic for macOS to include the name here
                 showWindow.Text = "Show OpenTabletDriver";
@@ -121,7 +121,7 @@ namespace OpenTabletDriver.UX
             items.Add(showWindow);
 
             // macOS doesn't present a menu bar for agent apps
-            if (DesktopInterop.CurrentPlatform == PluginPlatform.MacOS && window.Menu != null)
+            if (SystemInterop.CurrentPlatform == PluginPlatform.MacOS && window.Menu != null)
             {
                 items.Add(new SeparatorMenuItem());
 
