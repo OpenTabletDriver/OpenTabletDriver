@@ -144,7 +144,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
             //{ "Menu", CGKeyCode.kVK_ANSI_MENU },
             { "Backslash", CGKeyCode.kVK_ANSI_Backslash },
             { "Plus", CGKeyCode.kVK_ANSI_KeypadPlus },
-            { "Equal", CGKeyCode.kVK_ANSI_KeypadEquals },
+            { "Equal", CGKeyCode.kVK_ANSI_Equal },
             { "Semicolon", CGKeyCode.kVK_ANSI_Semicolon },
             { "Quote", CGKeyCode.kVK_ANSI_Quote },
             { "Comma", CGKeyCode.kVK_ANSI_Comma },
