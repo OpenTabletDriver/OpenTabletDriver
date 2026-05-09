@@ -150,7 +150,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
             { "Comma", CGKeyCode.kVK_ANSI_Comma },
             { "Period", CGKeyCode.kVK_ANSI_Period },
             { "ForwardSlash", CGKeyCode.kVK_ANSI_Slash },
-            { "Slash", CGKeyCode.kVK_ANSI_Backslash },
+            { "Slash", CGKeyCode.kVK_ANSI_Slash },
             { "RightBracket", CGKeyCode.kVK_ANSI_RightBracket },
             { "LeftBracket", CGKeyCode.kVK_ANSI_LeftBracket },
             //{ "ContextMenu", CGKeyCode.kVK_ANSI_MENU },
