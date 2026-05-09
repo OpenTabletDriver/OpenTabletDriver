@@ -88,6 +88,12 @@ namespace OpenTabletDriver.UX
             };
             close.Click += (sender, e) => window.Close();
 
+            var about = new ButtonMenuItem
+            {
+                Text = "About"
+            };
+            about.Click += (sender, e) => App.Current.AboutWindow.Show();
+
             if (DesktopInterop.CurrentPlatform == PluginPlatform.MacOS)
             {
                 // It's more idiomatic for macOS to include the name here
@@ -153,6 +159,7 @@ namespace OpenTabletDriver.UX
                 items.Add(new SeparatorMenuItem());
             }
 
+            items.Add(about);
             items.Add(close);
 
             Indicator.Menu = new ContextMenu(items);
