@@ -30,6 +30,6 @@
     <key>NSRequiresAquaSystemAppearance</key>
     <string>False</string>
     <key>LSUIElement</key>
-    <string>true</string>
+    <string>False</string>
   </dict>
 </plist>
