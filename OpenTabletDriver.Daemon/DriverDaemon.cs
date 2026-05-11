@@ -658,13 +658,82 @@ namespace OpenTabletDriver.Daemon
             return Task.CompletedTask;
         }
 
-        public Task<string> RequestDeviceString(int vid, int pid, int index)
+        public async Task<string> RequestDeviceString(int vid, int pid, int index)
         {
             var tablet = Driver.CompositeDeviceHub.GetDevices().Where(d => d.VendorID == vid && d.ProductID == pid).FirstOrDefault();
             if (tablet == null)
                 throw new IOException("Device not found");
 
-            return Task.FromResult(tablet.GetDeviceString((byte)index));
+            try
+            {
+                var request = Task.Run(() => tablet.GetDeviceString((byte)index));
+                var completed = await Task.WhenAny(request, Task.Delay(TimeSpan.FromSeconds(5)));
+
+                if (completed == request)
+                    return await request;
+                else
+                    return "{ OTD: Operation timed-out }";
+            }
+            catch
+            {
+                var stillPresent = Driver.CompositeDeviceHub.GetDevices()
+                    .Any(d => d.VendorID == vid && d.ProductID == pid);
+
+                return !stillPresent
+                    ? "{ OTD: Device disconnected }"
+                    : "{ OTD: Operation failed }";
+            }
+        }
+
+        public async Task<IEnumerable<string>> RequestDeviceStrings(int vid, int pid)
+        {
+            var tablet = Driver.CompositeDeviceHub.GetDevices().Where(d => d.VendorID == vid && d.ProductID == pid).FirstOrDefault();
+            if (tablet == null)
+                throw new IOException("Device not found");
+
+            var results = new List<string>();
+
+            for (int i = 1; i < 256; i++)
+            {
+                // Check if device is still connected
+                var stillConnected = Driver.CompositeDeviceHub.GetDevices()
+                    .Any(d => d.VendorID == vid && d.ProductID == pid);
+
+                if (!stillConnected)
+                {
+                    for (int j = i; j < 256; j++)
+                        results.Add("{ OTD: Device disconnected }");
+                    break;
+                }
+
+                try
+                {
+                    var request = Task.Run(() => tablet.GetDeviceString((byte)i));
+                    var completed = await Task.WhenAny(request, Task.Delay(TimeSpan.FromSeconds(5)));
+
+                    if (completed == request)
+                        results.Add(await request);
+                    else
+                        results.Add("{ OTD: Operation timed-out }");
+                }
+                catch
+                {
+                    var stillPresent = Driver.CompositeDeviceHub.GetDevices()
+                        .Any(d => d.VendorID == vid && d.ProductID == pid);
+
+                    if (!stillPresent)
+                    {
+                        results.Add("{ OTD: Device disconnected }");
+                        for (int j = i + 1; j < 256; j++)
+                            results.Add("{ OTD: Device disconnected }");
+                        break;
+                    }
+
+                    results.Add("{ OTD: Operation failed }");
+                }
+            }
+
+            return results;
         }
 
         public Task<IEnumerable<LogMessage>> GetCurrentLog()

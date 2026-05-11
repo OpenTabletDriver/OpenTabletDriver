@@ -40,6 +40,7 @@ namespace OpenTabletDriver.Desktop.Contracts
 
         Task SetTabletDebug(bool isEnabled);
         Task<string> RequestDeviceString(int vendorID, int productID, int index);
+        Task<IEnumerable<string>> RequestDeviceStrings(int vendorID, int productID);
 
         Task<IEnumerable<LogMessage>> GetCurrentLog();
         Task<DiagnosticInfo> GetDiagnosticInfo();
