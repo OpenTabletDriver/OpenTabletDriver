@@ -19,8 +19,6 @@ using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Tablet.Touch;
 using OpenTabletDriver.UX.Controls.Generic;
 
-#nullable enable
-
 namespace OpenTabletDriver.UX.Windows.Tablet
 {
     using TDVM = TabletDebuggerViewModel;
@@ -70,7 +68,8 @@ namespace OpenTabletDriver.UX.Windows.Tablet
         public TabletDebugger()
             : base(Application.Instance.MainForm)
         {
-            HandleTabletsChanged(null, App.Driver.Instance.GetTablets().Result);
+            if (App.Driver.IsConnected)
+                HandleTabletsChanged(null, App.Driver.Instance.GetTablets().Result);
 
             var viewmodel = new TDVM();
             DataContext = viewmodel;
@@ -224,6 +223,14 @@ namespace OpenTabletDriver.UX.Windows.Tablet
 
             App.Driver.DeviceReport += viewmodel.HandleReport;
             App.Driver.TabletsChanged += HandleTabletsChanged;
+            if (App.Driver.IsConnected)
+                App.Driver.Instance.SetTabletDebug(true);
+            App.Driver.Connected += SetTabletDebug;
+        }
+
+        private static void SetTabletDebug(object? sender, EventArgs e)
+        {
+            Debug.Assert(App.Driver.IsConnected);
             App.Driver.Instance.SetTabletDebug(true);
         }
 
@@ -488,10 +495,13 @@ namespace OpenTabletDriver.UX.Windows.Tablet
         {
             var viewmodel = DataContext as TDVM ?? throw new InvalidOperationException("Invalid data context");
 
-            await App.Driver.Instance.SetTabletDebug(false);
+            if (App.Driver.IsConnected)
+                await App.Driver.Instance.SetTabletDebug(false);
 
             App.Driver.DeviceReport -= viewmodel.HandleReport;
             App.Driver.TabletsChanged -= HandleTabletsChanged;
+            App.Driver.Connected -= SetTabletDebug;
+
             if (DataContext is IDisposable disposable)
                 disposable.Dispose();
 
@@ -584,7 +594,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             private void DrawPosition(Graphics graphics, float scale)
             {
                 Debug.Assert(ReportData != null); // ReportData should already be checked by callers
-                object report = ReportData!.ToObject();
+                object? report = ReportData!.ToObject();
                 var specifications = ReportData.Tablet.Properties.Specifications;
                 string tabletName = ReportData.Tablet.Properties.Name;
                 var touchDigitizerSpecification = specifications.Touch;
@@ -606,7 +616,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                     {
                         var tabletScale = CalculateTabletScale(touchDigitizerSpecification, scale);
 
-                        foreach (TouchPoint touchPoint in touchReport.Touches.Where((t) => t != null))
+                        foreach (var touchPoint in touchReport.Touches.Where(t => t != null).Cast<TouchPoint>())
                         {
                             var position = new PointF(touchPoint.Position.X, touchPoint.Position.Y) * tabletScale;
                             var drawPen = new Pen(s_AccentColor, _SPACING / 2);

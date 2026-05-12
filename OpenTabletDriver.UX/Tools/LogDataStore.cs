@@ -8,7 +8,7 @@ using OpenTabletDriver.Plugin.Logging;
 
 namespace OpenTabletDriver.UX.Tools
 {
-    public class LogDataStore : INotifyCollectionChanged, IEnumerable<LogMessage>, IList<LogMessage>
+    public class LogDataStore : INotifyCollectionChanged, ICollection<LogMessage>
     {
         public LogDataStore(IEnumerable<LogMessage> currentMessages)
         {
@@ -37,7 +37,7 @@ namespace OpenTabletDriver.UX.Tools
 
         public bool IsReadOnly => false;
 
-        public event NotifyCollectionChangedEventHandler CollectionChanged;
+        public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
         public void Add(LogMessage message)
         {
@@ -100,30 +100,9 @@ namespace OpenTabletDriver.UX.Tools
             messages.CopyTo(array, arrayIndex);
         }
 
-        int IList<LogMessage>.IndexOf(LogMessage item)
-        {
-            return (filteredMessages as IList<LogMessage>).IndexOf(item);
-        }
-
-        void IList<LogMessage>.Insert(int index, LogMessage item)
-        {
-            throw new NotSupportedException();
-        }
-
         bool ICollection<LogMessage>.Remove(LogMessage item)
         {
             throw new NotSupportedException();
-        }
-
-        void IList<LogMessage>.RemoveAt(int index)
-        {
-            throw new NotSupportedException();
-        }
-
-        LogMessage IList<LogMessage>.this[int index]
-        {
-            get => (filteredMessages as IList<LogMessage>)[index];
-            set => (filteredMessages as IList<LogMessage>)[index] = value;
         }
     }
 }

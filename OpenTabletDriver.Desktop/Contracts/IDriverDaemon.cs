@@ -9,16 +9,14 @@ using OpenTabletDriver.Plugin.Devices;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Tablet;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Contracts
 {
     public interface IDriverDaemon
     {
-        event EventHandler<LogMessage> Message;
-        event EventHandler<DebugReportData> DeviceReport;
-        event EventHandler<IEnumerable<TabletReference>> TabletsChanged;
-        event EventHandler Resynchronize;
+        event EventHandler<LogMessage>? Message;
+        event EventHandler<DebugReportData>? DeviceReport;
+        event EventHandler<IEnumerable<TabletReference>>? TabletsChanged;
+        event EventHandler? Resynchronize;
 
         Task WriteMessage(LogMessage message);
 

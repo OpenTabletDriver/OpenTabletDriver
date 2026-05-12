@@ -1,6 +1,7 @@
 using System;
 using BenchmarkDotNet.Attributes;
 using OpenTabletDriver.Desktop.Profiles;
+using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
 
@@ -9,7 +10,7 @@ namespace OpenTabletDriver.Benchmarks.Output
     public class OutputBenchmark
     {
         public AbsoluteOutputMode OutputMode { get; set; } = new NoopAbsoluteMode();
-        public IDeviceReport Report { get; set; }
+        public IDeviceReport? Report { get; set; }
 
         public void SetProfile(Profile profile)
         {
@@ -27,12 +28,14 @@ namespace OpenTabletDriver.Benchmarks.Output
                             Height = 20,
                         },
                         Pen = new PenSpecifications()
-                    }
+                    },
+                    Name = "Fake Name",
+                    DigitizerIdentifiers = [],
                 }
             };
 
-            OutputMode.Output = profile.AbsoluteModeSettings.Display.Area;
-            OutputMode.Input = profile.AbsoluteModeSettings.Tablet.Area;
+            OutputMode.Output = profile.AbsoluteModeSettings!.Display.Area;
+            OutputMode.Input = profile.AbsoluteModeSettings!.Tablet.Area;
 
             var data = new byte[8];
             var randGen = new Random();
@@ -62,7 +65,9 @@ namespace OpenTabletDriver.Benchmarks.Output
                         Width = 20,
                         Height = 20
                     }
-                }
+                },
+                Tablet = "Spoofed Tablet",
+                OutputMode = new PluginSettingStore("", false) // TODO: test
             };
 
             SetProfile(profile);
@@ -71,7 +76,7 @@ namespace OpenTabletDriver.Benchmarks.Output
         [Benchmark]
         public void Output()
         {
-            OutputMode.Read(Report);
+            OutputMode.Read(Report!);
         }
     }
 }

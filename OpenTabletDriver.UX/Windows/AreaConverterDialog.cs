@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Linq;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Profiles;
@@ -115,9 +116,11 @@ namespace OpenTabletDriver.UX.Windows
             // ReSharper disable once AsyncVoidMethod
             Application.Instance.AsyncInvoke(async void () =>
             {
+                if (!App.Driver.IsConnected) return;
+
                 var tablets = await App.Driver.Instance.GetTablets();
-                var targetProfile = App.Current.Settings.Profiles.FirstOrDefault(p => p.AbsoluteModeSettings.Tablet == this.DataContext);
-                var tablet = tablets.FirstOrDefault(t => t.Properties.Name == targetProfile.Tablet);
+                var targetProfile = App.Current.Settings.Profiles.First(p => p.AbsoluteModeSettings?.Tablet == this.DataContext);
+                var tablet = tablets.First(t => t.Properties.Name == targetProfile.Tablet);
                 Select(tablet);
             });
         }
@@ -126,7 +129,7 @@ namespace OpenTabletDriver.UX.Windows
         private Group topGroup, leftGroup, bottomGroup, rightGroup;
         private FloatNumberBox top, left, bottom, right;
         private Button applyButton;
-        private TabletReference selectedTablet;
+        private TabletReference? selectedTablet;
 
         protected void OnSelectionChanged()
         {
@@ -151,19 +154,22 @@ namespace OpenTabletDriver.UX.Windows
 
         protected void ConvertArea()
         {
+            var areaSettings = this.DataContext as AreaSettings;
+            Debug.Assert(areaSettings != null, "invalid sender");
+            Debug.Assert(selectedTablet != null, "Tried to convert with no selected tablet");
             var converter = this.converterList.ConstructSelectedType();
-            var convertedArea = converter.Convert(selectedTablet, top.Value, left.Value, bottom.Value, right.Value);
+            var convertedArea = converter!.Convert(selectedTablet, top.Value, left.Value, bottom.Value, right.Value);
 
-            (this.DataContext as AreaSettings).Area = convertedArea;
+            areaSettings.Area = convertedArea;
             this.Close();
         }
 
         private void Select(TabletReference tablet)
         {
-            if (tablet.Identifiers?.FirstOrDefault()?.VendorID is int vendorId)
+            if (tablet.Identifiers.FirstOrDefault()?.VendorID is int vendorId)
             {
                 var vendor = (DeviceVendor)vendorId;
-                converterList.Select(t => t.Vendor.HasFlag(vendor));
+                converterList.Select(t => t!.Vendor.HasFlag(vendor));
                 applyButton.Enabled = true;
                 selectedTablet = tablet;
             }

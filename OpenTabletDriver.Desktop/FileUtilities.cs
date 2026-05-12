@@ -4,8 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop
 {
     public static class FileUtilities

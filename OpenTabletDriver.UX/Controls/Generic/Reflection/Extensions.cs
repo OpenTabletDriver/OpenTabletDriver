@@ -13,10 +13,10 @@ namespace OpenTabletDriver.UX.Controls.Generic.Reflection
 
         public static string GetFriendlyName(this TypeInfo type)
         {
-            if (FriendlyNameCache.TryGetValue(type, out string value))
+            if (FriendlyNameCache.TryGetValue(type, out string? value))
                 return value;
 
-            return FriendlyNameCache[type] = type.GetCustomAttribute<PluginNameAttribute>()?.Name ?? type.FullName;
+            return FriendlyNameCache[type] = type.GetCustomAttribute<PluginNameAttribute>()?.Name ?? type.FullName!;
         }
 
         public static bool RemoveFromFriendlyNameCache(TypeInfo typeInfo) => FriendlyNameCache.Remove(typeInfo);

@@ -29,13 +29,13 @@ namespace OpenTabletDriver.UX.Controls.Output
                 }
             };
 
-            absoluteModeEditor.SettingsBinding.Bind(ProfileBinding.Child(p => p.AbsoluteModeSettings));
-            relativeModeEditor.SettingsBinding.Bind(ProfileBinding.Child(p => p.RelativeModeSettings));
+            absoluteModeEditor.SettingsBinding.Bind(ProfileBinding.Child(p => p!.AbsoluteModeSettings));
+            relativeModeEditor.SettingsBinding.Bind(ProfileBinding.Child(p => p!.RelativeModeSettings));
 
             outputModeSelector.SelectedItemBinding.Convert<PluginSettingStore>(
-                c => PluginSettingStore.FromPath(c?.FullName),
+                c => (c != null ? PluginSettingStore.FromPath(c.FullName!) : null) ?? throw new InvalidOperationException($"TypeInfo lookup: unknown path '{c?.FullName}'"),
                 v => v?.GetTypeInfo()
-            ).Bind(ProfileBinding.Child(c => c.OutputMode));
+            ).Bind(ProfileBinding.Child(c => c!.OutputMode));
 
             outputModeSelector.SelectedValueChanged += (sender, e) => UpdateOutputMode(Profile?.OutputMode);
 
@@ -44,16 +44,16 @@ namespace OpenTabletDriver.UX.Controls.Output
         }
 
         // ReSharper disable once AsyncVoidMethod
-        private void UpdateTablet(IEnumerable<TabletReference> tablets = null) => Application.Instance.AsyncInvoke(async void () =>
+        private void UpdateTablet(IEnumerable<TabletReference>? tablets = null) => Application.Instance.AsyncInvoke(async void () =>
         {
-            tablets ??= await App.Driver.Instance.GetTablets();
+            tablets ??= await App.Driver.Instance!.GetTablets();
             var selectedTablet = tablets.FirstOrDefault(t => t.Properties.Name == Profile?.Tablet);
             if (selectedTablet != null)
                 SetTabletSize(selectedTablet);
         });
 
-        private Profile profile;
-        public Profile Profile
+        private Profile? profile;
+        public Profile? Profile
         {
             set
             {
@@ -63,7 +63,7 @@ namespace OpenTabletDriver.UX.Controls.Output
             get => this.profile;
         }
 
-        public event EventHandler<EventArgs> ProfileChanged;
+        public event EventHandler<EventArgs>? ProfileChanged;
 
         protected virtual void OnProfileChanged()
         {
@@ -73,11 +73,11 @@ namespace OpenTabletDriver.UX.Controls.Output
             outputModeSelector.Enabled = Profile != null;
         }
 
-        public BindableBinding<OutputModeEditor, Profile> ProfileBinding
+        public BindableBinding<OutputModeEditor, Profile?> ProfileBinding
         {
             get
             {
-                return new BindableBinding<OutputModeEditor, Profile>(
+                return new BindableBinding<OutputModeEditor, Profile?>(
                     this,
                     c => c.Profile,
                     (c, v) => c.Profile = v,
@@ -97,7 +97,7 @@ namespace OpenTabletDriver.UX.Controls.Output
         public void SetTabletSize(TabletReference tablet)
         {
             var tabletAreaEditor = absoluteModeEditor.tabletAreaEditor;
-            if (tablet?.Properties?.Specifications?.Digitizer is DigitizerSpecifications digitizer)
+            if (tablet.Properties.Specifications.Digitizer is DigitizerSpecifications digitizer)
             {
                 tabletAreaEditor.AreaBounds =
                 [
@@ -110,7 +110,7 @@ namespace OpenTabletDriver.UX.Controls.Output
             }
         }
 
-        public void SetDisplaySize(IEnumerable<IDisplay> displays)
+        public void SetDisplaySize(IEnumerable<IDisplay>? displays)
         {
             var bgs = from disp in displays
                       where !(disp is IVirtualScreen)
@@ -118,7 +118,7 @@ namespace OpenTabletDriver.UX.Controls.Output
             absoluteModeEditor.displayAreaEditor.AreaBounds = bgs;
         }
 
-        private void UpdateOutputMode(PluginSettingStore store)
+        private void UpdateOutputMode(PluginSettingStore? store)
         {
             bool showAbsolute = false;
             bool showRelative = false;

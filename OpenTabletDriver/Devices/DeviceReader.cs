@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading;
 using OpenTabletDriver.Plugin;
@@ -32,7 +33,7 @@ namespace OpenTabletDriver.Devices
         /// <summary>
         /// The raw device endpoint report stream.
         /// </summary>
-        public IDeviceEndpointStream ReportStream { protected set; get; }
+        public IDeviceEndpointStream? ReportStream { protected set; get; }
 
         /// <summary>
         /// The <see cref="IReportParser{T}"/> in which the device reports will be parsed with.
@@ -47,7 +48,7 @@ namespace OpenTabletDriver.Devices
         /// <summary>
         /// Invoked when a new report comes in from the device.
         /// </summary>
-        public event EventHandler<T> Report;
+        public event EventHandler<T>? Report;
 
         /// <summary>
         /// Invoked when a new report comes in from the device.
@@ -56,7 +57,7 @@ namespace OpenTabletDriver.Devices
         /// This will only be invoked when <see cref="RawClone"/> is set to true.
         /// This report is not meant in any way to be modified, as it is supposed to represent the original data.
         /// </remarks>
-        public event EventHandler<T> RawReport;
+        public event EventHandler<T>? RawReport;
 
         /// <summary>
         /// Whether the device is actively emitting reports and being parsed.
@@ -74,8 +75,9 @@ namespace OpenTabletDriver.Devices
         /// <summary>
         /// Invoked when <see cref="Connected"/> is changed.
         /// </summary>
-        public event EventHandler<bool> ConnectionStateChanged;
+        public event EventHandler<bool>? ConnectionStateChanged;
 
+        [MemberNotNullWhen(true, nameof(ReportStream))]
         protected virtual bool Initialize()
         {
             try
@@ -106,7 +108,7 @@ namespace OpenTabletDriver.Devices
                 Connected = true;
                 while (Connected)
                 {
-                    var data = ReportStream.Read();
+                    var data = ReportStream!.Read();
                     if (Parser.Parse(data) is T report)
                         OnReport(report);
 

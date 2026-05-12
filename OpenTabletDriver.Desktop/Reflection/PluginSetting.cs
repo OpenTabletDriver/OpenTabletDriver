@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -9,53 +10,44 @@ namespace OpenTabletDriver.Desktop.Reflection
 {
     public class PluginSetting
     {
-        public PluginSetting(string property, object value)
-            : this()
+        [JsonConstructor, SetsRequiredMembers]
+        public PluginSetting(string property, object? value)
         {
             Property = property;
             SetValue(value);
         }
 
-        public PluginSetting(PropertyInfo property, object value)
+        [SetsRequiredMembers]
+        public PluginSetting(PropertyInfo property, object? value = null)
             : this(property.Name, value)
         {
         }
 
-        public PluginSetting(PropertyInfo property)
-            : this(property, null)
-        {
-        }
-
-        [JsonConstructor]
-        private PluginSetting()
-        {
-        }
+        [JsonProperty]
+        public required string Property { set; get; }
 
         [JsonProperty]
-        public string Property { set; get; }
-
-        [JsonProperty]
-        public JToken Value { set; get; }
+        public JToken? Value { set; get; }
 
         [JsonIgnore]
         public bool HasValue => Value != null && Value.Type != JTokenType.Null;
 
-        public void SetValue(object value)
+        public void SetValue(object? value)
         {
             Value = value == null ? null : JToken.FromObject(value);
         }
 
-        public T GetValue<T>()
+        public T? GetValue<T>()
         {
             return Value == null ? default(T) : Value.Type != JTokenType.Null ? Value.ToObject<T>() : default(T);
         }
 
-        public object GetValue(Type asType)
+        public object? GetValue(Type asType)
         {
             return Value == null ? default : Value.Type != JTokenType.Null ? Value.ToObject(asType) : default;
         }
 
-        public T GetValueOrDefault<T>(PropertyInfo property)
+        public T? GetValueOrDefault<T>(PropertyInfo property)
         {
             if (this.HasValue)
             {

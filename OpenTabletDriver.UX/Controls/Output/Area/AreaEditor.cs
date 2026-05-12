@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using Eto.Drawing;
@@ -96,10 +97,10 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             xGroup.UnitBinding.Bind(UnitBinding);
             yGroup.UnitBinding.Bind(UnitBinding);
 
-            var widthBinding = AreaBinding.Child((AreaSettings s) => s.Width);
-            var heightBinding = AreaBinding.Child((AreaSettings s) => s.Height);
-            var xBinding = AreaBinding.Child((AreaSettings s) => s.X);
-            var yBinding = AreaBinding.Child((AreaSettings s) => s.Y);
+            var widthBinding = AreaBinding.Child((AreaSettings? s) => s!.Width);
+            var heightBinding = AreaBinding.Child((AreaSettings? s) => s!.Height);
+            var xBinding = AreaBinding.Child((AreaSettings? s) => s!.X);
+            var yBinding = AreaBinding.Child((AreaSettings? s) => s!.Y);
 
             width.ValueBinding.Bind(widthBinding);
             height.ValueBinding.Bind(heightBinding);
@@ -117,7 +118,6 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             Display.AreaBoundsBinding.Bind(AreaBoundsBinding);
             Display.FullAreaBoundsBinding.Bind(FullAreaBoundsBinding);
             Display.InvalidForegroundErrorBinding.Bind(InvalidForegroundErrorBinding);
-            Display.InvalidBackgroundErrorBinding.Bind(InvalidBackgroundErrorBinding);
         }
 
         private BooleanCommand lockToUsableArea = new BooleanCommand
@@ -134,20 +134,20 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
 
         public bool FullAreaCommandExecuting { get; private set; }
 
-        public override IEnumerable<RectangleF> AreaBounds
+        public override IEnumerable<RectangleF>? AreaBounds
         {
             set
             {
-                this.areaBounds = value;
+                this.areaBounds = value?.ToArray();
                 this.OnAreaBoundsChanged();
-                if (AreaBounds != null)
+                if (areaBounds != null)
                 {
                     this.FullAreaBounds = new RectangleF
                     {
-                        Left = this.AreaBounds.Min(r => r.Left),
-                        Top = this.AreaBounds.Min(r => r.Top),
-                        Right = this.AreaBounds.Max(r => r.Right),
-                        Bottom = this.AreaBounds.Max(r => r.Bottom),
+                        Left = this.areaBounds.Min(r => r.Left),
+                        Top = this.areaBounds.Min(r => r.Top),
+                        Right = this.areaBounds.Max(r => r.Right),
+                        Bottom = this.areaBounds.Max(r => r.Bottom),
                     };
                 }
                 else
@@ -162,6 +162,8 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
 
         public Vector2[] GetAreaCorners()
         {
+            Debug.Assert(Area != null, "Tried to get area corners but Area is null");
+
             var origin = new Vector2(Area.X, Area.Y);
             var matrix = Matrix3x2.CreateTranslation(-origin);
             matrix *= Matrix3x2.CreateRotation((float)(Area.Rotation * Math.PI / 180));
@@ -207,30 +209,30 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                             new ActionCommand
                             {
                                 MenuText = "Left",
-                                Action = () => Area.X = GetAreaCenterOffset().X
+                                Action = () => Area!.X = GetAreaCenterOffset().X
                             },
                             new ActionCommand
                             {
                                 MenuText = "Right",
-                                Action = () => Area.X = FullAreaBounds.Width - GetAreaCenterOffset().X
+                                Action = () => Area!.X = FullAreaBounds!.Value.Width - GetAreaCenterOffset().X
                             },
                             new ActionCommand
                             {
                                 MenuText = "Top",
-                                Action = () => Area.Y = GetAreaCenterOffset().Y
+                                Action = () => Area!.Y = GetAreaCenterOffset().Y
                             },
                             new ActionCommand
                             {
                                 MenuText = "Bottom",
-                                Action = () => Area.Y = FullAreaBounds.Height - GetAreaCenterOffset().Y
+                                Action = () => Area!.Y = FullAreaBounds!.Value.Height - GetAreaCenterOffset().Y
                             },
                             new ActionCommand
                             {
                                 MenuText = "Center",
                                 Action = () =>
                                 {
-                                    Area.X = FullAreaBounds.Center.X;
-                                    Area.Y = FullAreaBounds.Center.Y;
+                                    Area!.X = FullAreaBounds!.Value.Center.X;
+                                    Area!.Y = FullAreaBounds!.Value.Center.Y;
                                 }
                             }
                         }
@@ -246,10 +248,10 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                                 Action = () =>
                                 {
                                     FullAreaCommandExecuting = true;
-                                    Area.Height = FullAreaBounds.Height;
-                                    Area.Width = FullAreaBounds.Width;
-                                    Area.Y = FullAreaBounds.Center.Y;
-                                    Area.X = FullAreaBounds.Center.X;
+                                    Area!.Height = FullAreaBounds!.Value.Height;
+                                    Area!.Width = FullAreaBounds!.Value.Width;
+                                    Area!.Y = FullAreaBounds!.Value.Center.Y;
+                                    Area!.X = FullAreaBounds!.Value.Center.X;
                                     FullAreaCommandExecuting = false;
                                 }
                             },
@@ -258,8 +260,8 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                                 MenuText = "Quarter area",
                                 Action = () =>
                                 {
-                                    Area.Height = FullAreaBounds.Height / 2;
-                                    Area.Width = FullAreaBounds.Width / 2;
+                                    Area!.Height = FullAreaBounds!.Value.Height / 2;
+                                    Area!.Width = FullAreaBounds!.Value.Width / 2;
                                 }
                             }
                         }
@@ -272,12 +274,12 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                             new ActionCommand
                             {
                                 MenuText = "Horizontal",
-                                Action = () => Area.X = FullAreaBounds.Width - Area.X
+                                Action = () => Area!.X = FullAreaBounds!.Value.Width - Area.X
                             },
                             new ActionCommand
                             {
                                 MenuText = "Vertical",
-                                Action = () => Area.Y = FullAreaBounds.Height - Area.Y
+                                Action = () => Area!.Y = FullAreaBounds!.Value.Height - Area.Y
                             }
                         }
                     },

@@ -35,7 +35,7 @@ namespace OpenTabletDriver.UX.Controls
             this.slider.MaxValue = 100; // as default only
         }
 
-        public event EventHandler<EventArgs> ValueChanged;
+        public event EventHandler<EventArgs>? ValueChanged;
 
         private readonly Slider slider = new();
 

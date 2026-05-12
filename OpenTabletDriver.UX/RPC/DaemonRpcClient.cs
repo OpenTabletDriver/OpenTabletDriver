@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.RPC;
@@ -14,13 +15,14 @@ namespace OpenTabletDriver.UX.RPC
         {
         }
 
-        public event EventHandler<LogMessage> Message;
-        public event EventHandler<DebugReportData> DeviceReport;
-        public event EventHandler<IEnumerable<TabletReference>> TabletsChanged;
-        public event EventHandler Resynchronize;
+        public event EventHandler<LogMessage>? Message;
+        public event EventHandler<DebugReportData>? DeviceReport;
+        public event EventHandler<IEnumerable<TabletReference>>? TabletsChanged;
+        public event EventHandler? Resynchronize;
 
         protected override void OnConnected()
         {
+            Debug.Assert(IsConnected, $"{nameof(OnConnected)} called without being connected");
             base.OnConnected();
 
             Instance.Message += (sender, e) =>

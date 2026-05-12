@@ -34,7 +34,7 @@ namespace OpenTabletDriver.UX
         {
             string message = errorData.Message + Environment.NewLine + errorData.StackTrace;
             Log.Write(
-                errorData.TypeName,
+                errorData.TypeName ?? "<unknown>",
                 message,
                 LogLevel.Error
             );
@@ -61,13 +61,12 @@ namespace OpenTabletDriver.UX
             );
         }
 
-        public static async Task<TabletReference> GetTabletReference(this Profile profile)
+        public static async Task<TabletReference?> GetTabletReference(this Profile profile)
         {
+            Debug.Assert(App.Driver.IsConnected, "User shouldn't be able to ask for a tablet reference without a connected daemon");
             var tablets = await App.Driver.Instance.GetTablets();
             return tablets.FirstOrDefault(t => t.Properties.Name == profile.Tablet);
         }
-
-#nullable enable
 
         [Obsolete("Please use method specifying an initialFileName. 'null' is an acceptable value")]
         public static T BuildFileDialog<T>(string? title, string? directory, IEnumerable<FileFilter>? filters, bool? multiSelect = null)

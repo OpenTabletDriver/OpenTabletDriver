@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -80,6 +81,12 @@ namespace OpenTabletDriver.UX.Windows.Plugins
 
         protected async Task<bool> DownloadAndInstall(PluginMetadata metadata)
         {
+            if (!App.Driver.IsConnected)
+            {
+                MessageBox.Show("Unable to download and install plugin without an active daemon", MessageBoxType.Error);
+                return false;
+            }
+
             try
             {
                 if (await App.Driver.Instance.DownloadPlugin(metadata))
@@ -98,6 +105,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             catch (RemoteInvocationException ex)
             {
                 var data = ex.DeserializedErrorData as CommonErrorData;
+                Debug.Assert(data != null, $"Deserialized error data was not {nameof(CommonErrorData)}");
                 if (data.TypeName == typeof(CryptographicException).FullName)
                 {
                     MessageBox.Show(
@@ -123,6 +131,12 @@ namespace OpenTabletDriver.UX.Windows.Plugins
 
         protected async Task Install(string path)
         {
+            if (!App.Driver.IsConnected)
+            {
+                MessageBox.Show("Unable to install plugin without an active daemon", MessageBoxType.Error);
+                return;
+            }
+
             if (await App.Driver.Instance.InstallPlugin(path))
             {
                 AppInfo.PluginManager.Load();
@@ -135,6 +149,12 @@ namespace OpenTabletDriver.UX.Windows.Plugins
 
         protected async Task<bool> Uninstall(PluginMetadata metadata)
         {
+            if (!App.Driver.IsConnected)
+            {
+                MessageBox.Show("Unable to uninstall plugin without an active daemon", MessageBoxType.Error);
+                return false;
+            }
+
             var context = AppInfo.PluginManager.GetLoadedPlugins().First(
                 c => PluginMetadata.Match(c.GetMetadata(), metadata)
             );
@@ -179,7 +199,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             };
         }
 
-        private async void PromptInstallPlugin(object sender, EventArgs e)
+        private async void PromptInstallPlugin(object? sender, EventArgs e)
         {
             if (!this.ParentWindow.Enabled)
                 return;
@@ -200,7 +220,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             }
         }
 
-        private void RefreshHandler(object sender, EventArgs e)
+        private void RefreshHandler(object? sender, EventArgs e)
         {
             if (this.ParentWindow.Enabled)
                 pluginList.Refresh();

@@ -23,7 +23,7 @@ namespace OpenTabletDriver.Desktop
 
         public IReadOnlyCollection<Preset> GetPresets() => Presets;
 
-        public Preset FindPreset(string presetName)
+        public Preset? FindPreset(string presetName)
         {
             return Presets.Find(preset => preset.Name == presetName);
         }

@@ -1,8 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
 
-#nullable enable
-
 namespace OpenTabletDriver.Native.OSX.Timers
 {
     public static class Timers

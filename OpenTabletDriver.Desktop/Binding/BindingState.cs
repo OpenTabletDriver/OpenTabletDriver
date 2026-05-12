@@ -5,7 +5,7 @@ namespace OpenTabletDriver.Desktop.Binding
 {
     public class BindingState
     {
-        public IBinding Binding { set; get; }
+        public IBinding? Binding { set; get; }
 
         protected bool PreviousState { set; get; }
 

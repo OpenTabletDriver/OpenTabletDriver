@@ -3,8 +3,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using OpenTabletDriver.Plugin.Tablet;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Profiles
 {
     public class ProfileCollection : ObservableCollection<Profile>

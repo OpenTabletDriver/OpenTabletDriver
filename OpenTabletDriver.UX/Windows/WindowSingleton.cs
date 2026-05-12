@@ -6,7 +6,7 @@ namespace OpenTabletDriver.UX.Windows
     public class WindowSingleton<T> where T : Window, new()
     {
         private readonly object sync = new();
-        private T window;
+        private T? window;
 
         public T GetWindow()
         {
@@ -44,10 +44,10 @@ namespace OpenTabletDriver.UX.Windows
         public void Close()
         {
             if (window != null)
-                GetWindow()?.Close();
+                GetWindow().Close();
         }
 
-        private void HandleWindowClosed(object sender, EventArgs e)
+        private void HandleWindowClosed(object? sender, EventArgs e)
         {
             window = null;
         }

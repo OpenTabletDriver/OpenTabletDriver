@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using OpenTabletDriver.Native.Windows.USB;
@@ -13,9 +14,9 @@ namespace OpenTabletDriver.Devices.WinUSB
         private readonly int interfaceNum;
         private readonly byte readPipe;
         private readonly byte writePipe;
-        private readonly byte[] readBuffer;
+        private readonly byte[]? readBuffer;
         private readonly byte* readPtr;
-        private readonly byte[] writeBuffer;
+        private readonly byte[]? writeBuffer;
         private readonly byte* writePtr;
 
         [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed")]
@@ -49,6 +50,7 @@ namespace OpenTabletDriver.Devices.WinUSB
 
         public byte[] Read()
         {
+            Debug.Assert(readBuffer != null, "Tried to read without an initialized read buffer");
             WinUsb_ReadPipe(winUsbHandle, readPipe, readPtr, (uint)readBuffer.Length, out var bytesRead, null);
             return bytesRead < readBuffer.Length
                 ? readBuffer.AsSpan(0, (int)bytesRead).ToArray()
@@ -57,6 +59,7 @@ namespace OpenTabletDriver.Devices.WinUSB
 
         public void Write(byte[] buffer)
         {
+            Debug.Assert(writeBuffer != null, "Tried to write without an initialized write buffer");
             if (buffer.Length < writeBuffer.Length)
             {
                 writeBuffer.AsSpan().Clear();

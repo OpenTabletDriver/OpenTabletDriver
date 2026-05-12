@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Http;
 using Eto.Drawing;
@@ -8,7 +9,7 @@ using OpenTabletDriver.UX.Controls.Generic;
 
 namespace OpenTabletDriver.UX.Dialogs
 {
-    public class RepositoryDialog : Dialog<PluginMetadataCollection>
+    public class RepositoryDialog : Dialog<PluginMetadataCollection?>
     {
         public RepositoryDialog()
         {
@@ -106,20 +107,21 @@ namespace OpenTabletDriver.UX.Dialogs
 
         protected class TextBoxGroup : Group
         {
+            [SetsRequiredMembers]
             public TextBoxGroup(string text)
             {
-                base.Text = text;
+                base.Text = DefaultInputText = text;
                 base.Orientation = Orientation.Horizontal;
             }
 
-            private string inputText;
+            private string? inputText;
             public string InputText
             {
                 protected set => this.inputText = value;
-                get => this.inputText == null || this.inputText?.Length == 0 ? DefaultInputText : this.inputText;
+                get => this.inputText is { Length: not 0 } ? this.inputText : DefaultInputText;
             }
 
-            public string DefaultInputText { set; get; }
+            public required string DefaultInputText { set; get; }
 
             protected const int TEXTBOX_WIDTH = 200;
 

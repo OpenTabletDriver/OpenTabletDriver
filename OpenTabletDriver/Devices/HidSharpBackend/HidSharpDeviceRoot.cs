@@ -26,7 +26,7 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
 
         private IEnumerable<IDeviceEndpoint> hidDevices = DeviceList.Local.GetHidDevices().Select(d => new HidSharpEndpoint(d));
 
-        public event EventHandler<DevicesChangedEventArgs> DevicesChanged;
+        public event EventHandler<DevicesChangedEventArgs>? DevicesChanged;
 
         public IEnumerable<IDeviceEndpoint> GetDevices()
         {

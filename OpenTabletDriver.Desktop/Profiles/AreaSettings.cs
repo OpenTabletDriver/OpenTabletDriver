@@ -56,13 +56,7 @@ namespace OpenTabletDriver.Desktop.Profiles
                 Y = value.Position.Y;
                 Rotation = value.Rotation;
             }
-            get => new Area
-            {
-                Width = this.Width,
-                Height = this.Height,
-                Position = new Vector2(this.X, this.Y),
-                Rotation = this.Rotation
-            };
+            get => new(this.Width, this.Height, new Vector2(this.X, this.Y), this.Rotation);
         }
 
         public static AreaSettings GetDefaults(DigitizerSpecifications digitizer)

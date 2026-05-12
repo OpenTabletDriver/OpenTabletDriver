@@ -8,9 +8,9 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.UX.Windows.Bindings
 {
-    public class BindingEditorDialog : Dialog<PluginSettingStore>
+    public class BindingEditorDialog : Dialog<PluginSettingStore?>
     {
-        public BindingEditorDialog(PluginSettingStore currentBinding = null)
+        public BindingEditorDialog(PluginSettingStore? currentBinding = null)
         {
             Title = "Binding Editor";
             Result = currentBinding;
@@ -62,12 +62,12 @@ namespace OpenTabletDriver.UX.Windows.Bindings
 
         private BindingController bindingController;
 
-        private void ClearBinding(object sender, EventArgs e)
+        private void ClearBinding(object? sender, EventArgs e)
         {
             Close(null);
         }
 
-        private void ApplyBinding(object sender, EventArgs e)
+        private void ApplyBinding(object? sender, EventArgs e)
         {
             Close(bindingController.Store);
         }
@@ -99,8 +99,8 @@ namespace OpenTabletDriver.UX.Windows.Bindings
 
             private const string TOOLTIP = "Press a key, combination of keys, or a mouse button.";
 
-            private PluginSettingStore store;
-            public PluginSettingStore Store
+            private PluginSettingStore? store;
+            public PluginSettingStore? Store
             {
                 set
                 {

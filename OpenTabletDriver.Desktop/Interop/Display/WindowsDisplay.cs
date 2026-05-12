@@ -29,7 +29,7 @@ namespace OpenTabletDriver.Desktop.Interop.Display
             }
 
             var monitors = GetDisplays();
-            var primary = monitors.FirstOrDefault(m => m.IsPrimary);
+            var primary = monitors.First(m => m.IsPrimary);
 
             var displays = new List<IDisplay>();
             displays.Add(this);

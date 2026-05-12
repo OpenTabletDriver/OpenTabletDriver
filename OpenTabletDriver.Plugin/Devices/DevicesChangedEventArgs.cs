@@ -23,8 +23,8 @@ namespace OpenTabletDriver.Plugin.Devices
 
         private class DeviceEndpointComparer : IEqualityComparer<IDeviceEndpoint>
         {
-            public bool Equals(IDeviceEndpoint x, IDeviceEndpoint y) => x?.DevicePath == y?.DevicePath;
-            public int GetHashCode(IDeviceEndpoint obj) => obj?.DevicePath?.GetHashCode() ?? 0;
+            public bool Equals(IDeviceEndpoint? x, IDeviceEndpoint? y) => x?.DevicePath == y?.DevicePath;
+            public int GetHashCode(IDeviceEndpoint? obj) => obj?.DevicePath.GetHashCode() ?? 0;
         }
     }
 }

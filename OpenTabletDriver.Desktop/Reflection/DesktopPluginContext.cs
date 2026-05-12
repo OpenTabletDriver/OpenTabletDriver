@@ -35,7 +35,9 @@ namespace OpenTabletDriver.Desktop.Reflection
             Directory.Refresh();
             if (Directory.Exists && Directory.EnumerateFiles().FirstOrDefault(f => f.Name == "metadata.json") is FileInfo file)
             {
-                var metadata = Serialization.Deserialize<PluginMetadata>(file);
+                var metadata = Serialization.Deserialize<PluginMetadata>(file)
+                    ?? throw new InvalidOperationException($"Could not deserialize {nameof(PluginMetadata)} for {file.Name}");
+
                 metadata.Installed = true;
                 return metadata;
             }
@@ -44,12 +46,14 @@ namespace OpenTabletDriver.Desktop.Reflection
                 return new PluginMetadata
                 {
                     Name = FriendlyName,
+                    Owner = "<unknown>",
+                    SupportedDriverVersion = Assembly.GetEntryAssembly()!.GetName().Version!, // TODO: require plugin manifest to ensure compatibility?
                     Installed = true,
                 };
             }
         }
 
-        protected Assembly LoadAssemblyFromFile(FileInfo file)
+        protected Assembly? LoadAssemblyFromFile(FileInfo file)
         {
             try
             {
@@ -67,12 +71,6 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         protected override IntPtr LoadUnmanagedDll(string unmanagedDllName)
         {
-            if (Directory == null)
-            {
-                Log.Write("Plugin", $"Independent plugin does not support loading native library '{unmanagedDllName}'", LogLevel.Warning);
-                throw new NotSupportedException();
-            }
-
             var runtimeFolder = new DirectoryInfo(Path.Join(Directory.FullName, "runtimes"));
             if (runtimeFolder.Exists)
             {
@@ -90,7 +88,7 @@ namespace OpenTabletDriver.Desktop.Reflection
                 PluginPlatform.Windows => $"{dllName}.dll",
                 PluginPlatform.Linux => $"lib{dllName}.so",
                 PluginPlatform.MacOS => $"lib{dllName}.dylib",
-                _ => null
+                _ => throw new InvalidOperationException($"Unsupported plugin platform '{SystemInterop.CurrentPlatform}'"),
             };
         }
     }

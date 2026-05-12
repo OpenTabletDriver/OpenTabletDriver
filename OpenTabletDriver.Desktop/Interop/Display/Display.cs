@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using OpenTabletDriver.Plugin.Platform.Display;
 
@@ -5,6 +6,7 @@ namespace OpenTabletDriver.Desktop.Interop.Display
 {
     internal class Display : IDisplay
     {
+        [SetsRequiredMembers]
         internal Display(float width, float height, Vector2 position, int index = 0)
         {
             Width = width;
@@ -13,10 +15,10 @@ namespace OpenTabletDriver.Desktop.Interop.Display
             Index = index;
         }
 
-        public int Index { private set; get; }
-        public float Width { private set; get; }
-        public float Height { private set; get; }
-        public Vector2 Position { private set; get; }
+        public required int Index { internal init; get; }
+        public required float Width { internal init; get; }
+        public required float Height { internal init; get; }
+        public required Vector2 Position { internal init; get; }
 
         public override string ToString()
         {

@@ -6,8 +6,6 @@ using System.Linq;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop
 {
     public class OSInfo

@@ -20,6 +20,6 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2
             };
         }
 
-        private TouchPoint[] prevTouches;
+        private TouchPoint[]? prevTouches;
     }
 }

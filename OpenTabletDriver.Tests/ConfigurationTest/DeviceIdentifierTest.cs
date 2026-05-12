@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.Extensions.DependencyInjection;
@@ -135,7 +134,7 @@ namespace OpenTabletDriver.Tests.ConfigurationTest
                 return IsEqual(x.Identifier, y.Identifier);
             }
 
-            public int GetHashCode([DisallowNull] IdentificationContext obj)
+            public int GetHashCode(IdentificationContext obj)
             {
                 return HashCode.Combine(
                     obj.Identifier.VendorID,

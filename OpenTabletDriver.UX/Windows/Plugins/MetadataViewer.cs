@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -52,7 +53,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                 () =>
                 {
                     // Get the plugin's updated metadata from the repo
-                    updatedMetadata = GetRepoMetadataForPlugin(PluginMetadataList.Repository, Metadata, CurrentDriverVersion).FirstOrDefault() ?? Metadata;
+                    updatedMetadata = GetRepoMetadataForPlugin(PluginMetadataList.Repository, Metadata!, CurrentDriverVersion).FirstOrDefault() ?? Metadata;
                     return updatedMetadata != Metadata;
                 },
                 addChangeEvent: (e) => MetadataChanged += e,
@@ -140,39 +141,44 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                 }
             };
 
-            name.TextBinding.Bind(MetadataBinding.Child(c => c.Name));
-            owner.TextBinding.Bind(MetadataBinding.Child(c => c.Owner));
-            description.TextBinding.Bind(MetadataBinding.Child(c => c.Description));
-            driverVersion.TextBinding.Bind(MetadataBinding.Child(c => c.SupportedDriverVersion).Convert(v => v?.ToString()));
-            maxDriverVersion.TextBinding.Bind(MetadataBinding.Child(c => c.MaxSupportedDriverVersion).Convert(v => v?.ToString() ?? "N/A"));
-            pluginVersion.TextBinding.Bind(MetadataBinding.Child(c => c.PluginVersion).Convert(v => v?.ToString()));
-            license.TextBinding.Bind(MetadataBinding.Child(c => c.LicenseIdentifier));
+            name.TextBinding.Bind(MetadataBinding.Child(c => c!.Name));
+            owner.TextBinding.Bind(MetadataBinding.Child(c => c!.Owner));
+            description.TextBinding.Bind(MetadataBinding.Child(c => c!.Description));
+            driverVersion.TextBinding.Bind(MetadataBinding.Child(c => c!.SupportedDriverVersion).Convert(v => v?.ToString()));
+            maxDriverVersion.TextBinding.Bind(MetadataBinding.Child(c => c!.MaxSupportedDriverVersion).Convert(v => v?.ToString() ?? "N/A"));
+            pluginVersion.TextBinding.Bind(MetadataBinding.Child(c => c!.PluginVersion).Convert(v => v?.ToString()));
+            license.TextBinding.Bind(MetadataBinding.Child(c => c!.LicenseIdentifier));
 
-            sourceCode.GetEnabledBinding().Bind(MetadataBinding.Child(c => c.RepositoryUrl).Convert(c => c != null));
-            sourceCode.Click += (sender, e) => DesktopInterop.Open(Metadata.RepositoryUrl);
+            sourceCode.GetEnabledBinding().Bind(MetadataBinding.Child(c => c!.RepositoryUrl).Convert(c => c != null));
+            sourceCode.Click += (_, _) => DesktopInterop.Open(Metadata!.RepositoryUrl!);
 
-            wiki.GetEnabledBinding().Bind(MetadataBinding.Child(c => c.WikiUrl).Convert(c => c != null));
-            wiki.Click += (sender, e) => DesktopInterop.Open(Metadata.WikiUrl);
+            wiki.GetEnabledBinding().Bind(MetadataBinding.Child(c => c!.WikiUrl).Convert(c => c != null));
+            wiki.Click += (_, _) => DesktopInterop.Open(Metadata!.WikiUrl!);
 
             AppInfo.PluginManager.AssembliesChanged += HandleAssembliesChanged;
         }
 
         private Control content;
         private StackLayout actions;
-        private Placeholder placeholder;
+        private Placeholder placeholder = new()
+        {
+            Text = "No plugin selected.",
+        };
 
         private Label name, owner, description, driverVersion, maxDriverVersion, pluginVersion, license;
         private Button sourceCode, wiki;
 
-        private Version CurrentDriverVersion = Assembly.GetExecutingAssembly().GetName().Version;
         private Button uninstallButton, installButton;
 
-        public event Func<PluginMetadata, Task<bool>> RequestPluginInstall;
-        public event Func<PluginMetadata, Task<bool>> RequestPluginUninstall;
+        // TODO: CurrentDriverVersion should look up version from daemon?
+        private readonly Version CurrentDriverVersion = Assembly.GetExecutingAssembly().GetName().Version!;
 
-        private PluginMetadata updatedMetadata;
-        private PluginMetadata metadata;
-        public PluginMetadata Metadata
+        public event Func<PluginMetadata, Task<bool>>? RequestPluginInstall;
+        public event Func<PluginMetadata, Task<bool>>? RequestPluginUninstall;
+
+        private PluginMetadata? updatedMetadata;
+        private PluginMetadata? metadata;
+        public PluginMetadata? Metadata
         {
             set
             {
@@ -182,23 +188,20 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             get => this.metadata;
         }
 
-        public event EventHandler<EventArgs> MetadataChanged;
+        public event EventHandler<EventArgs>? MetadataChanged;
 
         protected virtual void OnMetadataChanged()
         {
             MetadataChanged?.Invoke(this, new EventArgs());
 
-            this.Content = Metadata != null ? content : placeholder ??= new Placeholder
-            {
-                Text = "No plugin selected."
-            };
+            this.Content = Metadata != null ? content : placeholder;
         }
 
-        public BindableBinding<MetadataViewer, PluginMetadata> MetadataBinding
+        public BindableBinding<MetadataViewer, PluginMetadata?> MetadataBinding
         {
             get
             {
-                return new BindableBinding<MetadataViewer, PluginMetadata>(
+                return new BindableBinding<MetadataViewer, PluginMetadata?>(
                     this,
                     c => c.Metadata,
                     (c, v) => c.Metadata = v,
@@ -208,40 +211,47 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             }
         }
 
-        private void HandleAssembliesChanged(object sender, EventArgs e) => Application.Instance.AsyncInvoke(() =>
+        private void HandleAssembliesChanged(object? sender, EventArgs e) => Application.Instance.AsyncInvoke(() =>
         {
             MetadataBinding.Update();
         });
 
-        private async void InstallHandler(object sender, EventArgs e)
+        private async void InstallHandler(object? sender, EventArgs e)
         {
+            Debug.Assert(updatedMetadata != null);
             this.ParentWindow.Enabled = false;
 
-            await RequestPluginInstall?.Invoke(updatedMetadata);
+            if (RequestPluginInstall != null)
+                await RequestPluginInstall.Invoke(updatedMetadata);
 
             this.ParentWindow.Enabled = true;
         }
 
-        private async void UninstallHandler(object sender, EventArgs e)
+        private async void UninstallHandler(object? sender, EventArgs e)
         {
+            Debug.Assert(Metadata != null);
             this.ParentWindow.Enabled = false;
 
-            await RequestPluginUninstall?.Invoke(Metadata);
+            if (RequestPluginUninstall != null)
+                await RequestPluginUninstall.Invoke(Metadata);
 
             this.ParentWindow.Enabled = true;
         }
 
-        private static IEnumerable<PluginMetadata> GetRepoMetadataForPlugin(PluginMetadataCollection repo, PluginMetadata metadata, Version currentDriverVersion)
+        private static IEnumerable<PluginMetadata> GetRepoMetadataForPlugin(PluginMetadataCollection? repo, PluginMetadata? localMetadata, Version currentDriverVersion)
         {
             if (repo == null)
                 return Enumerable.Empty<PluginMetadata>();
 
             return from meta in repo
-                   where PluginMetadata.Match(meta, metadata)
-                   where meta.PluginVersion > metadata.PluginVersion
-                   where currentDriverVersion >= meta.SupportedDriverVersion
-                   where meta.MaxSupportedDriverVersion == null || currentDriverVersion <= meta.MaxSupportedDriverVersion
-                   orderby meta.PluginVersion descending
+                   where PluginMetadata.Match(meta, localMetadata) // find plugin match
+                   where localMetadata == null || // assume valid if no local metadata
+                         localMetadata.PluginVersion == null || // assume valid if no local plugin version
+                         meta.PluginVersion > localMetadata.PluginVersion // only show actual upgrades where data is available
+                   where currentDriverVersion >= meta.SupportedDriverVersion // must be supported by current driver version
+                   where meta.MaxSupportedDriverVersion == null || // assume valid if upstream doesn't define a version max
+                         currentDriverVersion <= meta.MaxSupportedDriverVersion // current driver must be equal or less to the version max
+                   orderby meta.PluginVersion descending // newest first
                    select meta;
         }
 

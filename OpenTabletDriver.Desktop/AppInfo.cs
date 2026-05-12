@@ -11,7 +11,7 @@ namespace OpenTabletDriver.Desktop
 
     public class AppInfo
     {
-        private string configurationDirectory,
+        private string? configurationDirectory,
             settingsFile,
             pluginDirectory,
             presetDirectory,
@@ -32,7 +32,8 @@ namespace OpenTabletDriver.Desktop
             }
         }
 
-        private static AppInfo current;
+        private static AppInfo? current;
+
         public static AppInfo Current
         {
             set => current = value;
@@ -53,7 +54,7 @@ namespace OpenTabletDriver.Desktop
                 {
                     AppDataDirectory = GetExistingPathOrLast(Path.Join(ProgramDirectory, "userdata"), "~/Library/Application Support/OpenTabletDriver"),
                     TemporaryDirectory = GetPath("$TMPDIR/OpenTabletDriver"),
-                    CacheDirectory = GetPath("~/Library/Caches/OpenTabletDriver")
+                    CacheDirectory = GetPath("~/Library/Caches/OpenTabletDriver"),
                 },
                 _ => throw new InvalidOperationException($"Unsupported platform {SystemInterop.CurrentPlatform}"),
             };
@@ -65,54 +66,63 @@ namespace OpenTabletDriver.Desktop
 
         public required string AppDataDirectory { set; get; }
 
+        [AllowNull]
         public string ConfigurationDirectory
         {
             set => this.configurationDirectory = value;
             get => this.configurationDirectory ?? GetDefaultConfigurationDirectory();
         }
 
+        [AllowNull]
         public string SettingsFile
         {
             set => this.settingsFile = value;
             get => this.settingsFile ?? GetDefaultSettingsFile();
         }
 
+        [AllowNull]
         public string PluginDirectory
         {
             set => this.pluginDirectory = value;
             get => this.pluginDirectory ?? GetDefaultPluginDirectory();
         }
 
+        [AllowNull]
         public string PresetDirectory
         {
             set => this.presetDirectory = value;
             get => this.presetDirectory ?? GetDefaultPresetDirectory();
         }
 
+        [AllowNull]
         public string LogDirectory
         {
             set => this.logDirectory = value;
             get => this.logDirectory ?? GetDefaultLogDirectory();
         }
 
+        [AllowNull]
         public string TemporaryDirectory
         {
             set => this.temporaryDirectory = value;
             get => this.temporaryDirectory ?? GetDefaultTemporaryDirectory();
         }
 
+        [AllowNull]
         public string CacheDirectory
         {
             set => this.cacheDirectory = value;
             get => this.cacheDirectory ?? GetDefaultCacheDirectory();
         }
 
+        [AllowNull]
         public string BackupDirectory
         {
             set => this.backupDirectory = value;
             get => this.backupDirectory ?? GetDefaultBackupDirectory();
         }
 
+        [AllowNull]
         public string TrashDirectory
         {
             set => this.trashDirectory = value;
@@ -136,7 +146,7 @@ namespace OpenTabletDriver.Desktop
         private string GetDefaultBackupDirectory() => Path.Join(AppDataDirectory, "Backup");
         private string GetDefaultTrashDirectory() => Path.Join(AppDataDirectory, "Trash");
 
-        private static bool IsEnvVarUnset([DisallowNull] string envVar) =>
+        private static bool IsEnvVarUnset(string envVar) =>
             string.IsNullOrEmpty(Environment.GetEnvironmentVariable(envVar));
     }
 }
