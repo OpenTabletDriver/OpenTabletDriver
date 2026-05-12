@@ -245,8 +245,8 @@ namespace OpenTabletDriver.Desktop.ViewModels.Utility
             string SelectEmojisFromButtonBool(KeyValuePair<int, bool?> button) =>
                 button.Value switch
                 { // add 1 to key number to display human-friendly number
-                    null => $"{button.Key + 1}✔",
-                    false => $"{button.Key + 1}↓️️",
+                    null => $"{button.Key + 1}✓",
+                    false => $"{button.Key + 1}↓",
                     true => $"{button.Key + 1}↑",
                 };
         }

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.CommandLine;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
 
 namespace OpenTabletDriver.Console
@@ -68,6 +69,21 @@ namespace OpenTabletDriver.Console
             else
             {
                 yield return "None";
+            }
+        }
+
+        public static IEnumerable<string> Format(this IEnumerable<WheelBindingSettings> wheelBindings)
+        {
+            if (!wheelBindings.Any()) { yield return "None"; }
+            var wheelIndex = 0;
+            foreach (var wheelBinding in wheelBindings)
+            {
+                yield return $"""
+                            Wheel {wheelIndex + 1} Button Bindings: [{string.Join(", ", wheelBinding.WheelButtons.Format())}]
+                            Wheel {wheelIndex + 1} Clockwise Rotation: [{wheelBinding.ClockwiseRotation.Format()}]@{wheelBinding.ClockwiseActivationThreshold}°
+                            Wheel {wheelIndex + 1} Counter-Clockwise Rotation: [{wheelBinding.CounterClockwiseRotation.Format()}]@{wheelBinding.CounterClockwiseActivationThreshold}°
+                            """;
+                wheelIndex++;
             }
         }
     }

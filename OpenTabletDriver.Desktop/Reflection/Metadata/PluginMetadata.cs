@@ -89,6 +89,11 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
         public string? WikiUrl { set; get; }
 
         /// <summary>
+        /// Whether the plugin is installed.
+        /// </summary>
+        public bool Installed { set; get; }
+
+        /// <summary>
         /// The SPDX license identifier expression.
         /// </summary>
         [JsonProperty(nameof(LicenseIdentifier))]

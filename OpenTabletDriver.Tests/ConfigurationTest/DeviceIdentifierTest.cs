@@ -87,6 +87,12 @@ namespace OpenTabletDriver.Tests.ConfigurationTest
                 return false;
             }
 
+            if ((a.Attributes?.TryGetValue("Interface", out string? aInterface) ?? false) && (b.Attributes?.TryGetValue("Interface", out string? bInterface) ?? false))
+            {
+                if (aInterface != bInterface)
+                    return false;
+            }
+
             if (a.DeviceStrings is null || a.DeviceStrings.Count == 0 || b.DeviceStrings is null || b.DeviceStrings.Count == 0)
             {
                 return true; // One or both have no device strings, so they match.

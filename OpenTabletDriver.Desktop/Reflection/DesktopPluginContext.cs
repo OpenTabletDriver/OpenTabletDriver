@@ -35,7 +35,11 @@ namespace OpenTabletDriver.Desktop.Reflection
             Directory.Refresh();
             if (Directory.Exists && Directory.EnumerateFiles().FirstOrDefault(f => f.Name == "metadata.json") is FileInfo file)
             {
-                return Serialization.Deserialize<PluginMetadata>(file) ?? throw new InvalidOperationException($"Could not deserialize {nameof(PluginMetadata)} for {file.Name}");
+                var metadata = Serialization.Deserialize<PluginMetadata>(file)
+                    ?? throw new InvalidOperationException($"Could not deserialize {nameof(PluginMetadata)} for {file.Name}");
+
+                metadata.Installed = true;
+                return metadata;
             }
             else
             {
@@ -44,6 +48,7 @@ namespace OpenTabletDriver.Desktop.Reflection
                     Name = FriendlyName,
                     Owner = "<unknown>",
                     SupportedDriverVersion = Assembly.GetEntryAssembly()!.GetName().Version!, // TODO: require plugin manifest to ensure compatibility?
+                    Installed = true,
                 };
             }
         }
