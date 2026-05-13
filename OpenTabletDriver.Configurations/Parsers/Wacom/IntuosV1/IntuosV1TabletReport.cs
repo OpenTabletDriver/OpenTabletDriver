@@ -3,9 +3,9 @@ using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1
 {
-    public struct IntuosV1TabletReport : ITabletReport, IProximityReport, ITiltReport
+    public struct IntuosV1TabletReport : ITabletReport, IProximityReport, ITiltReport, IRotationReport
     {
-        public IntuosV1TabletReport(byte[] report, ref uint _prevPressure, ref Vector2 _prevTilt, ref bool[] _prevPenButtons)
+        public IntuosV1TabletReport(byte[] report, ref uint _prevPressure, ref Vector2 _prevTilt, ref int _prevRotation, ref bool[] _prevPenButtons)
         {
             Raw = report;
 
@@ -35,6 +35,8 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1
             _prevPressure = Pressure;
             _prevTilt = Tilt;
             _prevPenButtons = PenButtons;
+
+            Rotation = _prevRotation;
         }
 
         public byte[] Raw { set; get; }
@@ -44,5 +46,6 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1
         public bool[] PenButtons { set; get; }
         public bool NearProximity { set; get; }
         public uint HoverDistance { set; get; }
+        public int Rotation { set; get; }
     }
 }
