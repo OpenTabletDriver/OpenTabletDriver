@@ -501,8 +501,12 @@ namespace OpenTabletDriver.Daemon
             if (pointer is IMouseButtonHandler mouseButtonHandler)
                 bindingServiceProvider.AddService(() => mouseButtonHandler);
 
-            if (pointer is IMouseScrollHandler mouseScrollHandler)
-                bindingServiceProvider.AddService(() => mouseScrollHandler);
+            // Fall back to the virtual mouse for scroll when the output mode's pointer is a tablet
+            // device that libinput won't route scroll events from (e.g. Linux artist mode).
+            var scrollHandler = (pointer as IMouseScrollHandler)
+                ?? (DesktopInterop.RelativePointer as IMouseScrollHandler);
+            if (scrollHandler != null)
+                bindingServiceProvider.AddService(() => scrollHandler);
 
             if (pointer is IPenActionHandler penActionHandler)
                 bindingServiceProvider.AddService(() => penActionHandler);
