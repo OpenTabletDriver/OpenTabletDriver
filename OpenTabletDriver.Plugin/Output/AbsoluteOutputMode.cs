@@ -146,8 +146,11 @@ namespace OpenTabletDriver.Plugin.Output
             if (report is ITiltReport tiltReport && Pointer is ITiltHandler tiltHandler && !DisableTilt)
                 tiltHandler.SetTilt(tiltReport.Tilt);
             if (report is IRotationReport rotationReport && Pointer is IRotationHandler rotationHandler &&
-                !DisableRotation && Tablet?.Properties.Specifications.Pen.MaxRotation != null)
-                rotationHandler.SetRotation(rotationReport.Rotation / (float)Tablet.Properties.Specifications.Pen.MaxRotation);
+                !DisableRotation && Tablet?.Properties.Specifications.Pen.MaxRotation != null && Tablet?.Properties.Specifications.Pen.MinRotation != null)
+            {
+                var rotationRange = (float)Tablet.Properties.Specifications.Pen.MaxRotation! - (float)Tablet.Properties.Specifications.Pen.MinRotation!;
+                rotationHandler.SetRotation((rotationReport.Rotation - (float)Tablet.Properties.Specifications.Pen.MinRotation!) / rotationRange);
+            }
             if (report is ITabletReport tabletReport && Pointer is IPressureHandler pressureHandler &&
                 !DisablePressure && Tablet?.Properties.Specifications.Pen != null)
                 pressureHandler.SetPressure(tabletReport.Pressure / (float)Tablet.Properties.Specifications.Pen.MaxPressure);

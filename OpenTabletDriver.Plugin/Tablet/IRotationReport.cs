@@ -2,6 +2,6 @@ namespace OpenTabletDriver.Plugin.Tablet
 {
     public interface IRotationReport : IDeviceReport
     {
-        uint Rotation { set; get; }
+        int Rotation { set; get; }
     }
 }

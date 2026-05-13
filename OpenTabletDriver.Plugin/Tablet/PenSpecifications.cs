@@ -13,6 +13,11 @@ namespace OpenTabletDriver.Plugin.Tablet
         public uint MaxPressure { set; get; }
 
         /// <summary>
+        /// The minimum rotation that the pen supports.
+        /// </summary>
+        public int? MinRotation { set; get; }
+
+        /// <summary>
         /// The maximum rotation that the pen supports.
         /// </summary>
         public uint? MaxRotation { set; get; }

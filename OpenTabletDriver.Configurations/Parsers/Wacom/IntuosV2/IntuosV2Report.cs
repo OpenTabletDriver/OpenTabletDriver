@@ -32,11 +32,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2
             NearProximity = report[1].IsBitSet(5);
             HoverDistance = report[16];
 
-            var rawRotation = (short)(report[12] | (report[13] << 8));
-            // range is from -899 to 900, offset by 899 to get positive only
-            // supported by input-wacom (though they define it as -900 to 899 because they subtract 1 in the parsing for some reason)
-            // https://github.com/linuxwacom/input-wacom/blob/09bc480a02d2f26390eefeb7ef7472b562239460/4.18/wacom_wac.c#L3917
-            Rotation = (uint)(rawRotation + 899);
+            Rotation = Unsafe.ReadUnaligned<short>(ref report[12]);
         }
 
         public byte[] Raw { set; get; }
@@ -47,6 +43,6 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2
         public bool[] PenButtons { set; get; }
         public bool NearProximity { set; get; }
         public uint HoverDistance { set; get; }
-        public uint Rotation { set; get; }
+        public int Rotation { set; get; }
     }
 }
