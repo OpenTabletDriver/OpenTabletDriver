@@ -11,7 +11,6 @@ using Eto.Drawing;
 using Eto.Forms;
 using Newtonsoft.Json.Linq;
 using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Diagnostics;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Interop;
@@ -763,8 +762,7 @@ namespace OpenTabletDriver.UX
 
             try
             {
-                var log = await App.Driver.Instance.GetCurrentLog();
-                var diagnosticDump = new DiagnosticInfo(log, await App.Driver.Instance.GetDevices());
+                var diagnosticDump = await App.Driver.Instance.GetDiagnosticInfo();
 
                 Clipboard.Instance.Clear();
                 Clipboard.Instance.Text = diagnosticDump.ToString();
