@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup Label="Project Properties">
     <OutputType>WinExe</OutputType>
@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup Label="NuGet Packages">
-    <PackageReference Include="Eto.Platform.Wpf" Version="2.5.6" />
+    <PackageReference Include="Eto.Platform.Wpf" Version="2.11.0" />
   </ItemGroup>
 
   <ItemGroup Label="Project References">

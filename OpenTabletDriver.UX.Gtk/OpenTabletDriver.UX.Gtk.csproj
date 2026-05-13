@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup Label="NuGet Packages">
-    <PackageReference Include="Eto.Platform.Gtk" Version="2.5.11" />
+    <PackageReference Include="Eto.Platform.Gtk" Version="2.11.0" />
   </ItemGroup>
 
   <ItemGroup Label="Project References">

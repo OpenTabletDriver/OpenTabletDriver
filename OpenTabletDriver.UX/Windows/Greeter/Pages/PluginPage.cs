@@ -12,7 +12,7 @@ namespace OpenTabletDriver.UX.Windows.Greeter.Pages
             this.Content = new StackedContent
             {
                 new PaddingSpacerItem(),
-                new Bitmap(App.Logo.WithSize(150, 150)),
+                new Bitmap(App.Logo, 150, 150),
                 new StylizedText("Plugins", SystemFonts.Bold(12), new Padding(0, 0, 0, 8)),
                 "Plugins can be downloaded from the plugin manager at your own risk.",
                 "The plugin manager can be found in the Plugins menu in the main window.",

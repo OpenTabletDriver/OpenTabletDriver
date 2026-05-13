@@ -49,7 +49,7 @@ namespace OpenTabletDriver.UX.Windows.Updater
                     Items =
                     {
                         new PaddingSpacerItem(),
-                        new Bitmap(App.Logo.WithSize(256, 256)),
+                        new Bitmap(App.Logo, 256, 256),
                         "An update is available to install",
                         $"OpenTabletDriver v{updateAvailable.Version}",
                         new PaddingSpacerItem(),

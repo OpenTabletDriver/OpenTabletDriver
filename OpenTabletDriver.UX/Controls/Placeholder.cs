@@ -15,7 +15,7 @@ namespace OpenTabletDriver.UX.Controls
                 Items =
                 {
                     new StackLayoutItem(null, true),
-                    new Bitmap(App.Logo.WithSize(256, 256)),
+                    new Bitmap(App.Logo, 256, 256),
                     new StackLayoutItem
                     {
                         Control = label = new Label()
