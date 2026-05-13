@@ -11,6 +11,9 @@ namespace OpenTabletDriver.Configurations.Parsers.UCLogic
             if (data[1] == 0xC0)
                 return new OutOfRangeReport(data);
 
+            if (data[1] == 0xf0)
+                return new UCLogicWheelReport(data);
+
             if (data[1].IsBitSet(6))
                 return new UCLogicAuxReport(data);
             else
