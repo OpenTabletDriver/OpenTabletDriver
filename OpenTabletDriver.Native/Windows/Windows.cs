@@ -14,7 +14,7 @@ namespace OpenTabletDriver.Native.Windows
         public delegate bool MonitorEnumDelegate(IntPtr hMonitor, IntPtr hdcMonitor, ref Rect lprcMonitor, IntPtr dwData);
 
         [DllImport("user32.dll")]
-        public static extern bool EnumDisplayMonitors(IntPtr? hdc, IntPtr? lprcClip, MonitorEnumDelegate lpfnEnum, IntPtr dwData);
+        public static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumDelegate lpfnEnum, IntPtr dwData);
 
         [DllImport("user32.dll")]
         public static extern bool GetMonitorInfo(IntPtr hmon, ref MonitorInfoEx mi);
@@ -64,10 +64,10 @@ namespace OpenTabletDriver.Native.Windows
             [MarshalAs(UnmanagedType.LPWStr)] string filename,
             FileAccess access,
             FileShare share,
-            IntPtr? securityAttributes,
+            IntPtr securityAttributes,
             FileMode creationDisposition,
             FileAttributes flagsAndAttributes,
-            IntPtr? templateFile);
+            IntPtr templateFile);
 
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern bool CloseHandle(IntPtr hHandle);
