@@ -450,6 +450,9 @@ namespace OpenTabletDriver.UX
             // Update title to new instance
             if (await App.Driver.Instance.GetTablets() is IEnumerable<TabletReference> tablets)
                 SetTitle(tablets);
+                
+            // Having a mismatch between the version of the daemon and the application will cause issues
+            MatchDaemonVersion();
         });
 
         private Button saveButton;
@@ -772,6 +775,17 @@ namespace OpenTabletDriver.UX
                 Log.Exception(ex);
                 ex.ShowMessageBox();
             }
+        }
+
+        private static void MatchDaemonVersion()
+        {
+            Debug.Assert(App.Driver.IsConnected, "It should not be possible to fetch the daemon version without a connected daemon");
+
+            var versionMatch = AppInfo.Current.Version != null && AppInfo.Current.Version.ToString() == App.Version;
+
+            if (versionMatch == false)
+                Log.WriteNotify("UX", $"Daemon version does not match the UX version." + Environment.NewLine +
+                                       "You may need to restart the daemon.", LogLevel.Warning);
         }
 
         private static void CheckForUpdates()
