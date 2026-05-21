@@ -781,15 +781,20 @@ namespace OpenTabletDriver.UX
         {
             Debug.Assert(App.Driver.IsConnected, "It should not be possible to fetch the daemon version without a connected daemon");
 
-            var versionMatch = App.DaemonWatchdog != null || (AppInfo.Current.Version != null && AppInfo.Current.Version.ToString() == App.Version);
+            var daemonVersion = AppInfo.Current.Version?.ToString() ?? "Outdated";
+            var versionMatch = AppInfo.Current.Version != null && daemonVersion == App.Version;
 
             if (versionMatch == false)
             {
-                var osSpecific = OperatingSystem.IsLinux() ? "You may need to restart the user service or edit symlinks." :
-                                                             "You may need to restart the daemon.";
+                var specificsTip = "You may need to restart the daemon.";
 
-                Log.WriteNotify("UX", $"Daemon version does not match the UX version." +
-                                        Environment.NewLine + osSpecific, LogLevel.Warning);
+                if (App.DaemonWatchdog != null)
+                    specificsTip = "You may need to restart the UX.";
+                else if (OperatingSystem.IsLinux())
+                    specificsTip = "You may need to restart the user service or edit symlinks.";
+
+                Log.WriteNotify("UX", $"Daemon version ({daemonVersion}) does not match the UX version ({App.Version})." +
+                                        Environment.NewLine + specificsTip, LogLevel.Warning);
             }
         }
 
