@@ -784,8 +784,13 @@ namespace OpenTabletDriver.UX
             var versionMatch = AppInfo.Current.Version != null && AppInfo.Current.Version.ToString() == App.Version;
 
             if (versionMatch == false)
-                Log.WriteNotify("UX", $"Daemon version does not match the UX version." + Environment.NewLine +
-                                       "You may need to restart the daemon.", LogLevel.Warning);
+            {
+                var osSpecific = OperatingSystem.IsLinux() ? "You may need to restart the user service or edit symlinks." :
+                                                             "You may need to restart the daemon.";
+
+                Log.WriteNotify("UX", $"Daemon version does not match the UX version." +
+                                        Environment.NewLine + osSpecific, LogLevel.Warning);
+            }
         }
 
         private static void CheckForUpdates()
