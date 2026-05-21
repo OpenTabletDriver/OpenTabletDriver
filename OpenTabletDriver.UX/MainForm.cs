@@ -450,7 +450,7 @@ namespace OpenTabletDriver.UX
             // Update title to new instance
             if (await App.Driver.Instance.GetTablets() is IEnumerable<TabletReference> tablets)
                 SetTitle(tablets);
-                
+
             // Having a mismatch between the version of the daemon and the application will cause issues
             MatchDaemonVersion();
         });
