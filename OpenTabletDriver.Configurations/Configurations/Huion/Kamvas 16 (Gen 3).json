@@ -36,7 +36,25 @@
       },
       "InitializationStrings": [
         200
-      ]
+      ],
+      "Attributes": {
+        "HidReports": "08:FF00:0001"
+      }
+    },
+    {
+      "VendorID": 9580,
+      "ProductID": 8201,
+      "InputReportLength": 14,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.KamvasOffsetReportParser",
+      "DeviceStrings": {
+        "201": "HUION_M22d_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ],
+      "Attributes": {
+        "HidReports": "08:000D:0002, 09:0001:0007, AC:0001:0007"
+      }
     }
   ],
   "Attributes": {
