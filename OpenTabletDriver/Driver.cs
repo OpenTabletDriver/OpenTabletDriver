@@ -228,7 +228,8 @@ namespace OpenTabletDriver
             }
 
             if (attributes.TryGetValue("HidReports", out var hidReports)
-                && (!device.DeviceAttributes.TryGetValue("HID_REPORTS", out var usbHidReports) || !Regex.IsMatch(usbHidReports, hidReports)))
+                && device.DeviceAttributes.TryGetValue("HID_REPORTS", out var usbHidReports)
+                && !Regex.IsMatch(usbHidReports, hidReports))
             {
                 return false; // HidReports specified and no HID Reports match.
             }
