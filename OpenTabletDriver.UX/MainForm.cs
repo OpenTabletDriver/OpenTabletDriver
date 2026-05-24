@@ -782,7 +782,7 @@ namespace OpenTabletDriver.UX
             Debug.Assert(App.Driver.IsConnected, "It should not be possible to fetch the daemon version without a connected daemon");
 
             var uxVersion = new Version(App.Version);
-            
+
             var daemonVersion = AppInfo.Current.Version?.ToString() ?? "Outdated";
             var versionMatch = AppInfo.Current.Version != null && AppInfo.Current.Version == uxVersion;
 
