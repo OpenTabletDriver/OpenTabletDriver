@@ -188,7 +188,7 @@ namespace OpenTabletDriver.UX.Windows
 
         private async Task SendRequestWithTimeout(string strIndex, Action<string> action, Action<Exception> error, Action timeoutAction)
         {
-            if (App.Driver.IsConnected)
+            if (!App.Driver.IsConnected)
             {
                 MessageBox.Show("Unable to send request without an active daemon", MessageBoxType.Error);
                 return;
