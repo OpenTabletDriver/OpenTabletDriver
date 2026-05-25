@@ -191,7 +191,17 @@ namespace OpenTabletDriver.UX.Controls.Output
                 }
                 else if (sender == tabletHeight)
                 {
-                    tabletWidth.DataValue = displayWidth.DataValue / displayHeight.DataValue * tabletHeight.DataValue;
+                    var fullWidth = tabletAreaEditor.FullAreaBounds!.Value.Width;
+                    var scaledWidth = displayWidth.DataValue / displayHeight.DataValue * tabletHeight.DataValue;
+                    if (tabletAreaEditor.FullAreaCommandExecuting && scaledWidth > fullWidth)
+                    {
+                        tabletWidth.DataValue = fullWidth;
+                        tabletHeight.DataValue = displayHeight.DataValue / displayWidth.DataValue * fullWidth;
+                    }
+                    else
+                    {
+                        tabletWidth.DataValue = scaledWidth;
+                    }
                 }
                 else if ((sender == displayWidth) && prevDisplayWidth is float prevWidth)
                 {
