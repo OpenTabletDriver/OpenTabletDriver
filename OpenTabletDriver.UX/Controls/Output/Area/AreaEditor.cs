@@ -245,8 +245,16 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                                 MenuText = "Full area",
                                 Action = () =>
                                 {
-                                    Area!.Height = FullAreaBounds!.Value.Height;
-                                    Area!.Width = FullAreaBounds!.Value.Width;
+                                    if (Display.Area!.Width > Display.Area.Height)
+                                    {
+                                        Area!.Height = FullAreaBounds!.Value.Height;
+                                        Area!.Width = FullAreaBounds!.Value.Width;
+                                    }
+                                    else // reorder setting order on vertical aspect ratios to un-jank 'force aspect ratio'
+                                    {
+                                        Area!.Width = FullAreaBounds!.Value.Width;
+                                        Area!.Height = FullAreaBounds!.Value.Height;
+                                    }
                                     Area!.Y = FullAreaBounds!.Value.Center.Y;
                                     Area!.X = FullAreaBounds!.Value.Center.X;
                                 }
@@ -256,8 +264,16 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                                 MenuText = "Quarter area",
                                 Action = () =>
                                 {
-                                    Area!.Height = FullAreaBounds!.Value.Height / 2;
-                                    Area!.Width = FullAreaBounds!.Value.Width / 2;
+                                    if (Display.Area!.Width > Display.Area.Height)
+                                    {
+                                        Area!.Height = FullAreaBounds!.Value.Height / 2;
+                                        Area!.Width = FullAreaBounds!.Value.Width / 2;
+                                    }
+                                    else // reorder setting order on vertical aspect ratios to un-jank 'force aspect ratio'
+                                    {
+                                        Area!.Width = FullAreaBounds!.Value.Width / 2;
+                                        Area!.Height = FullAreaBounds!.Value.Height / 2;
+                                    }
                                 }
                             }
                         }
