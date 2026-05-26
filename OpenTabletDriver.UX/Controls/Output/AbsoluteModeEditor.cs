@@ -173,17 +173,7 @@ namespace OpenTabletDriver.UX.Controls.Output
             {
                 if (sender == tabletWidth || sender == tabletAreaEditor)
                 {
-                    var fullHeight = tabletAreaEditor.FullAreaBounds!.Value.Height;
-                    var scaledHeight = displayHeight.DataValue / displayWidth.DataValue * tabletWidth.DataValue;
-                    if (tabletAreaEditor.FullAreaCommandExecuting && scaledHeight > fullHeight)
-                    {
-                        tabletHeight.DataValue = fullHeight;
-                        tabletWidth.DataValue = displayWidth.DataValue / displayHeight.DataValue * fullHeight;
-                    }
-                    else
-                    {
-                        tabletHeight.DataValue = scaledHeight;
-                    }
+                    tabletHeight.DataValue = displayHeight.DataValue / displayWidth.DataValue * tabletWidth.DataValue;
                 }
                 else if (sender == tabletHeight)
                 {
