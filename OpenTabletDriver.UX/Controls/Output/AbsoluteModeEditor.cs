@@ -207,9 +207,8 @@ namespace OpenTabletDriver.UX.Controls.Output
         {
             if (sender is not AreaDisplay display) return;
 
-            if (!handlingForcedArConstraint && !handlingSettingsChanging && display.LockToUsableArea && display.Area != null)
+            if (!handlingSettingsChanging && display.LockToUsableArea && display.Area != null)
             {
-                handlingForcedArConstraint = true;
                 Debug.Assert(display.FullAreaBounds.HasValue);
                 var fullBounds = display.FullAreaBounds.Value;
 
@@ -223,12 +222,16 @@ namespace OpenTabletDriver.UX.Controls.Output
                             display.Area.Height = fullBounds.Height;
                     }
 
+                    if (handlingForcedArConstraint) return;
+
+                    handlingForcedArConstraint = true;
+
                     var correction = GetOutOfBoundsAmount(display, display.Area.X, display.Area.Y);
                     display.Area.X -= correction.X;
                     display.Area.Y -= correction.Y;
-                }
 
-                handlingForcedArConstraint = false;
+                    handlingForcedArConstraint = false;
+                }
             }
         }
 
