@@ -6,6 +6,10 @@ namespace OpenTabletDriver.Devices.WindowsBluetoothBackend
 {
     internal static class WindowsBluetoothGattNative
     {
+        // BTH_LE_GATT_CHARACTERISTIC_VALUE is declared in bthledef.h as:
+        // ULONG DataSize; UCHAR Data[1];
+        // The notification callback gives us a pointer to that structure, so
+        // report bytes begin immediately after the 4-byte DataSize field.
         public const int BTH_LE_GATT_CHARACTERISTIC_VALUE_DATA_OFFSET = 4;
 
         private const uint GENERIC_READ = 0x80000000;
@@ -91,24 +95,36 @@ namespace OpenTabletDriver.Devices.WindowsBluetoothBackend
             public ushort AttributeHandle;
         }
 
-        // Mirrors BTH_LE_GATT_DESCRIPTOR_VALUE from bthledef.h on Windows x64.
-        // Only the ClientCharacteristicConfiguration union arm is populated here.
-        [StructLayout(LayoutKind.Explicit, Size = 80)]
+        private const int BTH_LE_GATT_DESCRIPTOR_VALUE_SIZE = 80;
+        private const int DESCRIPTOR_VALUE_DESCRIPTOR_TYPE_OFFSET = 0;
+        private const int DESCRIPTOR_VALUE_DESCRIPTOR_UUID_OFFSET = 4;
+        private const int DESCRIPTOR_VALUE_CCC_NOTIFICATION_OFFSET = 24;
+        private const int DESCRIPTOR_VALUE_CCC_INDICATION_OFFSET = 25;
+        private const int DESCRIPTOR_VALUE_DATA_SIZE_OFFSET = 72;
+
+        // Mirrors BTH_LE_GATT_DESCRIPTOR_VALUE from bthledef.h.
+        //
+        // The Windows SDK structure contains a BTH_LE_UUID followed by a large
+        // union. For WH851 we only populate the ClientCharacteristicConfiguration
+        // union arm used by BluetoothGATTSetDescriptorValue to enable GATT
+        // notifications. The explicit offsets below are covered by
+        // WH851TransportTests so future runtime/SDK layout changes fail fast.
+        [StructLayout(LayoutKind.Explicit, Size = BTH_LE_GATT_DESCRIPTOR_VALUE_SIZE)]
         public struct BTH_LE_GATT_DESCRIPTOR_VALUE
         {
-            [FieldOffset(0)]
+            [FieldOffset(DESCRIPTOR_VALUE_DESCRIPTOR_TYPE_OFFSET)]
             public int DescriptorType;
 
-            [FieldOffset(4)]
+            [FieldOffset(DESCRIPTOR_VALUE_DESCRIPTOR_UUID_OFFSET)]
             public BTH_LE_UUID DescriptorUuid;
 
-            [FieldOffset(24)]
+            [FieldOffset(DESCRIPTOR_VALUE_CCC_NOTIFICATION_OFFSET)]
             public byte IsSubscribeToNotification;
 
-            [FieldOffset(25)]
+            [FieldOffset(DESCRIPTOR_VALUE_CCC_INDICATION_OFFSET)]
             public byte IsSubscribeToIndication;
 
-            [FieldOffset(72)]
+            [FieldOffset(DESCRIPTOR_VALUE_DATA_SIZE_OFFSET)]
             public uint DataSize;
 
             public static BTH_LE_GATT_DESCRIPTOR_VALUE CreateClientCharacteristicConfiguration(BTH_LE_UUID descriptorUuid, bool notify, bool indicate)

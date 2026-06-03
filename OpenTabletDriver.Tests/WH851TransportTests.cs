@@ -91,6 +91,23 @@ namespace OpenTabletDriver.Tests
             Assert.Equal(72, Marshal.OffsetOf(descriptorValueType!, "DataSize").ToInt32());
         }
 
+        [Fact]
+        public void BluetoothGattCharacteristicValueDataOffsetMatchesWindowsSdkLayout()
+        {
+            var nativeType = typeof(Driver).Assembly.GetType(
+                "OpenTabletDriver.Devices.WindowsBluetoothBackend.WindowsBluetoothGattNative"
+            );
+            Assert.NotNull(nativeType);
+
+            var dataOffset = nativeType!.GetField(
+                "BTH_LE_GATT_CHARACTERISTIC_VALUE_DATA_OFFSET",
+                BindingFlags.Public | BindingFlags.Static
+            );
+            Assert.NotNull(dataOffset);
+
+            Assert.Equal(4, dataOffset!.GetRawConstantValue());
+        }
+
         private static ImmutableArray<InputDevice> InvokeTransportPriorityFilter(params InputDevice[] devices)
         {
             var method = typeof(Driver).GetMethod("FilterByTransportPriority", BindingFlags.NonPublic | BindingFlags.Static);
