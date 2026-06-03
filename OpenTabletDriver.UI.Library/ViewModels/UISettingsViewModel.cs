@@ -27,6 +27,12 @@ public partial class UISettingsViewModel : ActivatableViewModelBase
     [ObservableProperty]
     private bool _driverDaemonAutoStart;
 
+    [ObservableProperty]
+    private bool _driverDaemonAutoStartHideWindowVisible;
+
+    [ObservableProperty]
+    private bool _driverDaemonAutoStartHideWindow;
+
     private bool _modified;
 
     public bool Modified
@@ -74,6 +80,8 @@ public partial class UISettingsViewModel : ActivatableViewModelBase
 
             AutoStart = _autoStartService.AutoStart;
             DriverDaemonAutoStart = _driverDaemonAutoStartService.AutoStart;
+            DriverDaemonAutoStartHideWindow = _driverDaemonAutoStartService.HideWindow;
+            DriverDaemonAutoStartHideWindowVisible = _driverDaemonAutoStartService.HideWindowSupported;
 
             // Maybe convert to a drop-down to select auto-start backend?
             AutoStartLabel = !string.IsNullOrEmpty(_autoStartService.BackendName)
@@ -104,10 +112,11 @@ public partial class UISettingsViewModel : ActivatableViewModelBase
             AutoStart = _autoStartService.AutoStart;
         }
 
-        if (!_driverDaemonAutoStartService.TrySetAutoStart(DriverDaemonAutoStart))
+        if (!_driverDaemonAutoStartService.TrySetAutoStart(DriverDaemonAutoStart, DriverDaemonAutoStartHideWindow))
         {
             // TODO: notify failure
             DriverDaemonAutoStart = _driverDaemonAutoStartService.AutoStart;
+            DriverDaemonAutoStartHideWindow = _driverDaemonAutoStartService.HideWindow;
         }
 
         Modified = false;
@@ -134,4 +143,5 @@ public partial class UISettingsViewModel : ActivatableViewModelBase
     private bool IsModified() => Modified;
     partial void OnAutoStartChanging(bool value) => Modified = true;
     partial void OnDriverDaemonAutoStartChanging(bool value) => Modified = true;
+    partial void OnDriverDaemonAutoStartHideWindowChanging(bool value) => Modified = true;
 }

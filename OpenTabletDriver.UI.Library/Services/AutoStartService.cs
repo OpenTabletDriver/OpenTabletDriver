@@ -20,14 +20,18 @@ public interface IDriverDaemonAutoStartService
 {
     bool AutoStartSupported { get; }
     bool AutoStart { get; }
+    bool HideWindowSupported { get; }
+    bool HideWindow { get; }
     string? BackendName { get; }
-    bool TrySetAutoStart(bool autoStart);
+    bool TrySetAutoStart(bool autoStart, bool hideWindow);
 }
 
 public class NullDriverDaemonAutoStartService : IDriverDaemonAutoStartService
 {
     public bool AutoStartSupported => false;
     public bool AutoStart => false;
+    public bool HideWindowSupported => false;
+    public bool HideWindow => false;
     public string? BackendName => null;
-    public bool TrySetAutoStart(bool autoStart) => false;
+    public bool TrySetAutoStart(bool autoStart, bool hideWindow) => false;
 }

@@ -28,6 +28,10 @@
             IsVisible="{Binding DriverDaemonAutoStartLabel, Converter={x:Static ObjectConverters.IsNotNull}}"
             Value="{Binding DriverDaemonAutoStart}" />
         <tc:BooleanInput
+            Label="Hide daemon auto-start window"
+            IsVisible="{Binding DriverDaemonAutoStartHideWindowVisible}"
+            Value="{Binding DriverDaemonAutoStartHideWindow}" />
+        <tc:BooleanInput
             Label="{Binding AutoStartLabel}"
             IsVisible="{Binding AutoStartLabel, Converter={x:Static ObjectConverters.IsNotNull}}"
             Value="{Binding AutoStart}" />
