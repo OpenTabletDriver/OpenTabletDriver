@@ -10,6 +10,7 @@ public partial class UISettingsViewModel : ActivatableViewModelBase
 {
     private readonly IUISettingsProvider _settingsProvider;
     private readonly IAutoStartService _autoStartService;
+    private readonly IDriverDaemonAutoStartService _driverDaemonAutoStartService;
 
     [ObservableProperty]
     private UISettings? _settings;
@@ -19,6 +20,12 @@ public partial class UISettingsViewModel : ActivatableViewModelBase
 
     [ObservableProperty]
     private bool _autoStart;
+
+    [ObservableProperty]
+    private string? _driverDaemonAutoStartLabel;
+
+    [ObservableProperty]
+    private bool _driverDaemonAutoStart;
 
     private bool _modified;
 
@@ -32,10 +39,15 @@ public partial class UISettingsViewModel : ActivatableViewModelBase
         }
     }
 
-    public UISettingsViewModel(IUISettingsProvider settingsProvider, IAutoStartService autoStartService)
+    public UISettingsViewModel(
+        IUISettingsProvider settingsProvider,
+        IAutoStartService autoStartService,
+        IDriverDaemonAutoStartService driverDaemonAutoStartService
+    )
     {
         _settingsProvider = settingsProvider;
         _autoStartService = autoStartService;
+        _driverDaemonAutoStartService = driverDaemonAutoStartService;
 
         WhenActivated(d =>
         {
@@ -61,10 +73,14 @@ public partial class UISettingsViewModel : ActivatableViewModelBase
             ).DisposeWith(d);
 
             AutoStart = _autoStartService.AutoStart;
+            DriverDaemonAutoStart = _driverDaemonAutoStartService.AutoStart;
 
             // Maybe convert to a drop-down to select auto-start backend?
             AutoStartLabel = !string.IsNullOrEmpty(_autoStartService.BackendName)
-                ? "Auto-start with " + _autoStartService.BackendName
+                ? "Open UI on login with " + _autoStartService.BackendName
+                : null;
+            DriverDaemonAutoStartLabel = !string.IsNullOrEmpty(_driverDaemonAutoStartService.BackendName)
+                ? "Start daemon on login with " + _driverDaemonAutoStartService.BackendName
                 : null;
 
             Modified = modified;
@@ -86,6 +102,12 @@ public partial class UISettingsViewModel : ActivatableViewModelBase
         {
             // TODO: notify failure
             AutoStart = _autoStartService.AutoStart;
+        }
+
+        if (!_driverDaemonAutoStartService.TrySetAutoStart(DriverDaemonAutoStart))
+        {
+            // TODO: notify failure
+            DriverDaemonAutoStart = _driverDaemonAutoStartService.AutoStart;
         }
 
         Modified = false;
@@ -111,4 +133,5 @@ public partial class UISettingsViewModel : ActivatableViewModelBase
 
     private bool IsModified() => Modified;
     partial void OnAutoStartChanging(bool value) => Modified = true;
+    partial void OnDriverDaemonAutoStartChanging(bool value) => Modified = true;
 }

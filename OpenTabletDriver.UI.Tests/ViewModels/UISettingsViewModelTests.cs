@@ -16,6 +16,7 @@ public partial class UISettingsViewModelTests
     {
         var serviceProvider = new ServiceCollection()
             .AddSingleton<IAutoStartService, NullAutoStartService>()
+            .AddSingleton<IDriverDaemonAutoStartService, NullDriverDaemonAutoStartService>()
             .AddSingleton<UISettingsProviderMock>()
             .AddSingleton<IUISettingsProvider, UISettingsProviderMock>(s => s.GetRequiredService<UISettingsProviderMock>())
             .AddTransient<UISettingsViewModel>()

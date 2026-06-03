@@ -15,3 +15,19 @@ public class NullAutoStartService : IAutoStartService
     public string? BackendName => null;
     public bool TrySetAutoStart(bool autoStart) => false;
 }
+
+public interface IDriverDaemonAutoStartService
+{
+    bool AutoStartSupported { get; }
+    bool AutoStart { get; }
+    string? BackendName { get; }
+    bool TrySetAutoStart(bool autoStart);
+}
+
+public class NullDriverDaemonAutoStartService : IDriverDaemonAutoStartService
+{
+    public bool AutoStartSupported => false;
+    public bool AutoStart => false;
+    public string? BackendName => null;
+    public bool TrySetAutoStart(bool autoStart) => false;
+}

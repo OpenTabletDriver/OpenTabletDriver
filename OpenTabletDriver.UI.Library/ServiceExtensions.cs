@@ -28,7 +28,8 @@ public static class ServiceExtensions
             .AddSingleton<IUISettingsProvider, UISettingsProvider>()
             .UseNavigation<NavigatorFactory>()
             .AddSingleton<IMessenger, StrongReferenceMessenger>()
-            .AddSingleton<IAutoStartService, NullAutoStartService>();
+            .AddSingleton<IAutoStartService, NullAutoStartService>()
+            .AddSingleton<IDriverDaemonAutoStartService, NullDriverDaemonAutoStartService>();
     }
 
     public static IServiceCollection WithUIEnvironmentFrom(this IServiceCollection services, string[] args)
