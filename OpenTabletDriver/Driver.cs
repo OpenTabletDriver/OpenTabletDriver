@@ -303,8 +303,7 @@ namespace OpenTabletDriver
 
                     var bestPriority = group.Max(GetTransportPriority);
                     return group
-                        .Where(device => GetTransportPriority(device) == bestPriority)
-                        .Take(1);
+                        .Where(device => GetTransportPriority(device) == bestPriority);
                 })
                 .ToImmutableArray();
         }

@@ -37,6 +37,44 @@ namespace OpenTabletDriver.Tests
         }
 
         [Fact]
+        public void TransportPriorityPreservesSamePriorityDevices()
+        {
+            var first = CreateDevice("first", transportGroup: "Gaomon WH851", transportPriority: "20");
+            var second = CreateDevice("second", transportGroup: "Gaomon WH851", transportPriority: "20");
+
+            var filteredDevices = InvokeTransportPriorityFilter(first, second);
+
+            Assert.Equal(2, filteredDevices.Length);
+            Assert.Contains(first, filteredDevices);
+            Assert.Contains(second, filteredDevices);
+        }
+
+        [Fact]
+        public void TransportPriorityPreservesExplicitPriorityOverImplicitLowerPriority()
+        {
+            var explicitPriority = CreateDevice("explicit", transportGroup: "Gaomon WH851", transportPriority: "10");
+            var implicitPriority = CreateDevice("implicit", transportGroup: "Gaomon WH851", transportPriority: null);
+
+            var filteredDevices = InvokeTransportPriorityFilter(explicitPriority, implicitPriority);
+
+            var device = Assert.Single(filteredDevices);
+            Assert.Same(explicitPriority, device);
+        }
+
+        [Fact]
+        public void TransportPriorityDoesNotFilterWhenNoValidPriorityIsAvailable()
+        {
+            var invalidPriority = CreateDevice("invalid", transportGroup: "Gaomon WH851", transportPriority: "invalid");
+            var implicitPriority = CreateDevice("implicit", transportGroup: "Gaomon WH851", transportPriority: null);
+
+            var filteredDevices = InvokeTransportPriorityFilter(invalidPriority, implicitPriority);
+
+            Assert.Equal(2, filteredDevices.Length);
+            Assert.Contains(invalidPriority, filteredDevices);
+            Assert.Contains(implicitPriority, filteredDevices);
+        }
+
+        [Fact]
         public void BluetoothLeHidChildMatcherAcceptsWindowsBthLeDeviceHardwareId()
         {
             Assert.True(IsBluetoothLeHidChild(
