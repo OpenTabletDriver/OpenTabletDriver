@@ -20,27 +20,6 @@ namespace OpenTabletDriver.Daemon.Library.Interop.Display
                 Log.Debug("Display", "DPI Awareness enabled");
             }
             catch { }
-
-            var monitors = GetDisplays();
-            var primary = monitors.First(m => m.IsPrimary);
-
-            var displays = new List<IDisplay>();
-            displays.Add(this);
-            foreach (var monitor in monitors)
-            {
-                var display = new Display(
-                    monitor.Width,
-                    monitor.Height,
-                    new Vector2(monitor.Left, monitor.Top),
-                    monitors.IndexOf(monitor) + 1);
-                displays.Add(display);
-            }
-
-            var x = primary.Left - monitors.Min(m => m.Left);
-            var y = primary.Top - monitors.Min(m => m.Top);
-
-            Displays = displays;
-            Position = new Vector2(x, y);
         }
 
         private static List<DisplayInfo> GetDisplays()
@@ -72,14 +51,21 @@ namespace OpenTabletDriver.Daemon.Library.Interop.Display
             return displayCollection;
         }
 
-        private IEnumerable<DisplayInfo> InternalDisplays => GetDisplays().OrderBy(e => e.Left);
+        private static List<DisplayInfo> InternalDisplays => GetDisplays()
+            .OrderBy(e => e.Left)
+            .ThenBy(e => e.Top)
+            .ToList();
 
         public float Width
         {
             get
             {
-                var left = InternalDisplays.Min(d => d.Left);
-                var right = InternalDisplays.Max(d => d.Right);
+                var displays = InternalDisplays;
+                if (displays.Count == 0)
+                    return 0;
+
+                var left = displays.Min(d => d.Left);
+                var right = displays.Max(d => d.Right);
                 return right - left;
             }
         }
@@ -88,15 +74,49 @@ namespace OpenTabletDriver.Daemon.Library.Interop.Display
         {
             get
             {
-                var top = InternalDisplays.Min(d => d.Top);
-                var bottom = InternalDisplays.Max(d => d.Bottom);
+                var displays = InternalDisplays;
+                if (displays.Count == 0)
+                    return 0;
+
+                var top = displays.Min(d => d.Top);
+                var bottom = displays.Max(d => d.Bottom);
                 return bottom - top;
             }
         }
 
-        public Vector2 Position { private set; get; }
+        public Vector2 Position
+        {
+            get
+            {
+                var displays = InternalDisplays;
+                if (displays.Count == 0)
+                    return Vector2.Zero;
 
-        public IEnumerable<IDisplay> Displays { private set; get; }
+                var primary = displays.FirstOrDefault(m => m.IsPrimary) ?? displays[0];
+                var x = primary.Left - displays.Min(m => m.Left);
+                var y = primary.Top - displays.Min(m => m.Top);
+                return new Vector2(x, y);
+            }
+        }
+
+        public IEnumerable<IDisplay> Displays
+        {
+            get
+            {
+                var monitors = InternalDisplays;
+                yield return this;
+
+                for (var index = 0; index < monitors.Count; index++)
+                {
+                    var monitor = monitors[index];
+                    yield return new Display(
+                        monitor.Width,
+                        monitor.Height,
+                        new Vector2(monitor.Left, monitor.Top),
+                        index + 1);
+                }
+            }
+        }
 
         public int Index => 0;
 

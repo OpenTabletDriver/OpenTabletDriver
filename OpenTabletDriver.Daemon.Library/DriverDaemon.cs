@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Win32;
 using OpenTabletDriver.Components;
 using OpenTabletDriver.Daemon.Contracts;
 using OpenTabletDriver.Daemon.Contracts.Persistence;
@@ -53,6 +54,7 @@ namespace OpenTabletDriver.Daemon.Library
         private Settings? _lastValidSettings;
         private bool _debugging;
         private bool _isScanningDevices;
+        private bool _displayChangeEventsInitialized;
 
         public DriverDaemon(
             IServiceProvider serviceProvider,
@@ -90,6 +92,7 @@ namespace OpenTabletDriver.Daemon.Library
         public event EventHandler<IEnumerable<PluginSettings>>? ToolsChanged;
         public event EventHandler<PluginContextDto>? PluginAdded;
         public event EventHandler<PluginContextDto>? PluginRemoved;
+        public event EventHandler? DisplayChanged;
 
         public async Task Initialize()
         {
@@ -101,6 +104,7 @@ namespace OpenTabletDriver.Daemon.Library
             };
 
             InitializePlatform();
+            InitializeDisplayChangeEvents();
             _driver.InputDeviceAdded += (sender, e) =>
             {
                 // hookEndpoint(e.Digitizer);
@@ -192,6 +196,37 @@ namespace OpenTabletDriver.Daemon.Library
                 Log.Write(nameof(DriverDaemon), "Sleep detected...", LogLevel.Info);
                 await DetectTablets();
             };
+        }
+
+        private void InitializeDisplayChangeEvents()
+        {
+            if (_displayChangeEventsInitialized)
+                return;
+
+            if (!OperatingSystem.IsWindows())
+                return;
+
+            try
+            {
+                SystemEvents.DisplaySettingsChanged += OnDisplaySettingsChanged;
+                _displayChangeEventsInitialized = true;
+                Log.Debug("Display", "Display settings change events enabled");
+            }
+            catch (Exception ex)
+            {
+                Log.Write("Display", $"Failed to initialize display settings change events: {ex.Message}", LogLevel.Warning);
+            }
+        }
+
+        private void OnDisplaySettingsChanged(object? sender, EventArgs e)
+        {
+            Log.Debug("Display", "Display settings changed");
+            var displays = _serviceProvider.GetRequiredService<IVirtualScreen>().Displays
+                .Where(t => t is not IVirtualScreen)
+                .Select(t => $"{t.Width}x{t.Height}@{t.Position}")
+                .ToArray();
+            Log.Debug("Display", $"Display layout refresh event: {string.Join(", ", displays)}");
+            _synchronizationContext.Post(_ => DisplayChanged?.Invoke(this, EventArgs.Empty), null);
         }
 
         public async Task<IEnumerable<PluginMetadata>> GetInstallablePlugins(string owner, string name, string gitRef)

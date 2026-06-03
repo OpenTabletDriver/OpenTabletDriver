@@ -17,6 +17,7 @@ namespace OpenTabletDriver.Daemon.Contracts
         event EventHandler<IEnumerable<PluginSettings>>? ToolsChanged;
         event EventHandler<PluginContextDto>? PluginAdded;
         event EventHandler<PluginContextDto>? PluginRemoved;
+        event EventHandler? DisplayChanged;
 
         Task Initialize();
 
