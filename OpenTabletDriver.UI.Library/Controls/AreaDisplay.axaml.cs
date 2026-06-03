@@ -138,21 +138,28 @@ public partial class AreaDisplay : UserControl
             var padding = VIEW_AreaBorder.Padding;
             var maxCanvasSize = finalSize.Deflate(padding);
 
+            if (vm.MaximumBounds.Width <= 0 || vm.MaximumBounds.Height <= 0 || maxCanvasSize.Width <= 0 || maxCanvasSize.Height <= 0)
+                return base.ArrangeOverride(finalSize);
+
             var scaledWidth = maxCanvasSize.Height / vm.MaximumBounds.Height * vm.MaximumBounds.Width;
             var scaledHeight = maxCanvasSize.Width / vm.MaximumBounds.Width * vm.MaximumBounds.Height;
+            double canvasWidth;
+            double canvasHeight;
 
             if (scaledWidth > maxCanvasSize.Width)
             {
-                VIEW_AreaCanvas.Width = maxCanvasSize.Width;
-                VIEW_AreaCanvas.Height = scaledHeight;
+                canvasWidth = maxCanvasSize.Width;
+                canvasHeight = scaledHeight;
             }
             else
             {
-                VIEW_AreaCanvas.Width = scaledWidth;
-                VIEW_AreaCanvas.Height = maxCanvasSize.Height;
+                canvasWidth = scaledWidth;
+                canvasHeight = maxCanvasSize.Height;
             }
 
-            _scale = VIEW_AreaCanvas.Bounds.Width / vm.MaximumBounds.Width;
+            VIEW_AreaCanvas.Width = canvasWidth;
+            VIEW_AreaCanvas.Height = canvasHeight;
+            _scale = canvasWidth / vm.MaximumBounds.Width;
 
             foreach (var border in VIEW_AreaCanvas.Children.OfType<Border>())
             {
@@ -236,8 +243,8 @@ public partial class AreaDisplay : UserControl
 
     private static void SetSize(Border border, Mapping mapping, double scale)
     {
-        border.Width = (mapping.Width * scale) - 1;
-        border.Height = (mapping.Height * scale) - 1;
+        border.Width = Math.Max(0, (mapping.Width * scale) - 1);
+        border.Height = Math.Max(0, (mapping.Height * scale) - 1);
     }
 
     private void SetPosition(Border border, Mapping mapping, double scale)
