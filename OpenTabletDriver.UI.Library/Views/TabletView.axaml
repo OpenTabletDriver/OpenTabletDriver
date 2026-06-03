@@ -55,6 +55,11 @@
           <StackPanel
               Spacing="4"
               Grid.IsSharedSizeScope="True">
+            <Button
+                Content="Refresh displays"
+                Command="{Binding RefreshDisplayLayoutCommand}"
+                HorizontalAlignment="Right"
+                ToolTip.Tip="Refresh the display layout after monitors are plugged in or unplugged." />
             <Grid
                 ColumnDefinitions="*,*"
                 Margin="-2">

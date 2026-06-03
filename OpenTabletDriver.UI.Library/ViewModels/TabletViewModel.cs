@@ -21,6 +21,7 @@ public partial class TabletViewModel : ActivatableViewModelBase
     private bool _modified;
     private bool _saved = true;
     private DateTime _lastApply;
+    private bool _isDisplayRefreshConfirmationOpen;
     private const int ApplyThresholdMs = 120;
 
     [ObservableProperty]
@@ -79,6 +80,7 @@ public partial class TabletViewModel : ActivatableViewModelBase
     public ObservableCollection<PluginSettingViewModel> OutputModeSettings { get; } = new();
     public ObservableCollection<BindingSettingViewModel> PenButtonBindings { get; } = new();
     public ObservableCollection<BindingSettingViewModel> TabletButtonBindings { get; } = new();
+    public event Func<Task<bool>>? DisplayLayoutRefreshConfirmationRequested;
 
     public bool Modified
     {
@@ -121,6 +123,16 @@ public partial class TabletViewModel : ActivatableViewModelBase
                 (s, p) => Profile = p,
                 invokeOnCreation: false)
             .DisposeWith(d);
+
+            if (_daemonService.Instance is { } daemon)
+            {
+                EventHandler displayChangedHandler = (_, _) => _dispatcher.Post(
+                    () => _ = RefreshDisplayLayoutFromSystemEvent(),
+                    DispatcherPriority.Background
+                );
+                daemon.DisplayChanged += displayChangedHandler;
+                new ActionDisposable(() => daemon.DisplayChanged -= displayChangedHandler).DisposeWith(d);
+            }
         });
 
         // propagate plugin changes as well
@@ -149,6 +161,119 @@ public partial class TabletViewModel : ActivatableViewModelBase
         SetupBindings(Profile);
         await InitializeProfileAsync(Profile);
         IsInitialized = true;
+    }
+
+    [RelayCommand]
+    private async Task RefreshDisplayLayout()
+    {
+        if (Modified)
+            await WriteProfileAsync(Profile);
+
+        await RefreshDisplayLayoutAsync(Saved);
+    }
+
+    private async Task RefreshDisplayLayoutFromSystemEvent()
+    {
+        if (!IsInitialized)
+            return;
+
+        if (Modified)
+        {
+            if (_isDisplayRefreshConfirmationOpen)
+                return;
+
+            _isDisplayRefreshConfirmationOpen = true;
+            try
+            {
+                if (DisplayLayoutRefreshConfirmationRequested is not { } requestConfirmation || !await requestConfirmation())
+                    return;
+            }
+            finally
+            {
+                _isDisplayRefreshConfirmationOpen = false;
+            }
+
+            await WriteProfileAsync(Profile);
+        }
+
+        await RefreshDisplayLayoutAsync(Saved);
+    }
+
+    private async Task RefreshDisplayLayoutAsync(bool wasSaved)
+    {
+        var shouldMapToCurrentVirtualDesktop = ShouldMapDisplayAreaToMaximumBounds();
+        await InitializeProfileAsync(Profile);
+        shouldMapToCurrentVirtualDesktop |= ShouldMapDisplayAreaToMaximumBounds();
+
+        if (shouldMapToCurrentVirtualDesktop)
+        {
+            MapDisplayAreaToMaximumBounds();
+            await WriteProfileAsync(Profile);
+        }
+
+        Modified = false;
+        Saved = wasSaved && !shouldMapToCurrentVirtualDesktop;
+    }
+
+    private bool ShouldMapDisplayAreaToMaximumBounds()
+    {
+        if (DisplayArea is null)
+            return false;
+
+        var mapping = DisplayArea.Mapping;
+        var maximumBounds = DisplayArea.MaximumBounds;
+
+        var isFullVirtualDesktop =
+            NearlyEqual(mapping.UntranslatedX, maximumBounds.X) &&
+            NearlyEqual(mapping.UntranslatedY, maximumBounds.Y) &&
+            NearlyEqual(mapping.Width, maximumBounds.Width) &&
+            NearlyEqual(mapping.Height, maximumBounds.Height);
+        var isOutsideCurrentVirtualDesktop =
+            mapping.UntranslatedX < maximumBounds.X - 1 ||
+            mapping.UntranslatedY < maximumBounds.Y - 1 ||
+            mapping.UntranslatedX + mapping.Width > maximumBounds.X + maximumBounds.Width + 1 ||
+            mapping.UntranslatedY + mapping.Height > maximumBounds.Y + maximumBounds.Height + 1 ||
+            mapping.Width > maximumBounds.Width + 1 ||
+            mapping.Height > maximumBounds.Height + 1;
+
+        return isFullVirtualDesktop || isOutsideCurrentVirtualDesktop;
+    }
+
+    private void MapDisplayAreaToMaximumBounds()
+    {
+        var maximumBounds = DisplayArea.MaximumBounds;
+        DisplayArea.SetProcessRestrictions(false);
+        DisplayArea.Mapping.UntranslatedX = maximumBounds.X;
+        DisplayArea.Mapping.UntranslatedY = maximumBounds.Y;
+        DisplayArea.Mapping.Width = maximumBounds.Width;
+        DisplayArea.Mapping.Height = maximumBounds.Height;
+        DisplayArea.Mapping.Rotation = maximumBounds.Rotation;
+        DisplayArea.SetProcessRestrictions(true);
+    }
+
+    private static bool NearlyEqual(double left, double right)
+    {
+        return Math.Abs(left - right) <= 1;
+    }
+
+    private sealed class ActionDisposable : IDisposable
+    {
+        private readonly Action _dispose;
+        private bool _disposed;
+
+        public ActionDisposable(Action dispose)
+        {
+            _dispose = dispose;
+        }
+
+        public void Dispose()
+        {
+            if (_disposed)
+                return;
+
+            _disposed = true;
+            _dispose();
+        }
     }
 
     [RelayCommand(CanExecute = nameof(Modified))]
@@ -198,10 +323,10 @@ public partial class TabletViewModel : ActivatableViewModelBase
         }
 
         var daemon = _daemonService.Instance!;
-        var displayDtos = await daemon.GetDisplays();
-        var displayBounds = displayDtos
+        var displayDtos = (await daemon.GetDisplays())
             .OrderBy(d => d.Index)
-            .Select(d => Bounds.FromDto(d));
+            .ToArray();
+        var displayBounds = displayDtos.Select(d => Bounds.FromDto(d));
         PluginSettings? outputMode = profile.OutputMode;
 
         var tabletWidth = _tabletService.Configuration.Specifications.Digitizer!.Width;
@@ -267,7 +392,8 @@ public partial class TabletViewModel : ActivatableViewModelBase
         {
             var input = outputMode["Input"];
 
-            input.SetValue(new {
+            input.SetValue(new
+            {
                 XPosition = tabletArea.Mapping.X,
                 YPosition = tabletArea.Mapping.Y,
                 Width = (double)tabletArea.Mapping.Width,
@@ -417,7 +543,8 @@ public partial class TabletViewModel : ActivatableViewModelBase
 
         var input = outputMode["Input"];
 
-        input.SetValue(new {
+        input.SetValue(new
+        {
             XPosition = TabletArea.Mapping.X,
             YPosition = TabletArea.Mapping.Y,
             Width = (double)TabletArea.Mapping.Width,
