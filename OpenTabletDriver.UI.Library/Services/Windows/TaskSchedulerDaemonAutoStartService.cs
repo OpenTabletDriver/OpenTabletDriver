@@ -44,6 +44,8 @@ public class TaskSchedulerDaemonAutoStartService : IDriverDaemonAutoStartService
         if (!File.Exists(daemonPath))
             return false;
 
+        var launcherPath = WriteHiddenLauncher(daemonPath);
+
         try
         {
             var service = CreateTaskService();
@@ -72,7 +74,8 @@ public class TaskSchedulerDaemonAutoStartService : IDriverDaemonAutoStartService
 
             var action = taskDefinition.Actions.Create(TaskActionExecute);
             action.Id = "StartDaemon";
-            action.Path = daemonPath;
+            action.Path = Path.Join(Environment.SystemDirectory, "wscript.exe");
+            action.Arguments = $"\"{launcherPath}\"";
             action.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
             rootFolder.RegisterTaskDefinition(TaskName, taskDefinition, TaskCreateOrUpdate, null, null, TaskLogonInteractiveToken, null);
@@ -82,6 +85,25 @@ public class TaskSchedulerDaemonAutoStartService : IDriverDaemonAutoStartService
         {
             return false;
         }
+    }
+
+    private static string WriteHiddenLauncher(string daemonPath)
+    {
+        var baseDirectory = AppDomain.CurrentDomain.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        var launcherPath = Path.Join(baseDirectory, "OpenTabletDriver.Daemon.hidden.vbs");
+        var script = string.Join(
+            Environment.NewLine,
+            "Set shell = CreateObject(\"WScript.Shell\")",
+            $"shell.CurrentDirectory = \"{EscapeVbsString(baseDirectory)}\"",
+            $"shell.Run \"\"\"{EscapeVbsString(daemonPath)}\"\"\", 0, False"
+        );
+        File.WriteAllText(launcherPath, script);
+        return launcherPath;
+    }
+
+    private static string EscapeVbsString(string value)
+    {
+        return value.Replace("\"", "\"\"");
     }
 
     private static bool TryGetTask(out dynamic? rootFolder)
