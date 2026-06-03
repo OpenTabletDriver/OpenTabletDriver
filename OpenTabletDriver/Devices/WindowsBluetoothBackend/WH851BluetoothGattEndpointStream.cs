@@ -91,20 +91,46 @@ namespace OpenTabletDriver.Devices.WindowsBluetoothBackend
 
         public static bool CanOpenConnected(string devicePath)
         {
+            return CanOpenConnected(devicePath, out _);
+        }
+
+        public static bool CanOpenConnected(string devicePath, out string failureReason)
+        {
             using var handle = WindowsBluetoothGattNative.CreateGattServiceHandle(devicePath);
             if (handle.IsInvalid)
+            {
+                failureReason = "Could not open the WH851 Bluetooth GATT service handle.";
                 return false;
+            }
 
             try
             {
                 var inputCharacteristics = GetNotifiableCharacteristics(handle);
-                return inputCharacteristics.Any(characteristic =>
-                    EnableClientCharacteristicConfiguration(handle, characteristic, logFailures: false)
-                );
+                if (inputCharacteristics.Length == 0)
+                {
+                    failureReason = "No notifiable or indicatable WH851 Bluetooth GATT characteristics were found.";
+                    return false;
+                }
+
+                var failures = new List<string>();
+                foreach (var characteristic in inputCharacteristics)
+                {
+                    if (EnableClientCharacteristicConfiguration(handle, characteristic, logFailures: false, out var characteristicFailure))
+                    {
+                        failureReason = string.Empty;
+                        return true;
+                    }
+
+                    failures.Add($"{characteristic.CharacteristicUuid}: {characteristicFailure}");
+                }
+
+                failureReason = string.Join("; ", failures);
+                return false;
             }
             catch (Exception ex)
             {
-                Log.Debug("Bluetooth", $"Could not probe WH851 Bluetooth GATT notifications: {ex.Message}");
+                failureReason = ex.Message;
+                Log.Debug("Bluetooth", $"Could not probe WH851 Bluetooth GATT notifications: {failureReason}");
                 return false;
             }
         }
@@ -163,7 +189,7 @@ namespace OpenTabletDriver.Devices.WindowsBluetoothBackend
                     $"Registered WH851 GATT characteristic {characteristic.CharacteristicUuid} notifications (notifiable={characteristic.IsNotifiable}, indicatable={characteristic.IsIndicatable})"
                 );
 
-                if (EnableClientCharacteristicConfiguration(_serviceHandle, characteristic, logFailures: true))
+                if (EnableClientCharacteristicConfiguration(_serviceHandle, characteristic, logFailures: true, out var failureReason))
                 {
                     enabledNotificationCount++;
                 }
@@ -171,7 +197,7 @@ namespace OpenTabletDriver.Devices.WindowsBluetoothBackend
                 {
                     Log.Write(
                         "Bluetooth",
-                        $"Could not explicitly enable WH851 Bluetooth GATT characteristic {characteristic.CharacteristicUuid} notifications; registering for value changes anyway.",
+                        $"Could not explicitly enable WH851 Bluetooth GATT characteristic {characteristic.CharacteristicUuid} notifications ({failureReason}); registering for value changes anyway.",
                         LogLevel.Warning
                     );
                 }
@@ -249,10 +275,12 @@ namespace OpenTabletDriver.Devices.WindowsBluetoothBackend
         private static bool EnableClientCharacteristicConfiguration(
             SafeFileHandle serviceHandle,
             WindowsBluetoothGattNative.BTH_LE_GATT_CHARACTERISTIC characteristic,
-            bool logFailures)
+            bool logFailures,
+            out string failureReason)
         {
             var descriptors = GetDescriptors(serviceHandle, ref characteristic);
             var clientConfigurationFound = false;
+            failureReason = "No client characteristic configuration descriptor was found.";
 
             foreach (var descriptor in descriptors.Where(d => d.DescriptorType == ClientCharacteristicConfiguration))
             {
@@ -266,12 +294,16 @@ namespace OpenTabletDriver.Devices.WindowsBluetoothBackend
                 var hr = WindowsBluetoothGattNative.BluetoothGATTSetDescriptorValue(serviceHandle, ref mutableDescriptor, ref descriptorValue, 0);
                 if (hr != S_OK)
                 {
+                    failureReason = $"BluetoothGATTSetDescriptorValue failed: 0x{hr:X8}";
                     if (logFailures)
-                        Log.Debug("Bluetooth", $"BluetoothGATTSetDescriptorValue failed: 0x{hr:X8}");
+                        Log.Debug("Bluetooth", failureReason);
 
                     return false;
                 }
             }
+
+            if (clientConfigurationFound)
+                failureReason = string.Empty;
 
             return clientConfigurationFound;
         }

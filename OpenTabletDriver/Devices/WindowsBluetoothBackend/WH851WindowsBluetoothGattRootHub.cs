@@ -66,12 +66,12 @@ namespace OpenTabletDriver.Devices.WindowsBluetoothBackend
                 return false;
             }
 
-            if (WH851BluetoothGattEndpointStream.CanOpenConnected(info.DevicePath))
+            if (WH851BluetoothGattEndpointStream.CanOpenConnected(info.DevicePath, out var failureReason))
                 return true;
 
             Log.Write(
                 "Bluetooth",
-                $"Skipping cached WH851 GATT service '{info.DevicePath}' because notification setup could not be verified. The device is likely not connected.",
+                $"Skipping cached WH851 GATT service '{info.DevicePath}' because notification setup could not be verified. The device is likely not connected. Reason: {failureReason}",
                 LogLevel.Debug
             );
             return false;
