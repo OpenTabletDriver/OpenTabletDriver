@@ -13,6 +13,7 @@ namespace OpenTabletDriver.Devices.WindowsBluetoothBackend
     {
         private const int S_OK = 0;
         private const int HRESULT_ERROR_MORE_DATA = unchecked((int)0x800700EA);
+        private const int HRESULT_SEMAPHORE_TIMEOUT = unchecked((int)0x80070079);
         private const int ClientCharacteristicConfiguration = 2;
         private const int CharacteristicValueChangedEvent = 0;
         private const int MaxQueuedReports = 512;
@@ -218,7 +219,7 @@ namespace OpenTabletDriver.Devices.WindowsBluetoothBackend
         {
             var hr = WindowsBluetoothGattNative.BluetoothGATTGetCharacteristics(serviceHandle, IntPtr.Zero, 0, IntPtr.Zero, out var actual, 0);
             if (hr != HRESULT_ERROR_MORE_DATA && hr != S_OK)
-                throw new IOException($"BluetoothGATTGetCharacteristics failed: 0x{hr:X8}");
+                throw new IOException($"BluetoothGATTGetCharacteristics failed: {FormatGattHResult(hr)}");
 
             if (actual == 0)
                 return Array.Empty<WindowsBluetoothGattNative.BTH_LE_GATT_CHARACTERISTIC>();
@@ -229,7 +230,7 @@ namespace OpenTabletDriver.Devices.WindowsBluetoothBackend
             {
                 hr = WindowsBluetoothGattNative.BluetoothGATTGetCharacteristics(serviceHandle, IntPtr.Zero, actual, buffer, out actual, 0);
                 if (hr != S_OK)
-                    throw new IOException($"BluetoothGATTGetCharacteristics failed: 0x{hr:X8}");
+                    throw new IOException($"BluetoothGATTGetCharacteristics failed: {FormatGattHResult(hr)}");
 
                 var characteristics = new WindowsBluetoothGattNative.BTH_LE_GATT_CHARACTERISTIC[actual];
                 for (var i = 0; i < actual; i++)
@@ -294,7 +295,7 @@ namespace OpenTabletDriver.Devices.WindowsBluetoothBackend
                 var hr = WindowsBluetoothGattNative.BluetoothGATTSetDescriptorValue(serviceHandle, ref mutableDescriptor, ref descriptorValue, 0);
                 if (hr != S_OK)
                 {
-                    failureReason = $"BluetoothGATTSetDescriptorValue failed: 0x{hr:X8}";
+                    failureReason = $"BluetoothGATTSetDescriptorValue failed: {FormatGattHResult(hr)}";
                     if (logFailures)
                         Log.Debug("Bluetooth", failureReason);
 
@@ -327,9 +328,20 @@ namespace OpenTabletDriver.Devices.WindowsBluetoothBackend
             );
 
             if (hr != S_OK)
-                throw new IOException($"BluetoothGATTRegisterEvent failed: 0x{hr:X8}");
+                throw new IOException($"BluetoothGATTRegisterEvent failed: {FormatGattHResult(hr)}");
 
             _eventHandles.Add(eventHandle);
+        }
+
+        private static string FormatGattHResult(int hr)
+        {
+            return hr switch
+            {
+                HRESULT_SEMAPHORE_TIMEOUT => "0x80070079 (semaphore timeout; the BLE device/service did not respond in time)",
+                HRESULT_ERROR_MORE_DATA => "0x800700EA (more data is available)",
+                S_OK => "0x00000000 (success)",
+                _ => $"0x{hr:X8}"
+            };
         }
 
         private void CleanupEventRegistrations()
