@@ -48,9 +48,23 @@ namespace OpenTabletDriver.Devices.WindowsBluetoothBackend
         {
             return WindowsBluetoothGattDeviceInterfaceEnumerator.EnumerateDeviceInterfacePaths(PenDataServiceUuid)
                 .Where(info => info.HasHardwareId(VendorId, ProductId))
+                .Where(IsConnectedWh851)
                 .Select(info => new WH851BluetoothGattEndpoint(info.DevicePath, PenDataServiceUuid, info.BluetoothAddress))
                 .OrderBy(endpoint => endpoint.DevicePath)
                 .ToArray();
+        }
+
+        private static bool IsConnectedWh851(WindowsBluetoothGattDeviceInterfaceInfo info)
+        {
+            if (WindowsBluetoothGattDeviceInterfaceEnumerator.HasPresentBluetoothLeHidChild(info.BluetoothAddress, VendorId, ProductId))
+                return true;
+
+            Log.Write(
+                "Bluetooth",
+                $"Skipping cached WH851 GATT service '{info.DevicePath}' because the Bluetooth HID child is not present.",
+                LogLevel.Debug
+            );
+            return false;
         }
 
         private void RefreshDevices()
