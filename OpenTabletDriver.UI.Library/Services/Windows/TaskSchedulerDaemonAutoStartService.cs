@@ -19,18 +19,18 @@ public class TaskSchedulerDaemonAutoStartService : IDriverDaemonAutoStartService
     private const int TaskInstancesIgnoreNew = 2;
 
     public bool AutoStartSupported => true;
-    public bool AutoStart => TryGetTask(out _);
+    public bool AutoStart => TryGetTask(out _, out var task) && IsTaskForCurrentDaemon(task);
     public bool HideWindowSupported => true;
     public bool HideWindow
     {
         get
         {
-            if (!TryGetTask(out _, out var task))
+            if (!TryGetTask(out _, out var task) || !IsTaskForCurrentDaemon(task))
                 return true;
 
             try
             {
-                return task!.Definition.Actions[1].HideAppWindow;
+                return GetTaskAction(task)!.HideAppWindow;
             }
             catch
             {
@@ -59,7 +59,7 @@ public class TaskSchedulerDaemonAutoStartService : IDriverDaemonAutoStartService
             }
         }
 
-        var daemonPath = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "OpenTabletDriver.Daemon.exe");
+        var daemonPath = GetCurrentDaemonPath();
         if (!File.Exists(daemonPath))
             return false;
 
@@ -93,7 +93,7 @@ public class TaskSchedulerDaemonAutoStartService : IDriverDaemonAutoStartService
             action.Id = "StartDaemon";
             action.Path = daemonPath;
             action.HideAppWindow = hideWindow;
-            action.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            action.WorkingDirectory = GetCurrentWorkingDirectory();
 
             rootFolder.RegisterTaskDefinition(TaskName, taskDefinition, TaskCreateOrUpdate, null, null, TaskLogonInteractiveToken, null);
             return true;
@@ -102,6 +102,58 @@ public class TaskSchedulerDaemonAutoStartService : IDriverDaemonAutoStartService
         {
             return false;
         }
+    }
+
+    private static string GetCurrentDaemonPath()
+    {
+        return Path.Join(GetCurrentWorkingDirectory(), "OpenTabletDriver.Daemon.exe");
+    }
+
+    private static string GetCurrentWorkingDirectory()
+    {
+        return AppDomain.CurrentDomain.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+    }
+
+    private static bool IsTaskForCurrentDaemon(dynamic? task)
+    {
+        try
+        {
+            var action = GetTaskAction(task);
+            if (action is null)
+                return false;
+
+            return PathsEqual(action.Path, GetCurrentDaemonPath())
+                && PathsEqual(action.WorkingDirectory, GetCurrentWorkingDirectory());
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private static dynamic? GetTaskAction(dynamic? task)
+    {
+        if (task is null)
+            return null;
+
+        var taskValue = task;
+        if (taskValue.Definition.Actions.Count < 1)
+            return null;
+
+        return taskValue.Definition.Actions.Item(1);
+    }
+
+    private static bool PathsEqual(string? left, string? right)
+    {
+        if (string.IsNullOrWhiteSpace(left) || string.IsNullOrWhiteSpace(right))
+            return false;
+
+        return string.Equals(NormalizePath(left), NormalizePath(right), StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string NormalizePath(string path)
+    {
+        return Path.GetFullPath(path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
     }
 
     private static bool TryGetTask(out dynamic? rootFolder)
