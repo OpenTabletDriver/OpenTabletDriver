@@ -27,6 +27,21 @@
       "InitializationStrings": [
         200
       ]
+    },
+    {
+      "VendorID": 9580,
+      "ProductID": 33361,
+      "InputReportLength": 10,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.WH851BluetoothReportParser",
+      "Attributes": {
+        "WinUsage": "01"
+      }
+    },
+    {
+      "VendorID": 9580,
+      "ProductID": 33361,
+      "InputReportLength": 12,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.WH851BluetoothReportParser"
     }
   ],
   "Attributes": {
