@@ -29,7 +29,7 @@
       ],
       "Attributes": {
         "TransportGroup": "Gaomon WH851",
-        "TransportPriority": "20"
+        "TransportPriority": "10"
       }
     },
     {
@@ -40,7 +40,7 @@
       "Attributes": {
         "WinUsage": "01",
         "TransportGroup": "Gaomon WH851",
-        "TransportPriority": "10"
+        "TransportPriority": "20"
       }
     },
     {
@@ -50,7 +50,7 @@
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.WH851BluetoothReportParser",
       "Attributes": {
         "TransportGroup": "Gaomon WH851",
-        "TransportPriority": "10"
+        "TransportPriority": "20"
       }
     }
   ],

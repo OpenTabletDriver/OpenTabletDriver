@@ -12,15 +12,15 @@ namespace OpenTabletDriver.Tests
     public sealed class WH851TransportTests
     {
         [Fact]
-        public void TransportPriorityPrefersUsbOverStaleBluetooth()
+        public void TransportPriorityPrefersConnectedBluetoothOverUsbFallback()
         {
-            var usb = CreateDevice("usb", transportGroup: "Gaomon WH851", transportPriority: "20");
-            var bluetooth = CreateDevice("bluetooth", transportGroup: "Gaomon WH851", transportPriority: "10");
+            var usb = CreateDevice("usb", transportGroup: "Gaomon WH851", transportPriority: "10");
+            var bluetooth = CreateDevice("bluetooth", transportGroup: "Gaomon WH851", transportPriority: "20");
 
             var filteredDevices = InvokeTransportPriorityFilter(usb, bluetooth);
 
             var device = Assert.Single(filteredDevices);
-            Assert.Same(usb, device);
+            Assert.Same(bluetooth, device);
         }
 
         [Fact]
