@@ -91,6 +91,11 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                         },
                         new AlignedGroup
                         {
+                            Text = "Creator",
+                            Content = creator = new Label()
+                        },
+                        new AlignedGroup
+                        {
                             Text = "Description",
                             Content = description = new Label
                             {
@@ -143,6 +148,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
 
             name.TextBinding.Bind(MetadataBinding.Child(c => c!.Name));
             owner.TextBinding.Bind(MetadataBinding.Child(c => c!.Owner));
+            creator.TextBinding.Bind(MetadataBinding.Child(c => c!.Creator ?? c.Owner));
             description.TextBinding.Bind(MetadataBinding.Child(c => c!.Description));
             driverVersion.TextBinding.Bind(MetadataBinding.Child(c => c!.SupportedDriverVersion).Convert(v => v?.ToString()));
             maxDriverVersion.TextBinding.Bind(MetadataBinding.Child(c => c!.MaxSupportedDriverVersion).Convert(v => v?.ToString() ?? "N/A"));
@@ -165,7 +171,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             Text = "No plugin selected.",
         };
 
-        private Label name, owner, description, driverVersion, maxDriverVersion, pluginVersion, license;
+        private Label name, owner, creator, description, driverVersion, maxDriverVersion, pluginVersion, license;
         private Button sourceCode, wiki;
 
         private Button uninstallButton, installButton;
