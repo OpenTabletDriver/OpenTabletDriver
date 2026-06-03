@@ -28,6 +28,7 @@ namespace OpenTabletDriver.Daemon.Contracts
 
         Task<IEnumerable<DeviceEndpointDto>> GetDevices();
         Task<IEnumerable<DisplayDto>> GetDisplays();
+        Task<VMultiDeviceStatusDto> GetVMultiDeviceStatus();
 
         Task DetectTablets();
         Task<IEnumerable<int>> GetTablets();

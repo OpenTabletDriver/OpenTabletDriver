@@ -1,8 +1,6 @@
 using System;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using HidSharp;
-using HidSharp.Reports;
 using OpenTabletDriver.Logging;
 
 namespace OpenTabletDriver.Daemon.Library.Output.WindowsInk
@@ -45,46 +43,15 @@ namespace OpenTabletDriver.Daemon.Library.Output.WindowsInk
 
         private static HidStream? Retrieve(string name, out bool extended)
         {
-            HidStream? virtualHidDevice = null;
-            var devices = DeviceList.Local.GetHidDevices(vendorID: 0x00ff, productID: 0xbacc).ToArray();
-
-            foreach (var device in devices)
+            if (VMultiDeviceDetector.TryOpenOutputDevice(out var virtualHidDevice, out var status))
             {
-                if (device.GetMaxOutputReportLength() == 65 && device.GetMaxInputReportLength() == 65)
-                {
-                    if (device.TryOpen(out virtualHidDevice))
-                        break;
-                }
+                extended = status.IsExtendedDigitizerAvailable;
+                return virtualHidDevice;
             }
 
-            var normal = false;
             extended = false;
-
-            foreach (var device in devices)
-            {
-                if (device.GetMaxInputReportLength() != 10)
-                    continue;
-
-                var reportDescriptor = device.GetReportDescriptor();
-                if (reportDescriptor.TryGetReport(ReportType.Input, DigitizerInputReport.NormalReportId, out _))
-                    normal = true;
-                if (reportDescriptor.TryGetReport(ReportType.Input, DigitizerInputReport.ExtendedReportId, out _))
-                    extended = true;
-
-                if (normal && extended)
-                    break;
-            }
-
-            if (virtualHidDevice == null || (!normal && !extended))
-            {
-                Log.WriteNotify(
-                    name,
-                    "Cannot find VMulti VirtualHID. Install VMulti driver, then restart OpenTabletDriver.",
-                    LogLevel.Error
-                );
-            }
-
-            return virtualHidDevice;
+            Log.WriteNotify(name, status.Message, LogLevel.Error);
+            return null;
         }
     }
 

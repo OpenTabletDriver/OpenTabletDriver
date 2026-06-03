@@ -16,6 +16,7 @@ using OpenTabletDriver.Daemon.Contracts.Persistence;
 using OpenTabletDriver.Daemon.Library.Binding;
 using OpenTabletDriver.Daemon.Library.Components;
 using OpenTabletDriver.Daemon.Library.Output;
+using OpenTabletDriver.Daemon.Library.Output.WindowsInk;
 using OpenTabletDriver.Daemon.Library.Reflection;
 using OpenTabletDriver.Daemon.Library.Updater;
 using OpenTabletDriver.Interop;
@@ -232,6 +233,11 @@ namespace OpenTabletDriver.Daemon.Library
                 .Select(t => new DisplayDto(t));
 
             return Task.FromResult(displays);
+        }
+
+        public Task<VMultiDeviceStatusDto> GetVMultiDeviceStatus()
+        {
+            return Task.FromResult(VMultiDeviceDetector.GetStatus());
         }
 
         public Task DetectTablets()

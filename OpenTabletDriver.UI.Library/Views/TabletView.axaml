@@ -39,6 +39,35 @@
           </Grid>
         </tc:Section>
 
+        <!-- Windows Ink / VMulti dependency -->
+        <tc:Section
+            Header="Windows Ink dependency"
+            IsVisible="{Binding IsVMultiStatusVisible}">
+          <StackPanel Spacing="8">
+            <TextBlock
+                Text="{Binding VMultiStatusHeader}"
+                FontWeight="SemiBold" />
+            <TextBlock
+                Text="{Binding VMultiStatusText}"
+                TextWrapping="Wrap" />
+            <TextBlock
+                Text="VMulti remains an external dependency. Download it, extract the archive, run install_hiddriver.bat as administrator, then restart OpenTabletDriver."
+                TextWrapping="Wrap"
+                IsVisible="{Binding IsVMultiDownloadVisible}" />
+            <StackPanel
+                Orientation="Horizontal"
+                Spacing="8">
+              <Button
+                  Content="Open VMulti download page"
+                  Command="{Binding OpenVMultiDownloadPageCommand}"
+                  IsVisible="{Binding IsVMultiDownloadVisible}" />
+              <Button
+                  Content="Refresh VMulti status"
+                  Command="{Binding RefreshVMultiStatusCommand}" />
+            </StackPanel>
+          </StackPanel>
+        </tc:Section>
+
         <!-- Display Area -->
         <tc:Section
             Classes="Emphasized"

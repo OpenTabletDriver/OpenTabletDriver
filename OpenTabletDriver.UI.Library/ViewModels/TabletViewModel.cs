@@ -22,6 +22,8 @@ public partial class TabletViewModel : ActivatableViewModelBase
     private bool _saved = true;
     private DateTime _lastApply;
     private const int ApplyThresholdMs = 120;
+    private const string WindowsInkOutputModePath = "OpenTabletDriver.Daemon.Library.Output.WindowsInk.WindowsInkAbsoluteMode";
+    private const string VMultiDownloadUrlFallback = "https://github.com/X9VoiD/vmulti-bin/releases/latest";
 
     [ObservableProperty]
     private bool _isInitialized;
@@ -79,6 +81,41 @@ public partial class TabletViewModel : ActivatableViewModelBase
     public ObservableCollection<PluginSettingViewModel> OutputModeSettings { get; } = new();
     public ObservableCollection<BindingSettingViewModel> PenButtonBindings { get; } = new();
     public ObservableCollection<BindingSettingViewModel> TabletButtonBindings { get; } = new();
+
+    private bool _isVMultiStatusVisible;
+    public bool IsVMultiStatusVisible
+    {
+        get => _isVMultiStatusVisible;
+        set => SetProperty(ref _isVMultiStatusVisible, value);
+    }
+
+    private bool _isVMultiDownloadVisible;
+    public bool IsVMultiDownloadVisible
+    {
+        get => _isVMultiDownloadVisible;
+        set => SetProperty(ref _isVMultiDownloadVisible, value);
+    }
+
+    private string _vMultiStatusHeader = string.Empty;
+    public string VMultiStatusHeader
+    {
+        get => _vMultiStatusHeader;
+        set => SetProperty(ref _vMultiStatusHeader, value);
+    }
+
+    private string _vMultiStatusText = string.Empty;
+    public string VMultiStatusText
+    {
+        get => _vMultiStatusText;
+        set => SetProperty(ref _vMultiStatusText, value);
+    }
+
+    private string _vMultiDownloadUrl = VMultiDownloadUrlFallback;
+    public string VMultiDownloadUrl
+    {
+        get => _vMultiDownloadUrl;
+        set => SetProperty(ref _vMultiDownloadUrl, value);
+    }
 
     public bool Modified
     {
@@ -151,6 +188,52 @@ public partial class TabletViewModel : ActivatableViewModelBase
         IsInitialized = true;
     }
 
+    [RelayCommand]
+    private async Task RefreshVMultiStatus()
+    {
+        if (!IsWindowsInkOutputMode(SelectedOutputMode))
+            return;
+
+        if (_daemonService.Instance is not { } daemon)
+        {
+            VMultiStatusHeader = "VMulti status unavailable";
+            VMultiStatusText = "The daemon is not connected. Start or reconnect the daemon, then refresh VMulti status.";
+            VMultiDownloadUrl = VMultiDownloadUrlFallback;
+            IsVMultiDownloadVisible = true;
+            return;
+        }
+
+        try
+        {
+            var status = await daemon.GetVMultiDeviceStatus();
+            VMultiStatusHeader = status.Kind switch
+            {
+                VMultiDeviceStatusKind.Ready when status.IsExtendedDigitizerAvailable => "VMulti ready (extended digitizer)",
+                VMultiDeviceStatusKind.Ready => "VMulti ready",
+                VMultiDeviceStatusKind.Missing => "VMulti missing",
+                VMultiDeviceStatusKind.Incomplete => "VMulti installation incomplete",
+                VMultiDeviceStatusKind.OpenFailed => "VMulti could not be opened",
+                _ => "VMulti status unavailable"
+            };
+            VMultiStatusText = status.Message;
+            VMultiDownloadUrl = string.IsNullOrWhiteSpace(status.DownloadUrl) ? VMultiDownloadUrlFallback : status.DownloadUrl;
+            IsVMultiDownloadVisible = !status.IsAvailable;
+        }
+        catch (Exception ex)
+        {
+            VMultiStatusHeader = "VMulti status unavailable";
+            VMultiStatusText = $"OpenTabletDriver could not query VMulti status: {ex.Message}";
+            VMultiDownloadUrl = VMultiDownloadUrlFallback;
+            IsVMultiDownloadVisible = true;
+        }
+    }
+
+    [RelayCommand]
+    private void OpenVMultiDownloadPage()
+    {
+        var url = string.IsNullOrWhiteSpace(VMultiDownloadUrl) ? VMultiDownloadUrlFallback : VMultiDownloadUrl;
+        Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+    }
     [RelayCommand(CanExecute = nameof(Modified))]
     private async Task Apply()
     {
@@ -503,6 +586,7 @@ public partial class TabletViewModel : ActivatableViewModelBase
     partial void OnSelectedOutputModeChanged(PluginDto? value)
     {
         OutputModeSettings.Clear();
+        UpdateVMultiStatusVisibility(value);
 
         if (value is null)
             return;
@@ -523,6 +607,25 @@ public partial class TabletViewModel : ActivatableViewModelBase
         settings.ForEach(s => s.PropertyChanged += HandleSettingsChanged);
         OutputModeSettings.AddRange(settings);
     }
+
+    private void UpdateVMultiStatusVisibility(PluginDto? outputMode)
+    {
+        IsVMultiStatusVisible = IsWindowsInkOutputMode(outputMode);
+        if (!IsVMultiStatusVisible)
+            return;
+
+        VMultiStatusHeader = "Checking VMulti status...";
+        VMultiStatusText = "Windows Ink output mode requires the external VMulti VirtualHID driver. OpenTabletDriver does not install this kernel driver automatically.";
+        VMultiDownloadUrl = VMultiDownloadUrlFallback;
+        IsVMultiDownloadVisible = true;
+        _ = RefreshVMultiStatus();
+    }
+
+    private static bool IsWindowsInkOutputMode(PluginDto? outputMode)
+    {
+        return outputMode?.Path == WindowsInkOutputModePath;
+    }
+
     partial void OnSensitivityXChanged(double value) => HandleSettingsChanged(null, null!);
     partial void OnSensitivityYChanged(double value) => HandleSettingsChanged(null, null!);
     partial void OnResetDelayChanged(double value) => HandleSettingsChanged(null, null!);
