@@ -26,7 +26,11 @@
       },
       "InitializationStrings": [
         200
-      ]
+      ],
+      "Attributes": {
+        "TransportGroup": "Gaomon WH851",
+        "TransportPriority": "20"
+      }
     },
     {
       "VendorID": 9580,
@@ -34,17 +38,24 @@
       "InputReportLength": 10,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.WH851BluetoothReportParser",
       "Attributes": {
-        "WinUsage": "01"
+        "WinUsage": "01",
+        "TransportGroup": "Gaomon WH851",
+        "TransportPriority": "10"
       }
     },
     {
       "VendorID": 9580,
       "ProductID": 33361,
       "InputReportLength": 12,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.WH851BluetoothReportParser"
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.WH851BluetoothReportParser",
+      "Attributes": {
+        "TransportGroup": "Gaomon WH851",
+        "TransportPriority": "10"
+      }
     }
   ],
   "Attributes": {
     "libinputoverride": "1"
   }
 }
+

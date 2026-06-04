@@ -11,7 +11,9 @@ namespace OpenTabletDriver.Configurations.Parsers.Huion
         public IDeviceReport Parse(byte[] data)
         {
             if (data.Length >= 12 && data[0] == 0x08)
+            {
                 return _inspiroyReportParser.Parse(data);
+            }
 
             if (data.Length >= 10 && data[0] == 0x0a)
             {

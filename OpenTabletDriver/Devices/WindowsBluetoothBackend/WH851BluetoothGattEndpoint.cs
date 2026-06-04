@@ -23,7 +23,7 @@ namespace OpenTabletDriver.Devices.WindowsBluetoothBackend
         public string FriendlyName => "Gaomon WH851 Bluetooth";
         public string? SerialNumber { get; }
         public string DevicePath { get; }
-        public bool CanOpen => true;
+        public bool CanOpen => WH851BluetoothGattEndpointStream.CanOpenConnected(DevicePath);
         public IDictionary<string, string>? DeviceAttributes => new Dictionary<string, string>
         {
             ["BluetoothServiceUuid"] = _serviceUuid.ToString()

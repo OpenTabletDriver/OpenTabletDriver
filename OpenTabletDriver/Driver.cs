@@ -26,6 +26,8 @@ namespace OpenTabletDriver
         private readonly object _detectLock = new();
         private ImmutableArray<InputDevice> _inputDevices = ImmutableArray<InputDevice>.Empty;
         private Dictionary<(int, int), List<TabletConfiguration>> _configHashMap;
+        private const string TRANSPORT_GROUP_ATTRIBUTE_KEY_NAME = "TransportGroup";
+        private const string TRANSPORT_PRIORITY_ATTRIBUTE_KEY_NAME = "TransportPriority";
 
         public Driver(
             ICompositeDeviceHub deviceHub,
@@ -50,22 +52,61 @@ namespace OpenTabletDriver
             _compositeDeviceHub.DevicesChanged += (sender, d) =>
             {
                 var additions = d.Additions.ToArray();
+                var removals = d.Removals.ToArray();
                 if (additions.Length == 0)
+                {
+                    if (removals.Any(IsKnownTabletEndpoint))
+                        ScanDevices();
+
                     return;
+                }
 
                 var addedDevices = ScanDevices(additions);
                 if (addedDevices.Length == 0)
                     return;
 
-                ImmutableInterlocked.Update(ref _inputDevices, devices => devices.AddRange(addedDevices));
+                var oldDevices = _inputDevices;
+                var newDevices = FilterByTransportPriority(oldDevices.AddRange(addedDevices));
+
+                var removedDevices = oldDevices
+                    .Where(oldDevice => !newDevices.Contains(oldDevice))
+                    .ToArray();
+
+                foreach (var device in removedDevices)
+                {
+                    device.Dispose();
+                    OnInputDeviceRemoved(this, device);
+                    Log.Write("Detect", $"{device.PersistentName} superseded by a preferred transport", LogLevel.Info);
+                }
+
+                var devicesToInitialize = addedDevices
+                    .Where(addedDevice => newDevices.Contains(addedDevice))
+                    .ToArray();
+
+                var devicesToDispose = addedDevices
+                    .Where(addedDevice => !newDevices.Contains(addedDevice))
+                    .ToArray();
+
+                foreach (var device in devicesToDispose)
+                {
+                    device.Dispose();
+                    Log.Write("Detect", $"{device.Configuration.Name} ignored because a preferred transport is already active", LogLevel.Info);
+                }
+
+                _inputDevices = newDevices;
                 InputDevice.AssignPersistentId(_inputDevices);
 
-                foreach (var device in addedDevices)
+                foreach (var device in devicesToInitialize)
                 {
                     device.Initialize(true);
                     OnInputDeviceAdded(this, device);
                 }
             };
+        }
+
+        private bool IsKnownTabletEndpoint(IDeviceEndpoint endpoint)
+        {
+            return _configHashMap.ContainsKey((endpoint.VendorID, endpoint.ProductID));
         }
 
         public event EventHandler<InputDevice>? InputDeviceAdded;
@@ -92,7 +133,8 @@ namespace OpenTabletDriver
         {
             Log.Write("Detect", "Searching for tablets...");
 
-            DisposeDevices(_inputDevices);
+            var oldDevices = _inputDevices;
+            DisposeDevices(oldDevices);
             _inputDevices = ScanDevices(_compositeDeviceHub.GetDevices().ToArray());
             InputDevice.AssignPersistentId(_inputDevices);
 
@@ -100,6 +142,9 @@ namespace OpenTabletDriver
                 Log.Write("Detect", "Search done");
             else
                 Log.Write("Detect", "Search done. No tablets were detected.");
+
+            foreach (var device in oldDevices)
+                OnInputDeviceRemoved(this, device);
 
             foreach (var device in _inputDevices)
             {
@@ -240,8 +285,53 @@ namespace OpenTabletDriver
                     inputDevices.Add(inputDevice);
                 }
 
-                return inputDevices.ToImmutableArray();
+                return FilterByTransportPriority(inputDevices.ToImmutableArray());
             }
+        }
+
+        private static ImmutableArray<InputDevice> FilterByTransportPriority(ImmutableArray<InputDevice> devices)
+        {
+            if (devices.Length < 2)
+                return devices;
+
+            return devices
+                .GroupBy(GetTransportGroup)
+                .SelectMany(group =>
+                {
+                    if (group.Key is null || !group.Any(HasExplicitTransportPriority))
+                        return group;
+
+                    var bestPriority = group.Max(GetTransportPriority);
+                    return group
+                        .Where(device => GetTransportPriority(device) == bestPriority)
+                        .Take(1);
+                })
+                .ToImmutableArray();
+        }
+
+        private static string? GetTransportGroup(InputDevice device)
+        {
+            return device.Digitizer.Identifier.Attributes?.TryGetValue(TRANSPORT_GROUP_ATTRIBUTE_KEY_NAME, out var group) == true
+                ? group
+                : null;
+        }
+
+        private static int GetTransportPriority(InputDevice device)
+        {
+            var attributes = device.Digitizer.Identifier.Attributes;
+
+            if (attributes?.TryGetValue(TRANSPORT_PRIORITY_ATTRIBUTE_KEY_NAME, out var priorityText) == true &&
+                int.TryParse(priorityText, out var priority))
+            {
+                return priority;
+            }
+
+            return 0;
+        }
+
+        private static bool HasExplicitTransportPriority(InputDevice device)
+        {
+            return device.Digitizer.Identifier.Attributes?.ContainsKey(TRANSPORT_PRIORITY_ATTRIBUTE_KEY_NAME) == true;
         }
 
         private bool TryMatch(IDeviceEndpoint device, TabletConfiguration configuration, List<DeviceIdentifier>? identifiers, [NotNullWhen(true)] out InputDeviceEndpoint? endpoint)

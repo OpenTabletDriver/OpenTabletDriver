@@ -56,12 +56,22 @@ namespace OpenTabletDriver.Devices.WindowsBluetoothBackend
 
         private static bool IsConnectedWh851(WindowsBluetoothGattDeviceInterfaceInfo info)
         {
-            if (WindowsBluetoothGattDeviceInterfaceEnumerator.HasPresentBluetoothLeHidChild(info.BluetoothAddress, VendorId, ProductId))
+            if (!WindowsBluetoothGattDeviceInterfaceEnumerator.HasPresentBluetoothLeHidChild(info.BluetoothAddress, VendorId, ProductId))
+            {
+                Log.Write(
+                    "Bluetooth",
+                    $"Skipping cached WH851 GATT service '{info.DevicePath}' because the Bluetooth HID child is not present.",
+                    LogLevel.Debug
+                );
+                return false;
+            }
+
+            if (WH851BluetoothGattEndpointStream.CanOpenConnected(info.DevicePath))
                 return true;
 
             Log.Write(
                 "Bluetooth",
-                $"Skipping cached WH851 GATT service '{info.DevicePath}' because the Bluetooth HID child is not present.",
+                $"Skipping cached WH851 GATT service '{info.DevicePath}' because notification setup could not be verified. The device is likely not connected.",
                 LogLevel.Debug
             );
             return false;

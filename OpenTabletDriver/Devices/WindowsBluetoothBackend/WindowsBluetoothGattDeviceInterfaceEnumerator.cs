@@ -184,8 +184,10 @@ namespace OpenTabletDriver.Devices.WindowsBluetoothBackend
 
         private static bool IsBluetoothLeHidChild(IReadOnlyList<string> hardwareIds, int vendorId, int productId)
         {
-            var expectedDevice = $"hid\\{{{BluetoothLeHidServiceUuid}}}_dev_vid&02{vendorId:x4}_pid&{productId:x4}";
-            return hardwareIds.Any(id => id.StartsWith(expectedDevice, StringComparison.OrdinalIgnoreCase));
+            var expectedDevice = $"{{{BluetoothLeHidServiceUuid}}}_dev_vid&02{vendorId:x4}_pid&{productId:x4}";
+            return hardwareIds.Any(id =>
+                id.StartsWith($"bthledevice\\{expectedDevice}", StringComparison.OrdinalIgnoreCase) ||
+                id.StartsWith($"hid\\{expectedDevice}", StringComparison.OrdinalIgnoreCase));
         }
 
         [DllImport("setupapi.dll", SetLastError = true)]
