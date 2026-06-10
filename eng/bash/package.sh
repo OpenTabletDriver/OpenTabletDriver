@@ -78,8 +78,8 @@ if [[ "${NET_RUNTIME}" =~ ^win-.*$ ]]; then
 fi
 
 if [[ "${NET_RUNTIME}" =~ ^osx-.*$ ]]; then
-  # the following vars are imported from old packaging script
-  SINGLE_FILE="false"
+  # signed builds must be single file, otherwise reduce package size by not using single file
+  SINGLE_FILE="${SIGNED}"
   SELF_CONTAINED="true"
 
   PACKAGE_GEN=${PACKAGE_GEN:-"macos"}

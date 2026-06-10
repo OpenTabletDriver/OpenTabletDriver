@@ -8,29 +8,27 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
 {
     public abstract class AreaControl : Panel
     {
-        private AreaSettings area;
+        private AreaSettings? area;
         private bool lockToUsableArea;
-        private string unit, invalidForegroundError, invalidBackgroundError;
-        protected IEnumerable<RectangleF> areaBounds;
-        private RectangleF fullAreaBounds;
+        private string? unit, invalidForegroundError;
+        protected IEnumerable<RectangleF>? areaBounds;
+        private RectangleF? fullAreaBounds;
 
-        public event EventHandler<EventArgs> AreaChanged;
-        public event EventHandler<EventArgs> LockToUsableAreaChanged;
-        public event EventHandler<EventArgs> UnitChanged;
-        public event EventHandler<EventArgs> AreaBoundsChanged;
-        public event EventHandler<EventArgs> FullAreaBoundsChanged;
-        public event EventHandler<EventArgs> InvalidForegroundErrorChanged;
-        public event EventHandler<EventArgs> InvalidBackgroundErrorChanged;
+        public event EventHandler<EventArgs>? AreaChanged;
+        public event EventHandler<EventArgs>? LockToUsableAreaChanged;
+        public event EventHandler<EventArgs>? UnitChanged;
+        public event EventHandler<EventArgs>? AreaBoundsChanged;
+        public event EventHandler<EventArgs>? FullAreaBoundsChanged;
+        public event EventHandler<EventArgs>? InvalidForegroundErrorChanged;
 
-        protected virtual void OnAreaChanged() => AreaChanged?.Invoke(this, new EventArgs());
-        protected virtual void OnLockToUsableAreaChanged() => LockToUsableAreaChanged?.Invoke(this, new EventArgs());
-        protected virtual void OnUnitChanged() => UnitChanged?.Invoke(this, new EventArgs());
-        protected virtual void OnAreaBoundsChanged() => AreaBoundsChanged?.Invoke(this, new EventArgs());
-        protected virtual void OnFullAreaBoundsChanged() => FullAreaBoundsChanged?.Invoke(this, new EventArgs());
-        protected virtual void OnInvalidForegroundErrorChanged() => InvalidForegroundErrorChanged?.Invoke(this, new EventArgs());
-        protected virtual void OnInvalidBackgroundErrorChanged() => InvalidBackgroundErrorChanged?.Invoke(this, new EventArgs());
+        protected virtual void OnAreaChanged() => AreaChanged?.Invoke(this, EventArgs.Empty);
+        protected virtual void OnLockToUsableAreaChanged() => LockToUsableAreaChanged?.Invoke(this, EventArgs.Empty);
+        protected virtual void OnUnitChanged() => UnitChanged?.Invoke(this, EventArgs.Empty);
+        protected virtual void OnAreaBoundsChanged() => AreaBoundsChanged?.Invoke(this, EventArgs.Empty);
+        protected virtual void OnFullAreaBoundsChanged() => FullAreaBoundsChanged?.Invoke(this, EventArgs.Empty);
+        protected virtual void OnInvalidForegroundErrorChanged() => InvalidForegroundErrorChanged?.Invoke(this, EventArgs.Empty);
 
-        public AreaSettings Area
+        public AreaSettings? Area
         {
             set
             {
@@ -50,7 +48,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             get => this.lockToUsableArea;
         }
 
-        public string Unit
+        public string? Unit
         {
             set
             {
@@ -60,7 +58,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             get => this.unit;
         }
 
-        public virtual IEnumerable<RectangleF> AreaBounds
+        public virtual IEnumerable<RectangleF>? AreaBounds
         {
             set
             {
@@ -70,7 +68,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             get => this.areaBounds;
         }
 
-        public RectangleF FullAreaBounds
+        public RectangleF? FullAreaBounds
         {
             protected set
             {
@@ -80,7 +78,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             get => this.fullAreaBounds;
         }
 
-        public string InvalidForegroundError
+        public string? InvalidForegroundError
         {
             set
             {
@@ -90,21 +88,11 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             get => this.invalidForegroundError;
         }
 
-        public string InvalidBackgroundError
-        {
-            set
-            {
-                this.invalidBackgroundError = value;
-                this.OnInvalidBackgroundErrorChanged();
-            }
-            get => this.invalidBackgroundError;
-        }
-
-        public BindableBinding<AreaControl, AreaSettings> AreaBinding
+        public BindableBinding<AreaControl, AreaSettings?> AreaBinding
         {
             get
             {
-                return new BindableBinding<AreaControl, AreaSettings>(
+                return new BindableBinding<AreaControl, AreaSettings?>(
                     this,
                     c => c.Area,
                     (c, v) => c.Area = v,
@@ -128,11 +116,11 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             }
         }
 
-        public BindableBinding<AreaControl, string> UnitBinding
+        public BindableBinding<AreaControl, string?> UnitBinding
         {
             get
             {
-                return new BindableBinding<AreaControl, string>(
+                return new BindableBinding<AreaControl, string?>(
                     this,
                     c => c.Unit,
                     (c, v) => c.Unit = v,
@@ -142,11 +130,11 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             }
         }
 
-        public BindableBinding<AreaControl, IEnumerable<RectangleF>> AreaBoundsBinding
+        public BindableBinding<AreaControl, IEnumerable<RectangleF>?> AreaBoundsBinding
         {
             get
             {
-                return new BindableBinding<AreaControl, IEnumerable<RectangleF>>(
+                return new BindableBinding<AreaControl, IEnumerable<RectangleF>?>(
                     this,
                     c => c.AreaBounds,
                     (c, v) => c.AreaBounds = v,
@@ -156,11 +144,11 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             }
         }
 
-        public BindableBinding<AreaControl, RectangleF> FullAreaBoundsBinding
+        public BindableBinding<AreaControl, RectangleF?> FullAreaBoundsBinding
         {
             get
             {
-                return new BindableBinding<AreaControl, RectangleF>(
+                return new BindableBinding<AreaControl, RectangleF?>(
                     this,
                     c => c.FullAreaBounds,
                     (c, v) => c.FullAreaBounds = v,
@@ -170,30 +158,16 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             }
         }
 
-        public BindableBinding<AreaControl, string> InvalidForegroundErrorBinding
+        public BindableBinding<AreaControl, string?> InvalidForegroundErrorBinding
         {
             get
             {
-                return new BindableBinding<AreaControl, string>(
+                return new BindableBinding<AreaControl, string?>(
                     this,
                     c => c.InvalidForegroundError,
                     (c, v) => c.InvalidForegroundError = v,
                     (c, h) => c.InvalidForegroundErrorChanged += h,
                     (c, h) => c.InvalidForegroundErrorChanged -= h
-                );
-            }
-        }
-
-        public BindableBinding<AreaControl, string> InvalidBackgroundErrorBinding
-        {
-            get
-            {
-                return new BindableBinding<AreaControl, string>(
-                    this,
-                    c => c.InvalidBackgroundError,
-                    (c, v) => c.InvalidBackgroundError = v,
-                    (c, h) => c.InvalidBackgroundErrorChanged += h,
-                    (c, h) => c.InvalidBackgroundErrorChanged -= h
                 );
             }
         }

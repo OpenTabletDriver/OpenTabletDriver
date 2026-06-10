@@ -18,13 +18,13 @@ namespace OpenTabletDriver.Console
         {
             if (!await EnsureDaemonReady())
                 throw new InvalidOperationException("Cannot get settings without a daemon");
-            return await Driver.Instance.GetSettings();
+            return await Driver.Instance!.GetSettings();
         }
 
         static async Task ApplySettings(Settings settings)
         {
             if (!await EnsureDaemonReady()) return;
-            await Driver.Instance.SetSettings(settings);
+            await Driver.Instance!.SetSettings(settings);
         }
 
         static async Task ModifySettings(Action<Settings> func)
@@ -39,18 +39,11 @@ namespace OpenTabletDriver.Console
             await ModifySettings(async s =>
             {
                 var profile = await GetProfile(profileName, s);
-                if (profile != null)
-                {
-                    func.Invoke(profile);
-                }
-                else
-                {
-                    throw new ArgumentException("No profile exists for the target tablet.");
-                }
+                func.Invoke(profile);
             });
         }
 
-        static async Task<Profile> GetProfile(string profileName, Settings settings = null)
+        static async Task<Profile> GetProfile(string profileName, Settings? settings = null)
         {
             if (!await EnsureDaemonReady())
                 throw new InvalidOperationException("Cannot get a profile without a daemon");
@@ -61,7 +54,7 @@ namespace OpenTabletDriver.Console
             var profile = settings.Profiles.FirstOrDefault(p => p.Tablet.Equals(profileName, comparer));
             if (profile == null)
             {
-                var tablets = await Driver.Instance.GetTablets();
+                var tablets = await Driver.Instance!.GetTablets();
                 var tablet = tablets.FirstOrDefault(t => t.Properties.Name.Equals(profileName, comparer));
                 if (tablet != null)
                     profile = Profile.GetDefaults(tablet);
@@ -70,7 +63,7 @@ namespace OpenTabletDriver.Console
             return profile ?? throw new ArgumentException($"Cannot find profile for tablet '{profileName}'");
         }
 
-        static async Task ListTypes<T>(Func<Type, bool> predicate = null)
+        static async Task ListTypes<T>(Func<Type, bool>? predicate = null)
         {
             if (!await EnsureDaemonReady()) return;
             var types = AppInfo.PluginManager.GetChildTypes<T>();
@@ -84,6 +77,9 @@ namespace OpenTabletDriver.Console
             {
                 if (predicate?.Invoke(type) ?? true)
                 {
+                    if (type.FullName == null)
+                        throw new InvalidOperationException($"Could not look up name for type {type}");
+
                     var name = AppInfo.PluginManager.GetFriendlyName(type.FullName);
                     var output = string.IsNullOrWhiteSpace(name) ? type.FullName : $"{type.FullName} [{name}]";
                     await Out.WriteLineAsync(output);
@@ -102,10 +98,10 @@ namespace OpenTabletDriver.Console
         {
             foreach (var path in paths)
             {
-                var existing = pssc.FirstOrDefault(x => x.Path == path);
+                var existing = pssc.FirstOrDefault(x => x?.Path == path);
                 if (existing == null)
                 {
-                    var obj = PluginSettingStore.FromPath(path).Construct<T>();
+                    var obj = PluginSettingStore.FromPath(path)?.Construct<T>();
                     pssc.Add(new PluginSettingStore(obj));
                 }
                 else
@@ -119,7 +115,8 @@ namespace OpenTabletDriver.Console
         {
             foreach (string path in paths)
             {
-                var plugins = pssc.Where(x => x.Path == path).ToArray();
+                var plugins =
+                    pssc.Where(x => x != null && x.Path == path).Cast<PluginSettingStore>().ToArray();
 
                 if (plugins.Length == 0)
                     Out.WriteLineAsync("No plugins found matching path");

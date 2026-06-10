@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 
 namespace OpenTabletDriver.Native.Linux.Evdev
 {

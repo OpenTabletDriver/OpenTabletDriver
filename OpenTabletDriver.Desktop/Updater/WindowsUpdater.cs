@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -7,8 +6,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Octokit;
-
-#nullable enable
 
 namespace OpenTabletDriver.Desktop.Updater
 {

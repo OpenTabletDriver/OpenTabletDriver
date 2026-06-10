@@ -50,7 +50,7 @@ if [ -z "$VERSION_SUFFIX" ]; then
   hash sed &>/dev/null && \
   git rev-parse --is-inside-work-tree &>/dev/null
   then
-    GIT_DESCRIBE="$(git describe --long --tags --dirty)"
+    GIT_DESCRIBE="$(git describe --long --tags --dirty --always)"
 
     # don't set suffix if this is a tagged commit
     COMMIT_DISTANCE_FROM_TAG="$(sed -E s/"${GIT_TAG_REGEX}"/\\8/ <<< "$GIT_DESCRIBE")"
@@ -93,7 +93,7 @@ fi
 
 ### Build Requirements
 
-DOTNET_VERSION="8.0"
+DOTNET_VERSION="10.0"
 
 # could do away with declare -g, but did it anyway for all of them for consistency
 # with NET_RUNTIME (a global variable without initial value in lib.sh)
@@ -105,6 +105,7 @@ declare -g DOG_FOOD="true"
 declare -g BUILD="true"
 declare -g PORTABLE="false"
 declare -g SINGLE_FILE="true"
+declare -g SIGNED="false"
 declare -g SELF_CONTAINED="false"
 
 ### Global Descriptors
@@ -232,6 +233,13 @@ parse_build_args() {
         SELF_CONTAINED="${args[1]}"
         shift_arr "args"
         ;;
+      --signed=*)
+        SIGNED="${args[0]#*=}"
+        ;;
+      --signed)
+        SIGNED="${args[1]}"
+        shift_arr "args"
+        ;;
       *)
         remaining_options+=("${args[0]}")
         ;;
@@ -251,6 +259,7 @@ print_common_arg_help() {
   echo "  --portable <bool>             Whether to build portable binaries (default: ${PORTABLE})"
   echo "  --single-file <bool>          Whether to build single-file binaries (default: ${SINGLE_FILE})"
   echo "  --self-contained <bool>       Whether to build self-contained binaries (default: ${SELF_CONTAINED})"
+  echo "  --signed <bool>               Whether to sign MacOS binaries (default: ${SIGNED})"
   echo "  -h, --help                    Print this help message"
 }
 
@@ -306,6 +315,9 @@ build() {
   fi
   if [ "${SINGLE_FILE}" == "true" ]; then
     options+=( -p:PublishSingleFile=true )
+  fi
+  if [ "${SIGNED}" == "false" ] && [[ "${NET_RUNTIME}" =~ ^osx-.*$ ]]; then
+    options+=( /p:_EnableMacOSCodeSign=false )
   fi
   if [ "${SELF_CONTAINED}" == "true" ]; then
     options+=( --self-contained "${SELF_CONTAINED}" )

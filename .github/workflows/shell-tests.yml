@@ -10,7 +10,7 @@ jobs:
     name: Test for presence of all GitHub Labeler paths
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Test paths
         run: |
@@ -21,7 +21,7 @@ jobs:
     name: Test for presence of added/changed configuration files in TABLETS.md
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           # Full git history is needed to get a proper list of changed files
           fetch-depth: 0

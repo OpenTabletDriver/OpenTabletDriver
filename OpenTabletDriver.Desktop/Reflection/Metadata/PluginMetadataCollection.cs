@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using ICSharpCode.SharpZipLib.GZip;
 using ICSharpCode.SharpZipLib.Tar;
 using Newtonsoft.Json;
+using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Desktop.Reflection.Metadata
 {
@@ -41,7 +42,7 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
             return await DownloadAsync(REPOSITORY_OWNER, REPOSITORY_NAME);
         }
 
-        public static async Task<PluginMetadataCollection> DownloadAsync(string owner, string name, string gitRef = null)
+        public static async Task<PluginMetadataCollection> DownloadAsync(string owner, string name, string gitRef = "")
         {
             string archiveUrl = $"https://api.github.com/repos/{owner}/{name}/tarball/{gitRef}";
             return await DownloadAsync(archiveUrl);
@@ -96,8 +97,19 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
         protected static IEnumerable<PluginMetadata> EnumeratePluginMetadata(string directoryPath)
         {
             foreach (var file in Directory.EnumerateFiles(directoryPath, "*.json", SearchOption.AllDirectories))
-                using (var fs = File.OpenRead(file))
-                    yield return Serialization.Deserialize<PluginMetadata>(fs);
+            {
+                using var fs = File.OpenRead(file);
+
+                var metadata = Serialization.Deserialize<PluginMetadata>(fs);
+
+                if (metadata == null)
+                {
+                    Log.Write(nameof(PluginMetadataCollection), $"Invalid {nameof(PluginMetadata)} file: '{fs.Name}'");
+                    continue;
+                }
+
+                yield return metadata;
+            }
         }
     }
 }

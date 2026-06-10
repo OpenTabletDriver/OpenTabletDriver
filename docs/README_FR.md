@@ -69,7 +69,7 @@ Ce fichier doit-être déplacé dans `/etc/udev/rules.d/`:
 sudo mv ./bin/99-opentabletdriver.rules /etc/udev/rules.d/
 ```
 
-#### MacOS [Expérimental]
+#### MacOS
 
 Aucune autre dépendance.
 

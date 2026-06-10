@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Numerics;
 using OpenTabletDriver.Native.OSX;
 using OpenTabletDriver.Native.OSX.Input;

@@ -12,6 +12,7 @@
 | Gaomon M106K                       |     Supported     |
 | Gaomon M106K Pro                   |     Supported     |
 | Gaomon PD1161                      |     Supported     |
+| Gaomon PD1320                      |     Supported     |
 | Gaomon PD1560                      |     Supported     |
 | Gaomon PD1561                      |     Supported     |
 | Gaomon PD2200                      |     Supported     |
@@ -176,6 +177,7 @@
 | XP-Pen Artist 16 (2nd Gen)         |     Supported     |
 | XP-Pen Artist 22 (2nd Gen)         |     Supported     |
 | XP-Pen Artist 24                   |     Supported     |
+| XP-Pen Artist 22R Pro              |     Supported     |
 | XP-Pen Artist 24 Pro               |     Supported     |
 | XP-Pen Artist Pro 14 (Gen2)        |     Supported     |
 | XP-Pen Artist Pro 16 (Gen2)        |     Supported     |
@@ -191,8 +193,10 @@
 | XP-Pen Deco Fun S (CT640)          |     Supported     |
 | XP-Pen Deco Fun XS (CT430)         |     Supported     |
 | XP-Pen Deco M                      |     Supported     |
+| XP-Pen Deco MW                     |     Supported     |
 | XP-Pen Deco L                      |     Supported     |
 | XP-Pen Deco LW                     |     Supported     |
+| XP-Pen Deco LW (Variant 2)         |     Supported     |
 | XP-Pen Deco mini4                  |     Supported     |
 | XP-Pen Deco mini7                  |     Supported     |
 | XP-Pen Deco mini7 V2               |     Supported     |
@@ -327,12 +331,12 @@
 | XP-Pen Artist 12                   |  Missing Features | Touch bar is not yet supported
 | XP-Pen Artist 12 Pro               |  Missing Features | Tilt and wheel are not yet supported.
 | XP-Pen Artist 16 Pro               |  Missing Features | Wheel is not yet supported.
-| XP-Pen Artist 22R Pro              |  Missing Features | Wheel is not yet supported.
 | XP-Pen Artist Pro 16TP             |  Missing Features | Touch is not yet supported.
 | XP-Pen Artist Pro 19 (Gen2)        |  Missing Features | Scroll Wheel on Pen is not yet supported
 | XP-Pen Deco 02                     |  Missing Features | Wheel is not yet supported.
+| XP-Pen Deco mini7W V2              |  Missing Features | Wireless is not yet supported.
 | XP-Pen Deco Pro Medium             |  Missing Features | Tilt and wheel are not yet supported.
-| XP-Pen Deco Pro Small              |  Missing Features | Tilt and wheel are not yet supported.
+| XP-Pen Deco Pro Small              |  Missing Features | Trackpad is not yet supported.
 | XP-Pen Deco Pro SW                 |  Missing Features | Wheel is not yet supported.
 | XP-Pen Innovator 16                |  Missing Features | Wheel is not yet supported.
 | XP-Pen Deco Pro MW                 |  Missing Features | Touch wheel and physical wheel are not yet supported.

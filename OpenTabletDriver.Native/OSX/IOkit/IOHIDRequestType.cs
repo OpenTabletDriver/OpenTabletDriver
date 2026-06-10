@@ -1,4 +1,3 @@
-using System;
 namespace OpenTabletDriver.Native.OSX.IOkit
 {
     public enum IOHIDRequestType : uint

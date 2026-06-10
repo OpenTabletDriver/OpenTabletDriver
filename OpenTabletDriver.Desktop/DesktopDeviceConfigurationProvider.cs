@@ -7,8 +7,6 @@ using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Components;
 using OpenTabletDriver.Plugin.Tablet;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop
 {
     public class DesktopDeviceConfigurationProvider : IDeviceConfigurationProvider
@@ -31,8 +29,8 @@ namespace OpenTabletDriver.Desktop
                         ? $"{files.Count} configurations exist in '{AppInfo.Current.ConfigurationDirectory}'. Built-in configurations may be overridden if the Name matches exactly."
                         : $"Configuration overrides specified as '{AppInfo.Current.ConfigurationDirectory}' but folder is empty.");
 
-                jsonConfigurations = files.Select(path => Serialization.Deserialize<TabletConfiguration>(File.OpenRead(path)))
-                    .Select(jsonConfig => (ConfigurationSource.File, jsonConfig));
+                jsonConfigurations = files.Select(path => Serialization.Deserialize<TabletConfiguration>(File.OpenRead(path))).Where(x => x != null)
+                    .Select(jsonConfig => (ConfigurationSource.File, jsonConfig))!;
             }
 
             return _inAssemblyConfigurationProvider.TabletConfigurations

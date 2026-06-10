@@ -3,7 +3,7 @@
 
 # increment this when releasing a new package of the same upstream version
 # where the only changes are to the packaging itself
-PKG_FILE="${OTD_LNAME}-${OTD_VERSION}_x64.deb"
+PKG_FILE="${OTD_LNAME}_${OTD_VERSION}-1_x64.deb"
 
 debian_src="$(readlink -f $(dirname "${BASH_SOURCE[0]}"))"
 

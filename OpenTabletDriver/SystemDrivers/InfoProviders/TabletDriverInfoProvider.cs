@@ -12,7 +12,7 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
             "TabletDriverService",
         ];
 
-        public DriverInfo GetDriverInfo()
+        public DriverInfo? GetDriverInfo()
         {
             if (SystemInterop.CurrentPlatform == PluginPlatform.Windows)
             {
@@ -22,7 +22,7 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
                     return new DriverInfo
                     {
                         Name = "TabletDriver",
-                        Processes = processes,
+                        Processes = [.. processes],
                         Status = DriverStatus.Active | DriverStatus.Blocking // TabletDriver opens tablets in exclusive mode by default
                     };
                 }

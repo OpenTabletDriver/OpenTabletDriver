@@ -2,8 +2,6 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Plugin;
 
-#nullable enable
-
 namespace OpenTabletDriver
 {
     public class DriverBuilder

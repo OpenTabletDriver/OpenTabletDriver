@@ -1,8 +1,6 @@
-using System;
 using System.Diagnostics;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Profiles;
-using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls.Generic;
 
 namespace OpenTabletDriver.UX.Controls.Bindings
@@ -45,7 +43,7 @@ namespace OpenTabletDriver.UX.Controls.Bindings
                                         ExpandContent = false,
                                         Content = clockwiseButton = new BindingDisplay()
                                     },
-                                    new Group
+                                    new UnitGroup
                                     {
                                         Text = "Clockwise Rotation Threshold",
                                         ToolTip = "The minimum threshold in degrees in order for the assigned binding to activate.",
@@ -55,7 +53,8 @@ namespace OpenTabletDriver.UX.Controls.Bindings
                                             Minimum = 1,
                                             Maximum = 360,
                                             SnapToTick = true,
-                                        }
+                                        },
+                                        Unit = "°"
                                     }
                                 }
                             }
@@ -76,7 +75,7 @@ namespace OpenTabletDriver.UX.Controls.Bindings
                                         Orientation = Orientation.Horizontal,
                                         Content = counterClockwiseButton = new BindingDisplay()
                                     },
-                                    new Group
+                                    new UnitGroup
                                     {
                                         Text = "Counter-Clockwise Rotation Threshold",
                                         ToolTip = "The minimum threshold in degrees in order for the assigned binding to activate.",
@@ -86,7 +85,8 @@ namespace OpenTabletDriver.UX.Controls.Bindings
                                             Minimum = 1,
                                             Maximum = 360,
                                             SnapToTick = true,
-                                        }
+                                        },
+                                        Unit = "°"
                                     }
                                 }
                             }
@@ -110,7 +110,7 @@ namespace OpenTabletDriver.UX.Controls.Bindings
                     // e.g. switching from a tablet with a Minimum/StepSize of 15 to a tablet with StepSize 5 would
                     //   cause the 2nd tablet to have its values increased to the minimum if they were below this
                     clockwiseThreshold.Minimum = clockwiseThreshold.StepSize =
-                        counterClockwiseThreshold.Minimum = clockwiseThreshold.StepSize = 1;
+                        counterClockwiseThreshold.Minimum = counterClockwiseThreshold.StepSize = 1;
 
                     this.DataContext = wheel;
 
@@ -118,7 +118,7 @@ namespace OpenTabletDriver.UX.Controls.Bindings
 
                     // manually handle Minimum and StepSize part 2 of 2
                     clockwiseThreshold.Minimum = clockwiseThreshold.StepSize =
-                        counterClockwiseThreshold.Minimum = clockwiseThreshold.StepSize = (int)wheel.StepSize.Value;
+                        counterClockwiseThreshold.Minimum = counterClockwiseThreshold.StepSize = (int)wheel.StepSize.Value;
                 }
             };
 

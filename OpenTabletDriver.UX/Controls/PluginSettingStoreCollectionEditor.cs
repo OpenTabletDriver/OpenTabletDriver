@@ -43,7 +43,7 @@ namespace OpenTabletDriver.UX.Controls
             };
 
             settingStoreEditor.StoreBinding.Bind(
-                sourceSelector.SelectedItemBinding.Convert(t => StoreCollection?.FromType(t))
+                sourceSelector.SelectedItemBinding.Convert(t => t != null ? StoreCollection?.FromType(t) : null)
             );
 
             if (!Platform.IsMac) // Don't do this on macOS, causes poor UI performance.
@@ -57,8 +57,8 @@ namespace OpenTabletDriver.UX.Controls
         private TypeListBox<TSource> sourceSelector;
         private ToggleablePluginSettingStoreEditor settingStoreEditor;
 
-        private PluginSettingStoreCollection storeCollection;
-        public PluginSettingStoreCollection StoreCollection
+        private PluginSettingStoreCollection? storeCollection;
+        public PluginSettingStoreCollection? StoreCollection
         {
             set
             {
@@ -68,7 +68,7 @@ namespace OpenTabletDriver.UX.Controls
             get => this.storeCollection;
         }
 
-        public event EventHandler<EventArgs> StoreCollectionChanged;
+        public event EventHandler<EventArgs>? StoreCollectionChanged;
 
         protected virtual void OnStoreCollectionChanged()
         {
@@ -76,7 +76,7 @@ namespace OpenTabletDriver.UX.Controls
             RefreshContent();
         }
 
-        private void HandleAssembliesChanged(object sender, EventArgs e) => Application.Instance.AsyncInvoke(RefreshContent);
+        private void HandleAssembliesChanged(object? sender, EventArgs e) => Application.Instance.AsyncInvoke(RefreshContent);
 
         private void RefreshContent()
         {
@@ -94,11 +94,11 @@ namespace OpenTabletDriver.UX.Controls
             this.Content = types.Any() ? mainContent : placeholder;
         }
 
-        public BindableBinding<PluginSettingStoreCollectionEditor<TSource>, PluginSettingStoreCollection> StoreCollectionBinding
+        public BindableBinding<PluginSettingStoreCollectionEditor<TSource>, PluginSettingStoreCollection?> StoreCollectionBinding
         {
             get
             {
-                return new BindableBinding<PluginSettingStoreCollectionEditor<TSource>, PluginSettingStoreCollection>(
+                return new BindableBinding<PluginSettingStoreCollectionEditor<TSource>, PluginSettingStoreCollection?>(
                     this,
                     c => c.StoreCollection,
                     (c, v) => c.StoreCollection = v,

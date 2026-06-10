@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using Newtonsoft.Json;
 
 namespace OpenTabletDriver.Plugin.Devices
 {
@@ -6,8 +8,10 @@ namespace OpenTabletDriver.Plugin.Devices
     {
         public SerializedDeviceEndpoint()
         {
+            DeviceAttributes = new Dictionary<string, string>();
         }
 
+        [SetsRequiredMembers]
         public SerializedDeviceEndpoint(IDeviceEndpoint endpoint)
         {
             DevicePath = endpoint.DevicePath;
@@ -24,15 +28,20 @@ namespace OpenTabletDriver.Plugin.Devices
             DeviceAttributes = endpoint.DeviceAttributes;
         }
 
-        public string DevicePath { get; set; }
+        [JsonProperty(nameof(DevicePath))]
+        public required string DevicePath { get; set; }
 
-        public string Manufacturer { get; set; }
+        [JsonProperty(nameof(Manufacturer))]
+        public string? Manufacturer { get; set; }
 
-        public string ProductName { get; set; }
+        [JsonProperty(nameof(ProductName))]
+        public string? ProductName { get; set; }
 
-        public string SerialNumber { get; set; }
+        [JsonProperty(nameof(SerialNumber))]
+        public string? SerialNumber { get; set; }
 
-        public string FriendlyName { get; set; }
+        [JsonProperty(nameof(FriendlyName))]
+        public string? FriendlyName { get; set; }
 
         public int VendorID { get; set; }
 

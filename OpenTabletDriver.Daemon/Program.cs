@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.CommandLine;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -11,9 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.RPC;
-using OpenTabletDriver.Desktop.Updater;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Components;
 
@@ -21,8 +17,8 @@ namespace OpenTabletDriver.Daemon
 {
     class CommandLineOptions
     {
-        public DirectoryInfo AppDataDirectory { get; set; }
-        public DirectoryInfo ConfigurationDirectory { get; set; }
+        public DirectoryInfo? AppDataDirectory { get; set; }
+        public DirectoryInfo? ConfigurationDirectory { get; set; }
     }
 
     partial class Program
@@ -36,9 +32,9 @@ namespace OpenTabletDriver.Daemon
 
             var cmdLineOptions = ParseCmdLineOptions(args);
 
-            if (!string.IsNullOrWhiteSpace(cmdLineOptions?.AppDataDirectory?.FullName))
+            if (!string.IsNullOrWhiteSpace(cmdLineOptions.AppDataDirectory?.FullName))
                 AppInfo.Current.AppDataDirectory = cmdLineOptions.AppDataDirectory.FullName;
-            if (!string.IsNullOrWhiteSpace(cmdLineOptions?.ConfigurationDirectory?.FullName))
+            if (!string.IsNullOrWhiteSpace(cmdLineOptions.ConfigurationDirectory?.FullName))
                 AppInfo.Current.ConfigurationDirectory = cmdLineOptions.ConfigurationDirectory.FullName;
 
             await StartDaemon();
@@ -83,7 +79,7 @@ namespace OpenTabletDriver.Daemon
                     PosixSignalRegistration.Create(signal,
                         [SuppressMessage("ReSharper", "AccessToModifiedClosure")] (_) =>
                         {
-                            Log.Debug("signal", Enum.GetName(signal));
+                            Log.Debug("signal", Enum.GetName(signal) ?? "<unknown signal>");
                             CloseDaemon();
                         });
             }

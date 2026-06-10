@@ -61,7 +61,7 @@ Nota: Si se compila por primera vez, ejecute el script 'generate-rules.sh' inclu
 sudo mv ./bin/99-opentabletdriver.rules /etc/udev/rules.d/
 ```
 
-#### MacOS [Experimental]
+#### MacOS
 
 No hay otras dependencias.
 

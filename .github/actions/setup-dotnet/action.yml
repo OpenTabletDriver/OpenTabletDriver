@@ -3,7 +3,7 @@ description: 'Sets up .NET with the preferred OpenTabletDriver defaults'
 inputs:
   dotnet-version:
     description: "The .NET version to use. See actions/setup-dotnet"
-    default: '8.0'
+    default: '10.0'
     required: false
     type: string
 runs:

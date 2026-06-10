@@ -26,7 +26,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
             OnNextFrame(e);
         }
 
-        protected void OnCompose(object _, EventArgs a)
+        protected void OnCompose(object? _, EventArgs a)
         {
             Invalidate();
         }

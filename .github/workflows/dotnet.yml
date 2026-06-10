@@ -17,12 +17,12 @@ jobs:
     name: Generate udev Rules
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - run: ./generate-rules.sh > 70-opentabletdriver.rules
 
       - name: Upload udev Rules
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: udev Rules
           path: 70-opentabletdriver.rules
@@ -32,7 +32,7 @@ jobs:
     name: Lint Code
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           # Full git history is needed to get a proper list of changed files
           fetch-depth: 0
@@ -48,7 +48,7 @@ jobs:
     name: Unit Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-dotnet
 
       - name: Run tests
@@ -58,7 +58,7 @@ jobs:
     name: Validate Solution Filters
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-dotnet
 
       - name: Windows

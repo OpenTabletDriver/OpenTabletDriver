@@ -11,6 +11,6 @@ namespace OpenTabletDriver.Desktop.Output
     public class RelativeMode : RelativeOutputMode
     {
         [Resolved]
-        public override IRelativePointer Pointer { set; get; }
+        public override IRelativePointer? Pointer { set; get; }
     }
 }

@@ -14,11 +14,11 @@ namespace OpenTabletDriver.Plugin.Output
         }
 
         private bool passthrough;
-        private TabletReference tablet;
-        private IList<IPositionedPipelineElement<IDeviceReport>> elements;
-        private IPipelineElement<IDeviceReport> entryElement;
+        private TabletReference? tablet;
+        private IList<IPositionedPipelineElement<IDeviceReport>> elements = [];
+        private IPipelineElement<IDeviceReport>? entryElement;
 
-        public event Action<IDeviceReport> Emit;
+        public event Action<IDeviceReport?>? Emit;
 
         protected bool Passthrough
         {
@@ -62,7 +62,7 @@ namespace OpenTabletDriver.Plugin.Output
                 Passthrough = false;
                 DestroyInternalLinks();
 
-                if (Elements != null && Elements.Count > 0)
+                if (elements.Count > 0)
                 {
                     PreTransformElements = GroupElements(Elements, PipelinePosition.PreTransform);
                     PostTransformElements = GroupElements(Elements, PipelinePosition.PostTransform);
@@ -99,7 +99,7 @@ namespace OpenTabletDriver.Plugin.Output
             }
         }
 
-        public virtual TabletReference Tablet
+        public virtual TabletReference? Tablet
         {
             set
             {
@@ -109,10 +109,11 @@ namespace OpenTabletDriver.Plugin.Output
             get => this.tablet;
         }
 
-        public virtual void Consume(IDeviceReport report)
+        public virtual void Consume(IDeviceReport? report)
         {
             if (report is IAbsolutePositionReport tabletReport)
                 report = Transform(tabletReport);
+
             if (report != null)
                 Emit?.Invoke(report);
         }
@@ -120,7 +121,7 @@ namespace OpenTabletDriver.Plugin.Output
         public virtual void Read(IDeviceReport deviceReport) => entryElement?.Consume(deviceReport);
 
         protected abstract Matrix3x2 CreateTransformationMatrix();
-        protected abstract IAbsolutePositionReport Transform(IAbsolutePositionReport tabletReport);
+        protected abstract IAbsolutePositionReport? Transform(IAbsolutePositionReport tabletReport);
         protected abstract void OnOutput(IDeviceReport report);
 
         private void DestroyInternalLinks()
@@ -148,7 +149,7 @@ namespace OpenTabletDriver.Plugin.Output
             {
                 entryElement = null;
 
-                foreach (var obj in Elements ?? [])
+                foreach (var obj in Elements)
                     if (obj is IDisposable disposable)
                         disposable.Dispose();
             }

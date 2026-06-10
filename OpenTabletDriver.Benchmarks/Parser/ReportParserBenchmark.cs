@@ -9,7 +9,7 @@ namespace OpenTabletDriver.Benchmarks.Parser
     {
         private TabletReportParser parser = new TabletReportParser();
         private SkipByteTabletReportParser skipParser = new SkipByteTabletReportParser();
-        private byte[] data;
+        private byte[]? data;
 
         [GlobalSetup]
         public void Setup()
@@ -22,13 +22,13 @@ namespace OpenTabletDriver.Benchmarks.Parser
         [Benchmark]
         public void ReportParser()
         {
-            parser.Parse(data);
+            parser.Parse(data!);
         }
 
         [Benchmark]
         public void SkipByteReportParser()
         {
-            skipParser.Parse(data);
+            skipParser.Parse(data!);
         }
     }
 }

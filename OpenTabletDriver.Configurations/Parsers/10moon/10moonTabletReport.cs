@@ -1,8 +1,5 @@
 using System;
-using System.Linq;
 using System.Numerics;
-using System.Runtime.CompilerServices;
-using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.TenMoon

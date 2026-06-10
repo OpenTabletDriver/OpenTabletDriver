@@ -25,8 +25,15 @@ configs_path="OpenTabletDriver.Configurations/Configurations/"
 ### funcs
 
 git_prettyprint_ref() {
+  if [ "$1" == "" ]; then
+    echo "ERR: Cannot look up empty ref"
+    return
+  fi
   local text="$(git log --format="%h {{DESCRIBEHERE}} - %aN - %as: %s" -1 "$1")"
-  local describe="$(git describe --contains "${1}")"
+  local describe="$(git describe --contains "${1}" 2>/dev/null)"
+  if [ "${describe}" == "" ]; then
+    describe="<untagged>"
+  fi
   sed "s/{{DESCRIBEHERE}}/${describe}/" <<< $text
 }
 
@@ -110,7 +117,7 @@ echo "Tablet config: ${tablet_config}"
 
 tablet_config="${root_dir}"/"${configs_path}"/"${tablet_config}"
 
-commit_added="$(git log --follow --pretty=format:%H --diff-filter=AC -1 -- "${tablet_config}")"
+commit_added="$(git log --follow --pretty=format:%H --diff-filter=ARC -1 -- "${tablet_config}")"
 
 echo -e "\nAdded in:"
 git_prettyprint_ref "${commit_added}"

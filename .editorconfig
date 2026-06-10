@@ -38,6 +38,8 @@ dotnet_diagnostic.CA1822.severity = warning
 dotnet_diagnostic.SYSLIB1045.severity = warning
 # use concrete types when possible for improved performance
 dotnet_diagnostic.CA1859.severity = warning
+# disallow unnecessary using directives
+dotnet_diagnostic.IDE0005.severity = warning
 
 # IDE-only inspections (Rider, etc.)
 resharper_can_simplify_dictionary_lookup_with_try_get_value_highlighting=warning

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
@@ -15,14 +14,22 @@ namespace OpenTabletDriver.Desktop.Binding
         private const string PLUGIN_NAME = "Multi-Key Binding";
         private const char KEYS_SPLITTER = '+';
 
-        private string[] keys;
-        private string keysString;
+        private string[]? keys;
+        private string? keysString;
 
         [Resolved]
-        public IVirtualKeyboard Keyboard { set; get; }
+        public IVirtualKeyboard? Keyboard { set; get; }
+
+        [OnDependencyLoad]
+        public void VerifyInitialization()
+        {
+            if (Keyboard == null)
+                Log.Write(nameof(MultiKeyBinding),
+                    $"{nameof(IVirtualKeyboard)} unavailable. Keyboard buttons will not work", LogLevel.Error);
+        }
 
         [Property("Keys")]
-        public string Keys
+        public string? Keys
         {
             set
             {
@@ -34,20 +41,21 @@ namespace OpenTabletDriver.Desktop.Binding
 
         public void Press(TabletReference tablet, IDeviceReport report)
         {
-            if (keys.Length > 0)
-                Keyboard.Press(this.keys);
+            if (keys?.Length > 0)
+                Keyboard?.Press(this.keys);
         }
 
         public void Release(TabletReference tablet, IDeviceReport report)
         {
-            if (keys.Length > 0)
-                Keyboard.Release(this.keys);
+            if (keys?.Length > 0)
+                Keyboard?.Release(this.keys);
         }
 
-        private string[] ParseKeys(string str)
+        private string[] ParseKeys(string? str)
         {
+            if (str == null || Keyboard == null) return [];
             var newKeys = str.Split(KEYS_SPLITTER, StringSplitOptions.TrimEntries);
-            return newKeys.All(k => Keyboard.SupportedKeys.Contains(k)) ? newKeys : Array.Empty<string>();
+            return newKeys.All(k => Keyboard.SupportedKeys.Contains(k)) ? newKeys : [];
         }
 
         public override string ToString() => $"{PLUGIN_NAME}: {Keys}";

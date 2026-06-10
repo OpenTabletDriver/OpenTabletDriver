@@ -11,6 +11,6 @@ namespace OpenTabletDriver.Desktop.Output
     public class AbsoluteMode : AbsoluteOutputMode
     {
         [Resolved]
-        public override IAbsolutePointer Pointer { set; get; }
+        public override IAbsolutePointer? Pointer { set; get; }
     }
 }

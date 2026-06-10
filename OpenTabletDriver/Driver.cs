@@ -5,15 +5,12 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
-using System.Threading;
 using OpenTabletDriver.Devices.HidSharpBackend;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Components;
 using OpenTabletDriver.Plugin.Devices;
 using OpenTabletDriver.Plugin.Tablet;
-
-#nullable enable
 
 namespace OpenTabletDriver
 {
@@ -194,7 +191,7 @@ namespace OpenTabletDriver
                 try
                 {
                     // Iterate through each device string, if one doesn't match then its the wrong configuration.
-                    var input = device.GetDeviceString(matchQuery.Key);
+                    var input = device.GetDeviceString(matchQuery.Key) ?? throw new IOException($"Unable to look up string index {matchQuery.Key}");
                     var pattern = matchQuery.Value;
                     if (!Regex.IsMatch(input, pattern))
                         return false;
@@ -230,24 +227,13 @@ namespace OpenTabletDriver
                 }
             }
 
-            var device_attributes = device.DeviceAttributes;
-            if (device_attributes != null)
-            {
-                return matchInterface(attributes, device_attributes);
-            }
+            if (!attributes.TryGetValue("Interface", out var identifierInterface))
+                return true; // No interface specified, match.
 
-            return true;
+            if (!device.DeviceAttributes.TryGetValue("USB_INTERFACE_NUMBER", out var usbInterface))
+                return false; // Device doesn't have an interface number, not a match.
 
-            static bool matchInterface(Dictionary<string, string> identifierAttributes, IDictionary<string, string> deviceAttributes)
-            {
-                if (!identifierAttributes.TryGetValue("Interface", out var identifierInterface))
-                    return true; // No interface specified, match.
-
-                if (!deviceAttributes.TryGetValue("USB_INTERFACE_NUMBER", out var usbInterface))
-                    return false; // Device doesn't have an interface number, not a match.
-
-                return identifierInterface == usbInterface;
-            }
+            return identifierInterface == usbInterface;
         }
 
         private static void DisposeDevices(ImmutableArray<InputDeviceTree> trees)

@@ -2,7 +2,7 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
 {
     public class OpenTabletDriverInfoProvider : IDriverInfoProvider
     {
-        public DriverInfo GetDriverInfo()
+        public DriverInfo? GetDriverInfo()
         {
             var daemonInstanceName = "OpenTabletDriver.Daemon";
             if (Instance.Exists(daemonInstanceName) && !Instance.IsOwnerOf(daemonInstanceName))
@@ -10,7 +10,6 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
                 return new DriverInfo
                 {
                     Name = "OpenTabletDriver",
-                    Processes = [],
                     Status = DriverStatus.Active
                 };
             }

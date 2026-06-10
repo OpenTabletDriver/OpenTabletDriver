@@ -87,6 +87,7 @@ tests:
     - 'OpenTabletDriver.UX.Gtk/**'
     - 'generate-rules.sh'
     - '**/*Linux*' # TODO: verify that this works 1/3
+    - '**/*Evdev*'
 
 'windows/wpf':
 - changed-files:

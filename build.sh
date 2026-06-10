@@ -31,6 +31,9 @@ while [ $# -gt 0 ]; do
     macos)
       options+=("--runtime" "osx-x64")
       ;;
+    macos-signed)
+      options+=("--runtime" "osx-x64" "--signed" "true")
+      ;;
     linux)
       options+=("--runtime" "linux-x64")
       ;;

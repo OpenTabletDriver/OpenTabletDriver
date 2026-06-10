@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.IO.Pipes;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,7 +10,7 @@ namespace OpenTabletDriver.Desktop.RPC
     public class RpcHost<T>(string pipeName)
         where T : class
     {
-        public event EventHandler<bool> ConnectionStateChanged;
+        public event EventHandler<bool>? ConnectionStateChanged;
 
         public async Task Run(T host, CancellationToken ct)
         {

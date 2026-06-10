@@ -1,5 +1,5 @@
 using System;
-using System.Text;
+using System.Diagnostics.CodeAnalysis;
 
 namespace OpenTabletDriver.Plugin.Logging
 {
@@ -9,6 +9,7 @@ namespace OpenTabletDriver.Plugin.Logging
         {
         }
 
+        [SetsRequiredMembers]
         public LogMessage(Exception exception, LogLevel level = LogLevel.Error)
         {
             Group = exception.GetType().Name;
@@ -25,17 +26,17 @@ namespace OpenTabletDriver.Plugin.Logging
         /// <summary>
         /// The group in which the log message belongs to.
         /// </summary>
-        public string Group { set; get; }
+        public required string Group { set; get; }
 
         /// <summary>
         /// The content of the log message.
         /// </summary>
-        public string Message { set; get; }
+        public required string Message { set; get; }
 
         /// <summary>
         /// The stack trace at the time of the log message.
         /// </summary>
-        public string StackTrace { set; get; }
+        public string? StackTrace { set; get; }
 
         /// <summary>
         /// The severity level of the log message.

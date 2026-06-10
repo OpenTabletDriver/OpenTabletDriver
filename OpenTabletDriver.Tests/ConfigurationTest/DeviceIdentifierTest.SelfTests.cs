@@ -182,5 +182,44 @@ namespace OpenTabletDriver.Tests.ConfigurationTest
             Assert.False(equality);
         }
 
+        [Fact]
+        public void Configurations_DeviceIdentifier_Equality_Interfaces_SelfTest()
+        {
+            var firstIdentifier = new DeviceIdentifier
+            {
+                VendorID = 1,
+                ProductID = 1,
+                Attributes = new Dictionary<string, string>([new KeyValuePair<string, string>("Interface", "1")]),
+            };
+
+            var secondIdentifier = new DeviceIdentifier
+            {
+                VendorID = 1,
+                ProductID = 1,
+                Attributes = new Dictionary<string, string>([new KeyValuePair<string, string>("Interface", "1")]),
+            };
+
+            Assert.True(IsEqual(firstIdentifier, secondIdentifier));
+        }
+
+        [Fact]
+        public void Configurations_DeviceIdentifier_NonEquality_Interfaces_SelfTest()
+        {
+            var firstIdentifier = new DeviceIdentifier
+            {
+                VendorID = 1,
+                ProductID = 1,
+                Attributes = new Dictionary<string, string>([new KeyValuePair<string, string>("Interface", "1")]),
+            };
+
+            var secondIdentifier = new DeviceIdentifier
+            {
+                VendorID = 1,
+                ProductID = 1,
+                Attributes = new Dictionary<string, string>([new KeyValuePair<string, string>("Interface", "2")]),
+            };
+
+            Assert.False(IsEqual(firstIdentifier, secondIdentifier));
+        }
     }
 }

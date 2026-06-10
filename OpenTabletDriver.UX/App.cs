@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.CommandLine;
 using System.ComponentModel;
 using System.IO;
@@ -10,7 +9,6 @@ using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.UX.RPC;
@@ -35,7 +33,6 @@ namespace OpenTabletDriver.UX
         }
 
         public CancellationTokenSource Canceler { get; } = new();
-        public bool IsActive { get; private set; } = true;
 
         public static void Run(string platform, string[] args)
         {
@@ -75,7 +72,6 @@ namespace OpenTabletDriver.UX
             mainForm.SkipUpdate = options.SkipUpdate;
             mainForm.Closing += Current.HandleClosing;
 
-            app.NotificationActivated += Current.HandleNotification;
             app.UnhandledException += ShowUnhandledException;
             app.Terminating += async (sender, args) => await Current.Canceler.CancelAsync();
 
@@ -102,7 +98,6 @@ namespace OpenTabletDriver.UX
                     ipcServer.Disconnect();
                 }
                 ipcServer.Close();
-                Current.IsActive = false;
             });
 
             app.Run(mainForm);
@@ -145,27 +140,25 @@ namespace OpenTabletDriver.UX
         public static App Current { get; } = new App();
 
         public const string WikiUrl = "https://opentabletdriver.net/Wiki";
-        public static readonly string Version = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
-
-        public IDictionary<string, Action> NotificationHandlers { get; } = new Dictionary<string, Action>();
+        public static readonly string Version = Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
 
         public static DaemonRpcClient Driver { get; } = new DaemonRpcClient("OpenTabletDriver.Daemon");
-        public static Bitmap Logo { get; } = new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.Assets.otd.png"));
+        public static Bitmap Logo { get; } = new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.Assets.otd.png")!);
 
         public static Uri Website { get; } = new Uri(@"https://github.com/OpenTabletDriver/OpenTabletDriver");
-        public static string License { get; } = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.LICENSE")).ReadToEnd();
+        public static string License { get; } = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.LICENSE")!).ReadToEnd();
 
-        private Settings settings;
+        private Settings? settings;
         public Settings Settings
         {
-            set => this.RaiseAndSetIfChanged(ref this.settings, value);
-            get => this.settings;
+            set => this.RaiseAndSetIfChanged(ref this.settings!, value);
+            get => this.settings ?? throw new InvalidOperationException("Settings cannot be null");
         }
 
         private const string APPNAME = "OpenTabletDriver.UX";
         public readonly static bool EnableTrayIcon = (PluginPlatform.Windows | PluginPlatform.MacOS).HasFlag(SystemInterop.CurrentPlatform);
         public readonly static bool EnableDaemonWatchdog = (PluginPlatform.Windows | PluginPlatform.MacOS).HasFlag(SystemInterop.CurrentPlatform);
-        public static DaemonWatchdog DaemonWatchdog;
+        public static DaemonWatchdog? DaemonWatchdog;
 
         public WindowSingleton<StartupGreeterWindow> StartupGreeterWindow { get; } = new WindowSingleton<StartupGreeterWindow>();
         public WindowSingleton<PluginManagerWindow> PluginManagerWindow { get; } = new WindowSingleton<PluginManagerWindow>();
@@ -175,13 +168,7 @@ namespace OpenTabletDriver.UX
 
         public WindowSingleton<AboutWindow> AboutWindow { get; } = new WindowSingleton<AboutWindow>();
 
-        private void HandleNotification(object sender, NotificationEventArgs e)
-        {
-            if (NotificationHandlers.TryGetValue(e.ID, out var handler))
-                handler.Invoke();
-        }
-
-        private void HandleClosing(object sender, CancelEventArgs args)
+        private void HandleClosing(object? sender, CancelEventArgs args)
         {
             StartupGreeterWindow.Close();
             PluginManagerWindow.Close();
@@ -191,13 +178,13 @@ namespace OpenTabletDriver.UX
             AboutWindow.Close();
         }
 
-        private static void ShowUnhandledException(object sender, Eto.UnhandledExceptionEventArgs e)
+        private static void ShowUnhandledException(object? sender, Eto.UnhandledExceptionEventArgs e)
         {
             try
             {
                 var exception = e.ExceptionObject as Exception;
                 Log.Exception(exception);
-                exception.ShowMessageBox();
+                exception!.ShowMessageBox();
             }
             catch (Exception ex)
             {

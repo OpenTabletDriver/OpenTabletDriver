@@ -1,0 +1,44 @@
+changelog:
+  categories:
+    - title: Regressions Fixed
+      labels:
+        - 'regression'
+    - title: Major Features
+      labels:
+        - 'breaking'
+    - title: Tablet Configurations
+      labels:
+        - 'configuration'
+    - title: Bug Fixes
+      labels:
+        - 'bug'
+    - title: Performance Enhancements
+      labels:
+        - 'performance'
+    - title: Daemon Enhancements
+      labels:
+        - 'daemon'
+    - title: UI Enhancements
+      labels:
+        - 'gui'
+    - title: Console (CLI) Enhancements
+      labels:
+        - 'console'
+    - title: Documentation
+      labels:
+        - 'documentation'
+    - title: Unit Tests
+      labels:
+        - 'tests'
+    - title: Build scripts
+      labels:
+        - 'packaging'
+    - title: Dependencies
+      labels:
+        - 'dependencies'
+    - title: Other non-code changes
+      labels:
+        - 'meta'
+    - title: Other Changes
+      labels:
+        - '*'

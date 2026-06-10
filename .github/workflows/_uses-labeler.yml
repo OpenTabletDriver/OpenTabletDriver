@@ -16,12 +16,12 @@ jobs:
     steps:
       - name: "Pull Request Labeler (automatic)"
         if: "${{ inputs.pull_request_id == '' }}"
-        uses: actions/labeler@v5
+        uses: actions/labeler@v6
         with:
           configuration-path: .github/pr-labeler.yml
       - name: "Pull Request Labeler (manually input ID's)"
         if: "${{ inputs.pull_request_id != '' }}"
-        uses: actions/labeler@v5
+        uses: actions/labeler@v6
         with:
           configuration-path: .github/pr-labeler.yml
           pr-number: ${{ fromJSON(inputs.pull_request_ids) }}

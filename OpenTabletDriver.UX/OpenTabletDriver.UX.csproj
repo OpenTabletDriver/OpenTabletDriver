@@ -3,6 +3,7 @@
   <PropertyGroup Label="Project Properties">
     <TargetFramework>$(FrameworkBase)</TargetFramework>
     <NoWarn>VSTHRD100; VSTHRD101; VSTHRD110; VSTHRD200</NoWarn>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   
   <ItemGroup Label="Resources">

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using OpenTabletDriver.Desktop.Contracts;
@@ -20,14 +19,14 @@ namespace OpenTabletDriver.Desktop.Binding
         public static string[] ValidPresets => Presets.Select(x => x.Name).ToArray();
 
         [Property("Preset"), PropertyValidated(nameof(ValidPresets))]
-        public string Preset { set; get; }
+        public string? Preset { set; get; }
 
         [Resolved]
-        public IDriverDaemon Daemon { set; get; }
+        public IDriverDaemon? Daemon { set; get; }
 
         public void Press(TabletReference tablet, IDeviceReport report)
         {
-            if (Preset != null && AppInfo.PresetManager != null && _stopwatch.Elapsed.Milliseconds > TIMEOUT)
+            if (Preset != null && _stopwatch.Elapsed.Milliseconds > TIMEOUT)
             {
                 // Force a refresh, preset list may be out of date
                 AppInfo.PresetManager.Refresh();

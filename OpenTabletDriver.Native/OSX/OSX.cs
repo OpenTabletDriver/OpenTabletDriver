@@ -3,6 +3,9 @@ using System.Runtime.InteropServices;
 using OpenTabletDriver.Native.OSX.Generic;
 using OpenTabletDriver.Native.OSX.Input;
 
+// TODO: remove nullable disable
+#nullable disable
+
 namespace OpenTabletDriver.Native.OSX
 {
     using static ObjectiveCRuntime;

@@ -27,7 +27,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos4
             var wheelByte = report[1];
 
             // Wheel Start at Position zero (0x80) and Provides a value between 0x80 & 0xC7 on PTK 440, 640 & 840
-            AnalogPositions = [wheelByte.IsBitSet(7) ? (uint)wheelByte - 0x80 : null];
+            AnalogPositions = [wheelByte.IsBitSet(7) ? (uint)(wheelByte & 0x7f) : null];
 
             WheelButtons = [[touchWheelButtonByte.IsBitSet(0)]];
         }

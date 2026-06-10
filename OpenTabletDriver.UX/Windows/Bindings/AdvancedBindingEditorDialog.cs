@@ -8,9 +8,9 @@ using IBinding = OpenTabletDriver.Plugin.IBinding;
 
 namespace OpenTabletDriver.UX.Windows.Bindings
 {
-    public class AdvancedBindingEditorDialog : Dialog<PluginSettingStore>
+    public class AdvancedBindingEditorDialog : Dialog<PluginSettingStore?>
     {
-        public AdvancedBindingEditorDialog(PluginSettingStore currentBinding = null)
+        public AdvancedBindingEditorDialog(PluginSettingStore? currentBinding = null)
         {
             Title = "Advanced Binding Editor";
             Result = currentBinding;
@@ -70,7 +70,7 @@ namespace OpenTabletDriver.UX.Windows.Bindings
                 }
             };
 
-            bindingTypeDropDown.SelectedItemBinding.Convert(t => new PluginSettingStore(t)).Bind(settingStoreEditor.StoreBinding);
+            bindingTypeDropDown.SelectedItemBinding.Convert(t => new PluginSettingStore(t!)).Bind(settingStoreEditor.StoreBinding!);
             bindingTypeDropDown.SelectedItem = currentBinding?.GetTypeInfo();
             settingStoreEditor.Store = currentBinding;
         }
@@ -78,12 +78,12 @@ namespace OpenTabletDriver.UX.Windows.Bindings
         private TypeDropDown<IBinding> bindingTypeDropDown;
         private PluginSettingStoreEditor<IBinding> settingStoreEditor = new PluginSettingStoreEditor<IBinding>();
 
-        private void ClearBinding(object sender, EventArgs e)
+        private void ClearBinding(object? sender, EventArgs e)
         {
             Close(null);
         }
 
-        private void ApplyBinding(object sender, EventArgs e)
+        private void ApplyBinding(object? sender, EventArgs e)
         {
             if (bindingTypeDropDown.SelectedItem == null)
             {

@@ -1,4 +1,3 @@
-using System;
 using OpenTabletDriver.Plugin.Tablet.Wheel;
 
 namespace OpenTabletDriver.Configurations.Parsers.Huion;

@@ -1,8 +1,8 @@
 <Project>
 
   <PropertyGroup>
-    <VersionBase>0.6.6.2</VersionBase>
-    <FrameworkBase>net8.0</FrameworkBase>
+    <VersionBase>0.6.7</VersionBase>
+    <FrameworkBase>net10.0</FrameworkBase>
     <VersionPrefix>$(VersionBase)</VersionPrefix>
     <Version Condition="$(VersionSuffix.StartsWith('+'))">$(VersionPrefix)$(VersionSuffix)</Version>
     <Version Condition="$(VersionSuffix.StartsWith('-'))">$(VersionPrefix)$(VersionSuffix)</Version>

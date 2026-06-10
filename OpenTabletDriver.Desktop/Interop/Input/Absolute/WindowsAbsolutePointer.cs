@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 using OpenTabletDriver.Native.Windows.Input;
 using OpenTabletDriver.Plugin.Platform.Pointer;
@@ -6,7 +7,15 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
     public class WindowsAbsolutePointer : WindowsVirtualMouse, IAbsolutePointer
     {
-        private static Vector2 ScreenToVirtualDesktop = new Vector2(DesktopInterop.VirtualScreen.Width, DesktopInterop.VirtualScreen.Height) / 65535;
+        public WindowsAbsolutePointer()
+        {
+            var virtualScreen = DesktopInterop.VirtualScreen ??
+                                throw new InvalidOperationException("Could not get virtual screen");
+
+            ScreenToVirtualDesktop = new Vector2(virtualScreen.Width, virtualScreen.Height) / 65535;
+        }
+
+        private readonly Vector2 ScreenToVirtualDesktop;
 
         public void SetPosition(Vector2 pos)
         {

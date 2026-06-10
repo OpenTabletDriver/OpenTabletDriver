@@ -41,12 +41,13 @@ namespace OpenTabletDriver.UX.Controls.Bindings
                                                         ExpandContent = false,
                                                         Content = tipButton = new BindingDisplay()
                                                     },
-                                                    new Group
+                                                    new UnitGroup
                                                     {
                                                         Text = "Tip Threshold",
                                                         ToolTip = "The minimum threshold in order for the assigned binding to activate.",
                                                         Orientation = Orientation.Horizontal,
-                                                        Content = tipThreshold = new FloatSlider()
+                                                        Content = tipThreshold = new FloatSlider(),
+                                                        Unit = "%"
                                                     }
                                                 }
                                             }
@@ -67,12 +68,13 @@ namespace OpenTabletDriver.UX.Controls.Bindings
                                                         Orientation = Orientation.Horizontal,
                                                         Content = eraserButton = new BindingDisplay()
                                                     },
-                                                    new Group
+                                                    new UnitGroup
                                                     {
                                                         Text = "Eraser Threshold",
                                                         ToolTip = "The minimum threshold in order for the assigned binding to activate.",
                                                         Orientation = Orientation.Horizontal,
-                                                        Content = eraserThreshold = new FloatSlider()
+                                                        Content = eraserThreshold = new FloatSlider(),
+                                                        Unit = "%"
                                                     }
                                                 }
                                             }
@@ -126,7 +128,7 @@ namespace OpenTabletDriver.UX.Controls.Bindings
             eraserButton.StoreBinding.Bind(SettingsBinding.Child(c => c.EraserButton));
             tipThreshold.ValueBinding.Bind(SettingsBinding.Child(c => c.TipActivationThreshold));
             eraserThreshold.ValueBinding.Bind(SettingsBinding.Child(c => c.EraserActivationThreshold));
-            penButtons.ItemSourceBinding.Bind(SettingsBinding.Child(c => (IList<PluginSettingStore>)c.PenButtons));
+            penButtons.ItemSourceBinding.Bind(SettingsBinding.Child(c => (IList<PluginSettingStore>)c.PenButtons)!);
             disablePressure.CheckedBinding.Cast<bool>().Bind(SettingsBinding.Child(c => c.DisablePressure));
             disableTilt.CheckedBinding.Cast<bool>().Bind(SettingsBinding.Child(c => c.DisableTilt));
             enableDragBindings.CheckedBinding.Cast<bool>().Bind(SettingsBinding.Child(c => c.EnableDragBindings));

@@ -4,8 +4,6 @@ using System.Threading.Tasks;
 using Octokit;
 using OpenTabletDriver.Plugin;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Updater
 {
     public abstract partial class GitHubUpdater : Updater

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
@@ -17,16 +16,16 @@ namespace OpenTabletDriver.UX.Windows.Plugins
     {
         public PluginMetadataList()
         {
-            ItemTextBinding = Binding.Property<PluginMetadata, string>(m => m.Name);
+            ItemTextBinding = Binding.Property<PluginMetadata, string>(m => m.Installed ? $"✓ {m.Name}" : m.Name);
 
             Refresh();
             AppInfo.PluginManager.AssembliesChanged += (sender, e) => Refresh();
         }
 
-        public static PluginMetadataCollection Repository { private set; get; }
+        public static PluginMetadataCollection? Repository { private set; get; }
 
         private static readonly TimeSpan DOWNLOAD_TIMEOUT = TimeSpan.FromSeconds(5);
-        private static readonly Version AppVersion = Assembly.GetEntryAssembly().GetName().Version;
+        private static readonly Version AppVersion = Assembly.GetEntryAssembly()!.GetName().Version!;
 
         // ReSharper disable once AsyncVoidMethod
         public void Refresh() => Application.Instance.AsyncInvoke(async void () =>

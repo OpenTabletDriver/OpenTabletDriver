@@ -5,7 +5,7 @@ namespace OpenTabletDriver.Plugin.Devices
 {
     public interface IDeviceHub
     {
-        event EventHandler<DevicesChangedEventArgs> DevicesChanged;
+        event EventHandler<DevicesChangedEventArgs>? DevicesChanged;
 
         IEnumerable<IDeviceEndpoint> GetDevices();
     }

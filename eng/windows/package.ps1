@@ -1,12 +1,11 @@
 param (
     $output = "dist",
     $config = "Release",
-    $framework = "net8.0",
+    $framework = "net10.0",
     $netRuntime = "win-x64",
     $isRelease = $true,
     $isPackage = $true,
-    $isPortable = $false,
-    $selfContained = $false
+    $isPortable = $false
 )
 
 $ErrorActionPreference = "Stop";
@@ -25,7 +24,7 @@ $UIProjects = @(
 $Options = @(
     "--configuration", "$config",
     "--runtime", "$netRuntime",
-    "--self-contained", "$selfContained",
+    "--no-self-contained",
     "--output", "$output",
     "/p:PublishSingleFile=true",
     "/p:PublishTrimmed=false",

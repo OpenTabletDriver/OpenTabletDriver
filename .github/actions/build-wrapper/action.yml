@@ -26,6 +26,11 @@ runs:
         hash git &>/dev/null && \
           git config --system --add safe.directory /__w/OpenTabletDriver/OpenTabletDriver
 
+    - name: "Install rcodesign (macOS builds)"
+      if: inputs.package-name == 'macos-signed'
+      shell: bash
+      run: cargo install apple-codesign
+
     - name: "BASH Build Artifact"
       uses: ./.github/actions/build-bash
       with:

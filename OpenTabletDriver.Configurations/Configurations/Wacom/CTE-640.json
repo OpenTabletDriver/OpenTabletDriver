@@ -23,7 +23,7 @@
       "VendorID": 1386,
       "ProductID": 22,
       "InputReportLength": 8,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Bamboo.BambooReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Graphire.GraphireReportParser",
       "FeatureInitReport": [
         "AgI="
       ]

@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -17,7 +19,7 @@ namespace OpenTabletDriver.UX.Windows
         {
             this.Title = "Device String Reader";
             this.Icon = App.Logo.WithSize(App.Logo.Size);
-            this.ClientSize = new Size(-1, 320);
+            this.ClientSize = new Size(-1, 345);
 
             var sendRequestButton = new Button
             {
@@ -25,7 +27,7 @@ namespace OpenTabletDriver.UX.Windows
             };
 
             sendRequestButton.Click += async (_, _) => await SendRequestWithTimeout(stringIndexText.Text,
-                (s) => deviceStringText.Text = s != null ? System.Text.Json.JsonEncodedText.Encode(s).ToString() : s,
+                (s) => deviceStringText.Text = System.Text.Json.JsonEncodedText.Encode(s).ToString(),
                 (e) => MessageBox.Show($"Error: {e.Message}", MessageBoxType.Error),
                 () => MessageBox.Show(OperationTimedOut)
             );
@@ -37,36 +39,9 @@ namespace OpenTabletDriver.UX.Windows
 
             sendRequestAllStringsButton.Click += SendRequestAllStrings;
 
-            this.vendorIdText = new NumericMaskedTextBox<ushort>
-            {
-                PlaceholderText = DecimalStyle,
-                Width = NUMERICBOX_WIDTH
-            };
-            this.productIdText = new NumericMaskedTextBox<ushort>
-            {
-                PlaceholderText = DecimalStyle,
-                Width = NUMERICBOX_WIDTH
-            };
-            this.stringIndexText = new NumericMaskedTextBox<ushort>
-            {
-                PlaceholderText = "[1..255]",
-                Width = NUMERICBOX_WIDTH
-            };
-            this.deviceStringText = new TextBox
-            {
-                PlaceholderText = "Device String",
-                ReadOnly = true
-            };
-            this.requireReconnect = new CheckBox
-            {
-                Text = "Require reconnect on fail",
-                Checked = false,
-                ToolTip = "Pauses string dump with a pop-up box if any string dump errors occur",
-            };
-
-            this.vendorIdCtrl = new Group("VendorID", vendorIdText, Orientation.Horizontal, false);
-            this.productIdCtrl = new Group("ProductID", productIdText, Orientation.Horizontal, false);
-            this.stringIndexCtrl = new Group("String Index", stringIndexText, Orientation.Horizontal, false);
+            var vendorIdCtrl = new Group("VendorID", vendorIdText, Orientation.Horizontal, false);
+            var productIdCtrl = new Group("ProductID", productIdText, Orientation.Horizontal, false);
+            var stringIndexCtrl = new Group("String Index", stringIndexText, Orientation.Horizontal, false);
 
             this.Content = new StackLayout
             {
@@ -80,6 +55,7 @@ namespace OpenTabletDriver.UX.Windows
                     productIdCtrl,
                     stringIndexCtrl,
                     requireReconnect,
+                    requestDangerous,
                     new StackLayoutItem(
                         new StackLayout
                         {
@@ -103,23 +79,22 @@ namespace OpenTabletDriver.UX.Windows
             };
 
             deviceDropDown.SelectedItemBinding
-                .Convert(x => x?.VendorID.ToString())
+                .Convert(x => x?.VendorID.ToString() ?? vendorIdText.Text, _ => null)
                 .Bind(vendorIdText.TextBinding);
 
             deviceDropDown.SelectedItemBinding
-                .Convert(x => x?.ProductID.ToString())
+                .Convert(x => x?.ProductID.ToString() ?? productIdText.Text, _ => null)
                 .Bind(productIdText.TextBinding);
 
-            this.deviceDropDown.DataStore =
-                App.Driver.Instance.GetDevices().Result
-                    .Where(x => x.CanOpen)
-                    .DistinctBy(x => new { x.VendorID, x.ProductID });
+            if (App.Driver.IsConnected)
+                SetDeviceDropDownDataStore();
 
             this.deviceDropDown.ItemTextBinding = Binding.Delegate<SerializedDeviceEndpoint, string>(x =>
             {
                 // don't include manufacturer if it's already in the product name (e.g. Razer)
-                string name = x.ProductName ?? x.FriendlyName;
-                string title = name.Contains(x.Manufacturer) ? name : $"{x.Manufacturer} {name}";
+                string name = x.ProductName ?? x.FriendlyName ?? "null";
+                string manufacturer = x.Manufacturer ?? "null";
+                string title = name.Contains(manufacturer) ? name : $"{manufacturer} {name}";
 
                 if (title.Length >= 32) // truncate if too long, used in GUI
                     title = title[..29] + "...";
@@ -129,6 +104,16 @@ namespace OpenTabletDriver.UX.Windows
             });
         }
 
+        private void SetDeviceDropDownDataStore()
+        {
+            Debug.Assert(App.Driver.IsConnected, "Tried setting device dropdown without an active daemon");
+
+            this.deviceDropDown.DataStore =
+                App.Driver.Instance.GetDevices().Result
+                    .Where(x => x.CanOpen)
+                    .DistinctBy(x => new { x.VendorID, x.ProductID });
+        }
+
         private const int NUMERICBOX_WIDTH = 150;
         private const string DecimalStyle = "Decimal Value";
         private const string StringIndex = "Index";
@@ -136,9 +121,24 @@ namespace OpenTabletDriver.UX.Windows
         private const string DisconnectionIndex = "Device disconnected";
         private const string OperationTimedOut = "Operation timed-out";
         private const string OperationFailed = "Operation failed";
-
-        private async void SendRequestAllStrings(object sender, EventArgs args)
+        private static Dictionary<int, string> GetDangerousStrings(int vendorId) => vendorId switch
         {
+            // XP-Pen, UGEE, and XenceLabs
+            10429 => new()
+            {
+                [200] = "Common DFU String"
+            },
+            _ => [],
+        };
+
+        private async void SendRequestAllStrings(object? sender, EventArgs args)
+        {
+            if (!App.Driver.IsConnected)
+            {
+                MessageBox.Show("Unable to send request without an active daemon", MessageBoxType.Error);
+                return;
+            }
+
             var validVid = int.TryParse(vendorIdText.Text, out var vid);
             var validPid = int.TryParse(productIdText.Text, out var pid);
             var matchingDeviceFound = (await App.Driver.Instance.GetDevices()).Any(x => x.ProductID == pid && x.VendorID == vid);
@@ -149,16 +149,25 @@ namespace OpenTabletDriver.UX.Windows
                 return;
             }
 
+            var requestDangerousStrings = requestDangerous.Checked.HasValue && (bool)requestDangerous.Checked;
+            var dangerousStrings = requestDangerousStrings ? [] : GetDangerousStrings(vid);
+
             var stringDump = new StringBuilder();
 
             for (int i = 1; i < 256; i++)
             {
+                if (dangerousStrings.ContainsKey(i))
+                {
+                    stringDump.AppendLine($"{StringIndex} {i}: {{ OTD: {dangerousStrings[i]} }}");
+                    continue;
+                }
+
                 bool shouldRead = true;
                 await SendRequestWithTimeout($"{i}",
                     (str) => stringDump.AppendLine($"{StringIndex} {i}: {str}"),
                     (e) =>
                     {
-                        if ((bool)requireReconnect.Checked)
+                        if (requireReconnect.Checked.HasValue && (bool)requireReconnect.Checked)
                         {
                             shouldRead = AskReconnection(stringDump, i);
                         }
@@ -199,6 +208,12 @@ namespace OpenTabletDriver.UX.Windows
 
         private async Task SendRequestWithTimeout(string strIndex, Action<string> action, Action<Exception> error, Action timeoutAction)
         {
+            if (!App.Driver.IsConnected)
+            {
+                MessageBox.Show("Unable to send request without an active daemon", MessageBoxType.Error);
+                return;
+            }
+
             var strVid = vendorIdText.Text;
             var strPid = productIdText.Text;
             var request = SendRequest(strIndex, strVid, strPid);
@@ -224,6 +239,7 @@ namespace OpenTabletDriver.UX.Windows
 
         private static async Task<string> SendRequest(string strIndex, string strVid, string strPid)
         {
+            Debug.Assert(App.Driver.IsConnected, "Sending a request should not be able to be called without an active daemon");
             if (int.TryParse(strIndex, out var index) && index < 256 && index > 0)
             {
                 if (int.TryParse(strVid, out var vid) && int.TryParse(strPid, out var pid))
@@ -240,9 +256,43 @@ namespace OpenTabletDriver.UX.Windows
         }
 
         private readonly DropDown<SerializedDeviceEndpoint> deviceDropDown = new();
-        private readonly NumericMaskedTextBox<ushort> vendorIdText, productIdText, stringIndexText;
-        private readonly TextBox deviceStringText;
-        private readonly Group vendorIdCtrl, productIdCtrl, stringIndexCtrl;
-        private readonly CheckBox requireReconnect;
+
+        private readonly NumericMaskedTextBox<ushort> vendorIdText = new()
+        {
+            PlaceholderText = DecimalStyle,
+            Width = NUMERICBOX_WIDTH
+        };
+
+        private readonly NumericMaskedTextBox<ushort> productIdText = new()
+        {
+            PlaceholderText = DecimalStyle,
+            Width = NUMERICBOX_WIDTH
+        };
+
+        private readonly NumericMaskedTextBox<ushort> stringIndexText = new()
+        {
+            PlaceholderText = "[1..255]",
+            Width = NUMERICBOX_WIDTH
+        };
+
+        private readonly TextBox deviceStringText = new()
+        {
+            PlaceholderText = "Device String",
+            ReadOnly = true
+        };
+
+        private readonly CheckBox requireReconnect = new()
+        {
+            Text = "Require reconnect on fail",
+            Checked = false,
+            ToolTip = "Pauses string dump with a pop-up box if any string dump errors occur",
+        };
+
+        private readonly CheckBox requestDangerous = new()
+        {
+            Text = "Dump potentially dangerous strings",
+            Checked = false,
+            ToolTip = "Requests all strings in a string dump even if they are known to likely damage or disrupt usage of the tablet",
+        };
     }
 }

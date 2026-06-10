@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using OpenTabletDriver.Native.Windows;
 using OpenTabletDriver.Native.Windows.Input;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Platform.Keyboard;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
@@ -30,7 +30,9 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
             };
 
             var inputs = new INPUT[] { input };
-            SendInput((uint)inputs.Length, inputs, INPUT.Size);
+            var result = SendInput((uint)inputs.Length, inputs, INPUT.Size);
+            if (result != inputs.Length)
+                Log.Write("WindowsKeyboard", $"SendInput failed: {result}/{inputs.Length} events inserted", LogLevel.Error);
         }
 
         public void Press(string key)

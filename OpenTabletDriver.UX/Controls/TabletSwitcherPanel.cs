@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Profiles;
-using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.UX.Controls
@@ -50,13 +48,13 @@ namespace OpenTabletDriver.UX.Controls
                 }
             };
 
-            controlPanel.ProfileBinding.Bind(tabletSwitcher.SelectedValueBinding.Cast<Profile>());
+            controlPanel.ProfileBinding.Bind(tabletSwitcher.SelectedValueBinding.Cast<Profile?>());
 
             tabletSwitcher.ProfilesBinding.BindDataContext<App>(a => a.Settings.Profiles);
 
             App.Driver.TabletsChanged += HandleTabletsChanged;
             // ReSharper disable once AsyncVoidMethod
-            Application.Instance.AsyncInvoke(async void () => HandleTabletsChanged(this, await App.Driver.Instance.GetTablets()));
+            Application.Instance.AsyncInvoke(async void () => HandleTabletsChanged(this, await App.Driver.Instance!.GetTablets()));
         }
 
         private StackLayout layout;
@@ -70,7 +68,7 @@ namespace OpenTabletDriver.UX.Controls
             get => commandsPanel.Content;
         }
 
-        private void HandleTabletsChanged(object sender, IEnumerable<TabletReference> tablets)
+        private void HandleTabletsChanged(object? sender, IEnumerable<TabletReference> tablets)
         {
             tabletSwitcher.HandleTabletsChanged(sender, [.. tablets]);
         }
@@ -86,7 +84,7 @@ namespace OpenTabletDriver.UX.Controls
 
             private readonly ObservableCollection<Profile> visibleProfiles = [];
 
-            private ProfileCollection profiles;
+            private ProfileCollection profiles = [];
             public ProfileCollection Profiles
             {
                 set
@@ -98,12 +96,12 @@ namespace OpenTabletDriver.UX.Controls
                 get => this.profiles;
             }
 
-            public event EventHandler<EventArgs> ProfilesChanged;
+            public event EventHandler<EventArgs>? ProfilesChanged;
 
             protected virtual async Task OnProfilesChanged()
             {
                 ProfilesChanged?.Invoke(this, EventArgs.Empty);
-                var tablets = await App.Driver.Instance.GetTablets();
+                var tablets = await App.Driver.Instance!.GetTablets();
                 HandleTabletsChanged(this, [.. tablets]);
             }
 
@@ -121,10 +119,9 @@ namespace OpenTabletDriver.UX.Controls
                 }
             }
 
-            public void HandleTabletsChanged(object sender, IList<TabletReference> tablets)
+            public void HandleTabletsChanged(object? sender, IList<TabletReference> tablets)
             {
                 visibleProfiles.Clear();
-                profiles ??= [];
 
                 if (tablets.Any())
                 {
@@ -136,7 +133,7 @@ namespace OpenTabletDriver.UX.Controls
                         profiles.Generate(tablet);
 
                     foreach (var tablet in tablets)
-                        visibleProfiles.Add(Profiles.FirstOrDefault(p => p.Tablet == tablet.Properties.Name));
+                        visibleProfiles.Add(Profiles.First(p => p.Tablet == tablet.Properties.Name));
 
                     if (this.SelectedIndex < 0)
                     {

@@ -1,7 +1,6 @@
 using System;
 using Eto.Drawing;
 using Eto.Forms;
-using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 
@@ -29,26 +28,24 @@ namespace OpenTabletDriver.UX.Controls.Generic
         protected virtual Color HorizontalBackgroundColor => SystemColors.ControlBackground;
         protected virtual Color VerticalBackgroundColor => SystemColors.WindowBackground;
 
-        private string text;
-        public string Text
+        public string? Text
         {
+            get;
             set
             {
-                this.text = value;
+                field = value;
                 UpdateControlLayout();
             }
-            get => text;
         }
 
-        private Control content;
-        public new Control Content
+        public new Control? Content
         {
+            get;
             set
             {
-                this.content = value;
+                field = value;
                 UpdateControlLayout();
             }
-            get => content;
         }
 
         public Orientation Orientation { set; get; } = DEFAULT_ORIENTATION;

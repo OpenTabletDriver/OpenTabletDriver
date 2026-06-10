@@ -14,9 +14,18 @@ namespace OpenTabletDriver.Desktop.Binding
     {
         private const string PluginName = "Adaptive Binding";
 
-        [Resolved] public IPenActionHandler PenActionHandler { set; get; }
+        [Resolved] public IPenActionHandler? PenActionHandler { set; get; }
 
-        [Resolved] public IMouseButtonHandler MouseButtonHandler { set; get; }
+        [Resolved] public IMouseButtonHandler? MouseButtonHandler { set; get; }
+
+        [OnDependencyLoad]
+        public void VerifyInitialization()
+        {
+            if (PenActionHandler == null && MouseButtonHandler == null)
+                Log.Write(PluginName,
+                    $"Neither {nameof(IPenActionHandler)} nor {nameof(IMouseButtonHandler)} is available. Your selected output mode is incompatible",
+                    LogLevel.Error);
+        }
 
         // ReSharper disable once UnusedMember.Global
         public AdaptiveBinding()
@@ -99,6 +108,6 @@ namespace OpenTabletDriver.Desktop.Binding
         private static string ActionToString(PenAction button) =>
             ValidButtons.Where(x => x.Value == button)
                 .Select(x => x.Key)
-                .FirstOrDefault();
+                .First();
     }
 }

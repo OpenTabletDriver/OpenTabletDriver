@@ -6,9 +6,9 @@ namespace OpenTabletDriver.Plugin.Output
 {
     public class PipelineManager<T>
     {
-        protected void Link<T2>(IPipelineElement<T> source, T2 destination)
+        protected void Link<T2>(IPipelineElement<T> source, T2? destination)
         {
-            if (source != null && destination != null)
+            if (destination != null)
             {
                 switch (destination)
                 {
@@ -18,7 +18,7 @@ namespace OpenTabletDriver.Plugin.Output
                     case IEnumerable<IPipelineElement<T>> nextGroup:
                         source.Emit += nextGroup.First().Consume;
                         break;
-                    case Action<T> nextAction:
+                    case Action<T?> nextAction:
                         source.Emit += nextAction;
                         break;
                 }
@@ -27,7 +27,7 @@ namespace OpenTabletDriver.Plugin.Output
 
         protected void Unlink<T2>(IPipelineElement<T> source, T2 destination)
         {
-            if (source != null && destination != null)
+            if (destination != null)
             {
                 switch (destination)
                 {
@@ -37,7 +37,7 @@ namespace OpenTabletDriver.Plugin.Output
                     case IEnumerable<IPipelineElement<T>> nextGroup:
                         source.Emit -= nextGroup.First().Consume;
                         break;
-                    case Action<T> nextAction:
+                    case Action<T?> nextAction:
                         source.Emit -= nextAction;
                         break;
                 }
@@ -46,27 +46,25 @@ namespace OpenTabletDriver.Plugin.Output
 
         protected void LinkElements(IEnumerable<IPipelineElement<T>> elements)
         {
-            if (elements != null && elements.Any())
+            IPipelineElement<T>? prevElement = null;
+            foreach (var element in elements)
             {
-                IPipelineElement<T> prevElement = null;
-                foreach (var element in elements)
-                {
+                if (prevElement != null)
                     Link(prevElement, element);
-                    prevElement = element;
-                }
+
+                prevElement = element;
             }
         }
 
         protected void UnlinkElements(IEnumerable<IPipelineElement<T>> elements)
         {
-            if (elements != null && elements.Any())
+            IPipelineElement<T>? prevElement = null;
+            foreach (var element in elements)
             {
-                IPipelineElement<T> prevElement = null;
-                foreach (var element in elements)
-                {
+                if (prevElement != null)
                     Unlink(prevElement, element);
-                    prevElement = element;
-                }
+
+                prevElement = element;
             }
         }
 

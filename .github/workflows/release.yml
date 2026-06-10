@@ -16,7 +16,7 @@ jobs:
     if: ${{ github.event_name != 'workflow_dispatch' }}
     name: NuGet Deploy Release (Ubuntu Host)
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Publish NuGet package
         env:

@@ -7,13 +7,25 @@ using OpenTabletDriver.Plugin.DependencyInjection;
 using OpenTabletDriver.Plugin.Platform.Keyboard;
 using OpenTabletDriver.Plugin.Tablet;
 
+#nullable enable
+
 namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
 {
-    [PluginName("Linux Artist Mode Pad Bindings"), SupportedPlatform(PluginPlatform.Linux)]
+    [PluginName(_PLUGIN_NAME), SupportedPlatform(PluginPlatform.Linux)]
     public class LinuxArtistModePadBinding : IStateBinding
     {
+        private const string _PLUGIN_NAME = "Linux Artist Mode Pad Binding";
+
         [Resolved]
-        public IVirtualPad VirtualPad;
+        public IVirtualPad? VirtualPad;
+
+        [OnDependencyLoad]
+        public void VerifyInitialization()
+        {
+            if (VirtualPad == null)
+                Log.Write(_PLUGIN_NAME,
+                    $"{nameof(IVirtualPad)} unavailable", LogLevel.Error);
+        }
 
         private static readonly Dictionary<string, TabletPadEvent> s_ValidButtons = new()
         {
@@ -33,17 +45,20 @@ namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
         public static string[] ValidKeys => s_ValidButtons.Keys.ToArray();
 
         [Property("Button"), PropertyValidated(nameof(ValidKeys))]
-        public string Button
+        public string? Button
         {
             get => _button;
             set
             {
                 _button = value;
-                _buttonPadEvent = s_ValidButtons.First(x => x.Key == value).Value;
+                if (value != null)
+                    _buttonPadEvent = s_ValidButtons.First(x => x.Key == value).Value;
+                else
+                    _buttonPadEvent = null;
             }
         }
 
-        private string _button;
+        private string? _button;
         private TabletPadEvent? _buttonPadEvent;
 
         public void Press(TabletReference tablet, IDeviceReport report)
@@ -60,7 +75,7 @@ namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
         {
             if (_buttonPadEvent == null) throw new InvalidOperationException("Cannot send null event");
 
-            VirtualPad.KeyEvent(_buttonPadEvent.Value, isPress);
+            VirtualPad?.KeyEvent(_buttonPadEvent.Value, isPress);
         }
 
         public override string ToString() => $"{nameof(LinuxArtistModePadBinding)}: {Button ?? "<button not set>"}";

@@ -26,7 +26,7 @@ namespace OpenTabletDriver.UX.Tools
                 return string.Empty;
         }
 
-        public static byte[] ToByteArray(string hex)
+        public static byte[]? ToByteArray(string hex)
         {
             var raw = hex.Split(' ');
             byte[] buffer = new byte[raw.Length];

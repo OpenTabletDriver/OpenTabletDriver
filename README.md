@@ -1,10 +1,10 @@
-[![Actions Status](https://github.com/OpenTabletDriver/OpenTabletDriver/workflows/.NET%20Core/badge.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/actions) [![CodeFactor](https://www.codefactor.io/repository/github/OpenTabletDriver/OpenTabletDriver/badge/master)](https://www.codefactor.io/repository/github/OpenTabletDriver/OpenTabletDriver/overview/master) [![Total Download Count](https://img.shields.io/github/downloads/OpenTabletDriver/OpenTabletDriver/total.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/releases/latest)
+[![GitHub Actions Status](https://github.com/OpenTabletDriver/OpenTabletDriver/actions/workflows/dotnet.yml/badge.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/actions/workflows/dotnet.yml) [![Total Download Count](https://img.shields.io/github/downloads/OpenTabletDriver/OpenTabletDriver/total.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/releases/latest)
 
 # OpenTabletDriver
 
 English | [한국어](docs/README_KO.md) | [Español](docs/README_ES.md) | [Русский](docs/README_RU.md) | [简体中文](docs/README_CN.md) | [Français](docs/README_FR.md) | [Deutsch](docs/README_DE.md)
 
-OpenTabletDriver is an open source, cross platform, user mode tablet driver. The goal of OpenTabletDriver is to be cross platform as possible with the highest compatibility in an easily configurable graphical user interface.
+OpenTabletDriver is an open source, cross platform, user mode tablet driver. The goal of OpenTabletDriver is to be as cross platform as possible with the highest compatibility in an easily configurable graphical user interface.
 
 <p align="middle">
   <img src="https://i.imgur.com/XDYf62e.png" width="410" align="middle"/>
@@ -14,7 +14,7 @@ OpenTabletDriver is an open source, cross platform, user mode tablet driver. The
 
 # Supported Tablets
 
-All statuses of tablets that are supported, untested, and planned to be supported can be found here. Common issue workarounds can be found in the wiki for your platform.
+The status of all supported tablets can be seen here.
 
 - [Supported Tablets](https://opentabletdriver.net/Tablets)
 
@@ -75,10 +75,17 @@ installs, as it does not install necessary system files.
 
 You can also run `./build.sh linux` to generate files into `bin/`, but this does not include system files.
 
-#### MacOS [Experimental]
+#### MacOS
 
 A newer version of Bash and Coreutils is required to build OpenTabletDriver. You can install them using Homebrew.
 Run `PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH" $(brew --prefix)/bin/bash ./eng/bash/package.sh -r osx-x64`.
+
+| Package Format | Command |
+| --- | --- |
+| Unsigned Package | `./eng/bash/package.sh --runtime osx-x64 --package macos` |
+| Signed Package | `./eng/bash/package.sh --signed true --runtime osx-x64 --package macos` |
+
+Packaging signed MacOS builds on Linux or Windows requires `rcodesign`.
 
 # Features
 
@@ -86,6 +93,11 @@ Run `PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH" $(brew --prefix)/bin
   - Windows: `Windows Presentation Foundation`
   - Linux: `GTK+3`
   - MacOS: `MonoMac`
+- Multi-tablet support
+  - Handles multiple tablets from a large selection of models and
+    manufacturers, each with its own plugin pipeline and settings
+- Validated tablet specifications, ensuring the smoothest transition if
+  switching tablets
 - Fully fledged console tool
   - Quickly acquire, change, load, or save settings
   - Scripting support (json output)
@@ -95,29 +107,47 @@ Run `PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH" $(brew --prefix)/bin
   - Precise area rotation
 - Relative cursor positioning
   - px/mm horizontal and vertical sensitivity
+- Advanced tablet feature compatibility
+  - Pressure output
+    - Windows: Needs Windows Ink OpenTabletDriver plugin for Windows Ink output
+      mode, and VMulti system driver
+    - Linux: Natively supported with "Linux Artist Mode" output mode
+    - MacOS: Natively supported in all output modes
+  - Pen tilt
+  - Tablet pad wheels/dials
+  - Auxiliary/Express Keys
 - Pen bindings
   - Tip by pressure bindings
-  - Express key bindings
+  - Express ("Aux") key bindings
   - Pen button bindings
   - Mouse button bindings
+  - Wheel bindings
   - Keyboard bindings
+  - Preset bindings
   - External plugin bindings
 - Saving and loading settings
-  - Auto-loads user settings via `settings.json` in the active user `%localappdata%` or `.config` settings root directory.
-- Configuration Editor
-  - Allows you to create, modify, and delete configurations.
-  - Generate configurations from visible HID devices
+  - Persistent settings
+  - Presets for quick-access to prior saved settings
 - Plugins
-  - Filters
+  - Plugin Manager (via
+    [Plugin-Repository](https://github.com/OpenTabletDriver/Plugin-Repository))
+  - Filters, including asynchronous filters (interpolators)
   - Output modes
-  - Tools
+- Device debugging tools
+  - Tablet data analyzer ("Tablet Debugger")
+  - USB Device String readings
+- Automatic version update notification
+  - Can be disabled with `--skipupdate` command line flag
+- Vendor driver area conversions
+  - Supports transforming your Wacom / XP-Pen / Huion / Gaomon / VEIKK area
+- Standalone daemon, for low-spec or headless systems.
 
 # Contributing to OpenTabletDriver
 
 If you wish to contribute to OpenTabletDriver, check out the [issue
 tracker](https://github.com/OpenTabletDriver/OpenTabletDriver/issues). When
 creating pull requests, follow the guidelines outlined in our [contribution
-guidelines](https://github.com/OpenTabletDriver/OpenTabletDriver/blob/master/CONTRIBUTING.md).
+guidelines](CONTRIBUTING.md).
 
 If you have any issues or suggestions, [open an issue
 ticket](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose)
@@ -125,9 +155,7 @@ and fill out the template with relevant information. We welcome both bug
 reports, as well as new tablets to add support for. In many cases adding support
 for a new tablet is quite easy.
 
-For issues and PRs related to OpenTabletDriver's packaging, please see the repository [here](https://github.com/OpenTabletDriver/OpenTabletDriver.Packaging).
-
-For issues and PRs related to OpenTabletDriver's [web page](https://opentabletdriver.net), see the repository [here](https://github.com/OpenTabletDriver/OpenTabletDriver.Web).
+For issues and PRs related to OpenTabletDriver's [web page](https://opentabletdriver.net), see the repository [here](https://github.com/OpenTabletDriver/opentabletdriver.github.io).
 
 ### Supporting a new tablet
 

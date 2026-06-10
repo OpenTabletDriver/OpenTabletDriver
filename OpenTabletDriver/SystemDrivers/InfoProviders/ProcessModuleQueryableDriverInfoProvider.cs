@@ -17,10 +17,10 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
         protected abstract string[] WinProcessNames { get; }
         protected abstract string[] Heuristics { get; }
 
-        private static string pnpUtil;
-        private static string linuxModules;
+        private static string? pnpUtil;
+        private static string? linuxModules;
 
-        public DriverInfo GetDriverInfo()
+        public DriverInfo? GetDriverInfo()
         {
             return SystemInterop.CurrentPlatform switch
             {
@@ -30,8 +30,10 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
             };
         }
 
-        protected virtual DriverInfo GetWinDriverInfo()
+        protected virtual DriverInfo? GetWinDriverInfo()
         {
+            if (pnpUtil == null) throw new InvalidOperationException($"pnpUtil is null. Run {nameof(Refresh)}() first");
+
             IEnumerable<Process> processes;
             var match = Heuristics.Any(name => Regex.IsMatch(pnpUtil, name, RegexOptions.IgnoreCase));
             if (match)
@@ -55,7 +57,7 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
             return null;
         }
 
-        protected virtual DriverInfo GetLinuxDriverInfo()
+        protected virtual DriverInfo? GetLinuxDriverInfo()
         {
             // short circuit if modules aren't filled
             if (string.IsNullOrEmpty(linuxModules))

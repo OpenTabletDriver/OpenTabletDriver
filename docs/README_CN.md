@@ -1,4 +1,4 @@
-[![Actions Status](https://github.com/OpenTabletDriver/OpenTabletDriver/workflows/.NET%20Core/badge.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/actions) [![CodeFactor](https://www.codefactor.io/repository/github/OpenTabletDriver/OpenTabletDriver/badge/master)](https://www.codefactor.io/repository/github/OpenTabletDriver/OpenTabletDriver/overview/master) [![Total Download Count](https://img.shields.io/github/downloads/OpenTabletDriver/OpenTabletDriver/total.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/releases/latest)
+[![GitHub Actions Status](https://github.com/OpenTabletDriver/OpenTabletDriver/actions/workflows/dotnet.yml/badge.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/actions/workflows/dotnet.yml) [![Total Download Count](https://img.shields.io/github/downloads/OpenTabletDriver/OpenTabletDriver/total.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/releases/latest)
 
 # OpenTabletDriver
 
@@ -15,8 +15,7 @@ OpenTabletDriver 是一款开源、跨平台、工作在用户模式（用户态
 
 # 支持的数位板
 
-所有已经被支持的、未测试的、以及计划被支持的数位板都可以在这里被找到。
-如果您的数位板在您的平台上无法正常工作的话可以在Wiki之中寻找一些解决方法。
+所有受支持的数位板都可以在这里看到。
 
 - [数位板支持](https://opentabletdriver.net/Tablets)
 
@@ -74,7 +73,7 @@ OpenTabletDriver 由两个独立进程协同工作：守护进程`OpenTabletDriv
 简易二进制包只能用于在已存在安装的基础上测试新功能，它并不会安装必要系统文件。
 您也可以直接运行 `./build.sh linux` 将文件生成至 `bin/`，但这并不包含系统文件。
 
-#### MacOS [试验性]
+#### MacOS
 
 构建 OpenTabletDriver 需要较新版本的 Bash 和 Coreutils，您可以使用 Homebrew 来安装
 运行 `PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH" $(brew --prefix)/bin/bash ./eng/bash/package.sh -r osx-x64`
@@ -85,6 +84,9 @@ OpenTabletDriver 由两个独立进程协同工作：守护进程`OpenTabletDriv
   - Windows：`Windows Presentation Foundation`
   - Linux：`GTK+3`
   - macOS：`MonoMac`
+- 多数位板支持
+  - 支持来自众多型号和厂商的多款数位板，每款设备均拥有独立的插件处理流程和配置设置
+  - 已验证的数位板规格，确保在更换数位板时实现最顺畅的过渡
 - 完善的命令行工具
   - 快速获取、更改、加载和保存设置
   - 支持脚本（JSON格式）
@@ -94,33 +96,53 @@ OpenTabletDriver 由两个独立进程协同工作：守护进程`OpenTabletDriv
   - 准确的区域旋转
 - 相对定位模式
   - 可独立设置水平与垂直方向的灵敏度（像素/毫米）
+- 数位板高级功能兼容性
+  - 压感输出
+    - Windows： 需要 Windows Ink OpenTabletDriver 插件来支持 Windows Ink 输出模式，以及 VMulti 系统驱动
+    - Linux： 原生支持带有 “Linux Artist Mode” 输出模式
+    - MacOS： 原生支持所有输出模式
+  - 笔尖倾斜
+  - 数位板滚轮 / 旋钮
+  - 辅助按键 / 快捷键
 - 笔绑定
   - 含压感的笔尖绑定
-  - 快捷键绑定
+  - 快捷键（“辅助键”）绑定
   - 笔身按钮绑定
   - 鼠标按键绑定
+  - 滚轮绑定
   - 键盘按键绑定
+  - 预设绑定
   - 扩展插件绑定
 - 保存以及加载设置
-  - 自动加载当前用户的 `%localappdata%` 或者 `.config` 中 `settings.json` 保存的设置
+  - 持久性设置
+  - 预设可快速访问之前保存的设置
 - 配置文件编辑器
   - 允许您创建、修改、以及删除配置文件
   - 从可见的 HID 设备中生成配置文件
 - 插件
-  - 过滤器
+  - 插件管理器 （通过
+    [插件仓库](https://github.com/OpenTabletDriver/Plugin-Repository)）
+  - 过滤器，包括异步过滤器 （如插值器）
   - 输出模式
-  - 工具
+- 设备调试工具
+  - 数位板数据分析器 （“Tablet Debugger”）
+  - USB设备字符串读取
+- 自动更新提示
+  - 您可以通过添加 `--skipupdate` 命令行标志来禁用
+- 供应商驱动区域转换
+  - 支持转换您的 Wacom / XP-Pen / Huion / Gaomon / VEIKK 区域
+- 为低规格或无头系统提供独立的守护进程
 
-# 向OpenTabletDriver贡献
+# 向 OpenTabletDriver 贡献
 
 若您希望为 OpenTabletDriver 做出贡献，请查看[议题追踪器](https://github.com/OpenTabletDriver/OpenTabletDriver/issues)。
-创建拉取请求（PR）时，请遵循我们的 [贡献指南](https://github.com/OpenTabletDriver/OpenTabletDriver/blob/master/CONTRIBUTING.md)。
+创建拉取请求（PR）时，请遵循我们的 [贡献指南](../CONTRIBUTING.md)。
 如果您有任何**问题或建议**，请[创建新议题](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose)，填写模板并附上相关信息。
 我们欢迎bug报告以及添加对新数位板的支持。
 通常，添加对新数位板的支持相当简单。
 
 有关 OpenTabletDriver 包的议题（issue）与拉取请求（PR），请查看[此仓库](https://github.com/OpenTabletDriver/OpenTabletDriver.Packaging)。
-有关 OpenTabletDriver [网页](https://opentabletdriver.net)的议题（issue）与拉取请求（PR），请查看[此仓库](https://github.com/OpenTabletDriver/OpenTabletDriver.Web)。
+有关 OpenTabletDriver [网页](https://opentabletdriver.net)的议题（issue）与拉取请求（PR），请查看[此仓库](https://github.com/OpenTabletDriver/opentabletdriver.github.io)。
 
 ### 添加对新数位板的支持
 
