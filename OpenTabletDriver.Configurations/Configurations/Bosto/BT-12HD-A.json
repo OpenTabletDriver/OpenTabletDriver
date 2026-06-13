@@ -1,0 +1,29 @@
+{
+  "Name": "BOSTO BT-12HD-A",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 256.0,
+      "Height": 145.0,
+      "MaxX": 17918.0,
+      "MaxY": 10228.0
+    },
+    "Pen": {
+      "MaxPressure": 16384,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 3793,
+      "ProductID": 30753,
+      "InputReportLength": 10,
+      "OutputReportLength": 0,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "InitializationStrings": []
+    }
+  ]
+}
