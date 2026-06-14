@@ -2,13 +2,13 @@
   "Name": "Bosto BT-12HD-A",
   "Specifications": {
     "Digitizer": {
-      "Width": 258.0,
-      "Height": 145.0,
+      "Width": 227.5586,
+      "Height": 129.8956,
       "MaxX": 17918.0,
       "MaxY": 10228.0
     },
     "Pen": {
-      "MaxPressure": 16384,
+      "MaxPressure": 8191,
       "ButtonCount": 2
     }
   },
