@@ -70,7 +70,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             return obj;
         }
 
-        public static PluginSettingStore? FromPath(string path)
+        public static PluginSettingStore? FromPath(string? path)
         {
             var pathType = AppInfo.PluginManager.PluginTypes.FirstOrDefault(t => t.FullName == path);
             return pathType != null ? new PluginSettingStore(pathType) : null;
