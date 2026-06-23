@@ -35,7 +35,7 @@ namespace OpenTabletDriver.UX.Controls.Output
             outputModeSelector.SelectedItemBinding.Convert<PluginSettingStore?>(
                 c => PluginSettingStore.FromPath(c?.FullName),
                 v => v?.GetTypeInfo()
-            ).Bind(ProfileBinding.Child(c => c != null ? c.OutputMode : null));
+            ).Bind(ProfileBinding.Child(c => (PluginSettingStore?)c!.OutputMode));
 
             outputModeSelector.SelectedValueChanged += (sender, e) => UpdateOutputMode(Profile?.OutputMode);
 
