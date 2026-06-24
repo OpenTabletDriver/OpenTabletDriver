@@ -118,7 +118,20 @@ The following rules apply to all code contributions:
   - In new classes, initializing fields or properties with `null!` should only
     ever be done if there is no other way to inform the compiler that the value
     won't be null at the end of the constructor.
-  - Suppressing null warnings with `!` should only be used very sparingly.
+  - Suppressing null warnings with `!` is only allowed if any related null
+    reference exceptions will easily be caught via normal developer usage (e.g.
+    starting daemon and GUI and applying existing settings), or if the code is
+    not intended to be used by inexperienced end-users (e.g. benchmarks and tests).
+    - Even then, null-silencing operators should only be used very sparingly, e.g:
+      1. If a helper function is used to check the value for null and
+         `[MemberNotNull]`/`[NotNullWhen]`/similar attributes cannot be used.
+      1. If a preceding code path makes it obvious that the value will never be
+         null (e.g. chained LINQ statements with a `.Where()` clause that
+         checks the value for null)
+      1. Other unaccounted for edge cases (code analysis quirks etc)
+    - Regardless, it is highly recommended to add a comment detailing the need
+      for the null-suppressing operator, if it isn't immediately obvious by the
+        surrounding code why it's being used.
 
 ## Setting up your environment
 
