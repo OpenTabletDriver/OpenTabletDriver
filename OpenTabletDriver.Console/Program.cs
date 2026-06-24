@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.CommandLine;
 using System.IO;
 using System.Threading.Tasks;
-using OpenTabletDriver.Desktop;
 
 namespace OpenTabletDriver.Console
 {
@@ -17,26 +16,6 @@ namespace OpenTabletDriver.Console
         }
 
         private static bool pluginsLoaded;
-
-        public static async Task<bool> EnsureDaemonReady()
-        {
-            if (!Instance.Exists("OpenTabletDriver.Daemon"))
-            {
-                System.Console.WriteLine("OpenTabletDriver Daemon not running");
-                return false;
-            }
-
-            if (!Driver.IsConnected)
-                await Driver.Connect();
-
-            if (!pluginsLoaded)
-            {
-                pluginsLoaded = true;
-                AppInfo.PluginManager.Load();
-            }
-
-            return true;
-        }
 
         private static readonly Lazy<RootCommand> root = new Lazy<RootCommand>(GenerateRoot);
         public static RootCommand Root => root.Value;
