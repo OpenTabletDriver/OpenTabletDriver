@@ -44,7 +44,7 @@ OpenTabletDriver работает в двух процессах, взаимод
 
 ### Все платформы
 
-- .NET 6 SDK
+- .NET 10 SDK
 
 #### Windows
 
