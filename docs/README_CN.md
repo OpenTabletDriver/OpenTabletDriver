@@ -39,7 +39,7 @@ OpenTabletDriver 由两个独立进程协同工作：守护进程`OpenTabletDriv
 
 ### 所有平台
 
-- .NET 8 SDK (点击[这里](https://dotnet.microsoft.com/download/dotnet/8.0)获取 - 需要对应平台的SDK， Linux建议通过包管理器安装)
+- .NET 10 SDK (点击[这里](https://dotnet.microsoft.com/download/dotnet/10.0)获取 - 需要对应平台的SDK， Linux建议通过包管理器安装)
 
 #### Windows
 
