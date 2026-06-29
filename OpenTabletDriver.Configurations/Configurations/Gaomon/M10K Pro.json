@@ -12,8 +12,15 @@
       "ButtonCount": 2
     },
     "AuxiliaryButtons": {
-      "ButtonCount": 10
-    }
+      "ButtonCount": 11
+    },
+    "Wheels": [
+      {
+        "AbsoluteWheelMax": 12,
+        "AngleOfZeroReading": 180.0,
+        "ButtonCount": 0
+      }
+    ]
   },
   "DigitizerIdentifiers": [
     {
