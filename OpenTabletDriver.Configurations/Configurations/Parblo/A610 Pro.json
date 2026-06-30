@@ -12,8 +12,14 @@
       "ButtonCount": 2
     },
     "AuxiliaryButtons": {
-      "ButtonCount": 8
-    }
+      "ButtonCount": 9
+    },
+    "Wheels": [
+      {
+        "RelativeWheelSteps": 24,
+        "ButtonCount": 0
+      }
+    ]
   },
   "DigitizerIdentifiers": [
     {
