@@ -25,6 +25,11 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
         public string? Owner { set; get; }
 
         /// <summary>
+        /// The original creator of the plugin if it differs from the Owner.
+        /// </summary>
+        public string? Creator { set; get; }
+
+        /// <summary>
         /// The plugin's long description.
         /// <para/>
         /// GUI currently expects this property to be filled with something useful in some manner
