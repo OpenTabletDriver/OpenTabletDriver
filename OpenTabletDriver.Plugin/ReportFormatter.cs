@@ -138,6 +138,7 @@ namespace OpenTabletDriver.Plugin
         {
             yield return $"Rotation:{rotationReport.Rotation}";
         }
+
         private static IEnumerable<string> GetStringFormat(ITouchReport touchReport)
         {
             yield return $"Touch data:";
