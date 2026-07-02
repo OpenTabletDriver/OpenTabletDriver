@@ -13,14 +13,21 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 4
-    }
+    },
+    "Wheels": [
+      {
+        "AbsoluteWheelMax": 71,
+        "AngleOfZeroReading": 0.0,
+        "ButtonCount": 0
+      }
+    ]
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 1386,
       "ProductID": 101,
       "InputReportLength": 5,
-      "ReportParser": "OpenTabletDriver.Plugin.Tablet.TabletReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Bamboo.BambooReportParser",
       "FeatureInitReport": [
         "AgI="
       ]
