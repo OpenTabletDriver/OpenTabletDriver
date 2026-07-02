@@ -1,0 +1,43 @@
+{
+  "Name": "Artisul D16",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 345.46,
+      "Height": 194.86,
+      "MaxX": 34546,
+      "MaxY": 19486
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 8
+    },
+    "Wheels": [
+      {
+        "RelativeWheelSteps": 24,
+        "ButtonCount": 0
+      }
+    ]
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 21827,
+      "ProductID": 71,
+      "InputReportLength": 10,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicV1ReportParser",
+      "DeviceStrings": {
+        "6": "^ARTISUL D16$"
+      },
+      "InitializationStrings": [
+        100,
+        200
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1",
+    "Interface": "0"
+  }
+}
