@@ -1,0 +1,36 @@
+{
+  "Name": "Monoprice 21826",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 344.17,
+      "Height": 193.55,
+      "MaxX": 68834,
+      "MaxY": 38710
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 10
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 9580,
+      "ProductID": 110,
+      "InputReportLength": 64,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.GianoReportParser",
+      "DeviceStrings": {
+        "201": "OEM00_M166_\\d{6}$"
+      },
+      "InitializationStrings": [
+        100,
+        200
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
