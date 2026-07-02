@@ -104,6 +104,7 @@ namespace OpenTabletDriver.Tests.ConfigurationTest
                 yield return new(Consts.VERIFIED_LPI_KEY, ConfigurationAttributes.CheckVerifiedLPI);
                 yield return new("FeatureInitDelayMs", ConfigurationAttributes.CheckFeatureInitDelayMs);
                 yield return new("WinUsage", ConfigurationAttributes.CheckWinUsage);
+                yield return new("HidReports", ConfigurationAttributes.CheckHidReports);
             }
         }
 

@@ -61,6 +61,34 @@ namespace OpenTabletDriver.Tests.ConfigurationTest
             /// <returns><c>true</c> if string is a zero-padded string <see cref="uint"/> value that is exactly 2 characters</returns>
             internal static bool CheckWinUsage(string attributeValue) =>
                 uint.TryParse(attributeValue, out _) && attributeValue.Length == 2;
+
+
+            /// <summary>
+            /// Checks if <c>HidReports</c> matches expected format
+            /// </summary>
+            /// <param name="attributeValue">The value of the <c>HidReports</c> key</param>
+            /// <returns><c>true</c> if all HidReport values in string are <c>, </c> separated and follow the format <c>{byte:X2}:{ushort:X4}:{ushort:X4}</c></returns>
+            internal static bool CheckHidReports(string attributeValue)
+            {
+                var splitHidReports = attributeValue.Split(", ");
+                foreach (var hidReport in splitHidReports)
+                {
+                    var splitHidReport = hidReport.Split(":");
+                    if (splitHidReport.Length != 3)
+                        return false;
+
+                    if (splitHidReport[0].Length != 2 || splitHidReport[1].Length != 4 || splitHidReport[2].Length != 4)
+                        return false;
+
+                    if (!byte.TryParse(splitHidReport[0], System.Globalization.NumberStyles.HexNumber, null, out _)
+                        || !ushort.TryParse(splitHidReport[1], System.Globalization.NumberStyles.HexNumber, null, out _)
+                        || !ushort.TryParse(splitHidReport[2], System.Globalization.NumberStyles.HexNumber, null, out _))
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
         }
 
         [Theory, MemberData(nameof(TestData.TestTabletConfigurations), MemberType = typeof(TestData))]
