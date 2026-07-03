@@ -204,7 +204,7 @@
 | XP-Pen Deco Pro MW Gen2            |     Supported     |
 | XP-Pen Deco Pro LW Gen2            |     Supported     |
 | XP-Pen Deco Pro XLW Gen2           |     Supported     |
-| XP-Pen Innovator 16                |  Missing Features | Wheel is not yet supported.
+| XP-Pen Innovator 16                |     Supported     |
 | XP-Pen Star 03                     |     Supported     | Older variants may use the same configuration as the UC-Logic 1060N.
 | XP-Pen Star 03 Pro                 |     Supported     |
 | XP-Pen Star 03 V2                  |     Supported     |
