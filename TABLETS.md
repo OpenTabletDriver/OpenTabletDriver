@@ -204,6 +204,7 @@
 | XP-Pen Deco Pro MW Gen2            |     Supported     |
 | XP-Pen Deco Pro LW Gen2            |     Supported     |
 | XP-Pen Deco Pro XLW Gen2           |     Supported     |
+| XP-Pen Innovator 16                |     Supported     |
 | XP-Pen Star 03                     |     Supported     | Older variants may use the same configuration as the UC-Logic 1060N.
 | XP-Pen Star 03 Pro                 |     Supported     |
 | XP-Pen Star 03 V2                  |     Supported     |
@@ -343,7 +344,6 @@
 | XP-Pen Deco Pro Medium             |  Missing Features | Tilt and wheel are not yet supported.
 | XP-Pen Deco Pro Small              |  Missing Features | Trackpad is not yet supported.
 | XP-Pen Deco Pro SW                 |  Missing Features | Wheel is not yet supported.
-| XP-Pen Innovator 16                |  Missing Features | Wheel is not yet supported.
 | XP-Pen Deco Pro MW                 |  Missing Features | Touch wheel and physical wheel are not yet supported.
 | XP-Pen Star 02                     |  Missing Features | Pen and auxiliary buttons may produce malformed reports. Windows: Requires Zadig's WinUSB to be installed on interface 0.
 | XP-Pen Star 06                     |  Missing Features | Wheel is not yet supported.
