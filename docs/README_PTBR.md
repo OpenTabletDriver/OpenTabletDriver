@@ -2,7 +2,7 @@
 
 # OpenTabletDriver
 
-[English](../README.md) | [한국어](docs/README_KO.md) | [Español](docs/README_ES.md) | [Русский](docs/README_RU.md) | [简体中文](docs/README_CN.md) | [Français](docs/README_FR.md) | [Deutsch](docs/README_DE.md) | Português-BR
+[English](../README.md) | [한국어](README_KO.md) | [Español](README_ES.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | [Français](README_FR.md) | [Deutsch](README_DE.md) | Português-BR
 
 OpenTabletDriver é um programa de código aberto, multi-plataforma, driver de mesas digitalizadoras (tablets) em modo de usuário. O objetivo do OpenTabletDriver é ser compatível em múltiplas plataformas em uma interface gráfica amigável e de fácil utilização para o usuário.
 
@@ -130,8 +130,8 @@ Sem outras dependências.
 Se você deseja contribuir com o OpenTabletDriver, dê uma olhada nas [issues](https://github.com/OpenTabletDriver/OpenTabletDriver/issues). Ao criar Pull Requests, siga as orientações descritas em nossas
 [diretrizes de contribuição](CONTRIBUTING.md).
 
-Se você tiver qualquer problema ou sugestão, [abra uma issue
-](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose)
+Se você tiver qualquer problema ou sugestão,
+[abra uma issue](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose)
 e preencha o modelo com as informações relevantes. Aceitamos tanto relatos de bugs quanto suporte para novos tablets.
 Em muitos casos, adicionar suporte para um novo tablet é bem fácil.
 
@@ -140,7 +140,7 @@ Para issues e PRs relacionados à [página web](https://opentabletdriver.net) do
 ### Adicionando suporte para um novo tablet
 
 Se você quiser que adicionemos suporte para um novo tablet, abra uma issue ou entre no nosso
-[discord](https://discord.gg/9bcMaPkVAR)  pedindo ajuda. Geralmente preferimos que o suporte para novos tablets seja feito via Discord,
+[Discord](https://discord.gg/9bcMaPkVAR)  pedindo ajuda. Geralmente preferimos que o suporte para novos tablets seja feito via Discord,
 devido à necessidade de troca de informações.
 
 Nós pediremos para você fazer algumas coisas,
