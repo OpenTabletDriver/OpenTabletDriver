@@ -268,6 +268,21 @@ namespace OpenTabletDriver.UX.Windows.Tablet
 
             dataRecordingMenuItem.BindDataContext(x => x.Checked, (TDVM vm) => vm.DataRecordingEnabled);
 
+            var openDataRecordingDirectoryMenuItem = new Command
+            {
+                MenuText = "Open recordings directory...",
+            };
+            openDataRecordingDirectoryMenuItem.Executed += (sender, e) => DesktopInterop.OpenFolder(AppInfo.Current.RecordingDirectory);
+
+            ButtonMenuItem recordingTab = new()
+            {
+                Text = "Recording",
+                Visible = true,
+                Items = {
+                    dataRecordingMenuItem,
+                    openDataRecordingDirectoryMenuItem,
+                }
+            };
 
             var visualizerEnabledMenuItem = new CheckMenuItem
             {
@@ -310,7 +325,6 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             {
                 ApplicationItems =
                 {
-                    dataRecordingMenuItem,
                     visualizerEnabledMenuItem,
                     decodingSwitchMenuItem,
                     additionalStatisticsMenuItem,
@@ -321,6 +335,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                 },
                 Items =
                 {
+                    recordingTab,
                     _debuggedTablets,
                     _debuggedReports,
                 },
