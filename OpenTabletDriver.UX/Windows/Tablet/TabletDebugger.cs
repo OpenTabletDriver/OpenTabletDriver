@@ -222,7 +222,8 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                 {
                     >= 1300 => 5,
                     > 1160 => 4,
-                    <= 1160 => 3,
+                    > 1000 => 3,
+                    <= 1000 => 2,
                 };
 
                 if (oldValue == newValue) return;
