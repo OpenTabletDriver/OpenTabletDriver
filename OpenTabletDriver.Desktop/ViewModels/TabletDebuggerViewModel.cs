@@ -266,7 +266,7 @@ public sealed class TabletDebuggerViewModel : ViewModel, IDisposable
         set => RaiseAndSetIfChanged(ref _isVisualizerEnabled, value);
     }
 
-    private bool _showAdditionalStatistics;
+    private bool _showAdditionalStatistics = true;
     public bool ShowAdditionalStatistics
     {
         get => _showAdditionalStatistics;
