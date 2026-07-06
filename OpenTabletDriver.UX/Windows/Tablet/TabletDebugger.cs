@@ -90,7 +90,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                 VerticalContentAlignment = VerticalAlignment.Stretch,
                 Spacing = 5,
                 Padding = 5,
-                MinimumSize = new Size(940, 560),
+                MinimumSize = new Size(1025, 560),
                 Items =
                 {
                     new StackLayoutItem
