@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Desktop.ViewModels;
 using OpenTabletDriver.Desktop.ViewModels.Utility;
@@ -70,6 +72,14 @@ namespace OpenTabletDriver.UX.Windows.Tablet
         {
             if (App.Driver.IsConnected)
                 HandleTabletsChanged(null, App.Driver.Instance.GetTablets().Result);
+
+            var recordingDir = new DirectoryInfo(AppInfo.Current.RecordingDirectory);
+
+            if (!recordingDir.Exists)
+            {
+                recordingDir.Create();
+                Log.Write("TabletDebugger", $"The recording directory '{recordingDir.FullName}' has been created");
+            }
 
             var viewmodel = new TDVM();
             DataContext = viewmodel;

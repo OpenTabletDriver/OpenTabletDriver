@@ -251,7 +251,7 @@ public sealed class TabletDebuggerViewModel : ViewModel, IDisposable
                 ResetStatistics();
 
                 string fileName = "tablet-data_" + DateTimeOffset.UtcNow.ToUnixTimeSeconds() + ".txt";
-                _tabletRecordingFileStream = File.OpenWrite(Path.Join(AppInfo.Current.AppDataDirectory, fileName));
+                _tabletRecordingFileStream = File.OpenWrite(Path.Join(AppInfo.Current.RecordingDirectory, fileName));
                 _tabletRecordingStreamWriter = new StreamWriter(_tabletRecordingFileStream);
             }
             else
