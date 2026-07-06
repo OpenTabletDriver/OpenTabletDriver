@@ -19,7 +19,8 @@ namespace OpenTabletDriver.Desktop
             temporaryDirectory,
             cacheDirectory,
             backupDirectory,
-            trashDirectory;
+            trashDirectory,
+            recordingDirectory;
 
         public AppInfo()
         {
@@ -129,6 +130,13 @@ namespace OpenTabletDriver.Desktop
             get => this.trashDirectory ?? GetDefaultTrashDirectory();
         }
 
+        [AllowNull]
+        public string RecordingDirectory
+        {
+            set => this.recordingDirectory = value;
+            get => this.recordingDirectory ?? GetDefaultRecordingDirectory();
+        }
+
         public static string ProgramDirectory => AppContext.BaseDirectory;
 
         private string GetDefaultConfigurationDirectory() => GetExistingPathOrLast(
@@ -145,6 +153,7 @@ namespace OpenTabletDriver.Desktop
         private string GetDefaultCacheDirectory() => Path.Join(AppDataDirectory, "Cache");
         private string GetDefaultBackupDirectory() => Path.Join(AppDataDirectory, "Backup");
         private string GetDefaultTrashDirectory() => Path.Join(AppDataDirectory, "Trash");
+        private string GetDefaultRecordingDirectory() => Path.Join(AppDataDirectory, "Recording");
 
         private static bool IsEnvVarUnset(string envVar) =>
             string.IsNullOrEmpty(Environment.GetEnvironmentVariable(envVar));
