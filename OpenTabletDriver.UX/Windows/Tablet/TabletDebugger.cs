@@ -327,8 +327,8 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                 ApplicationItems =
                 {
                     visualizerEnabledMenuItem,
-                    decodingSwitchMenuItem,
                     additionalStatisticsMenuItem,
+                    decodingSwitchMenuItem,
                 },
                 QuitItem = new ButtonMenuItem((_, _) => Application.Instance.AsyncInvoke(Close))
                 {
