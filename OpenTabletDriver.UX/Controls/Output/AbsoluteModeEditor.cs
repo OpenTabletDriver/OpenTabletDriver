@@ -295,17 +295,10 @@ namespace OpenTabletDriver.UX.Controls.Output
 
                 var subMenu = base.ContextMenu.Items.GetSubmenu("Set to display");
 
-                var displays = DesktopInterop.VirtualScreen?.Displays.ToArray()
+                var virtualScreen = DesktopInterop.VirtualScreen
                     ?? throw new InvalidOperationException("Could not get VirtualScreen");
 
-                // account for monitor layouts with negative offsets (e.g. Wayland supports this)
-                // skip IVirtualScreen's as these tend to be normalized to 0,0, which may confuse these methods
-                float xOffset = displays.Where(d => d is not IVirtualScreen).MinBy(d => d.Position.X)?.Position.X
-                    ?? throw new InvalidOperationException("Unable to look up X offset");
-                float yOffset = displays.Where(d => d is not IVirtualScreen).MinBy(d => d.Position.Y)?.Position.Y
-                    ?? throw new InvalidOperationException("Unable to look up Y offset");
-
-                foreach (var display in displays)
+                foreach (var display in virtualScreen.Displays)
                 {
                     subMenu.Items.Add(
                         new ActionCommand
@@ -316,23 +309,40 @@ namespace OpenTabletDriver.UX.Controls.Output
                                 if (this.Area == null)
                                     throw new InvalidOperationException("Area null, somehow?");
 
+                                var center = GetDisplayAreaCenter(display, virtualScreen);
+
                                 this.Area.Width = display.Width;
                                 this.Area.Height = display.Height;
-                                if (display is IVirtualScreen virtualScreen)
-                                {
-                                    this.Area.X = virtualScreen.Width / 2;
-                                    this.Area.Y = virtualScreen.Height / 2;
-                                }
-                                else
-                                {
-                                    virtualScreen = DesktopInterop.VirtualScreen;
-                                    this.Area.X = display.Position.X - xOffset + virtualScreen.Position.X + (display.Width / 2);
-                                    this.Area.Y = display.Position.Y - yOffset + virtualScreen.Position.Y + (display.Height / 2);
-                                }
+
+                                this.Area.X = center.X;
+                                this.Area.Y = center.Y;
                             }
                         }
                     );
                 }
+            }
+
+            internal static Vector2 GetDisplayAreaCenter(IDisplay display, IVirtualScreen virtualScreen)
+            {
+                if (display is IVirtualScreen)
+                    return new Vector2(virtualScreen.Width / 2, virtualScreen.Height / 2);
+
+                // area coordinates are relative to the virtual screen's top left corner, so
+                // normalize by the minimum display position. This handles platform differences
+                // in one step: Windows/X11 report positions relative to the primary display
+                // (negative for displays left of/above it), Wayland may report negative logical
+                // coordinates, and MacOS reports already-normalized positions.
+                // Skip IVirtualScreen's as these tend to be normalized to 0,0, which may confuse these methods
+                var displays = virtualScreen.Displays.Where(d => d is not IVirtualScreen).ToArray();
+
+                float xOffset = displays.MinBy(d => d.Position.X)?.Position.X
+                    ?? throw new InvalidOperationException("Unable to look up X offset");
+                float yOffset = displays.MinBy(d => d.Position.Y)?.Position.Y
+                    ?? throw new InvalidOperationException("Unable to look up Y offset");
+
+                return new Vector2(
+                    display.Position.X - xOffset + (display.Width / 2),
+                    display.Position.Y - yOffset + (display.Height / 2));
             }
         }
 
