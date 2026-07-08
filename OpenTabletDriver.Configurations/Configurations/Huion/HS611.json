@@ -64,6 +64,22 @@
       "Attributes": {
         "Interface": "2"
       }
+    },
+    {
+      "VendorID": 9580,
+      "ProductID": 109,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.HS611MediaAuxReportParser",
+      "Attributes": {
+        "Interface": "1"
+      }
+    },
+    {
+      "VendorID": 9580,
+      "ProductID": 111,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.HS611MediaAuxReportParser",
+      "Attributes": {
+        "Interface": "1"
+      }
     }
   ],
   "Attributes": {
