@@ -34,6 +34,8 @@ namespace OpenTabletDriver
         public ImmutableArray<InputDeviceTree> InputDevices => _inputDeviceTrees;
         public IEnumerable<TabletReference> Tablets => InputDevices.Select(c => c.CreateReference());
 
+        private Dictionary<IDeviceEndpoint, Dictionary<byte, string>> DeviceStringCache = [];
+
         public IReportParser<IDeviceReport> GetReportParser(DeviceIdentifier identifier)
         {
             return _reportParserProvider.GetReportParser(identifier.ReportParser);
@@ -49,6 +51,8 @@ namespace OpenTabletDriver
         {
             lock (_detectSync)
             {
+                DeviceStringCache = []; // reset cache on redetect
+
                 bool success = false;
 
                 Log.Write("Detect", "Searching for tablets...");
@@ -176,24 +180,32 @@ namespace OpenTabletDriver
                    where identifier.InputReportLength == null || identifier.InputReportLength == device.InputReportLength
                    where identifier.OutputReportLength == null || identifier.OutputReportLength == device.OutputReportLength
                    where identifier.FeatureReportLength == null || identifier.FeatureReportLength == device.FeatureReportLength
-                   where DeviceMatchesStrings(device, identifier.DeviceStrings)
+                   where DeviceMatchesStrings(device, identifier.DeviceStrings, DeviceStringCache)
                    where DeviceMatchesAttribute(device, identifier.Attributes, configuration.Attributes)
                    select device;
         }
 
-        private static bool DeviceMatchesStrings(IDeviceEndpoint device, Dictionary<byte, string>? deviceStrings)
+        private static bool DeviceMatchesStrings(IDeviceEndpoint device, Dictionary<byte, string>? deviceStrings, Dictionary<IDeviceEndpoint, Dictionary<byte, string>> stringCache)
         {
             if (deviceStrings == null || deviceStrings.Count == 0)
                 return true;
 
+            // Iterate through each device string, if one doesn't match then its the wrong configuration.
             foreach (var matchQuery in deviceStrings)
             {
                 try
                 {
-                    // Iterate through each device string, if one doesn't match then its the wrong configuration.
-                    var input = device.GetDeviceString(matchQuery.Key) ?? throw new IOException($"Unable to look up string index {matchQuery.Key}");
+                    string? deviceString = null;
+                    if (stringCache.TryGetValue(device, out var deviceCachedStrings) && deviceCachedStrings.TryGetValue(matchQuery.Key, out var cacheDeviceString))
+                        deviceString = cacheDeviceString;
+
+                    deviceString ??= device.GetDeviceString(matchQuery.Key) ?? throw new IOException($"Unable to look up string index {matchQuery.Key}");
+
+                    if (!stringCache.TryAdd(device, new Dictionary<byte, string>{{matchQuery.Key, deviceString}}))
+                        stringCache[device].TryAdd(matchQuery.Key, deviceString);
+
                     var pattern = matchQuery.Value;
-                    if (!Regex.IsMatch(input, pattern))
+                    if (!Regex.IsMatch(deviceString, pattern))
                         return false;
                 }
                 catch (Exception ex)
