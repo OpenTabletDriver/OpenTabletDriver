@@ -196,17 +196,14 @@ namespace OpenTabletDriver
                 try
                 {
                     string? deviceString = null;
-                    if (stringCache.TryGetValue(device, out var deviceCachedStrings))
+                    if (stringCache.TryGetValue(device, out var deviceCachedStrings) && deviceCachedStrings.TryGetValue(matchQuery.Key, out var cacheDeviceString))
                     {
-                        if (deviceCachedStrings.TryGetValue(matchQuery.Key, out var cacheDeviceString))
+                        if (cacheDeviceString == null)
                         {
-                            if (cacheDeviceString == null)
-                            {
-                                Log.Write("Detect", $"Cached null string for index {matchQuery.Key}, skipping", LogLevel.Debug);
-                                return false;
-                            }
-                            deviceString = cacheDeviceString;
+                            Log.Write("Detect", $"Cached null for index {matchQuery.Key}, skipping", LogLevel.Debug);
+                            return false;
                         }
+                        deviceString = cacheDeviceString;
                     }
 
                     deviceString ??= device.GetDeviceString(matchQuery.Key);
