@@ -34,7 +34,7 @@ namespace OpenTabletDriver
         public ImmutableArray<InputDeviceTree> InputDevices => _inputDeviceTrees;
         public IEnumerable<TabletReference> Tablets => InputDevices.Select(c => c.CreateReference());
 
-        private Dictionary<IDeviceEndpoint, Dictionary<byte, string>> DeviceStringCache = [];
+        private Dictionary<IDeviceEndpoint, Dictionary<byte, string?>> DeviceStringCache = [];
 
         public IReportParser<IDeviceReport> GetReportParser(DeviceIdentifier identifier)
         {
@@ -185,7 +185,7 @@ namespace OpenTabletDriver
                    select device;
         }
 
-        private static bool DeviceMatchesStrings(IDeviceEndpoint device, Dictionary<byte, string>? deviceStrings, Dictionary<IDeviceEndpoint, Dictionary<byte, string>> stringCache)
+        private static bool DeviceMatchesStrings(IDeviceEndpoint device, Dictionary<byte, string>? deviceStrings, Dictionary<IDeviceEndpoint, Dictionary<byte, string?>> stringCache)
         {
             if (deviceStrings == null || deviceStrings.Count == 0)
                 return true;
@@ -196,13 +196,27 @@ namespace OpenTabletDriver
                 try
                 {
                     string? deviceString = null;
-                    if (stringCache.TryGetValue(device, out var deviceCachedStrings) && deviceCachedStrings.TryGetValue(matchQuery.Key, out var cacheDeviceString))
-                        deviceString = cacheDeviceString;
+                    if (stringCache.TryGetValue(device, out var deviceCachedStrings))
+                    {
+                        if (deviceCachedStrings.TryGetValue(matchQuery.Key, out var cacheDeviceString))
+                        {
+                            if (cacheDeviceString == null)
+                            {
+                                Log.Write("Detect", $"Cached null string for index {matchQuery.Key}, skipping", LogLevel.Debug);
+                                return false;
+                            }
+                            deviceString = cacheDeviceString;
+                        }
+                    }
 
-                    deviceString ??= device.GetDeviceString(matchQuery.Key) ?? throw new IOException($"Unable to look up string index {matchQuery.Key}");
+                    deviceString ??= device.GetDeviceString(matchQuery.Key);
 
-                    if (!stringCache.TryAdd(device, new Dictionary<byte, string>{{matchQuery.Key, deviceString}}))
+                    if (!stringCache.TryAdd(device, new Dictionary<byte, string?>{{matchQuery.Key, deviceString}}))
                         stringCache[device].TryAdd(matchQuery.Key, deviceString);
+
+                    // nullcheck after cache update to ensure nulls are cached
+                    if (deviceString == null)
+                        throw new IOException($"Unable to look up string index {matchQuery.Key}");
 
                     var pattern = matchQuery.Value;
                     if (!Regex.IsMatch(deviceString, pattern))
