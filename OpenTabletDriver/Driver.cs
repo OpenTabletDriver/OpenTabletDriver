@@ -211,7 +211,7 @@ namespace OpenTabletDriver
 
                     deviceString ??= device.GetDeviceString(matchQuery.Key);
 
-                    if (!stringCache.TryAdd(device, new Dictionary<byte, string?>{{matchQuery.Key, deviceString}}))
+                    if (!stringCache.TryAdd(device, new Dictionary<byte, string?> { { matchQuery.Key, deviceString } }))
                         stringCache[device].TryAdd(matchQuery.Key, deviceString);
 
                     // nullcheck after cache update to ensure nulls are cached
