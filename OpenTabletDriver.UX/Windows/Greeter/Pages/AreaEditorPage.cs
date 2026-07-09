@@ -19,7 +19,7 @@ namespace OpenTabletDriver.UX.Windows.Greeter.Pages
                     Expand = true,
                     Control = new Group
                     {
-                        Text = "Demo Area Editor",
+                        Text = Strings.DemoAreaEditor,
                         Content = new RotationAreaEditor
                         {
                             Area = new AreaSettings

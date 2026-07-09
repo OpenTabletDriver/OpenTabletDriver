@@ -29,7 +29,7 @@ namespace OpenTabletDriver.UX.Controls.Output
                         Expand = true,
                         Control = new Group
                         {
-                            Text = "Display",
+                            Text = Strings.Display,
                             Content = displayAreaEditor = new DisplayAreaEditor
                             {
                                 InvalidForegroundError = "Invalid display area.",
@@ -42,7 +42,7 @@ namespace OpenTabletDriver.UX.Controls.Output
                         Expand = true,
                         Control = new Group
                         {
-                            Text = "Tablet",
+                            Text = Strings.Tablet,
                             Content = tabletAreaEditor = new TabletAreaEditor
                             {
                                 InvalidForegroundError = "Invalid tablet area.",
@@ -284,7 +284,7 @@ namespace OpenTabletDriver.UX.Controls.Output
         {
             public DisplayAreaEditor()
             {
-                this.ToolTip = "You can right click the area editor to set the area to a display, adjust alignment, or resize the area.";
+                this.ToolTip = Strings.Youcanrightclicktheareaeditortosettheareatoadisplayadjustalignmentorresizethearea;
             }
 
             protected override void CreateMenu()
@@ -340,7 +340,7 @@ namespace OpenTabletDriver.UX.Controls.Output
         {
             public TabletAreaEditor()
             {
-                this.ToolTip = "You can right click the area editor to enable aspect ratio locking, adjust alignment, or resize the area.";
+                this.ToolTip = Strings.Youcanrightclicktheareaeditortoenableaspectratiolockingadjustalignmentorresizethearea;
             }
 
             private BooleanCommand? lockArCmd, areaClippingCmd, ignoreOutsideAreaCmd;
@@ -434,17 +434,17 @@ namespace OpenTabletDriver.UX.Controls.Output
 
                 lockArCmd = new BooleanCommand
                 {
-                    MenuText = "Lock aspect ratio"
+                    MenuText = Strings.Lockaspectratio
                 };
 
                 areaClippingCmd = new BooleanCommand
                 {
-                    MenuText = "Clamp input outside area"
+                    MenuText = Strings.Clampinputoutsidearea
                 };
 
                 ignoreOutsideAreaCmd = new BooleanCommand
                 {
-                    MenuText = "Ignore input outside area"
+                    MenuText = Strings.Ignoreinputoutsidearea
                 };
 
                 base.ContextMenu.Items.AddRange(
@@ -461,7 +461,7 @@ namespace OpenTabletDriver.UX.Controls.Output
                 base.ContextMenu.Items.Add(
                     new ActionCommand
                     {
-                        MenuText = "Convert area...",
+                        MenuText = Strings.Convertarea,
                         Action = async () => await ConvertAreaDialog()
                     }
                 );

@@ -12,7 +12,7 @@ namespace OpenTabletDriver.UX.Windows.Bindings
     {
         public AdvancedBindingEditorDialog(PluginSettingStore? currentBinding = null)
         {
-            Title = "Advanced Binding Editor";
+            Title = Strings.AdvancedBindingEditor;
             Result = currentBinding;
             Padding = 5;
 
@@ -33,7 +33,7 @@ namespace OpenTabletDriver.UX.Windows.Bindings
                             {
                                 new Group
                                 {
-                                    Text = "Type",
+                                    Text = Strings.Type,
                                     Content = bindingTypeDropDown = new TypeDropDown<IBinding>()
                                 },
                                 settingStoreEditor
@@ -53,7 +53,7 @@ namespace OpenTabletDriver.UX.Windows.Bindings
                                     Expand = true,
                                     Control = new Button(ClearBinding)
                                     {
-                                        Text = "Clear"
+                                        Text = Strings.Clear
                                     }
                                 },
                                 new StackLayoutItem
@@ -61,7 +61,7 @@ namespace OpenTabletDriver.UX.Windows.Bindings
                                     Expand = true,
                                     Control = new Button(ApplyBinding)
                                     {
-                                        Text = "Apply"
+                                        Text = Strings.Apply
                                     }
                                 }
                             }

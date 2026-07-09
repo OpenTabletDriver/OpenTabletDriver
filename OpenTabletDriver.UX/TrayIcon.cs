@@ -74,7 +74,7 @@ namespace OpenTabletDriver.UX
         {
             var showWindow = new ButtonMenuItem
             {
-                Text = "Show Window"
+                Text = Strings.ShowWindow
             };
             showWindow.Click += (sender, e) =>
             {
@@ -84,18 +84,18 @@ namespace OpenTabletDriver.UX
 
             var close = new ButtonMenuItem
             {
-                Text = "Close"
+                Text = Strings.Close
             };
             close.Click += (sender, e) => window.Close();
 
             if (DesktopInterop.CurrentPlatform == PluginPlatform.MacOS)
             {
                 // It's more idiomatic for macOS to include the name here
-                showWindow.Text = "Show OpenTabletDriver";
+                showWindow.Text = Strings.ShowOpenTabletDriver;
 
                 // Applications on macOS will keep running even after closing all their windows
                 // Offering a way to quit the app here is more idiomatic
-                close.Text = "Quit";
+                close.Text = Strings.Quit;
                 close.Click += (sender, e) => Application.Instance.Quit();
             }
 
@@ -130,7 +130,7 @@ namespace OpenTabletDriver.UX
                 {
                     foreach (var item in fileMenu.Items)
                     {
-                        if (item.Text == "Close" || item.Text == "Presets")
+                        if (item.Text == Strings.Close || item.Text == Strings.Presets)
                             continue;
 
                         items.Add(CloneMenuItem(item));
@@ -142,7 +142,7 @@ namespace OpenTabletDriver.UX
                 if (tabletsMenu != null)
                     items.Add(CloneMenuItem(tabletsMenu));
 
-                var pluginsMenu = window.Menu.Items.GetSubmenu("Plugins");
+                var pluginsMenu = window.Menu.Items.GetSubmenu(Strings.Plugins);
                 if (pluginsMenu != null)
                     items.Add(CloneMenuItem(pluginsMenu));
 

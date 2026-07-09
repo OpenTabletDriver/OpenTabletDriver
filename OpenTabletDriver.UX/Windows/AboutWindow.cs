@@ -36,7 +36,7 @@ namespace OpenTabletDriver.UX.Windows
         public AboutWindow()
             : base(Application.Instance.MainForm)
         {
-            Title = "About OpenTabletDriver";
+            Title = Strings.AboutOpenTabletDriver;
 
             _tabControl = new TabControl();
 
@@ -83,16 +83,16 @@ namespace OpenTabletDriver.UX.Windows
                     },
                     new Label
                     {
-                        Text = "Open source, cross-platform tablet configurator",
+                        Text = Strings.Opensourcecrossplatformtabletconfigurator,
                     },
                     new LinkButton
                     {
-                        Text = "OpenTabletDriver Github Repository",
+                        Text = Strings.OpenTabletDriverGithubRepository,
                         Command = new Command((_, _) => Application.Instance.Open(App.Website.ToString())),
                     },
                     new CommandLabel
                     {
-                        Text = "In memory of jamesbt365",
+                        Text = Strings.Inmemoryofjamesbt365,
                         Command = new Command((_, _) => ShowMemoriamTab()),
                     },
                 }
@@ -128,7 +128,7 @@ namespace OpenTabletDriver.UX.Windows
                 $"OpenTabletDriver v{App.Version} Credits",
                 creditsTabContentControl);
 
-            return new TabPage(creditsTabContent) { Text = "Credits" };
+            return new TabPage(creditsTabContent) { Text = Strings.Credits };
         }
 
         private static TabPage GenerateLicenseTabPage()
@@ -152,7 +152,7 @@ namespace OpenTabletDriver.UX.Windows
                 $"OpenTabletDriver v{App.Version} License",
                 licenseTabContentControl);
 
-            return new TabPage(licenseTabContent) { Text = "License" };
+            return new TabPage(licenseTabContent) { Text = Strings.License };
         }
 
         private static TabPage GenerateMemoriamTabPage()
@@ -175,7 +175,7 @@ namespace OpenTabletDriver.UX.Windows
                 "In Memory of James",
                 memoriamTabContentControl);
 
-            return new TabPage(memoriamTabContent) { Text = "Memoriam" };
+            return new TabPage(memoriamTabContent) { Text = Strings.Memoriam };
         }
 
         #endregion Tab Pages
@@ -183,7 +183,7 @@ namespace OpenTabletDriver.UX.Windows
         private void ShowMemoriamTab()
         {
             Debug.Assert(_memoriamTabPage != null);
-            if (!_tabControl.Pages.Any((x) => x.Text == "Memoriam"))
+            if (!_tabControl.Pages.Any((x) => x.Text == Strings.Memoriam))
             {
                 _tabControl.Pages.Add(_memoriamTabPage);
             }

@@ -17,13 +17,13 @@ namespace OpenTabletDriver.UX.Windows
         public DeviceStringReader()
             : base(Application.Instance.MainForm)
         {
-            this.Title = "Device String Reader";
+            this.Title = Strings.DeviceStringReader;
             this.Icon = App.Logo.WithSize(App.Logo.Size);
             this.ClientSize = new Size(400, 410);
 
             var sendRequestButton = new Button
             {
-                Text = "Send Request",
+                Text = Strings.SendRequest,
             };
 
             sendRequestButton.Click += async (_, _) => await SendRequestWithTimeout(stringIndexText.Text,
@@ -34,7 +34,7 @@ namespace OpenTabletDriver.UX.Windows
 
             var sendRequestAllStringsButton = new Button
             {
-                Text = "Dump All"
+                Text = Strings.DumpAll
             };
 
             sendRequestAllStringsButton.Click += SendRequestAllStrings;
@@ -52,7 +52,7 @@ namespace OpenTabletDriver.UX.Windows
                 {
                     new Label
                     {
-                        Text = "WARNING\nArbitrary use of this tool may cause damage or disrupt usage of your tablet",
+                        Text = Strings.WARNINGnArbitraryuseofthistoolmaycausedamageordisruptusageofyourtablet,
                         Font = SystemFonts.Bold(),
                         TextAlignment = TextAlignment.Center,
                         Wrap = WrapMode.Word,
@@ -186,7 +186,7 @@ namespace OpenTabletDriver.UX.Windows
                     () => stringDump.AppendLine($"{StringIndex} {i}: {{ OTD: {OperationTimedOut} }}")
                 );
 
-                // If user pressed "Cancel" return immediately
+                // If user pressed Strings.Cancel return immediately
                 if (!shouldRead)
                     return;
             }
@@ -284,22 +284,22 @@ namespace OpenTabletDriver.UX.Windows
 
         private readonly TextBox deviceStringText = new()
         {
-            PlaceholderText = "Device String",
+            PlaceholderText = Strings.DeviceString,
             ReadOnly = true
         };
 
         private readonly CheckBox requireReconnect = new()
         {
-            Text = "Require reconnect on fail",
+            Text = Strings.Requirereconnectonfail,
             Checked = false,
-            ToolTip = "Pauses string dump with a pop-up box if any string dump errors occur",
+            ToolTip = Strings.Pausesstringdumpwithapopupboxifanystringdumperrorsoccur,
         };
 
         private readonly CheckBox requestDangerous = new()
         {
-            Text = "Dump potentially dangerous strings",
+            Text = Strings.Dumppotentiallydangerousstrings,
             Checked = false,
-            ToolTip = "Requests all strings in a string dump even if they are known to likely damage or disrupt usage of the tablet",
+            ToolTip = Strings.Requestsallstringsinastringdumpeveniftheyareknowntolikelydamageordisruptusageofthetablet,
         };
     }
 }

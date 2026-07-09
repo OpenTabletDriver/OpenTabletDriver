@@ -41,12 +41,12 @@ namespace OpenTabletDriver.UX
 
             saveButton = new Button(async (s, e) => await SaveSettings())
             {
-                Text = "Save"
+                Text = Strings.Save
             };
 
             applyButton = new Button(async (s, e) => await ApplySettings())
             {
-                Text = "Apply"
+                Text = Strings.Apply
             };
 
             App.Driver.Connected += HandleDaemonConnected;
@@ -109,7 +109,7 @@ namespace OpenTabletDriver.UX
         private readonly MenuBar fullMenu;
         private readonly Placeholder placeholder = new()
         {
-            Text = "Connecting to OpenTabletDriver Daemon...",
+            Text = Strings.ConnectingtoOpenTabletDriverDaemon,
         };
 
         private TrayIcon? trayIcon;
@@ -213,13 +213,13 @@ namespace OpenTabletDriver.UX
 
         private static MenuBar ConstructLimitedMenu()
         {
-            var quitCommand = new Command { MenuText = "Quit", Shortcut = Application.Instance.CommonModifier | Keys.Q };
+            var quitCommand = new Command { MenuText = Strings.Quit, Shortcut = Application.Instance.CommonModifier | Keys.Q };
             quitCommand.Executed += (sender, e) => Application.Instance.Quit();
 
-            var aboutCommand = new Command { MenuText = "About...", Shortcut = Keys.F1 };
+            var aboutCommand = new Command { MenuText = Strings.About, Shortcut = Keys.F1 };
             aboutCommand.Executed += (sender, e) => App.Current.AboutWindow.Show();
 
-            var wikiUrl = new Command { MenuText = "Open Wiki..." };
+            var wikiUrl = new Command { MenuText = Strings.OpenWiki };
             wikiUrl.Executed += (sender, e) => DesktopInterop.Open(App.WikiUrl);
 
             var menuBar = new MenuBar
@@ -228,7 +228,7 @@ namespace OpenTabletDriver.UX
                 {
                     new ButtonMenuItem
                     {
-                        Text = "&Help",
+                        Text = Strings.Help,
                         Items =
                         {
                             wikiUrl,
@@ -244,58 +244,58 @@ namespace OpenTabletDriver.UX
 
         private MenuBar ConstructMenu()
         {
-            var quitCommand = new Command { MenuText = "Quit", Shortcut = Application.Instance.CommonModifier | Keys.Q };
+            var quitCommand = new Command { MenuText = Strings.Quit, Shortcut = Application.Instance.CommonModifier | Keys.Q };
             quitCommand.Executed += (sender, e) => Application.Instance.Quit();
 
-            var aboutCommand = new Command { MenuText = "About...", Shortcut = Keys.F1 };
+            var aboutCommand = new Command { MenuText = Strings.About, Shortcut = Keys.F1 };
             aboutCommand.Executed += (sender, e) => App.Current.AboutWindow.Show();
 
-            var resetSettings = new Command { MenuText = "Reset to defaults" };
+            var resetSettings = new Command { MenuText = Strings.Resettodefaults };
             resetSettings.Executed += async (sender, e) => await ResetSettingsDialog();
 
-            var loadSettings = new Command { MenuText = "Load settings...", Shortcut = Application.Instance.CommonModifier | Keys.O };
+            var loadSettings = new Command { MenuText = Strings.Loadsettings, Shortcut = Application.Instance.CommonModifier | Keys.O };
             loadSettings.Executed += async (sender, e) => await LoadSettingsDialog();
 
-            var saveSettingsAs = new Command { MenuText = "Save settings as...", Shortcut = Application.Instance.CommonModifier | Keys.Shift | Keys.S };
+            var saveSettingsAs = new Command { MenuText = Strings.Savesettingsas, Shortcut = Application.Instance.CommonModifier | Keys.Shift | Keys.S };
             saveSettingsAs.Executed += async (sender, e) => await SaveSettingsDialog();
 
-            var saveSettings = new Command { MenuText = "Save settings", Shortcut = Application.Instance.CommonModifier | Keys.S };
+            var saveSettings = new Command { MenuText = Strings.Savesettings, Shortcut = Application.Instance.CommonModifier | Keys.S };
             saveSettings.Executed += async (sender, e) => await SaveSettings();
 
-            var applySettings = new Command { MenuText = "Apply settings", Shortcut = Application.Instance.CommonModifier | Keys.Enter };
+            var applySettings = new Command { MenuText = Strings.Applysettings, Shortcut = Application.Instance.CommonModifier | Keys.Enter };
             applySettings.Executed += async (sender, e) => await ApplySettings();
 
-            var refreshPresets = new Command { MenuText = "Refresh presets" };
+            var refreshPresets = new Command { MenuText = Strings.Refreshpresets };
             refreshPresets.Executed += async (sender, e) => await RefreshPresets();
 
-            var savePreset = new Command { MenuText = "Save as preset..." };
+            var savePreset = new Command { MenuText = Strings.Saveaspreset };
             savePreset.Executed += async (sender, e) => await SavePresetDialog();
 
-            var detectTablet = new Command { MenuText = "Detect tablet", Shortcut = Application.Instance.CommonModifier | Keys.D };
+            var detectTablet = new Command { MenuText = Strings.Detecttablet, Shortcut = Application.Instance.CommonModifier | Keys.D };
             detectTablet.Executed += async (sender, e) => await DetectTablet();
 
-            var showTabletDebugger = new Command { MenuText = "Tablet debugger..." };
+            var showTabletDebugger = new Command { MenuText = Strings.Tabletdebugger };
             showTabletDebugger.Executed += (sender, e) => App.Current.DebuggerWindow.Show();
 
             var deviceStringReader = new Command { MenuText = "Device string reader..." };
             deviceStringReader.Executed += (sender, e) => App.Current.StringReaderWindow.Show();
 
-            var pluginManager = new Command { MenuText = "Open Plugin Manager..." };
+            var pluginManager = new Command { MenuText = Strings.OpenPluginManager_1 };
             pluginManager.Executed += (sender, e) => App.Current.PluginManagerWindow.Show();
 
-            var wikiUrl = new Command { MenuText = "Open Wiki..." };
+            var wikiUrl = new Command { MenuText = Strings.OpenWiki };
             wikiUrl.Executed += (sender, e) => DesktopInterop.Open(App.WikiUrl);
 
-            var showGuide = new Command { MenuText = "Show guide..." };
+            var showGuide = new Command { MenuText = Strings.Showguide };
             showGuide.Executed += (sender, e) => App.Current.StartupGreeterWindow.Show();
 
-            var exportDiagnostics = new Command { MenuText = "Export diagnostics..." };
+            var exportDiagnostics = new Command { MenuText = Strings.Exportdiagnostics };
             exportDiagnostics.Executed += async (sender, e) => await ExportDiagnostics();
 
-            var exportDiagnosticsToClipboard = new Command { MenuText = "Export diagnostics to Clipboard..." };
+            var exportDiagnosticsToClipboard = new Command { MenuText = Strings.ExportdiagnosticstoClipboard };
             exportDiagnosticsToClipboard.Executed += async (sender, e) => await ExportDiagnosticsToClipboard();
 
-            var updater = new Command { MenuText = "Check for updates..." };
+            var updater = new Command { MenuText = Strings.Checkforupdates };
             updater.Executed += (sender, e) => App.Current.UpdaterWindow.Show();
 
             var menuBar = new MenuBar
@@ -305,7 +305,7 @@ namespace OpenTabletDriver.UX
                     // File submenu
                     new ButtonMenuItem
                     {
-                        Text = "&File",
+                        Text = Strings.File,
                         Items =
                         {
                             loadSettings,
@@ -318,12 +318,12 @@ namespace OpenTabletDriver.UX
                             savePreset,
                             new ButtonMenuItem
                             {
-                                Text = "Presets",
+                                Text = Strings.Presets,
                                 Items =
                                 {
                                     new ButtonMenuItem
                                     {
-                                        Text = "No presets loaded",
+                                        Text = Strings.Nopresetsloaded,
                                         Enabled = false
                                     }
                                 }
@@ -333,7 +333,7 @@ namespace OpenTabletDriver.UX
                     // Tablets submenu
                     new ButtonMenuItem
                     {
-                        Text = "Tablets",
+                        Text = Strings.Tablets,
                         Items =
                         {
                             detectTablet,
@@ -344,21 +344,38 @@ namespace OpenTabletDriver.UX
                     // Plugins submenu
                     new ButtonMenuItem
                     {
-                        Text = "Plugins",
+                        Text = Strings.Plugins,
                         Items =
                         {
                             pluginManager
                         }
                     },
+                    // Language submenu
                     new ButtonMenuItem
                     {
-                        Text = "&Help",
+                        Text = Strings.LanguageMenu,
+                        Items =
+                        {
+                            CreateLanguageItem("en", "English"),
+                            CreateLanguageItem("zh", "中文"),
+                            CreateLanguageItem("ko", "한국어"),
+                            CreateLanguageItem("es", "Español"),
+                            CreateLanguageItem("ru", "Русский"),
+                            CreateLanguageItem("fr", "Français"),
+                            CreateLanguageItem("de", "Deutsch"),
+                        }
+                    },
+                    new ButtonMenuItem
+                    {
+                        Text = Strings.Help,
                         Items =
                         {
                             wikiUrl,
                             exportDiagnostics,
                             exportDiagnosticsToClipboard,
-                            showGuide
+                            showGuide,
+                            new SeparatorMenuItem(),
+                            aboutCommand
                         }
                     }
                 },
@@ -375,7 +392,7 @@ namespace OpenTabletDriver.UX
                 case PluginPlatform.Windows:
                 case PluginPlatform.MacOS:
                 {
-                    menuBar.Items.GetSubmenu("&Help").Items.Add(updater);
+                    menuBar.Items.GetSubmenu(Strings.Help).Items.Add(updater);
                     break;
                 }
             }
@@ -486,7 +503,7 @@ namespace OpenTabletDriver.UX
 
         private static async Task ResetSettingsDialog()
         {
-            if (MessageBox.Show("Reset settings to default?", "Reset to defaults", MessageBoxButtons.OKCancel, MessageBoxType.Question) == DialogResult.Ok)
+            if (MessageBox.Show("Reset settings to default?", Strings.Resettodefaults, MessageBoxButtons.OKCancel, MessageBoxType.Question) == DialogResult.Ok)
                 await ResetSettings();
         }
 
@@ -638,7 +655,7 @@ namespace OpenTabletDriver.UX
 
             // Update File submenu
             var presets = AppInfo.PresetManager.GetPresets();
-            var presetsMenu = fullMenu.Items.GetSubmenu("&File").Items.GetSubmenu("Presets") as ButtonMenuItem;
+            var presetsMenu = fullMenu.Items.GetSubmenu(Strings.File).Items.GetSubmenu(Strings.Presets) as ButtonMenuItem;
             presetsMenu.Items.Clear();
 
             if (presets.Count != 0)
@@ -658,7 +675,7 @@ namespace OpenTabletDriver.UX
             {
                 var emptyPresetsItem = new ButtonMenuItem
                 {
-                    Text = "No presets loaded",
+                    Text = Strings.Nopresetsloaded,
                     Enabled = false
                 };
 
@@ -790,6 +807,18 @@ namespace OpenTabletDriver.UX
         {
             App.Driver.Disconnected -= HandleDaemonDisconnected;
             base.OnClosing(e);
+        }
+
+        private static ButtonMenuItem CreateLanguageItem(string code, string name)
+        {
+            var item = new ButtonMenuItem { Text = name };
+            item.Click += (s, e) =>
+            {
+                Strings.Language = code;
+                MessageBox.Show($"Language changed to {name}. Please restart to apply.",
+                    "Language", MessageBoxType.Information);
+            };
+            return item;
         }
     }
 }

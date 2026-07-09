@@ -12,7 +12,7 @@ namespace OpenTabletDriver.UX.Controls.Output
         {
             this.Content = new Group
             {
-                Text = "Relative",
+                Text = Strings.Relative,
                 Content = new StackLayout
                 {
                     Orientation = Orientation.Horizontal,
@@ -24,28 +24,28 @@ namespace OpenTabletDriver.UX.Controls.Output
                         new StackLayoutItem(null, true),
                         new UnitGroup
                         {
-                            Text = "X Sensitivity",
+                            Text = Strings.XSensitivity,
                             Orientation = Orientation.Horizontal,
                             Unit = "px/mm",
                             Content = xSens = new FloatNumberBox()
                         },
                         new UnitGroup
                         {
-                            Text = "Y Sensitivity",
+                            Text = Strings.YSensitivity,
                             Orientation = Orientation.Horizontal,
                             Unit = "px/mm",
                             Content = ySens = new FloatNumberBox()
                         },
                         new UnitGroup
                         {
-                            Text = "Rotation",
+                            Text = Strings.Rotation,
                             Orientation = Orientation.Horizontal,
                             Unit = "°",
                             Content = rotation = new FloatNumberBox()
                         },
                         new UnitGroup
                         {
-                            Text = "Reset Time",
+                            Text = Strings.ResetTime,
                             Orientation = Orientation.Horizontal,
                             Unit = "ms",
                             Content = resetTime = new FloatNumberBox()

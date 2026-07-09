@@ -26,12 +26,12 @@ namespace OpenTabletDriver.UX.Dialogs
         {
             base.OnLoadComplete(e);
 
-            var owner = new TextBoxGroup("Owner")
+            var owner = new TextBoxGroup(Strings.Owner)
             {
                 DefaultInputText = PluginMetadataCollection.REPOSITORY_OWNER
             };
 
-            var repo = new TextBoxGroup("Name")
+            var repo = new TextBoxGroup(Strings.Name)
             {
                 DefaultInputText = PluginMetadataCollection.REPOSITORY_NAME
             };
@@ -53,7 +53,7 @@ namespace OpenTabletDriver.UX.Dialogs
                         Expand = true,
                         Control = new Button((sender, e) => Close(null))
                         {
-                            Text = "Cancel"
+                            Text = Strings.Cancel
                         }
                     },
                     new StackLayoutItem
@@ -61,7 +61,7 @@ namespace OpenTabletDriver.UX.Dialogs
                         Expand = true,
                         Control = new Button((sender, e) => Return(owner, repo, gitRef))
                         {
-                            Text = "Apply"
+                            Text = Strings.Apply
                         }
                     }
                 }

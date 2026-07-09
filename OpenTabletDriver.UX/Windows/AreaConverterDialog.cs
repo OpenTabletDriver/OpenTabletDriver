@@ -55,7 +55,7 @@ namespace OpenTabletDriver.UX.Windows
                 {
                     new Group
                     {
-                        Text = "Converter",
+                        Text = Strings.Converter,
                         Content = converterList,
                         Orientation = Orientation.Horizontal
                     },
@@ -104,7 +104,7 @@ namespace OpenTabletDriver.UX.Windows
                         HorizontalAlignment = HorizontalAlignment.Right,
                         Control = applyButton = new Button((sender, e) => ConvertArea())
                         {
-                            Text = "Apply",
+                            Text = Strings.Apply,
                             Enabled = false
                         }
                     }

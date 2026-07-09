@@ -19,7 +19,7 @@ namespace OpenTabletDriver.UX.Windows.Greeter.Pages
                     Expand = true,
                     Control = new Group
                     {
-                        Text = "Demo",
+                        Text = Strings.Demo,
                         Content = new StackedContent
                         {
                             new PaddingSpacerItem(),
@@ -28,7 +28,7 @@ namespace OpenTabletDriver.UX.Windows.Greeter.Pages
                                 HorizontalAlignment = HorizontalAlignment.Stretch,
                                 Control = new Group
                                 {
-                                    Text = "Demo Binding",
+                                    Text = Strings.DemoBinding,
                                     Orientation = Orientation.Horizontal,
                                     Content = new StackLayout
                                     {

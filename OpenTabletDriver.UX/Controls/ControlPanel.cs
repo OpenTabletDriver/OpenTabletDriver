@@ -19,56 +19,56 @@ namespace OpenTabletDriver.UX.Controls
 
             control.Pages.Add(new TabPage
             {
-                Text = "Output",
+                Text = Strings.Output,
                 Content = outputModeEditor = new()
             });
 
             control.Pages.Add(new TabPage
             {
-                Text = "Filters",
+                Text = Strings.Filters,
                 Padding = 5,
                 Content = filterEditor = new()
             });
 
             control.Pages.Add(new TabPage
             {
-                Text = "Pen Settings",
+                Text = Strings.PenSettings,
                 Content = penBindingEditor = new PenBindingEditor()
             });
 
             control.Pages.Add(new TabPage
             {
-                Text = "Auxiliary Settings",
+                Text = Strings.AuxiliarySettings,
                 Content = auxBindingEditor = new AuxiliaryBindingEditor()
             });
 
             control.Pages.Add(new TabPage
             {
                 ID = "mouse",
-                Text = "Mouse Settings",
+                Text = Strings.MouseSettings,
                 Content = mouseBindingEditor = new MouseBindingEditor()
             });
 
             control.Pages.Add(new TabPage
             {
-                Text = "Tools",
+                Text = Strings.Tools,
                 Padding = 5,
                 Content = toolEditor = new()
             });
 
             control.Pages.Add(new TabPage
             {
-                Text = "Info",
+                Text = Strings.Info,
                 Padding = 5,
                 Content = placeholder = new Placeholder
                 {
-                    Text = "No tablets are detected."
+                    Text = Strings.Notabletsaredetected
                 }
             });
 
             control.Pages.Add(new TabPage
             {
-                Text = "Console",
+                Text = Strings.Console,
                 Padding = 5,
                 Content = logView = new()
             });

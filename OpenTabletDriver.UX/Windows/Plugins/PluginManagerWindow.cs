@@ -21,7 +21,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
         public PluginManagerWindow()
             : base(Application.Instance.MainForm)
         {
-            this.Title = "Plugin Manager";
+            this.Title = Strings.PluginManager;
             this.ClientSize = new Size(1000, 750);
             this.AllowDrop = true;
 
@@ -52,7 +52,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                                 Padding = 5,
                                 Content = new Label
                                 {
-                                    Text = "Drag and drop plugins here to install.",
+                                    Text = Strings.Draganddroppluginsheretoinstall,
                                     VerticalAlignment = VerticalAlignment.Center
                                 }
                             }
@@ -143,7 +143,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             }
             else
             {
-                MessageBox.Show(this, $"Failed to install plugin from '{path}'", "Plugin Manager", MessageBoxType.Error);
+                MessageBox.Show(this, $"Failed to install plugin from '{path}'", Strings.PluginManager, MessageBoxType.Error);
             }
         }
 
@@ -161,7 +161,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
 
             if (context.Directory.Exists && !await App.Driver.Instance.UninstallPlugin(context.Directory.FullName))
             {
-                MessageBox.Show(this, $"'{context.FriendlyName}' failed to uninstall", "Plugin Manager", MessageBoxType.Error);
+                MessageBox.Show(this, $"'{context.FriendlyName}' failed to uninstall", Strings.PluginManager, MessageBoxType.Error);
                 return false;
             }
 
@@ -171,19 +171,19 @@ namespace OpenTabletDriver.UX.Windows.Plugins
 
         private MenuBar ConstructMenu()
         {
-            var quitCommand = new Command { MenuText = "Exit", Shortcut = Keys.Escape };
+            var quitCommand = new Command { MenuText = Strings.Exit, Shortcut = Keys.Escape };
             quitCommand.Executed += (_, _) => this.Close();
 
-            var install = new Command { MenuText = "Install plugin...", Shortcut = Application.Instance.CommonModifier | Keys.O };
+            var install = new Command { MenuText = Strings.Installplugin, Shortcut = Application.Instance.CommonModifier | Keys.O };
             install.Executed += PromptInstallPlugin;
 
-            var refresh = new Command { MenuText = "Refresh", Shortcut = Application.Instance.CommonModifier | Keys.R };
+            var refresh = new Command { MenuText = Strings.Refresh, Shortcut = Application.Instance.CommonModifier | Keys.R };
             refresh.Executed += RefreshHandler;
 
-            var alternateSource = new Command { MenuText = "Use alternate source..." };
+            var alternateSource = new Command { MenuText = Strings.Usealternatesource };
             alternateSource.Executed += async (sender, e) => await SwitchRepositorySource();
 
-            var pluginsDirectory = new Command { MenuText = "Open plugins directory..." };
+            var pluginsDirectory = new Command { MenuText = Strings.Openpluginsdirectory };
             pluginsDirectory.Executed += (sender, e) => DesktopInterop.OpenFolder(AppInfo.Current.PluginDirectory);
 
             return new MenuBar()

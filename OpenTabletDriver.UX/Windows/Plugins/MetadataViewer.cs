@@ -28,7 +28,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                         Expand = true,
                         Control = uninstallButton = new Button(UninstallHandler)
                         {
-                            Text = "Uninstall"
+                            Text = Strings.Uninstall
                         }
                     },
                     new StackLayoutItem
@@ -81,22 +81,22 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                     {
                         new AlignedGroup
                         {
-                            Text = "Name",
+                            Text = Strings.Name,
                             Content = name = new Label()
                         },
                         new AlignedGroup
                         {
-                            Text = "Owner",
+                            Text = Strings.Owner,
                             Content = owner = new Label()
                         },
                         new AlignedGroup
                         {
-                            Text = "Creator",
+                            Text = Strings.Creator,
                             Content = creator = new Label()
                         },
                         new AlignedGroup
                         {
-                            Text = "Description",
+                            Text = Strings.Description,
                             Content = description = new Label
                             {
                                 Wrap = WrapMode.Word
@@ -104,40 +104,40 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                         },
                         new AlignedGroup
                         {
-                            Text = "Driver Version",
+                            Text = Strings.DriverVersion,
                             Content = driverVersion = new Label()
                         },
                         new AlignedGroup
                         {
-                            Text = "Max Supported Driver Version",
+                            Text = Strings.MaxSupportedDriverVersion,
                             Content = maxDriverVersion = new Label()
                         },
                         new AlignedGroup
                         {
-                            Text = "Plugin Version",
+                            Text = Strings.PluginVersion,
                             Content = pluginVersion = new Label()
                         },
                         new AlignedGroup
                         {
-                            Text = "Source Code Repository",
+                            Text = Strings.SourceCodeRepository,
                             Content = sourceCode = new Button
                             {
                                 Width = 175,
-                                Text = "Show source code"
+                                Text = Strings.Showsourcecode
                             }
                         },
                         new AlignedGroup
                         {
-                            Text = "Wiki",
+                            Text = Strings.Wiki,
                             Content = wiki = new Button
                             {
                                 Width = 175,
-                                Text = "Show plugin wiki"
+                                Text = Strings.Showpluginwiki
                             }
                         },
                         new AlignedGroup
                         {
-                            Text = "License",
+                            Text = Strings.License,
                             Content = license = new Label()
                         },
                         new StackLayoutItem(null, true),
@@ -168,7 +168,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
         private StackLayout actions;
         private Placeholder placeholder = new()
         {
-            Text = "No plugin selected.",
+            Text = Strings.Nopluginselected,
         };
 
         private Label name, owner, creator, description, driverVersion, maxDriverVersion, pluginVersion, license;

@@ -27,7 +27,7 @@ namespace OpenTabletDriver.UX.Controls.Bindings
                                     {
                                         new Group
                                         {
-                                            Text = "Tip Settings",
+                                            Text = Strings.TipSettings,
                                             Content = new StackLayout
                                             {
                                                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
@@ -36,15 +36,15 @@ namespace OpenTabletDriver.UX.Controls.Bindings
                                                 {
                                                     new Group
                                                     {
-                                                        Text = "Tip Binding",
+                                                        Text = Strings.TipBinding,
                                                         Orientation = Orientation.Horizontal,
                                                         ExpandContent = false,
                                                         Content = tipButton = new BindingDisplay()
                                                     },
                                                     new UnitGroup
                                                     {
-                                                        Text = "Tip Threshold",
-                                                        ToolTip = "The minimum threshold in order for the assigned binding to activate.",
+                                                        Text = Strings.TipThreshold,
+                                                        ToolTip = Strings.Theminimumthresholdinorderfortheassignedbindingtoactivate,
                                                         Orientation = Orientation.Horizontal,
                                                         Content = tipThreshold = new FloatSlider(),
                                                         Unit = "%"
@@ -54,7 +54,7 @@ namespace OpenTabletDriver.UX.Controls.Bindings
                                         },
                                         new Group
                                         {
-                                            Text = "Eraser Settings",
+                                            Text = Strings.EraserSettings,
                                             Content = new StackLayout
                                             {
                                                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
@@ -63,15 +63,15 @@ namespace OpenTabletDriver.UX.Controls.Bindings
                                                 {
                                                     new Group
                                                     {
-                                                        Text = "Eraser Binding",
+                                                        Text = Strings.EraserBinding,
                                                         ExpandContent = false,
                                                         Orientation = Orientation.Horizontal,
                                                         Content = eraserButton = new BindingDisplay()
                                                     },
                                                     new UnitGroup
                                                     {
-                                                        Text = "Eraser Threshold",
-                                                        ToolTip = "The minimum threshold in order for the assigned binding to activate.",
+                                                        Text = Strings.EraserThreshold,
+                                                        ToolTip = Strings.Theminimumthresholdinorderfortheassignedbindingtoactivate,
                                                         Orientation = Orientation.Horizontal,
                                                         Content = eraserThreshold = new FloatSlider(),
                                                         Unit = "%"
@@ -85,36 +85,36 @@ namespace OpenTabletDriver.UX.Controls.Bindings
                         },
                         new Group
                         {
-                            Text = "Pen Buttons",
+                            Text = Strings.PenButtons,
                             Content = penButtons = new BindingDisplayList
                             {
                                 Prefix = "Pen Binding"
                             }
                         },
                         new Group {
-                            Text = "Miscellaneous",
+                            Text = Strings.Miscellaneous,
                             Content = new StackLayout {
                                 Orientation = Orientation.Horizontal,
                                 Items = {
                                     new Group {
                                         Orientation = Orientation.Horizontal,
-                                        ToolTip = "Disable pressure if it is available",
+                                        ToolTip = Strings.Disablepressureifitisavailable,
                                         Content = disablePressure = new CheckBox {
-                                            Text = "Disable Pressure",
+                                            Text = Strings.DisablePressure,
                                         }
                                     },
                                     new Group {
                                         Orientation = Orientation.Horizontal,
-                                        ToolTip = "Disable tilt if it is available",
+                                        ToolTip = Strings.Disabletiltifitisavailable,
                                         Content = disableTilt = new CheckBox {
-                                            Text = "Disable Tilt",
+                                            Text = Strings.DisableTilt,
                                         }
                                     },
                                     new Group {
                                         Orientation = Orientation.Horizontal,
-                                        ToolTip = "Pen Bindings require pressure to activate",
+                                        ToolTip = Strings.PenBindingsrequirepressuretoactivate,
                                         Content = enableDragBindings = new CheckBox {
-                                            Text = "Drag Bindings",
+                                            Text = Strings.DragBindings,
                                         }
                                     },
                                 }

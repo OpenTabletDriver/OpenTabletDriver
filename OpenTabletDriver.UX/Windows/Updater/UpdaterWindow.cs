@@ -13,12 +13,12 @@ namespace OpenTabletDriver.UX.Windows.Updater
     {
         public UpdaterWindow()
         {
-            this.Title = "OpenTabletDriver Updater";
+            this.Title = Strings.OpenTabletDriverUpdater;
             this.ClientSize = new Size(400, 380);
 
             this.Content = new Placeholder
             {
-                Text = "Checking for updates...",
+                Text = Strings.Checkingforupdates,
                 ExtraContent = new Panel
                 {
                     Padding = 10,
@@ -60,11 +60,11 @@ namespace OpenTabletDriver.UX.Windows.Updater
                             {
                                 new Button(OpenRelease)
                                 {
-                                    Text = "Go to Release"
+                                    Text = Strings.GotoRelease
                                 },
                                 new Button(OpenDirectory)
                                 {
-                                    Text = "Open Directory"
+                                    Text = Strings.OpenDirectory
                                 }
                             },
                             Spacing = 5
@@ -78,7 +78,7 @@ namespace OpenTabletDriver.UX.Windows.Updater
             {
                 this.Content = new Placeholder
                 {
-                    Text = "No updates are available."
+                    Text = Strings.Noupdatesareavailable
                 };
                 _updateAvailable.SetResult(false);
             }

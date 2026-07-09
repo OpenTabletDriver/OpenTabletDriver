@@ -34,14 +34,14 @@ namespace OpenTabletDriver.UX.Controls
                     filterSelector,
                     new Button((sender, e) => Copy(this.messageStore))
                     {
-                        Text = "Copy All"
+                        Text = Strings.CopyAll
                     }
                 }
             };
 
             var copyCommand = new Command((sender, e) => Copy(messageList.SelectedItems))
             {
-                MenuText = "Copy"
+                MenuText = Strings.Copy
             };
 
             messageList.ContextMenu = new ContextMenu
@@ -101,7 +101,7 @@ namespace OpenTabletDriver.UX.Controls
             {
                 new GridColumn
                 {
-                    HeaderText = "Time",
+                    HeaderText = Strings.Time,
                     DataCell = new TextBoxCell
                     {
                         Binding = Binding.Property<LogMessage, string>(m => m.Time.ToLongTimeString())
@@ -109,7 +109,7 @@ namespace OpenTabletDriver.UX.Controls
                 },
                 new GridColumn
                 {
-                    HeaderText = "Level",
+                    HeaderText = Strings.Level,
                     DataCell = new TextBoxCell
                     {
                         Binding = Binding.Property<LogMessage, string>(m => Enum.GetName(m.Level)!)
@@ -117,7 +117,7 @@ namespace OpenTabletDriver.UX.Controls
                 },
                 new GridColumn
                 {
-                    HeaderText = "Group",
+                    HeaderText = Strings.Group,
                     DataCell = new TextBoxCell
                     {
                         Binding = Binding.Property<LogMessage, string>(m => m.Group)
@@ -125,7 +125,7 @@ namespace OpenTabletDriver.UX.Controls
                 },
                 new GridColumn
                 {
-                    HeaderText = "Message",
+                    HeaderText = Strings.Message,
                     DataCell = new TextBoxCell
                     {
                         Binding = Binding.Property<LogMessage, string>(m => m.Message)

@@ -44,7 +44,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                                 {
                                     Control = widthGroup = new UnitGroup
                                     {
-                                        Text = "Width",
+                                        Text = Strings.Width,
                                         Unit = Unit,
                                         ToolTip = $"Area width in {Unit}",
                                         Orientation = Orientation.Horizontal,
@@ -55,7 +55,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                                 {
                                     Control = heightGroup = new UnitGroup
                                     {
-                                        Text = "Height",
+                                        Text = Strings.Height,
                                         Unit = Unit,
                                         ToolTip = $"Area height in {Unit}",
                                         Orientation = Orientation.Horizontal,
@@ -122,7 +122,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
 
         private BooleanCommand lockToUsableArea = new BooleanCommand
         {
-            MenuText = "Lock to usable area"
+            MenuText = Strings.Locktousablearea
         };
 
         private UnitGroup widthGroup, heightGroup, xGroup, yGroup;
@@ -203,32 +203,32 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                 {
                     new ButtonMenuItem
                     {
-                        Text = "Align",
+                        Text = Strings.Align,
                         Items =
                         {
                             new ActionCommand
                             {
-                                MenuText = "Left",
+                                MenuText = Strings.Left,
                                 Action = () => Area!.X = GetAreaCenterOffset().X
                             },
                             new ActionCommand
                             {
-                                MenuText = "Right",
+                                MenuText = Strings.Right,
                                 Action = () => Area!.X = FullAreaBounds!.Value.Width - GetAreaCenterOffset().X
                             },
                             new ActionCommand
                             {
-                                MenuText = "Top",
+                                MenuText = Strings.Top,
                                 Action = () => Area!.Y = GetAreaCenterOffset().Y
                             },
                             new ActionCommand
                             {
-                                MenuText = "Bottom",
+                                MenuText = Strings.Bottom,
                                 Action = () => Area!.Y = FullAreaBounds!.Value.Height - GetAreaCenterOffset().Y
                             },
                             new ActionCommand
                             {
-                                MenuText = "Center",
+                                MenuText = Strings.Center,
                                 Action = () =>
                                 {
                                     Area!.X = FullAreaBounds!.Value.Center.X;
@@ -239,12 +239,12 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                     },
                     new ButtonMenuItem
                     {
-                        Text = "Resize",
+                        Text = Strings.Resize,
                         Items =
                         {
                             new ActionCommand
                             {
-                                MenuText = "Full area",
+                                MenuText = Strings.Fullarea,
                                 Action = () =>
                                 {
                                     FullAreaCommandExecuting = true;
@@ -257,7 +257,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                             },
                             new ActionCommand
                             {
-                                MenuText = "Quarter area",
+                                MenuText = Strings.Quarterarea,
                                 Action = () =>
                                 {
                                     Area!.Height = FullAreaBounds!.Value.Height / 2;
@@ -268,17 +268,17 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                     },
                     new ButtonMenuItem
                     {
-                        Text = "Flip",
+                        Text = Strings.Flip,
                         Items =
                         {
                             new ActionCommand
                             {
-                                MenuText = "Horizontal",
+                                MenuText = Strings.Horizontal,
                                 Action = () => Area!.X = FullAreaBounds!.Value.Width - Area.X
                             },
                             new ActionCommand
                             {
-                                MenuText = "Vertical",
+                                MenuText = Strings.Vertical,
                                 Action = () => Area!.Y = FullAreaBounds!.Value.Height - Area.Y
                             }
                         }

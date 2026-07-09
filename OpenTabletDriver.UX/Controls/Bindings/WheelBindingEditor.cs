@@ -11,7 +11,7 @@ namespace OpenTabletDriver.UX.Controls.Bindings
         {
             wheelButtonGroup = new Group
             {
-                Text = "Wheel Buttons",
+                Text = Strings.WheelButtons,
                 Content = wheelButtons = new BindingDisplayList
                 {
                     Prefix = "Wheel Button Binding"
@@ -29,7 +29,7 @@ namespace OpenTabletDriver.UX.Controls.Bindings
                     {
                         new Group
                         {
-                            Text = "Clockwise Rotation Settings",
+                            Text = Strings.ClockwiseRotationSettings,
                             Content = new StackLayout
                             {
                                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
@@ -38,15 +38,15 @@ namespace OpenTabletDriver.UX.Controls.Bindings
                                 {
                                     new Group
                                     {
-                                        Text = "Clockwise Rotation",
+                                        Text = Strings.ClockwiseRotation,
                                         Orientation = Orientation.Horizontal,
                                         ExpandContent = false,
                                         Content = clockwiseButton = new BindingDisplay()
                                     },
                                     new UnitGroup
                                     {
-                                        Text = "Clockwise Rotation Threshold",
-                                        ToolTip = "The minimum threshold in degrees in order for the assigned binding to activate.",
+                                        Text = Strings.ClockwiseRotationThreshold,
+                                        ToolTip = Strings.Theminimumthresholdindegreesinorderfortheassignedbindingtoactivate,
                                         Orientation = Orientation.Horizontal,
                                         Content = clockwiseThreshold = new FloatSlider()
                                         {
@@ -61,7 +61,7 @@ namespace OpenTabletDriver.UX.Controls.Bindings
                         },
                         new Group
                         {
-                            Text = "Counter-Clockwise Rotation Settings",
+                            Text = Strings.CounterClockwiseRotationSettings,
                             Content = new StackLayout
                             {
                                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
@@ -70,15 +70,15 @@ namespace OpenTabletDriver.UX.Controls.Bindings
                                 {
                                     new Group
                                     {
-                                        Text = "Counter-Clockwise Rotation",
+                                        Text = Strings.CounterClockwiseRotation,
                                         ExpandContent = false,
                                         Orientation = Orientation.Horizontal,
                                         Content = counterClockwiseButton = new BindingDisplay()
                                     },
                                     new UnitGroup
                                     {
-                                        Text = "Counter-Clockwise Rotation Threshold",
-                                        ToolTip = "The minimum threshold in degrees in order for the assigned binding to activate.",
+                                        Text = Strings.CounterClockwiseRotationThreshold,
+                                        ToolTip = Strings.Theminimumthresholdindegreesinorderfortheassignedbindingtoactivate,
                                         Orientation = Orientation.Horizontal,
                                         Content = counterClockwiseThreshold = new FloatSlider()
                                         {
