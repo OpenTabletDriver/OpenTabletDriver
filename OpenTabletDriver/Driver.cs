@@ -171,9 +171,9 @@ namespace OpenTabletDriver
             return null;
         }
 
-        private IEnumerable<IDeviceEndpoint> GetMatchingDevices(TabletConfiguration configuration, DeviceIdentifier identifier)
+        private IDeviceEndpoint[] GetMatchingDevices(TabletConfiguration configuration, DeviceIdentifier identifier)
         {
-            return from device in CompositeDeviceHub.GetDevices()
+            return [.. from device in CompositeDeviceHub.GetDevices()
                    where identifier.VendorID == device.VendorID
                    where identifier.ProductID == device.ProductID
                    where device.CanOpen
@@ -182,7 +182,7 @@ namespace OpenTabletDriver
                    where identifier.FeatureReportLength == null || identifier.FeatureReportLength == device.FeatureReportLength
                    where DeviceMatchesStrings(device, identifier.DeviceStrings, DeviceStringCache)
                    where DeviceMatchesAttribute(device, identifier.Attributes, configuration.Attributes)
-                   select device;
+                   select device];
         }
 
         private static bool DeviceMatchesStrings(IDeviceEndpoint device, Dictionary<byte, string>? deviceStrings, Dictionary<IDeviceEndpoint, Dictionary<byte, string?>> stringCache)
