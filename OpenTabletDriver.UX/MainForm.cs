@@ -271,6 +271,9 @@ namespace OpenTabletDriver.UX
             var savePreset = new Command { MenuText = "Save as preset..." };
             savePreset.Executed += async (sender, e) => await SavePresetDialog();
 
+            var openPresetsDirectory = new Command { MenuText = "Open presets directory..." };
+            openPresetsDirectory.Executed += async (sender, e) => DesktopInterop.OpenFolder(AppInfo.Current.PresetDirectory);
+
             var detectTablet = new Command { MenuText = "Detect tablet", Shortcut = Application.Instance.CommonModifier | Keys.D };
             detectTablet.Executed += async (sender, e) => await DetectTablet();
 
@@ -316,6 +319,7 @@ namespace OpenTabletDriver.UX
                             new SeparatorMenuItem(),
                             refreshPresets,
                             savePreset,
+                            openPresetsDirectory,
                             new ButtonMenuItem
                             {
                                 Text = "Presets",
