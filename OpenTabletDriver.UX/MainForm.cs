@@ -317,8 +317,8 @@ namespace OpenTabletDriver.UX
                             resetSettings,
                             applySettings,
                             new SeparatorMenuItem(),
-                            refreshPresets,
                             savePreset,
+                            refreshPresets,
                             openPresetsDirectory,
                             new ButtonMenuItem
                             {
