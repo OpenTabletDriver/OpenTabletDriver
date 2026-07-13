@@ -298,6 +298,13 @@ namespace OpenTabletDriver.UX.Controls.Output
                 var displays = DesktopInterop.VirtualScreen?.Displays.ToArray()
                     ?? throw new InvalidOperationException("Could not get VirtualScreen");
 
+                // account for monitor layouts with negative offsets (e.g. Wayland supports this)
+                // skip IVirtualScreen's as these tend to be normalized to 0,0, which may confuse these methods
+                float xOffset = displays.Where(d => d is not IVirtualScreen).MinBy(d => d.Position.X)?.Position.X
+                    ?? throw new InvalidOperationException("Unable to look up X offset");
+                float yOffset = displays.Where(d => d is not IVirtualScreen).MinBy(d => d.Position.Y)?.Position.Y
+                    ?? throw new InvalidOperationException("Unable to look up Y offset");
+
                 foreach (var display in displays)
                 {
                     subMenu.Items.Add(
@@ -319,8 +326,8 @@ namespace OpenTabletDriver.UX.Controls.Output
                                 else
                                 {
                                     virtualScreen = DesktopInterop.VirtualScreen;
-                                    this.Area.X = display.Position.X + virtualScreen.Position.X + (display.Width / 2);
-                                    this.Area.Y = display.Position.Y + virtualScreen.Position.Y + (display.Height / 2);
+                                    this.Area.X = display.Position.X - xOffset + (display.Width / 2);
+                                    this.Area.Y = display.Position.Y - yOffset + (display.Height / 2);
                                 }
                             }
                         }
