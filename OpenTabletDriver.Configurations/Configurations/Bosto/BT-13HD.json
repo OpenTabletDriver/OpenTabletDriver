@@ -1,0 +1,33 @@
+{
+  "Name": "Bosto BT-13HD",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 293.0,
+      "Height": 165.0,
+      "MaxX": 58420,
+      "MaxY": 32512
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 8
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 3793,
+      "ProductID": 30753,
+      "InputReportLength": 10,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Bosto.Bosto13HDReportParser",
+      "DeviceStrings": {
+        "3": "^A02017120201$"
+      },
+      "InitializationStrings": []
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
