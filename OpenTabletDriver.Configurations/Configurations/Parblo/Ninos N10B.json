@@ -1,0 +1,33 @@
+{
+  "Name": "Parblo Ninos N10B",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 252,
+      "Height": 157.5,
+      "MaxX": 25200,
+      "MaxY": 15750
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 6
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 1155,
+      "ProductID": 41499,
+      "InputReportLength": 10,
+      "OutputReportLength": 8,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "OutputInitReport": [
+        "ArAE"
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

@@ -71,6 +71,7 @@
 | Parblo A609                        |     Supported     |
 | Parblo A610 Pro (Variant 2)        |     Supported     |
 | Parblo A640 V2                     |     Supported     |
+| Parblo Ninos N10B                  |     Supported     |
 | Parblo Ninos N4                    |     Supported     |
 | Parblo Ninos N7                    |     Supported     |
 | RobotPen T9A                       |     Supported     |
