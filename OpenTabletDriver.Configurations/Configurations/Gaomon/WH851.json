@@ -1,0 +1,35 @@
+{
+  "Name": "Gaomon WH851",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 203.2,
+      "Height": 127,
+      "MaxX": 40640,
+      "MaxY": 25400
+    },
+    "Pen": {
+      "MaxPressure": 16383,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 9
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 9580,
+      "ProductID": 8195,
+      "InputReportLength": 12,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.InspiroyReportParser",
+      "DeviceStrings": {
+        "201": "GM001_T21f_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
