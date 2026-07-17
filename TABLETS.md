@@ -8,6 +8,7 @@
 | Gaomon GM116HD                     |     Supported     |
 | Gaomon GM156HD                     |     Supported     |
 | Gaomon M5                          |     Supported     |
+| Gaomon M5 V2                       |     Supported     |
 | Gaomon M7                          |     Supported     |
 | Gaomon M106K                       |     Supported     |
 | Gaomon M106K Pro                   |     Supported     |
