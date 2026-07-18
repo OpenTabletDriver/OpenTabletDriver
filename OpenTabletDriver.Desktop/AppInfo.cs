@@ -65,6 +65,23 @@ namespace OpenTabletDriver.Desktop
 
         public static PresetManager PresetManager { set; get; } = new PresetManager();
 
+        public string? CommandLineAppDataDirectory {
+            set {
+                field = value;
+                if (value != null)
+                    this.AppDataDirectory = value;
+            }
+            get;
+        }
+        public string? CommandLineConfigurationDirectory {
+            set {
+                field = value;
+                if (value != null)
+                    this.ConfigurationDirectory = value;
+            }
+            get;
+        }
+
         public required string AppDataDirectory { set; get; }
 
         [AllowNull]
