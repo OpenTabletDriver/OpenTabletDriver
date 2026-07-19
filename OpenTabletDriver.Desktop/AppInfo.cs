@@ -12,7 +12,7 @@ namespace OpenTabletDriver.Desktop
 
     public class AppInfo
     {
-        private readonly static Version version = new(Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion);
+        private readonly static Version version = Assembly.GetExecutingAssembly().GetName().Version!;
 
         private string? configurationDirectory,
             settingsFile,
