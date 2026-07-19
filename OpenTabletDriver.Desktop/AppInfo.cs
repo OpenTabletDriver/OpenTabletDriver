@@ -83,7 +83,7 @@ namespace OpenTabletDriver.Desktop
             }
             get;
         }
-        
+
         public string? CommandLineConfigurationDirectory
         {
             set
