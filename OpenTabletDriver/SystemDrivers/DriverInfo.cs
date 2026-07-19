@@ -39,6 +39,7 @@ namespace OpenTabletDriver.SystemDrivers
                 new GaomonDriverInfoProvider(),
                 new HuionDriverInfoProvider(),
                 new XPPenDriverInfoProvider(),
+                new RenamedDigimendDriverInfoProvider(),
                 new VeikkDriverInfoDriver(),
                 new OpenTabletDriverInfoProvider(),
                 new TabletDriverInfoProvider()
