@@ -9,7 +9,7 @@ namespace OpenTabletDriver.UX.MacOS
         {
             if (PermissionHelper.HasPermissions())
             {
-                App.Run(Eto.Platforms.Mac64, args);
+                App.Run("OpenTabletDriver.UX.MacOS.Platform, OpenTabletDriver.UX.MacOS", args);
             }
         }
     }

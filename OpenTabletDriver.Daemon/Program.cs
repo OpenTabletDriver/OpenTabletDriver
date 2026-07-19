@@ -33,9 +33,9 @@ namespace OpenTabletDriver.Daemon
             var cmdLineOptions = ParseCmdLineOptions(args);
 
             if (!string.IsNullOrWhiteSpace(cmdLineOptions.AppDataDirectory?.FullName))
-                AppInfo.Current.AppDataDirectory = cmdLineOptions.AppDataDirectory.FullName;
+                AppInfo.Current.CommandLineAppDataDirectory = cmdLineOptions.AppDataDirectory.FullName;
             if (!string.IsNullOrWhiteSpace(cmdLineOptions.ConfigurationDirectory?.FullName))
-                AppInfo.Current.ConfigurationDirectory = cmdLineOptions.ConfigurationDirectory.FullName;
+                AppInfo.Current.CommandLineConfigurationDirectory = cmdLineOptions.ConfigurationDirectory.FullName;
 
             await StartDaemon();
         }

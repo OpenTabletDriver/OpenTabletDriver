@@ -1,34 +1,28 @@
 {
-  "Name": "Huion H1061P",
+  "Name": "Gaomon WH851",
   "Specifications": {
     "Digitizer": {
-      "Width": 266.7,
-      "Height": 166.7,
-      "MaxX": 53340,
-      "MaxY": 33340
+      "Width": 203.2,
+      "Height": 127,
+      "MaxX": 40640,
+      "MaxY": 25400
     },
     "Pen": {
-      "MaxPressure": 8191,
+      "MaxPressure": 16383,
       "ButtonCount": 2
     },
     "AuxiliaryButtons": {
-      "ButtonCount": 11
-    },
-    "Wheels": [
-      {
-        "RelativeWheelSteps": 12,
-        "ButtonCount": 0
-      }
-    ]
+      "ButtonCount": 9
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 9580,
-      "ProductID": 104,
+      "ProductID": 8195,
       "InputReportLength": 12,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.InspiroyReportParser",
       "DeviceStrings": {
-        "201": "HUION_T(21m|255)_\\d{6}$"
+        "201": "GM001_T21f_\\d{6}$"
       },
       "InitializationStrings": [
         200

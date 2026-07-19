@@ -40,7 +40,7 @@ The requirements to build OpenTabletDriver are consistent across all platforms. 
 
 ### All platforms
 
-- .NET 8 SDK (can be obtained from [here](https://dotnet.microsoft.com/download/dotnet/8.0) - You want the SDK for your platform, Linux users should install via package manager where possible)
+- .NET 10 SDK (can be obtained from [here](https://dotnet.microsoft.com/download/dotnet/10.0) - You want the SDK for your platform, Linux users should install via package manager where possible)
 
 #### Windows
 
@@ -82,10 +82,13 @@ Run `PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH" $(brew --prefix)/bin
 
 | Package Format | Command |
 | --- | --- |
-| Unsigned Package | `./eng/bash/package.sh --runtime osx-x64 --package macos` |
-| Signed Package | `./eng/bash/package.sh --signed true --runtime osx-x64 --package macos` |
+| Unsigned x64 Package | `./eng/bash/package.sh --runtime osx-x64 --package macos` |
+| Signed x64 Package | `./eng/bash/package.sh --signed true --runtime osx-x64 --package macos` |
+| Signed arm64 Package | `./eng/bash/package.sh --signed true --runtime osx-arm64 --package macos` |
 
 Packaging signed MacOS builds on Linux or Windows requires `rcodesign`.
+
+As of [MacOS 11](https://developer.apple.com/documentation/macos-release-notes/macos-big-sur-11_0_1-universal-apps-release-notes/#Code-Signing), you **must** sign arm64 packages.
 
 # Features
 

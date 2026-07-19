@@ -32,10 +32,10 @@ namespace OpenTabletDriver.UX.Controls.Output
             absoluteModeEditor.SettingsBinding.Bind(ProfileBinding.Child(p => p!.AbsoluteModeSettings));
             relativeModeEditor.SettingsBinding.Bind(ProfileBinding.Child(p => p!.RelativeModeSettings));
 
-            outputModeSelector.SelectedItemBinding.Convert<PluginSettingStore>(
-                c => (c != null ? PluginSettingStore.FromPath(c.FullName!) : null) ?? throw new InvalidOperationException($"TypeInfo lookup: unknown path '{c?.FullName}'"),
+            outputModeSelector.SelectedItemBinding.Convert<PluginSettingStore?>(
+                c => PluginSettingStore.FromPath(c?.FullName),
                 v => v?.GetTypeInfo()
-            ).Bind(ProfileBinding.Child(c => c!.OutputMode));
+            ).Bind(ProfileBinding.Child(c => (PluginSettingStore?)c!.OutputMode));
 
             outputModeSelector.SelectedValueChanged += (sender, e) => UpdateOutputMode(Profile?.OutputMode);
 

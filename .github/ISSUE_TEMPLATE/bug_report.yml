@@ -1,5 +1,5 @@
 name: Bug Report
-description: Create a bug report to help fix issues with OpenTabletDriver
+description: Create a bug report to help fix issues with OpenTabletDriver. If your tablet isn't detected, please make a support request instead.
 labels: ["bug"]
 body:
   - type: markdown

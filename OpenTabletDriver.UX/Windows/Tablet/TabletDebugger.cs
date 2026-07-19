@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Desktop.ViewModels;
 using OpenTabletDriver.Desktop.ViewModels.Utility;
@@ -71,6 +73,14 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             if (App.Driver.IsConnected)
                 HandleTabletsChanged(null, App.Driver.Instance.GetTablets().Result);
 
+            var recordingDir = new DirectoryInfo(AppInfo.Current.RecordingDirectory);
+
+            if (!recordingDir.Exists)
+            {
+                recordingDir.Create();
+                Log.Write("TabletDebugger", $"The recording directory '{recordingDir.FullName}' has been created");
+            }
+
             var viewmodel = new TDVM();
             DataContext = viewmodel;
 
@@ -80,7 +90,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                 VerticalContentAlignment = VerticalAlignment.Stretch,
                 Spacing = 5,
                 Padding = 5,
-                MinimumSize = new Size(940, 560),
+                MinimumSize = new Size(1025, 560),
                 Items =
                 {
                     new StackLayoutItem
@@ -212,7 +222,8 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                 {
                     >= 1300 => 5,
                     > 1160 => 4,
-                    <= 1160 => 3,
+                    > 1000 => 3,
+                    <= 1000 => 2,
                 };
 
                 if (oldValue == newValue) return;
@@ -258,6 +269,21 @@ namespace OpenTabletDriver.UX.Windows.Tablet
 
             dataRecordingMenuItem.BindDataContext(x => x.Checked, (TDVM vm) => vm.DataRecordingEnabled);
 
+            var openDataRecordingDirectoryMenuItem = new Command
+            {
+                MenuText = "Open recordings directory...",
+            };
+            openDataRecordingDirectoryMenuItem.Executed += (sender, e) => DesktopInterop.OpenFolder(AppInfo.Current.RecordingDirectory);
+
+            ButtonMenuItem recordingTab = new()
+            {
+                Text = "Recording",
+                Visible = true,
+                Items = {
+                    dataRecordingMenuItem,
+                    openDataRecordingDirectoryMenuItem,
+                }
+            };
 
             var visualizerEnabledMenuItem = new CheckMenuItem
             {
@@ -300,10 +326,9 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             {
                 ApplicationItems =
                 {
-                    dataRecordingMenuItem,
                     visualizerEnabledMenuItem,
-                    decodingSwitchMenuItem,
                     additionalStatisticsMenuItem,
+                    decodingSwitchMenuItem,
                 },
                 QuitItem = new ButtonMenuItem((_, _) => Application.Instance.AsyncInvoke(Close))
                 {
@@ -311,6 +336,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                 },
                 Items =
                 {
+                    recordingTab,
                     _debuggedTablets,
                     _debuggedReports,
                 },

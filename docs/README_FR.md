@@ -36,7 +36,7 @@ Les exigences pour build OpenTabletDriver sont cohérentes sur toutes les platef
 
 ### Toutes les plateformes
 
-- .NET 6 SDK (peut-être obtenu [Ici](https://dotnet.microsoft.com/download/dotnet/6.0) - Prendre le SDK pour votre plateforme, les utilisateurs Linux doivent installer via un gestionnaire de paquets qui fournit le paquet .NET 6)
+- .NET 10 SDK (peut-être obtenu [Ici](https://dotnet.microsoft.com/download/dotnet/10.0) - Prendre le SDK pour votre plateforme, les utilisateurs Linux doivent installer via un gestionnaire de paquets qui fournit le paquet .NET 6)
 
 #### Windows
 

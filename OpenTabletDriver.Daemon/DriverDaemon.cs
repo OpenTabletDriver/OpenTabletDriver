@@ -417,13 +417,20 @@ namespace OpenTabletDriver.Daemon
         {
             string group = dev.Properties.Name;
 
+            var pressureRewriteFilter = new PressureRewriteFilter
+            {
+                TipPressureThreshold = profile.BindingSettings.TipActivationThreshold,
+                EraserPressureThreshold = profile.BindingSettings.EraserActivationThreshold,
+                MaxPenPressure = dev.Properties.Specifications.Pen.MaxPressure,
+            };
+
             var elements = (from store in profile.Filters
                             where store is { Enable: true }
                             let filter = store!.Construct<IPositionedPipelineElement<IDeviceReport>>(outputMode.Tablet)
                             where filter != null
                             select filter!).ToArray();
 
-            outputMode.Elements = elements.Append(bindingHandler).ToList();
+            outputMode.Elements = elements.Prepend(pressureRewriteFilter).Append(bindingHandler).ToList();
 
             foreach (var filter in elements)
             {
@@ -510,24 +517,21 @@ namespace OpenTabletDriver.Daemon
             var tip = bindingHandler.Tip = new ThresholdBindingState
             {
                 Binding = settings.TipButton?.Construct<IBinding>(bindingServiceProvider, tabletReference),
-
-                ActivationThreshold = settings.TipActivationThreshold
             };
 
             if (tip.Binding != null)
             {
-                Log.Write(group, $"Tip Binding: [{tip.Binding}]@{tip.ActivationThreshold}%");
+                Log.Write(group, $"Tip Binding: [{tip.Binding}]@{settings.TipActivationThreshold}%");
             }
 
             var eraser = bindingHandler.Eraser = new ThresholdBindingState
             {
                 Binding = settings.EraserButton?.Construct<IBinding>(bindingServiceProvider, tabletReference),
-                ActivationThreshold = settings.EraserActivationThreshold
             };
 
             if (eraser.Binding != null)
             {
-                Log.Write(group, $"Eraser Binding: [{eraser.Binding}]@{eraser.ActivationThreshold}%");
+                Log.Write(group, $"Eraser Binding: [{eraser.Binding}]@{settings.EraserActivationThreshold}%");
             }
 
             if (settings.PenButtons.Any(b => b?.Path != null))

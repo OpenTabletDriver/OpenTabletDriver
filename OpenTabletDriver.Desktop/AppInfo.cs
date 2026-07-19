@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
@@ -22,7 +23,8 @@ namespace OpenTabletDriver.Desktop
             temporaryDirectory,
             cacheDirectory,
             backupDirectory,
-            trashDirectory;
+            trashDirectory,
+            recordingDirectory;
 
         public AppInfo()
         {
@@ -50,7 +52,6 @@ namespace OpenTabletDriver.Desktop
                 PluginPlatform.Linux => new AppInfo
                 {
                     Version = version,
-                    ConfigurationDirectory = GetExistingPath(Path.Join(UnixXdgPath.DataHome, "OpenTabletDriver/Configurations")),
                     AppDataDirectory = GetExistingPathOrLast(Path.Join(ProgramDirectory, "userdata"), Path.Join(UnixXdgPath.ConfigHome, "OpenTabletDriver")),
                     TemporaryDirectory = GetPath(Path.Join(UnixXdgPath.RuntimeDir, "OpenTabletDriver")),
                     CacheDirectory = GetPath(Path.Join(UnixXdgPath.CacheHome, "OpenTabletDriver")),
@@ -71,6 +72,28 @@ namespace OpenTabletDriver.Desktop
         public static PresetManager PresetManager { set; get; } = new PresetManager();
 
         public required Version Version { set; get; }
+
+        public string? CommandLineAppDataDirectory
+        {
+            set
+            {
+                field = value;
+                if (value != null)
+                    this.AppDataDirectory = value;
+            }
+            get;
+        }
+        
+        public string? CommandLineConfigurationDirectory
+        {
+            set
+            {
+                field = value;
+                if (value != null)
+                    this.ConfigurationDirectory = value;
+            }
+            get;
+        }
 
         public required string AppDataDirectory { set; get; }
 
@@ -137,13 +160,29 @@ namespace OpenTabletDriver.Desktop
             get => this.trashDirectory ?? GetDefaultTrashDirectory();
         }
 
+        [AllowNull]
+        public string RecordingDirectory
+        {
+            set => this.recordingDirectory = value;
+            get => this.recordingDirectory ?? GetDefaultRecordingDirectory();
+        }
+
         public static string ProgramDirectory => AppContext.BaseDirectory;
 
-        private string GetDefaultConfigurationDirectory() => GetExistingPathOrLast(
-            Path.Join(AppDataDirectory, "Configurations"),
-            Path.Join(ProgramDirectory, "Configurations"),
-            Path.Join(Environment.CurrentDirectory, "Configurations")
-        );
+        private string GetDefaultConfigurationDirectory()
+        {
+            List<string> paths = [
+                Path.Join(AppDataDirectory, "Configurations"),
+                Path.Join(ProgramDirectory, "Configurations"),
+                Path.Join(Environment.CurrentDirectory, "Configurations")
+            ];
+            if (SystemInterop.CurrentPlatform == PluginPlatform.Linux)
+                paths.Insert(0, Path.Join(UnixXdgPath.DataHome, "OpenTabletDriver/Configurations"));
+            if (CommandLineConfigurationDirectory != null)
+                paths.Insert(0, CommandLineConfigurationDirectory);
+
+            return GetExistingPathOrLast([.. paths]);
+        }
 
         private string GetDefaultSettingsFile() => Path.Join(AppDataDirectory, "settings.json");
         private string GetDefaultPluginDirectory() => Path.Join(AppDataDirectory, "Plugins");
@@ -153,6 +192,7 @@ namespace OpenTabletDriver.Desktop
         private string GetDefaultCacheDirectory() => Path.Join(AppDataDirectory, "Cache");
         private string GetDefaultBackupDirectory() => Path.Join(AppDataDirectory, "Backup");
         private string GetDefaultTrashDirectory() => Path.Join(AppDataDirectory, "Trash");
+        private string GetDefaultRecordingDirectory() => Path.Join(AppDataDirectory, "Recording");
 
         private static bool IsEnvVarUnset(string envVar) =>
             string.IsNullOrEmpty(Environment.GetEnvironmentVariable(envVar));

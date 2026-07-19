@@ -67,9 +67,12 @@ namespace OpenTabletDriver.Plugin.Output
 
         public void Consume(T? value)
         {
-            // Block DeviceReport and ITouchReport from being consumed for now
-            if (value is DeviceReport or ITouchReport)
+            if (!FilterState(value))
+            {
+                if (value != null)
+                    Emit?.Invoke(value);
                 return;
+            }
 
             lock (synchronizationObject)
             {
@@ -99,6 +102,26 @@ namespace OpenTabletDriver.Plugin.Output
         /// Call <see cref="PenIsInRange"/> to check if the pen is in range and avoid false emit.
         /// </remarks>
         protected abstract void UpdateState();
+
+        /// <summary>
+        /// Allows the implementer to filter out reports they do not want in state updates.
+        /// Some reports such as <see cref="DeviceReport"/> or <see cref="ITouchReport"/> may consume a large amount of state changes and clog up <see cref="UpdateState"/>. These can be desirable to filter out.
+        /// Filtered reports are not removed from the pipeline, they skip over to the next element. Similar to <see cref="OnEmit"/> but without requiring a state update.
+        /// </summary>
+        /// <remarks>
+        /// By default, <see cref="DeviceReport"/> and <see cref="ITouchReport"/> are filtered out. Override <see cref="FilterState"/> if you need these reports.
+        /// </remarks>
+        protected virtual bool FilterState(T? value)
+        {
+            // Block DeviceReport and ITouchReport from being consumed by default
+            // Avoids timer polls being consumed by tablets that spam idle reports or touch reports without any way of disabling them
+            if (value is DeviceReport or ITouchReport)
+            {
+                return false;
+            }
+
+            return true;
+        }
 
         /// <summary>
         /// Determines if pen is in tablet hover range.

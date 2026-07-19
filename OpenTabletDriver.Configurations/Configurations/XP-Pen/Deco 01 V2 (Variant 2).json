@@ -43,6 +43,20 @@
         "4": "UG902_BPG1002",
         "5": "^202\\d-\\d{2}-\\d{2}"
       }
+    },
+    {
+      "VendorID": 10429,
+      "ProductID": 2306,
+      "InputReportLength": 12,
+      "OutputReportLength": 14,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "OutputInitReport": [
+        "ArAE"
+      ],
+      "DeviceStrings": {
+        "4": "UG903_BPN1002",
+        "5": "^202\\d-\\d{2}-\\d{2}"
+      }
     }
   ],
   "Attributes": {

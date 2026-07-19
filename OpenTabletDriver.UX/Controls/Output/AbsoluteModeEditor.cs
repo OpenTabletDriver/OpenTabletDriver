@@ -326,8 +326,8 @@ namespace OpenTabletDriver.UX.Controls.Output
                                 else
                                 {
                                     virtualScreen = DesktopInterop.VirtualScreen;
-                                    this.Area.X = display.Position.X - xOffset + virtualScreen.Position.X + (display.Width / 2);
-                                    this.Area.Y = display.Position.Y - yOffset + virtualScreen.Position.Y + (display.Height / 2);
+                                    this.Area.X = display.Position.X - xOffset + (display.Width / 2);
+                                    this.Area.Y = display.Position.Y - yOffset + (display.Height / 2);
                                 }
                             }
                         }

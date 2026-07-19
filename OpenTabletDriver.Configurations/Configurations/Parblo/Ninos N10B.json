@@ -1,32 +1,26 @@
 {
-  "Name": "Parblo A610 Pro",
+  "Name": "Parblo Ninos N10B",
   "Specifications": {
     "Digitizer": {
-      "Width": 255.5,
-      "Height": 160,
-      "MaxX": 51100,
-      "MaxY": 32000
+      "Width": 252,
+      "Height": 157.5,
+      "MaxX": 25200,
+      "MaxY": 15750
     },
     "Pen": {
       "MaxPressure": 8191,
       "ButtonCount": 2
     },
     "AuxiliaryButtons": {
-      "ButtonCount": 9
-    },
-    "Wheels": [
-      {
-        "RelativeWheelSteps": 24,
-        "ButtonCount": 0
-      }
-    ]
+      "ButtonCount": 6
+    }
   },
   "DigitizerIdentifiers": [
     {
-      "VendorID": 10429,
-      "ProductID": 6403,
+      "VendorID": 1155,
+      "ProductID": 41499,
       "InputReportLength": 10,
-      "OutputReportLength": 10,
+      "OutputReportLength": 8,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
       "OutputInitReport": [
         "ArAE"

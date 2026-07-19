@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace OpenTabletDriver.UX.Windows
         {
             this.Title = "Device String Reader";
             this.Icon = App.Logo.WithSize(App.Logo.Size);
-            this.ClientSize = new Size(-1, 320);
+            this.ClientSize = new Size(400, 410);
 
             var sendRequestButton = new Button
             {
@@ -49,11 +50,19 @@ namespace OpenTabletDriver.UX.Windows
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
                 Items =
                 {
+                    new Label
+                    {
+                        Text = "WARNING\nArbitrary use of this tool may cause damage or disrupt usage of your tablet",
+                        Font = SystemFonts.Bold(),
+                        TextAlignment = TextAlignment.Center,
+                        Wrap = WrapMode.Word,
+                    },
                     new Group("Connected HIDs", deviceDropDown, Orientation.Horizontal, false),
                     vendorIdCtrl,
                     productIdCtrl,
                     stringIndexCtrl,
                     requireReconnect,
+                    requestDangerous,
                     new StackLayoutItem(
                         new StackLayout
                         {
@@ -119,6 +128,15 @@ namespace OpenTabletDriver.UX.Windows
         private const string DisconnectionIndex = "Device disconnected";
         private const string OperationTimedOut = "Operation timed-out";
         private const string OperationFailed = "Operation failed";
+        private static Dictionary<int, string> GetDangerousStrings(int vendorId) => vendorId switch
+        {
+            // XP-Pen, UGEE, and XenceLabs
+            10429 => new()
+            {
+                [200] = "Common DFU String"
+            },
+            _ => [],
+        };
 
         private async void SendRequestAllStrings(object? sender, EventArgs args)
         {
@@ -138,10 +156,19 @@ namespace OpenTabletDriver.UX.Windows
                 return;
             }
 
+            var requestDangerousStrings = requestDangerous.Checked.HasValue && (bool)requestDangerous.Checked;
+            var dangerousStrings = requestDangerousStrings ? [] : GetDangerousStrings(vid);
+
             var stringDump = new StringBuilder();
 
             for (int i = 1; i < 256; i++)
             {
+                if (dangerousStrings.ContainsKey(i))
+                {
+                    stringDump.AppendLine($"{StringIndex} {i}: {{ OTD: {dangerousStrings[i]} }}");
+                    continue;
+                }
+
                 bool shouldRead = true;
                 await SendRequestWithTimeout($"{i}",
                     (str) => stringDump.AppendLine($"{StringIndex} {i}: {str}"),
@@ -188,7 +215,7 @@ namespace OpenTabletDriver.UX.Windows
 
         private async Task SendRequestWithTimeout(string strIndex, Action<string> action, Action<Exception> error, Action timeoutAction)
         {
-            if (App.Driver.IsConnected)
+            if (!App.Driver.IsConnected)
             {
                 MessageBox.Show("Unable to send request without an active daemon", MessageBoxType.Error);
                 return;
@@ -266,6 +293,13 @@ namespace OpenTabletDriver.UX.Windows
             Text = "Require reconnect on fail",
             Checked = false,
             ToolTip = "Pauses string dump with a pop-up box if any string dump errors occur",
+        };
+
+        private readonly CheckBox requestDangerous = new()
+        {
+            Text = "Dump potentially dangerous strings",
+            Checked = false,
+            ToolTip = "Requests all strings in a string dump even if they are known to likely damage or disrupt usage of the tablet",
         };
     }
 }
