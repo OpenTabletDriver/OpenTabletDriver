@@ -275,7 +275,11 @@ namespace OpenTabletDriver.UX
             openPresetsDirectory.Executed += async (sender, e) => DesktopInterop.OpenFolder(AppInfo.Current.PresetDirectory);
 
             var detectTablet = new Command { MenuText = "Detect tablet", Shortcut = Application.Instance.CommonModifier | Keys.D };
-            detectTablet.Executed += async (sender, e) => await DetectTablet();
+            detectTablet.Executed += async (sender, e) =>
+            {
+                AppInfo.Current.ConfigurationDirectory = null; // force recheck on next access
+                await DetectTablet();
+            };
 
             var showTabletDebugger = new Command { MenuText = "Tablet debugger..." };
             showTabletDebugger.Executed += (sender, e) => App.Current.DebuggerWindow.Show();
