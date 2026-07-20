@@ -429,11 +429,14 @@ namespace OpenTabletDriver.Daemon
                 MaxPenPressure = dev.Properties.Specifications.Pen.MaxPressure,
             };
 
-            var elements = (from store in profile.Filters
-                            where store is { Enable: true }
-                            let filter = store!.Construct<IPositionedPipelineElement<IDeviceReport>>(outputMode.Tablet)
+            var elements = (
+                            from store in
+                                from innerStore in profile.Filters
+                                where innerStore is { Enable: true }
+                                select innerStore
+                            let filter = store.Construct<IPositionedPipelineElement<IDeviceReport>>(outputMode.Tablet)
                             where filter != null
-                            select filter!).ToArray();
+                            select filter).ToArray();
 
             outputMode.Elements = elements.Prepend(pressureRewriteFilter).Append(bindingHandler).ToList();
 
