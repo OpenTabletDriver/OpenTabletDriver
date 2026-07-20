@@ -5,7 +5,7 @@ namespace OpenTabletDriver.Desktop.Reflection
 {
     public class ServiceManager : IServiceManager
     {
-        private readonly Dictionary<Type, Func<object>> services = new();
+        private readonly Dictionary<Type, Func<object?>> services = new();
 
         /// <summary>
         /// Adds a retrieval method for a service type.
@@ -13,9 +13,9 @@ namespace OpenTabletDriver.Desktop.Reflection
         /// <param name="value">The method in which returns the required service type.</param>
         /// <typeparam name="T">The type in which is returned by the constructor.</typeparam>
         /// <returns>True if adding the service was successful, otherwise false.</returns>
-        public bool AddService<T>(Func<T> value)
+        public bool AddService<T>(Func<T> value) where T : class?
         {
-            return services.TryAdd(typeof(T), (value as Func<object>)!);
+            return services.TryAdd(typeof(T), value);
         }
 
         /// <summary>
