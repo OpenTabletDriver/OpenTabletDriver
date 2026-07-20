@@ -1,4 +1,6 @@
 using System;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using OpenTabletDriver.Native.Linux;
@@ -24,7 +26,17 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
 
         }
 
-        public bool Enabled { private set; get; }
+        [MemberNotNullWhen(true, nameof(thread))]
+        public bool Enabled
+        {
+            get
+            {
+                if (field)
+                    Debug.Assert(thread != null, "Timer should not be reporting enabled with a null thread");
+                return field;
+            }
+            private set;
+        }
 
         public float Interval { get; set; } = 1;
 
@@ -71,7 +83,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
 
                     thread = new Thread(ThreadMain);
                     thread.IsBackground = true;
-                    thread!.Start();
+                    thread.Start();
                     Enabled = true;
                 }
             }
@@ -84,7 +96,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
                 if (Enabled)
                 {
                     SendCancelEvent();
-                    thread!.Join();
+                    thread.Join();
                     Close(kqueue);
                     Enabled = false;
                 }
