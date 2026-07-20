@@ -44,6 +44,7 @@ namespace OpenTabletDriver.Desktop
             string? pathFromEnvVar = Environment.GetEnvironmentVariable(pathRecord.EnvVar);
             bool found = !string.IsNullOrEmpty(pathFromEnvVar);
 
+            // null-warning suppressed as we've just null-checked the associated variable
             string rv = FileUtilities.InjectEnvironmentVariables(found ? pathFromEnvVar! : pathRecord.FallbackPath);
 
             Log.Debug(nameof(UnixXdgPath),
