@@ -25,9 +25,11 @@ namespace OpenTabletDriver.Desktop.RPC
             this.pipeName = pipeName;
         }
 
+        [MemberNotNull(nameof(Instance))]
         public async Task Connect()
         {
             this.stream = GetStream();
+            this.Instance ??= null!; // avoid CS8774, now don't you dare run this method non-awaited!
             await this.stream.ConnectAsync();
 
             rpc = new JsonRpc(this.stream);
