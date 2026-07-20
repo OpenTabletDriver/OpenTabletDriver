@@ -26,7 +26,7 @@ namespace OpenTabletDriver.Desktop
 
         extension<T>(IEnumerable<T?> o) where T : class
         {
-            public IEnumerable<T> WhereNotNull() => o.Where(x => x != null)!;
+            public IEnumerable<T> WhereNotNull() => o.Where(x => x != null).Cast<T>();
             public IEnumerable<TResult> SelectNotNull<TResult>(Func<T, TResult> fun) => o.WhereNotNull().Select(fun);
         }
 
