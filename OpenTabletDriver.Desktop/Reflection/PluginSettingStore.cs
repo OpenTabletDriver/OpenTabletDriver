@@ -14,7 +14,7 @@ namespace OpenTabletDriver.Desktop.Reflection
     {
         private static readonly Type _tabletRefType = typeof(TabletReference);
 
-        public PluginSettingStore(Type type, bool enable = true)
+        public PluginSettingStore(Type? type, bool enable = true)
         {
             Path = type?.FullName;
             Settings = type != null ? GetSettingsForType(type) : new ObservableCollection<PluginSetting>();
