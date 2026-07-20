@@ -489,7 +489,7 @@ namespace OpenTabletDriver.UX
         {
             Debug.Assert(App.Driver.IsConnected);
             await App.Driver.Instance.ResetSettings();
-            App.Current.Settings = await App.Driver.Instance.GetSettings();
+            await SyncSettings();
         }
 
         private static async Task ResetSettingsDialog()
