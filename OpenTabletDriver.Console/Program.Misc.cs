@@ -101,7 +101,7 @@ namespace OpenTabletDriver.Console
                 var existing = pssc.FirstOrDefault(x => x?.Path == path);
                 if (existing == null)
                 {
-                    var obj = PluginSettingStore.FromPath(path)?.Construct<T>();
+                    var obj = PluginSettingStore.FromPath(path)?.Construct<T>() ?? throw new InvalidOperationException($"Could not construct settings from path {path}");
                     pssc.Add(new PluginSettingStore(obj));
                 }
                 else

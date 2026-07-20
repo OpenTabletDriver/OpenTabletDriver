@@ -20,21 +20,15 @@ namespace OpenTabletDriver.Desktop.Reflection
             Enable = enable;
         }
 
-        public PluginSettingStore(object? source, bool enable = true)
+        public PluginSettingStore(object source, bool enable = true)
         {
-            if (source != null)
-            {
-                var sourceType = source.GetType();
+            var sourceType = source.GetType();
 
-                Path = sourceType.FullName ??
-                       throw new InvalidOperationException($"Could not look up full name for type {sourceType}");
-                Settings = GetSettingsForType(sourceType, source);
-                Enable = enable;
-            }
-            else
-            {
-                throw new NullReferenceException("Creating a plugin setting store from a null object is not allowed.");
-            }
+            Path = sourceType.FullName ??
+                   throw new InvalidOperationException($"Could not look up {nameof(Path)}'s full name via type '{sourceType}'");
+
+            Settings = GetSettingsForType(sourceType, source);
+            Enable = enable;
         }
 
         [JsonConstructor]
