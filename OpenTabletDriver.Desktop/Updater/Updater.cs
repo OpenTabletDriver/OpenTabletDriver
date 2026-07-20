@@ -16,6 +16,7 @@ namespace OpenTabletDriver.Desktop.Updater
             "Presets"
         ];
 
+        // null-warning suppressed as this should always succeed?
         protected static readonly Version AssemblyVersion = typeof(IUpdater).Assembly.GetName().Version!;
 
         protected Updater(Version currentVersion, string binaryDir, string appDataDir, string rollbackDir)
