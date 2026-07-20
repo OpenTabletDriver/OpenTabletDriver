@@ -1,5 +1,3 @@
-#nullable enable
-
 namespace OpenTabletDriver.Plugin.Tablet
 {
     public interface IAbsoluteAnalogReport : IDeviceReport
