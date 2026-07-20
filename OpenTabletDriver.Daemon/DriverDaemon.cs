@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -212,6 +213,7 @@ namespace OpenTabletDriver.Daemon
             return await GetTablets();
         }
 
+        [MemberNotNull(nameof(Settings))]
         public Task SetSettings(Settings? settings)
         {
             try
@@ -306,6 +308,7 @@ namespace OpenTabletDriver.Daemon
                 $"Pressure: {(profile.BindingSettings.DisablePressure ? "Disabled" : "Enabled")}");
         }
 
+        [MemberNotNull(nameof(Settings))]
         private void RecoverSettings(Settings? settings)
         {
             var recoveredSettings = Settings.GetDefaults();
@@ -352,11 +355,13 @@ namespace OpenTabletDriver.Daemon
             SetSettings(recoveredSettings);
         }
 
+        [MemberNotNull(nameof(Settings))]
         public async Task ResetSettings()
         {
             await SetSettings(Settings.GetDefaults());
         }
 
+        [MemberNotNull(nameof(Settings))]
         private async Task LoadUserSettings()
         {
             AppInfo.PluginManager.Clean();
@@ -396,7 +401,7 @@ namespace OpenTabletDriver.Daemon
                 await ResetSettings();
 
                 // only save fresh settings if a tablet was configured
-                if (Settings!.Profiles.Any())
+                if (Settings.Profiles.Any())
                     Settings.Serialize(settingsFile);
             }
         }
