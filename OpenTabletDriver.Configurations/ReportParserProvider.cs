@@ -39,7 +39,7 @@ namespace OpenTabletDriver.Configurations
             return assemblies.SelectMany(asm => asm.ExportedTypes)
                 .Where(t => t.IsAssignableTo(typeof(IReportParser<IDeviceReport>)))
                 .ToDictionary(
-                    t => t.FullName!,
+                    t => t.FullName!, // null-warning suppressed as the IsAssignableTo call indirectly forces FullName being available
                     GetConstructor
                 );
         }
