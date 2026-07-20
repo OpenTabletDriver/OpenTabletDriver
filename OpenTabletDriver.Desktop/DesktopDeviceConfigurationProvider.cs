@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using OpenTabletDriver.Configurations;
@@ -49,8 +50,11 @@ namespace OpenTabletDriver.Desktop
                     if (jsonConfig != null && asmConfig != null)
                         Log.Write("Detect", $"Overriding tablet configuration '{jsonConfig.Name}'");
 
-                    return jsonConfig ?? asmConfig!;
-                });
+                    Debug.Assert(jsonConfig != null || asmConfig != null,
+                        "Both tablet config variants unexpectedly null. Function is expected to find at least 1 non-null value");
+
+                    return jsonConfig ?? asmConfig;
+                }).Cast<TabletConfiguration>();
         }
 
         private enum ConfigurationSource
