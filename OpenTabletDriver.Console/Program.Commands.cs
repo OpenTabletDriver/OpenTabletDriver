@@ -300,7 +300,7 @@ namespace OpenTabletDriver.Console
             await ModifyProfile(tablet, s =>
             {
                 foreach (var filterToReset in filtersToReset)
-                    s.Filters = new PluginSettingStoreCollection(s.Filters.Where(filter => filter?.Path != filterToReset)!);
+                    s.Filters = new PluginSettingStoreCollection(s.Filters.Where(filter => filter?.Path != filterToReset).Cast<PluginSettingStore>());
                 AppendPluginStoreSettingsCollectionByPaths<IPositionedPipelineElement<IDeviceReport>>(s.Filters, filtersToReset);
             });
         }
