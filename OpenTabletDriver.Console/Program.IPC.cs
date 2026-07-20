@@ -12,16 +12,13 @@ namespace OpenTabletDriver.Console
         /// <summary>
         /// Connect to daemon if not already connected and ensure plugins are loaded
         /// </summary>
-        /// <returns><c>true</c> if connected successfully, <c>false</c> if daemon couldn't be found</returns>
-        /// <remarks>
-        /// <c>Driver.Instance</c> is guaranteed to be available after running this function.
-        /// </remarks>
-        public static async Task<bool> EnsureDaemonReady()
+        /// <returns>Driver instance if connected successfully, <c>null</c> if daemon couldn't be found</returns>
+        public static async Task<IDriverDaemon?> GetDaemon()
         {
             if (!Instance.Exists("OpenTabletDriver.Daemon"))
             {
                 System.Console.WriteLine("OpenTabletDriver Daemon not running");
-                return false;
+                return null;
             }
 
             if (!Driver.IsConnected)
@@ -33,7 +30,7 @@ namespace OpenTabletDriver.Console
                 AppInfo.PluginManager.Load();
             }
 
-            return true;
+            return Driver.Instance;
         }
 
     }
