@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.DependencyInjection;
 using OpenTabletDriver.Plugin.Tablet;
@@ -48,7 +49,11 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public T? Construct<T>(TabletReference? tabletReference = null, bool trigger = true) where T : class
         {
-            if (Path == null) return null;
+            if (Path == null)
+            {
+                Log.Write($"Construct<T>", $"{nameof(Path)} is null, returning null", LogLevel.Debug);
+                return null;
+            }
 
             var obj = AppInfo.PluginManager.ConstructObject<T>(Path);
             ApplySettings(obj);
