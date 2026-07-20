@@ -1,8 +1,6 @@
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop.Reflection;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Profiles
 {
     /// <summary>

@@ -7,8 +7,6 @@ using OpenTabletDriver.Plugin.DependencyInjection;
 using OpenTabletDriver.Plugin.Platform.Keyboard;
 using OpenTabletDriver.Plugin.Tablet;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
 {
     [PluginName(_PLUGIN_NAME), SupportedPlatform(PluginPlatform.Linux)]

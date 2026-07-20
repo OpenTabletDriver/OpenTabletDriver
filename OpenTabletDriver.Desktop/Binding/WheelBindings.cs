@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using OpenTabletDriver.Plugin.Tablet;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Binding
 {
     /// <summary>
