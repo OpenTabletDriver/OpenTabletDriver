@@ -137,7 +137,7 @@ namespace OpenTabletDriver.Daemon
         public event EventHandler? Resynchronize;
 
         public Driver Driver { get; }
-        private Settings? Settings { set; get; }
+        private Settings Settings { set; get; }
         private Collection<ITool> Tools { set; get; } = new Collection<ITool>();
         private readonly IUpdater? Updater = DesktopInterop.Updater;
         private readonly ISleepDetector? SleepDetector = new SleepDetector();
@@ -365,6 +365,7 @@ namespace OpenTabletDriver.Daemon
         private async Task LoadUserSettings()
         {
             AppInfo.PluginManager.Clean();
+            this.Settings ??= null!; // avoid CS8774, now don't you dare run this method non-awaited!
             await LoadPlugins();
             await DetectTablets();
 
@@ -642,24 +643,21 @@ namespace OpenTabletDriver.Daemon
                 runningTool.Dispose();
             Tools.Clear();
 
-            if (Settings != null)
+            foreach (var store in Settings.Tools)
             {
-                foreach (var store in Settings.Tools)
-                {
-                    if (store is not { Enable: true })
-                        continue;
+                if (store is not { Enable: true })
+                    continue;
 
-                    var tool = store.Construct<ITool>();
+                var tool = store.Construct<ITool>();
 
-                    if (tool?.Initialize() ?? false)
-                        Tools.Add(tool);
-                    else
-                        Log.Write("Tool", $"Failed to initialize {store.Name} tool.", LogLevel.Error);
-                }
+                if (tool?.Initialize() ?? false)
+                    Tools.Add(tool);
+                else
+                    Log.Write("Tool", $"Failed to initialize {store.Name} tool.", LogLevel.Error);
             }
         }
 
-        public Task<Settings?> GetSettings()
+        public Task<Settings> GetSettings()
         {
             return Task.FromResult(Settings);
         }

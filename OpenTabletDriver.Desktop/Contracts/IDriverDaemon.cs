@@ -31,7 +31,7 @@ namespace OpenTabletDriver.Desktop.Contracts
         Task<IEnumerable<TabletReference>> DetectTablets();
 
         Task SetSettings(Settings settings);
-        Task<Settings?> GetSettings();
+        Task<Settings> GetSettings();
         Task ResetSettings();
 
         Task<AppInfo> GetApplicationInfo();
