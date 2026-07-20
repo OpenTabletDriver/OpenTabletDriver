@@ -177,6 +177,8 @@ namespace OpenTabletDriver.Desktop.Profiles
                 var wheelBinding = WheelBindings[i];
                 wheelBinding.StepSize = GetDegreesPerStep(tabletSpecifications, i);
 
+                // null-warning suppressed as 'i' is based on the amount of wheels in the tablet specifications, or 0 if none
+                // therefore, if we're at 0 or no defined wheels then we should never be in this spot of the code
                 int buttonCountForWheel = (int)tabletSpecifications.Wheels![i].ButtonCount;
                 wheelBinding.WheelButtons.SetExpectedCount(buttonCountForWheel);
 
@@ -235,7 +237,7 @@ namespace OpenTabletDriver.Desktop.Profiles
             ArgumentNullException.ThrowIfNull(spec);
 
             if (spec.Wheels != null && spec.Wheels.Count >= wheelIndex && spec.Wheels[wheelIndex].StepCount != null)
-                return 360d / spec.Wheels[wheelIndex].StepCount!.Value;
+                return 360d / spec.Wheels[wheelIndex].StepCount!.Value; // null-warning suppressed as we've just null checked it
 
             throw new InvalidOperationException("Provided TabletSpecifications does not define wheel step count for this wheel");
         }
