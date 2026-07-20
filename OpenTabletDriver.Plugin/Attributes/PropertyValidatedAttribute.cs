@@ -29,6 +29,8 @@ namespace OpenTabletDriver.Plugin.Attributes
             {
                 return member.MemberType switch
                 {
+                    // the following null-suppressing operators are present as being here
+                    // in the member.MemberType switch case implicitly means those return values can't be null
                     MemberTypes.Property => (T?)sourceType.GetProperty(MemberName)!.GetValue(null),
                     MemberTypes.Field => (T?)sourceType.GetField(MemberName)!.GetValue(null),
                     MemberTypes.Method => (T?)sourceType.GetMethod(MemberName)!.Invoke(null, null),
