@@ -165,10 +165,10 @@ namespace OpenTabletDriver.Desktop.ViewModels.Utility
         private Statistic SaveMinMax<T>(T source, Func<T, T, T> minFunc, Func<T, T, T> maxFunc, string? unit, int? precision)
         {
             var min = this[StatisticSubGroup.Min];
-            min.Value = minFunc(source, (T)(min.Value ?? source)!);
+            min.Value = minFunc(source, min.Value is T minValue ? minValue : source);
             min.Unit = unit;
             var max = this[StatisticSubGroup.Max];
-            max.Value = maxFunc(source, (T)(max.Value ?? source)!);
+            max.Value = maxFunc(source, max.Value is T maxValue ? maxValue : source);
             max.Unit = unit;
 
             if (precision != null)
