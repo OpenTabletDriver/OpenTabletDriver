@@ -19,7 +19,10 @@ namespace OpenTabletDriver.Plugin
             {
                 if (_output == null && value != null)
                 {
-                    foreach (var message in _backlog!)
+                    System.Diagnostics.Debug.Assert(_backlog != null,
+                        "Backlog may not be null when no output events are present and one is being added");
+
+                    foreach (var message in _backlog)
                         value.Invoke(null, message);
                     _backlog = null;
                     _logAction = WriteLog;
@@ -125,12 +128,16 @@ namespace OpenTabletDriver.Plugin
 
         private static void WriteBacklog(LogMessage message)
         {
-            _backlog!.Add(message);
+            System.Diagnostics.Debug.Assert(_backlog != null,
+                "Writing to backlog without a backlog doesn't make sense. You should likely be writing to the normal log instead.");
+            _backlog.Add(message);
         }
 
         private static void WriteLog(LogMessage message)
         {
-            _output?.Invoke(null, message);
+            System.Diagnostics.Debug.Assert(_output != null,
+                "Writing to log output without any output events doesn't make sense. You should likely be writing to the backlog instead.");
+            _output.Invoke(null, message);
         }
     }
 }
