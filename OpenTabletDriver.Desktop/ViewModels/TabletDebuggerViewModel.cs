@@ -132,9 +132,9 @@ public sealed class TabletDebuggerViewModel : ViewModel, IDisposable
 
             if (dataObject is IAbsoluteWheelReport absoluteWheelReport)
                 for (int i = 0; i < absoluteWheelReport.AnalogPositions.Length; i++)
-                    if (absoluteWheelReport.AnalogPositions[i].HasValue)
+                    if (absoluteWheelReport.AnalogPositions[i] is { } analogPosition)
                         AdditionalStatistics[$"Abs. Wheel {i} Position"]
-                            .SaveMinMax(absoluteWheelReport.AnalogPositions[i]!.Value);
+                            .SaveMinMax(analogPosition);
 
             if (dataObject is IRelativeWheelReport relativeWheelReport)
                 for (int i = 0; i < relativeWheelReport.AnalogDeltas.Length; i++)
