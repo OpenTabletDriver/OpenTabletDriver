@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using OpenTabletDriver.Desktop;
@@ -16,7 +17,11 @@ namespace OpenTabletDriver.UX.Controls.Generic.Reflection
             if (FriendlyNameCache.TryGetValue(type, out string? value))
                 return value;
 
-            return FriendlyNameCache[type] = type.GetCustomAttribute<PluginNameAttribute>()?.Name ?? type.FullName!;
+            string? rv = type.GetCustomAttribute<PluginNameAttribute>()?.Name ?? type.FullName;
+
+            Debug.Assert(rv is not null, "Tried caching a null string");
+
+            return FriendlyNameCache[type] = rv;
         }
 
         public static bool RemoveFromFriendlyNameCache(TypeInfo typeInfo) => FriendlyNameCache.Remove(typeInfo);
