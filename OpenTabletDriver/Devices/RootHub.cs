@@ -55,7 +55,7 @@ namespace OpenTabletDriver.Devices
             if (serviceProvider == null)
                 throw new InvalidOperationException("Cannot instantiate device hubs without a service provider");
 
-            ConnectDeviceHub(ActivatorUtilities.CreateInstance<T>(serviceProvider!));
+            ConnectDeviceHub(ActivatorUtilities.CreateInstance<T>(serviceProvider));
         }
 
         public void ConnectDeviceHub(IDeviceHub rootHub)
