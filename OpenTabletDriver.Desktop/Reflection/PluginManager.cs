@@ -91,9 +91,9 @@ namespace OpenTabletDriver.Desktop.Reflection
         public virtual IReadOnlyCollection<TypeInfo> GetChildTypes<T>()
         {
             var children = (from type in PluginTypes
-                           where typeof(T).IsAssignableFrom(type)
-                           where !IsPluginIgnored(type)
-                           select type).ToArray();
+                            where typeof(T).IsAssignableFrom(type)
+                            where !IsPluginIgnored(type)
+                            select type).ToArray();
 
             Debug.Assert(children.All(x => !string.IsNullOrEmpty(x.FullName)),
                 "Tried returning Type with null or empty FullName");
