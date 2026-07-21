@@ -24,12 +24,6 @@ namespace OpenTabletDriver.Desktop
                    select type;
         }
 
-        extension<T>(IEnumerable<T?> o) where T : class
-        {
-            public IEnumerable<T> WhereNotNull() => o.Where(x => x != null).Cast<T>();
-            public IEnumerable<TResult> SelectNotNull<TResult>(Func<T, TResult> fun) => o.WhereNotNull().Select(fun);
-        }
-
         /// <summary>
         /// Check if provided assembly is loadable.
         /// Useful to check whether an OpenTabletDriver plugin is valid or not.
