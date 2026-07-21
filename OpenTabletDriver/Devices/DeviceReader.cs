@@ -108,6 +108,8 @@ namespace OpenTabletDriver.Devices
                 Connected = true;
                 while (Connected)
                 {
+                    // null-suppressing operator allowed as this is fastest (and has implicitly been this way for years)
+                    // maybe a later rewrite can ensure that `Connected` also means that we have a non-null ReportStream
                     var data = ReportStream!.Read();
                     if (Parser.Parse(data) is T report)
                         OnReport(report);
