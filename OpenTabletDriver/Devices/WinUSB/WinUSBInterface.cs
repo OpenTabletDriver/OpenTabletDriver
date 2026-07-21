@@ -124,7 +124,7 @@ namespace OpenTabletDriver.Devices.WinUSB
         private int referenceCount;
         private SafeFileHandle? activeFileHandle;
         private SafeWinUsbInterfaceHandle? activeWinUsbHandle;
-        private byte[] _reportDescriptor = null!;
+        private byte[] _reportDescriptor = null!; // null-silencing operator allowed as it is actually initialized in the constructor (trust)
 
         internal int InterfaceNum { get; private set; }
         internal byte? InputPipe { get; private set; }
