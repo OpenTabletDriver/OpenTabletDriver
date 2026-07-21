@@ -7,6 +7,8 @@ using OpenTabletDriver.Desktop;
 
 namespace OpenTabletDriver.UX.Controls.Generic.Reflection
 {
+    // null-warning suppression allowed here for TypeInfo.FullName
+    // as it's "guaranteed" to be non-null from the data source we're using
     public class TypeListBox<T> : ListBox<TypeInfo> where T : class
     {
         public TypeListBox()
