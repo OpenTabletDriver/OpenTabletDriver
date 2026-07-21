@@ -153,7 +153,7 @@ namespace OpenTabletDriver.UX
         private Settings? settings;
         public Settings Settings
         {
-            set => this.RaiseAndSetIfChanged(ref this.settings!, value);
+            set => this.RaiseAndSetIfChanged(ref this.settings, value);
             get => this.settings ?? throw new InvalidOperationException("Settings cannot be null");
         }
 
