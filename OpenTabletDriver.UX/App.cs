@@ -184,9 +184,9 @@ namespace OpenTabletDriver.UX
         {
             try
             {
-                var exception = e.ExceptionObject as Exception;
+                var exception = (Exception)e.ExceptionObject;
                 Log.Exception(exception);
-                exception!.ShowMessageBox();
+                exception.ShowMessageBox();
             }
             catch (Exception ex)
             {
