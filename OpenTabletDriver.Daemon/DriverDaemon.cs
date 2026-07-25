@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -136,7 +137,7 @@ namespace OpenTabletDriver.Daemon
         public event EventHandler? Resynchronize;
 
         public Driver Driver { get; }
-        private Settings? Settings { set; get; }
+        private Settings Settings { set; get; }
         private Collection<ITool> Tools { set; get; } = new Collection<ITool>();
         private readonly IUpdater? Updater = DesktopInterop.Updater;
         private readonly ISleepDetector? SleepDetector = new SleepDetector();
@@ -212,6 +213,7 @@ namespace OpenTabletDriver.Daemon
             return await GetTablets();
         }
 
+        [MemberNotNull(nameof(Settings))]
         public Task SetSettings(Settings? settings)
         {
             try
@@ -306,6 +308,7 @@ namespace OpenTabletDriver.Daemon
                 $"Pressure: {(profile.BindingSettings.DisablePressure ? "Disabled" : "Enabled")}");
         }
 
+        [MemberNotNull(nameof(Settings))]
         private void RecoverSettings(Settings? settings)
         {
             var recoveredSettings = Settings.GetDefaults();
@@ -352,14 +355,17 @@ namespace OpenTabletDriver.Daemon
             SetSettings(recoveredSettings);
         }
 
+        [MemberNotNull(nameof(Settings))]
         public async Task ResetSettings()
         {
             await SetSettings(Settings.GetDefaults());
         }
 
+        [MemberNotNull(nameof(Settings))]
         private async Task LoadUserSettings()
         {
             AppInfo.PluginManager.Clean();
+            this.Settings ??= null!; // avoid CS8774, now don't you dare run this method non-awaited!
             await LoadPlugins();
             await DetectTablets();
 
@@ -396,7 +402,7 @@ namespace OpenTabletDriver.Daemon
                 await ResetSettings();
 
                 // only save fresh settings if a tablet was configured
-                if (Settings!.Profiles.Any())
+                if (Settings.Profiles.Any())
                     Settings.Serialize(settingsFile);
             }
         }
@@ -424,11 +430,14 @@ namespace OpenTabletDriver.Daemon
                 MaxPenPressure = dev.Properties.Specifications.Pen.MaxPressure,
             };
 
-            var elements = (from store in profile.Filters
-                            where store is { Enable: true }
-                            let filter = store!.Construct<IPositionedPipelineElement<IDeviceReport>>(outputMode.Tablet)
+            var elements = (
+                            from store in
+                                from innerStore in profile.Filters
+                                where innerStore is { Enable: true }
+                                select innerStore
+                            let filter = store.Construct<IPositionedPipelineElement<IDeviceReport>>(outputMode.Tablet)
                             where filter != null
-                            select filter!).ToArray();
+                            select filter).ToArray();
 
             outputMode.Elements = elements.Prepend(pressureRewriteFilter).Append(bindingHandler).ToList();
 
@@ -634,26 +643,23 @@ namespace OpenTabletDriver.Daemon
                 runningTool.Dispose();
             Tools.Clear();
 
-            if (Settings != null)
+            foreach (var store in Settings.Tools)
             {
-                foreach (var store in Settings.Tools)
-                {
-                    if (store is not { Enable: true })
-                        continue;
+                if (store is not { Enable: true })
+                    continue;
 
-                    var tool = store.Construct<ITool>();
+                var tool = store.Construct<ITool>();
 
-                    if (tool?.Initialize() ?? false)
-                        Tools.Add(tool);
-                    else
-                        Log.Write("Tool", $"Failed to initialize {store.Name} tool.", LogLevel.Error);
-                }
+                if (tool?.Initialize() ?? false)
+                    Tools.Add(tool);
+                else
+                    Log.Write("Tool", $"Failed to initialize {store.Name} tool.", LogLevel.Error);
             }
         }
 
         public Task<Settings> GetSettings()
         {
-            return Task.FromResult(Settings!);
+            return Task.FromResult(Settings);
         }
 
         public Task<IEnumerable<SerializedDeviceEndpoint>> GetDevices()

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.DependencyInjection;
@@ -42,8 +41,9 @@ namespace OpenTabletDriver.Desktop.Binding
         }
 
         private static IEnumerable<string>? validButtons;
+
         public static IEnumerable<string> ValidButtons =>
-            validButtons ??= Enum.GetValues<MouseButton>().Select(Enum.GetName)!;
+            validButtons ??= Enum.GetNames<MouseButton>();
 
         public override string ToString() => $"{PLUGIN_NAME}: {Button}";
     }

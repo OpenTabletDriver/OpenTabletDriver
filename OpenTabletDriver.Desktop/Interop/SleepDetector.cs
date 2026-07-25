@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -58,7 +59,10 @@ namespace OpenTabletDriver.Desktop.Interop
                 if (task == null)
                     return;
 
-                cts!.Cancel();
+                Debug.Assert(cts != null,
+                    "Internal code error. Cancellation token source null when trying to stop sleep detector");
+
+                cts.Cancel();
 #pragma warning disable VSTHRD002
                 task.Wait();
 #pragma warning restore VSTHRD002

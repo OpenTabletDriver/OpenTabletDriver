@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -43,11 +44,17 @@ namespace OpenTabletDriver.Desktop.Reflection
             }
             else
             {
+                var entryAssembly = Assembly.GetEntryAssembly();
+                Debug.Assert(entryAssembly != null, $"Cannot {nameof(GetMetadata)}() without an entry assembly!");
+
+                var version = entryAssembly.GetName().Version;
+                Debug.Assert(version != null, $"Cannot {nameof(GetMetadata)}() without entry assembly containing a version (compile-time bug?)");
+
                 return new PluginMetadata
                 {
                     Name = FriendlyName,
                     Owner = "<unknown>",
-                    SupportedDriverVersion = Assembly.GetEntryAssembly()!.GetName().Version!, // TODO: require plugin manifest to ensure compatibility?
+                    SupportedDriverVersion = version, // TODO: require plugin manifest to ensure compatibility?
                     Installed = true,
                 };
             }

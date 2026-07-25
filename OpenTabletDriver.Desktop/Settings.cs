@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
@@ -64,7 +65,9 @@ namespace OpenTabletDriver.Desktop
         private static ProfileCollection GetDefaultProfiles()
         {
             // nullable warning suppressed because IDriver should always be provided by DI
-            return new ProfileCollection(AppInfo.PluginManager.GetService<IDriver>()!.Tablets);
+            var iDriver = AppInfo.PluginManager.GetService<IDriver>();
+            Debug.Assert(iDriver != null, "Internal program error. IDriver not injected?");
+            return new ProfileCollection(iDriver.Tablets);
         }
 
         #region Custom Serialization

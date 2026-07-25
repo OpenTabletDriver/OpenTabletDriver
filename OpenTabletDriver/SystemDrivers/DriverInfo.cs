@@ -50,9 +50,8 @@ namespace OpenTabletDriver.SystemDrivers
 
             // Remove "UC Logic" duplicates
             return providers.Select(provider => provider.GetDriverInfo())
-                .Where(i => i != null)
-                .GroupBy(i => i!.Name)
-                .Select(g => g.First()).Cast<DriverInfo>();
+                .WhereNotNull().GroupBy(i => i.Name)
+                .Select(g => g.First());
         }
 
         internal static Process[] SystemProcesses { get; private set; } = [];

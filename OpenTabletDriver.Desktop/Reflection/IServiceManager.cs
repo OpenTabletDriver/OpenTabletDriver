@@ -4,7 +4,7 @@ namespace OpenTabletDriver.Desktop.Reflection
 {
     public interface IServiceManager : IServiceProvider
     {
-        bool AddService<T>(Func<T> value);
+        bool AddService<T>(Func<T> value) where T : class?;
         void ResetServices();
     }
 }

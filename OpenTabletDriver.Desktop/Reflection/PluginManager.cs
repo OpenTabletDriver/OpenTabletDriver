@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using OpenTabletDriver.Plugin;
@@ -89,12 +90,15 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public virtual IReadOnlyCollection<TypeInfo> GetChildTypes<T>()
         {
-            var children = from type in PluginTypes
-                           where typeof(T).IsAssignableFrom(type)
-                           where !IsPluginIgnored(type)
-                           select type;
+            var children = (from type in PluginTypes
+                            where typeof(T).IsAssignableFrom(type)
+                            where !IsPluginIgnored(type)
+                            select type).ToArray();
 
-            return children.ToArray();
+            Debug.Assert(children.All(x => !string.IsNullOrEmpty(x.FullName)),
+                "Tried returning Type with null or empty FullName");
+
+            return children;
         }
 
         public virtual string? GetFriendlyName(string path)

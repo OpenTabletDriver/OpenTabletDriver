@@ -139,19 +139,21 @@ namespace OpenTabletDriver.UX
 
         public static App Current { get; } = new App();
 
-        public const string WikiUrl = "https://opentabletdriver.net/Wiki";
+        // null silencing operators allowed as it'll be very obvious to even carefree developers if anything breaks here (GUI won't start)
         public static readonly string Version = Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
+        public static Bitmap Logo { get; } = new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.Assets.otd.png")!);
+        public static string License { get; } = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.LICENSE")!).ReadToEnd();
+        // end of allowing null silencing operators
+
+        public const string WikiUrl = "https://opentabletdriver.net/Wiki";
+        public static Uri Website { get; } = new Uri(@"https://github.com/OpenTabletDriver/OpenTabletDriver");
 
         public static DaemonRpcClient Driver { get; } = new DaemonRpcClient("OpenTabletDriver.Daemon");
-        public static Bitmap Logo { get; } = new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.Assets.otd.png")!);
-
-        public static Uri Website { get; } = new Uri(@"https://github.com/OpenTabletDriver/OpenTabletDriver");
-        public static string License { get; } = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.LICENSE")!).ReadToEnd();
 
         private Settings? settings;
         public Settings Settings
         {
-            set => this.RaiseAndSetIfChanged(ref this.settings!, value);
+            set => this.RaiseAndSetIfChanged(ref this.settings, value);
             get => this.settings ?? throw new InvalidOperationException("Settings cannot be null");
         }
 
@@ -182,9 +184,9 @@ namespace OpenTabletDriver.UX
         {
             try
             {
-                var exception = e.ExceptionObject as Exception;
+                var exception = (Exception)e.ExceptionObject;
                 Log.Exception(exception);
-                exception!.ShowMessageBox();
+                exception.ShowMessageBox();
             }
             catch (Exception ex)
             {

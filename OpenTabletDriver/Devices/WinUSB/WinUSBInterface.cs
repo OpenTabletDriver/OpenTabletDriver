@@ -1,6 +1,7 @@
 using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using HidSharp.Reports;
@@ -124,7 +125,7 @@ namespace OpenTabletDriver.Devices.WinUSB
         private int referenceCount;
         private SafeFileHandle? activeFileHandle;
         private SafeWinUsbInterfaceHandle? activeWinUsbHandle;
-        private byte[] _reportDescriptor = null!;
+        private byte[] _reportDescriptor = null!; // null-silencing operator allowed as it is actually initialized in the constructor (trust)
 
         internal int InterfaceNum { get; private set; }
         internal byte? InputPipe { get; private set; }
@@ -226,7 +227,8 @@ namespace OpenTabletDriver.Devices.WinUSB
                     throw new IOException("Failed to initialize WinUSB interface");
             }
 
-            return activeWinUsbHandle!;
+            Debug.Assert(activeWinUsbHandle != null, "Unexpectedly tried to return a null WinUSB Handle");
+            return activeWinUsbHandle;
         }
 
         // Take reference, so we may easily add multiple interface support in the future

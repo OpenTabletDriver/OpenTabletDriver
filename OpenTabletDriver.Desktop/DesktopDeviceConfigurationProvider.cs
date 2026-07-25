@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using OpenTabletDriver.Configurations;
@@ -29,8 +30,8 @@ namespace OpenTabletDriver.Desktop
                         ? $"{files.Count} configurations exist in '{AppInfo.Current.ConfigurationDirectory}'. Built-in configurations may be overridden if the Name matches exactly."
                         : $"Configuration overrides specified as '{AppInfo.Current.ConfigurationDirectory}' but folder is empty.");
 
-                jsonConfigurations = files.Select(path => Serialization.Deserialize<TabletConfiguration>(File.OpenRead(path))).Where(x => x != null)
-                    .Select(jsonConfig => (ConfigurationSource.File, jsonConfig))!;
+                jsonConfigurations = files.Select(path => Serialization.Deserialize<TabletConfiguration>(File.OpenRead(path)))
+                    .SelectNotNull(jsonConfig => (ConfigurationSource.File, jsonConfig));
             }
 
             return _inAssemblyConfigurationProvider.TabletConfigurations
@@ -49,8 +50,11 @@ namespace OpenTabletDriver.Desktop
                     if (jsonConfig != null && asmConfig != null)
                         Log.Write("Detect", $"Overriding tablet configuration '{jsonConfig.Name}'");
 
-                    return jsonConfig ?? asmConfig!;
-                });
+                    Debug.Assert(jsonConfig != null || asmConfig != null,
+                        "Both tablet config variants unexpectedly null. Function is expected to find at least 1 non-null value");
+
+                    return jsonConfig ?? asmConfig;
+                }).Cast<TabletConfiguration>();
         }
 
         private enum ConfigurationSource

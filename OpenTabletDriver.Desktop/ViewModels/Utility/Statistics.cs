@@ -150,7 +150,7 @@ namespace OpenTabletDriver.Desktop.ViewModels.Utility
         public Statistic SaveMinMax(Vector2 source, string? unit = null, int precision = 0) => SaveMinMax(source, Vector2.Min, Vector2.Max, unit, precision);
         public Statistic SaveMinMax(TouchPoint?[] touchPoints)
         {
-            var validTouchPoints = touchPoints.Where(x => x != null).Select(x => x!.Position).ToArray();
+            var validTouchPoints = touchPoints.SelectNotNull(x => x.Position).ToArray();
             if (validTouchPoints.Length == 0) return this;
 
             // Vector2 doesn't implement IComparable, do naive method:
@@ -163,10 +163,10 @@ namespace OpenTabletDriver.Desktop.ViewModels.Utility
         private Statistic SaveMinMax<T>(T source, Func<T, T, T> minFunc, Func<T, T, T> maxFunc, string? unit, int? precision)
         {
             var min = this[StatisticSubGroup.Min];
-            min.Value = minFunc(source, (T)(min.Value ?? source)!);
+            min.Value = minFunc(source, min.Value is T minValue ? minValue : source);
             min.Unit = unit;
             var max = this[StatisticSubGroup.Max];
-            max.Value = maxFunc(source, (T)(max.Value ?? source)!);
+            max.Value = maxFunc(source, max.Value is T maxValue ? maxValue : source);
             max.Unit = unit;
 
             if (precision != null)

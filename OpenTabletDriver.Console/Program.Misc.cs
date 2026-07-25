@@ -16,15 +16,17 @@ namespace OpenTabletDriver.Console
 
         static async Task<Settings> GetSettings()
         {
-            if (!await EnsureDaemonReady())
+            var daemon = await GetDaemon();
+            if (daemon is null)
                 throw new InvalidOperationException("Cannot get settings without a daemon");
-            return await Driver.Instance!.GetSettings();
+            return await daemon.GetSettings();
         }
 
         static async Task ApplySettings(Settings settings)
         {
-            if (!await EnsureDaemonReady()) return;
-            await Driver.Instance!.SetSettings(settings);
+            var daemon = await GetDaemon();
+            if (daemon is null) return;
+            await daemon.SetSettings(settings);
         }
 
         static async Task ModifySettings(Action<Settings> func)
@@ -45,7 +47,8 @@ namespace OpenTabletDriver.Console
 
         static async Task<Profile> GetProfile(string profileName, Settings? settings = null)
         {
-            if (!await EnsureDaemonReady())
+            var daemon = await GetDaemon();
+            if (daemon is null)
                 throw new InvalidOperationException("Cannot get a profile without a daemon");
 
             const StringComparison comparer = StringComparison.InvariantCultureIgnoreCase;
@@ -54,7 +57,7 @@ namespace OpenTabletDriver.Console
             var profile = settings.Profiles.FirstOrDefault(p => p.Tablet.Equals(profileName, comparer));
             if (profile == null)
             {
-                var tablets = await Driver.Instance!.GetTablets();
+                var tablets = await daemon.GetTablets();
                 var tablet = tablets.FirstOrDefault(t => t.Properties.Name.Equals(profileName, comparer));
                 if (tablet != null)
                     profile = Profile.GetDefaults(tablet);
@@ -65,7 +68,8 @@ namespace OpenTabletDriver.Console
 
         static async Task ListTypes<T>(Func<Type, bool>? predicate = null)
         {
-            if (!await EnsureDaemonReady()) return;
+            var daemon = await GetDaemon();
+            if (daemon is null) return;
             var types = AppInfo.PluginManager.GetChildTypes<T>();
             if (types.Count == 0)
             {
