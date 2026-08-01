@@ -1,0 +1,33 @@
+{
+  "Name": "ViewSonic ID1330",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 300,
+      "Height": 168.75,
+      "MaxX": 30000,
+      "MaxY": 16875
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "ButtonCount": 1
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 6
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 1347,
+      "ProductID": 58969,
+      "InputReportLength": 33,
+      "OutputReportLength": 33,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.ViewSonic.ID1330ReportParser",
+      "Attributes": {
+        "Interface": "0"
+      }
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
