@@ -9,13 +9,27 @@
     },
     "Pen": {
       "MaxPressure": 8191,
-      "ButtonCount": 1
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": {
       "ButtonCount": 6
     }
   },
   "DigitizerIdentifiers": [
+    {
+      "VendorID": 1347,
+      "ProductID": 58969,
+      "InputReportLength": 14,
+      "FeatureReportLength": 5,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.ViewSonic.ID1330ReportParser",
+      "FeatureInitReport": [
+        "AhABAAA="
+      ],
+      "Attributes": {
+        "Interface": "0",
+        "WinUsage": "06"
+      }
+    },
     {
       "VendorID": 1347,
       "ProductID": 58969,
