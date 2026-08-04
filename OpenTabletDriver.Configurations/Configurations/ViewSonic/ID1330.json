@@ -2,10 +2,10 @@
   "Name": "ViewSonic ID1330",
   "Specifications": {
     "Digitizer": {
-      "Width": 300,
-      "Height": 168.75,
-      "MaxX": 30000,
-      "MaxY": 16875
+      "Width": 293.76,
+      "Height": 165.23,
+      "MaxX": 29376,
+      "MaxY": 16523
     },
     "Pen": {
       "MaxPressure": 8191,
