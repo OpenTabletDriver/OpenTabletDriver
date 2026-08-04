@@ -8,6 +8,8 @@ namespace OpenTabletDriver.Configurations.Parsers.Gaomon
         {
             Raw = data;
             byte wheelData = data[5];
+            // Map hardware range 1~12 to framework range 0~11 for AbsoluteWheelMax: 11.
+            // null means no touch on ring.
             AnalogPositions = [wheelData != 0 ? wheelData-1u : null];
         }
 

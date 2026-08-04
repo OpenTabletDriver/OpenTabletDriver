@@ -12,7 +12,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Gaomon
             return data[1] switch
             {
                 0xe0 => new UCLogicAuxReport(data),
-                // 0xf0 is for wheel data, reported in data[5]
+                // 0xf0 is wheel mode, data[5] contains absolute position (1~12)
                 0xf0 => new GaomonM6WheelReport(data),
                 _ => new TiltTabletReport(data)
             };
