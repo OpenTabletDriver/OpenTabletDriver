@@ -8,13 +8,15 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
-    public class EvdevVirtualTablet : IPenActionHandler, IAbsolutePointer, IPressureHandler, ITiltHandler, IEraserHandler, IHoverDistanceHandler, ISynchronousPointer, IDisposable
+    public class EvdevVirtualTablet : IPenActionHandler, IAbsolutePointer, IPressureHandler, ITiltHandler, IEraserHandler, IHoverDistanceHandler, IMouseScrollHandler, ISynchronousPointer, IDisposable
     {
         private const int RESOLUTION = 1000; // subpixels per screen pixel
 
         private bool isEraser;
 
         private readonly EvdevDevice Device;
+
+        private readonly EvdevDevice ScrollDevice;
 
         private EventCode[] supportedEventCodes =
         [
@@ -94,6 +96,27 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
                     Log.WriteNotify("Evdev", $"Failed to initialize virtual pressure sensitive tablet. (error code {result})", LogLevel.Error);
                     break;
             }
+
+            // A separate virtual mouse is used for the touch ring/wheel scroll events.
+            // This keeps the pen tablet device free of relative axes, since compositors
+            // (libinput) do not route REL_WHEEL from a tablet-class device.
+            ScrollDevice = new EvdevDevice("OpenTabletDriver Virtual Scroll Mouse");
+            ScrollDevice.EnableTypeCodes(
+                EventType.EV_REL,
+                EventCode.REL_WHEEL,
+                EventCode.REL_WHEEL_HI_RES,
+                EventCode.REL_HWHEEL,
+                EventCode.REL_HWHEEL_HI_RES
+            );
+            ScrollDevice.EnableTypeCodes(
+                EventType.EV_KEY,
+                EventCode.BTN_LEFT,
+                EventCode.BTN_RIGHT,
+                EventCode.BTN_MIDDLE
+            );
+            var scrollResult = ScrollDevice.Initialize();
+            if (scrollResult != ERRNO.NONE)
+                Log.WriteNotify("Evdev", $"Failed to initialize virtual scroll mouse. (error code {scrollResult})", LogLevel.Error);
         }
 
         private const int MaxPressure = ushort.MaxValue;
@@ -136,6 +159,16 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             Device.Write(EventType.EV_ABS, EventCode.ABS_DISTANCE, (int)distance);
         }
 
+        public void ScrollVertically(int amount)
+        {
+            ScrollDevice.Write(EventType.EV_REL, EventCode.REL_WHEEL_HI_RES, amount);
+        }
+
+        public void ScrollHorizontally(int amount)
+        {
+            ScrollDevice.Write(EventType.EV_REL, EventCode.REL_HWHEEL_HI_RES, amount);
+        }
+
         public void SetKeyState(EventCode eventCode, bool state)
         {
             Device.Write(EventType.EV_KEY, eventCode, state ? 1 : 0);
@@ -175,7 +208,10 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             if (_isDisposed) return;
 
             if (disposing)
+            {
                 Device.Dispose();
+                ScrollDevice.Dispose();
+            }
 
             _isDisposed = true;
         }
@@ -183,6 +219,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         public void Flush()
         {
             Device.Sync();
+            ScrollDevice.Sync();
         }
 
         public void Activate(PenAction action)
