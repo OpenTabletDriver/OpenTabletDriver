@@ -20,6 +20,11 @@ namespace OpenTabletDriver.Configurations.Parsers.XP_Pen
             if (report[1] == 0xF2)
                 return new DeviceReport(report);
 
+            // Ignore ON report when toggling ON tablets using the wireless dongle from XP-Pen.
+            // see https://github.com/OpenTabletDriver/OpenTabletDriver/issues/4988 for more details
+            if (report[1] == 0xF8)
+                return new XP_PenAuxReport(report);
+
             if (report[1].IsBitSet(4))
                 return new XP_PenAuxReport(report);
 
