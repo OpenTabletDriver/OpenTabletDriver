@@ -242,6 +242,7 @@
 | Huion Kamvas 13 (Gen 3)            |    Has Quirks     | Function-switch buttons act as regular auxiliary keys.
 | Huion New 1060 Plus (2048)         |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 1
 | Huion osu! Tablet                  |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0. Uses the same configuration as the Huion 420.
+| Huion Q630M                        |    Has Quirks     | Aux buttons are not in order.
 | Huion WH1409 V2 (Variant 2)        |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | KENTING K5540                      |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
 | Monoprice 10594                    |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
@@ -298,7 +299,6 @@
 | Huion Kamvas Pro 24                |  Missing Features | Touch bar is not yet supported.
 | Huion Kamvas Pro 24 (Gen 3)        |  Missing Features | Touch is not yet supported.
 | Huion Q620M                        |  Missing Features | Wheel button is not yet supported.
-| Huion Q630M                        |  Missing Features | Dials/Wheels are not yet supported.
 | Huion RTM-500                      |  Missing Features | Touch bar is not yet supported.
 | Huion RTP-700                      |  Missing Features | Touch bar is not yet supported.
 | LifeTec LT9570                     |  Missing Features | Aux buttons and tilt is not yet supported.
