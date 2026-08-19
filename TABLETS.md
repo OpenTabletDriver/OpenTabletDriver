@@ -61,7 +61,6 @@
 | Huion Note X10                     |     Supported     |
 | Huion Q11K                         |     Supported     |
 | Huion Q11K V2                      |     Supported     |
-| Huion Q630M                        |     Supported     |
 | Huion RDS-160                      |     Supported     |
 | Huion RDS-220                      |     Supported     |
 | Huion RTS-300                      |     Supported     | Uses the same configuration as the Huion H642.
@@ -234,6 +233,7 @@
 | Huion Kamvas 13 (Gen 3)            |    Has Quirks     | Function-switch buttons act as regular auxiliary keys.
 | Huion New 1060 Plus (2048)         |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 1
 | Huion osu! Tablet                  |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0. Uses the same configuration as the Huion 420.
+| Huion Q630M                        |    Has Quirks     | Aux buttons are not in order.
 | Huion WH1409 V2 (Variant 2)        |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | KENTING K5540                      |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
 | Monoprice 10594                    |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
