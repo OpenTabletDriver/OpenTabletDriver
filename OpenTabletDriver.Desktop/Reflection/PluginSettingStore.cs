@@ -38,6 +38,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             Settings = settings;
         }
 
+        // TODO: make non-nullable or similar fix, since it never makes sense to have a null/empty path? -gonX
         public string? Path { set; get; }
 
         [JsonIgnore]
