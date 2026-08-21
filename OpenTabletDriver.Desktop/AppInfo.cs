@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Reflection;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
@@ -12,6 +13,8 @@ namespace OpenTabletDriver.Desktop
 
     public class AppInfo
     {
+        private readonly static Version version = Assembly.GetExecutingAssembly().GetName().Version!;
+
         private string? configurationDirectory,
             settingsFile,
             pluginDirectory,
@@ -43,16 +46,19 @@ namespace OpenTabletDriver.Desktop
             {
                 PluginPlatform.Windows => new AppInfo
                 {
-                    AppDataDirectory = GetExistingPathOrLast(Path.Join(ProgramDirectory, "userdata"), "$LOCALAPPDATA\\OpenTabletDriver")
+                    Version = version,
+                    AppDataDirectory = GetExistingPathOrLast(Path.Join(ProgramDirectory, "userdata"), "$LOCALAPPDATA\\OpenTabletDriver"),
                 },
                 PluginPlatform.Linux => new AppInfo
                 {
+                    Version = version,
                     AppDataDirectory = GetExistingPathOrLast(Path.Join(ProgramDirectory, "userdata"), Path.Join(UnixXdgPath.ConfigHome, "OpenTabletDriver")),
                     TemporaryDirectory = GetPath(Path.Join(UnixXdgPath.RuntimeDir, "OpenTabletDriver")),
                     CacheDirectory = GetPath(Path.Join(UnixXdgPath.CacheHome, "OpenTabletDriver")),
                 },
                 PluginPlatform.MacOS => new AppInfo()
                 {
+                    Version = version,
                     AppDataDirectory = GetExistingPathOrLast(Path.Join(ProgramDirectory, "userdata"), "~/Library/Application Support/OpenTabletDriver"),
                     TemporaryDirectory = GetPath("$TMPDIR/OpenTabletDriver"),
                     CacheDirectory = GetPath("~/Library/Caches/OpenTabletDriver"),
@@ -65,6 +71,8 @@ namespace OpenTabletDriver.Desktop
 
         public static PresetManager PresetManager { set; get; } = new PresetManager();
 
+        public required Version Version { set; get; }
+
         public string? CommandLineAppDataDirectory
         {
             set
@@ -75,6 +83,7 @@ namespace OpenTabletDriver.Desktop
             }
             get;
         }
+
         public string? CommandLineConfigurationDirectory
         {
             set
