@@ -13,6 +13,13 @@ namespace OpenTabletDriver.Desktop
 
     public class AppInfo
     {
+        /// <summary>
+        ///   The version of the currently executing assembly
+        /// </summary>
+        /// <remarks>
+        ///   This value is set at compile time, it will differ depending on whether the Daemon, the UX or some other code is using this field.
+        ///   You should rely on <see cref="Version"/> instead.
+        /// </remarks>
         private readonly static Version assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version!;
 
         private string? configurationDirectory,
