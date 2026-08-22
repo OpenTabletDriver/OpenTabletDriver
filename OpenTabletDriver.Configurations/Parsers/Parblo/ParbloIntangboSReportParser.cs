@@ -5,7 +5,7 @@ using OpenTabletDriver.Plugin.Tablet;
 namespace OpenTabletDriver.Configurations.Parsers.Parblo
 {
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
-    public class ParbloIntangboSParser : IReportParser<IDeviceReport>
+    public class ParbloIntangboSReportParser : IReportParser<IDeviceReport>
     {
         public IDeviceReport? Parse(byte[]? report)
         {
