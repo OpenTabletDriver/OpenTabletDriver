@@ -75,6 +75,7 @@
 | Parblo A609                        |     Supported     |
 | Parblo A610 Pro (Variant 2)        |     Supported     |
 | Parblo A640 V2                     |     Supported     |
+| Parblo Intangbo S                  |     Supported     |
 | Parblo Ninos N10B                  |     Supported     |
 | Parblo Ninos N4                    |     Supported     |
 | Parblo Ninos N7                    |     Supported     |
@@ -305,7 +306,6 @@
 | Monoprice MP1060-HA60              |  Missing Features | Tablet buttons are not yet supported. Windows: Requires Zadig's WinUSB to be installed on interface 0
 | Parblo A640                        |  Missing Features | Aux buttons are not yet supported.
 | Parblo Intangbo M                  |  Missing Features | Wheel is not yet supported.
-| Parblo Intangbo S                  |  Missing Features | Wheel is not yet supported.
 | Parblo Intangbo SW                 |  Missing Features | Wheel and wireless are not yet supported.
 | UGEE M908                          |  Missing Features | Wheel is not yet supported.
 | UGEE UE16                          |  Missing Features | Wheel is not yet supported.
