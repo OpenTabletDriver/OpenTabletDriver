@@ -230,7 +230,7 @@
 | FlooGoo FMA100                     |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 1. Might also need to change the configuration depending on the tablet used.
 | Gaomon S56K                        |    Has Quirks     | Windows: Might need Zadig's WinUSB to be installed on interface 0 or 1
 | Gaomon S630                        |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
-| Gaomon S830                        |    Has Quirks     | User may have to replug their tablet until it is detected.
+| Gaomon S830                        |    Has Quirks     | Some variants may require user replugging their tablet until it is detected.
 | Genius G-Pen F509                  |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
 | Genius i405x                       |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
 | Genius i608x                       |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
