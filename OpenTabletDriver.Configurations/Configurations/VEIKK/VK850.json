@@ -1,0 +1,35 @@
+{
+  "Name": "VEIKK VK850",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 203.2,
+      "Height": 127.0,
+      "MaxX": 40640,
+      "MaxY": 25400
+    },
+    "Pen": {
+      "MaxPressure": 16384,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 10
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 12267,
+      "ProductID": 32,
+      "InputReportLength": 13,
+      "OutputReportLength": 9,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Veikk.VeikkTiltReportParser",
+      "OutputInitReport": [
+        "CQEE",
+        "CQIC",
+        "CQMC"
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
