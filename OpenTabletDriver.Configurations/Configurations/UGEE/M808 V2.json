@@ -1,5 +1,5 @@
 {
-  "Name": "UGEE M808",
+  "Name": "UGEE M808 V2",
   "Specifications": {
     "Digitizer": {
       "Width": 254,
@@ -8,7 +8,7 @@
       "MaxY": 31750
     },
     "Pen": {
-      "MaxPressure": 8191,
+      "MaxPressure": 16383,
       "ButtonCount": 2
     },
     "AuxiliaryButtons": {
@@ -26,7 +26,7 @@
         "ArAE"
       ],
       "DeviceStrings": {
-        "5": "^(?!2023-09-21_release001).*$"
+        "5": "2023-09-21_release001"
       },
       "InitializationStrings": [],
       "Attributes": {}
