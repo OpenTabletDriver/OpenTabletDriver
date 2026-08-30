@@ -97,6 +97,7 @@
 | VEIKK VK430                        |     Supported     |
 | VEIKK VK430 V2                     |     Supported     |
 | VEIKK VK640                        |     Supported     |
+| VEIKK VK850                        |     Supported     |
 | ViewSonic Woodpad PF0730           |     Supported     |
 | ViewSonic Woodpad PF1030           |     Supported     |
 | Wacom CTC-4110WL                   |     Supported     |
@@ -317,7 +318,6 @@
 | VEIKK Voila (VO1060)               |  Missing Features | Wheel is not yet supported.
 | VEIKK VK1060PRO                    |  Missing Features | Wheels not yet supported.
 | VEIKK VK2200PRO                    |  Missing Features | Wheels not yet supported, tablet buttons may be mapped incorrectly.
-| VEIKK VK850                        |  Missing Features | Wheel is not yet supported.
 | Wacom CTE-450                      |  Missing Features | Wheel is not yet supported.
 | Wacom CTE-650                      |  Missing Features | Wheel is not yet supported.
 | Wacom CTH-300                      |  Missing Features | Touch is not yet supported.
