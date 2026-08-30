@@ -93,7 +93,6 @@ namespace OpenTabletDriver.UX.Controls.Output
         internal TabletAreaEditor tabletAreaEditor;
 
         private bool arLockHooked;
-        private bool handlingArLock;
         private bool handlingForcedArConstraint;
         private bool handlingSettingsChanging;
         private float? prevDisplayWidth;
@@ -170,11 +169,8 @@ namespace OpenTabletDriver.UX.Controls.Output
 
         private void HandleAspectRatioLock(object? sender, EventArgs e)
         {
-            if (!handlingArLock && !handlingSettingsChanging)
+            if (!handlingSettingsChanging)
             {
-                // Avoids looping
-                handlingArLock = true;
-
                 if (sender == tabletWidth || sender == tabletAreaEditor)
                 {
                     var fullHeight = tabletAreaEditor.FullAreaBounds!.Value.Height;
@@ -204,8 +200,6 @@ namespace OpenTabletDriver.UX.Controls.Output
 
                 prevDisplayWidth = displayWidth.DataValue;
                 prevDisplayHeight = displayHeight.DataValue;
-
-                handlingArLock = false;
             }
         }
 
