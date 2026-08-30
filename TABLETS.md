@@ -17,6 +17,7 @@
 | Gaomon PD1320                      |     Supported     |
 | Gaomon PD1560                      |     Supported     |
 | Gaomon PD1561                      |     Supported     |
+| Gaomon PD1900                      |     Supported     |
 | Gaomon PD2200                      |     Supported     |
 | Gaomon S620                        |     Supported     |
 | Gaomon S620 (16K)                  |     Supported     |
