@@ -9,6 +9,8 @@
     },
     "Pen": {
       "MaxPressure": 2047,
+      "MinRotation": -900,
+      "MaxRotation": 899,
       "ButtonCount": 2
     },
     "AuxiliaryButtons": {

@@ -4,7 +4,7 @@ using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV3
 {
-    public struct IntuosV3ExtendedReport : ITabletReport, IProximityReport, ITiltReport, IEraserReport
+    public struct IntuosV3ExtendedReport : ITabletReport, IProximityReport, ITiltReport, IEraserReport, IRotationReport
     {
         public IntuosV3ExtendedReport(byte[] report)
         {
@@ -34,6 +34,8 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV3
             Eraser = report[2].IsBitSet(5);
             NearProximity = report[2].IsBitSet(6);
             HoverDistance = report[19];
+
+            Rotation = Unsafe.ReadUnaligned<short>(ref report[15]);
         }
 
         public byte[] Raw { set; get; }
@@ -44,5 +46,6 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV3
         public bool NearProximity { set; get; }
         public uint HoverDistance { set; get; }
         public bool Eraser { get; set; }
+        public int Rotation { set; get; }
     }
 }
