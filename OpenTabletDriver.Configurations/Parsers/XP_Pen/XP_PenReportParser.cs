@@ -11,6 +11,20 @@ namespace OpenTabletDriver.Configurations.Parsers.XP_Pen
             if (report[1] == 0xC0)
                 return new OutOfRangeReport(report);
 
+            // The tablet throw inits sent its way back to us, we ignore them.
+            if (report[1] == 0xB4)
+                return new DeviceReport(report);
+
+            // Ignore idle reports, as they were parsed as aux reports previously.
+            // see https://github.com/OpenTabletDriver/OpenTabletDriver/issues/4988 for more details
+            if (report[1] == 0xF2)
+                return new DeviceReport(report);
+
+            // Ignore ON report when toggling ON tablets using the wireless dongle from XP-Pen.
+            // see https://github.com/OpenTabletDriver/OpenTabletDriver/issues/4988 for more details
+            if (report[1] == 0xF8)
+                return new DeviceReport(report);
+
             if (report[1].IsBitSet(4))
                 return new XP_PenAuxReport(report);
 
