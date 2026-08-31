@@ -3,7 +3,7 @@
   "Specifications": {
     "Digitizer": {
       "Width": 203.2,
-      "Height": 127.0,
+      "Height": 127,
       "MaxX": 40640,
       "MaxY": 25400
     },
