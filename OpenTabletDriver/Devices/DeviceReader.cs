@@ -103,12 +103,13 @@ namespace OpenTabletDriver.Devices
 
         protected void Main()
         {
+            byte[]? data = null;
             try
             {
                 Connected = true;
                 while (Connected)
                 {
-                    var data = ReportStream!.Read();
+                    data = ReportStream!.Read();
                     if (Parser.Parse(data) is T report)
                         OnReport(report);
 
@@ -132,6 +133,9 @@ namespace OpenTabletDriver.Devices
             catch (Exception ex)
             {
                 Log.Exception(ex);
+
+                string formattedTabletData = data != null ? Extensions.PrettyPrintHex(data) : "<null>";
+                Log.Write("Device", $"Last report read from tablet: {formattedTabletData}");
             }
             finally
             {
