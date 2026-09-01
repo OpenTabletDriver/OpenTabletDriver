@@ -173,6 +173,7 @@
 | XENX X1-640                        |     Supported     |
 | XP-Pen Artist 10 (2nd Gen)         |     Supported     |
 | XP-Pen Artist 12 (2nd Gen)         |     Supported     |
+| XP-Pen Artist 12 (3rd Gen)         |  Missing Features | Both wheels function as a single wheel.
 | XP-Pen Artist 13 (2nd Gen)         |     Supported     |
 | XP-Pen Artist 13.3                 |     Supported     |
 | XP-Pen Artist 13.3 Pro             |     Supported     |
