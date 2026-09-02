@@ -17,11 +17,8 @@ namespace OpenTabletDriver.Configurations.Parsers.XP_Pen
 
             if (report[1] == 0xF0)
             {
-                return new XP_PenDeco03WheelReport(report, ref previousWheelByte);
+                return new XP_PenDeco03AuxReport(report, ref previousWheelByte);
             }
-
-            if (report[1].IsBitSet(4))
-                return new XP_PenAuxReport(report);
 
             if (report.Length >= 12)
                 return new XP_PenTabletOverflowReport(report);
