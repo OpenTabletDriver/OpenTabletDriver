@@ -1,6 +1,6 @@
 {
   "solution": {
-    "path": ".\\OpenTabletDriver.sln",
+    "path": ".\\OpenTabletDriver.slnx",
     "projects": [
       "OpenTabletDriver\\OpenTabletDriver.csproj",
       "OpenTabletDriver.Benchmarks\\OpenTabletDriver.Benchmarks.csproj",
