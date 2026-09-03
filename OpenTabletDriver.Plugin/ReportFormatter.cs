@@ -38,6 +38,8 @@ namespace OpenTabletDriver.Plugin
                 sb.AppendLines(GetStringFormat(proximityReport));
             if (report is ITiltReport tiltReport)
                 sb.AppendLines(GetStringFormat(tiltReport));
+            if (report is IRotationReport rotationReport)
+                sb.AppendLines(GetStringFormat(rotationReport));
             if (report is ITouchReport touchReport)
                 sb.AppendLines(GetStringFormat(touchReport));
             if (report is IAbsoluteWheelReport absoluteWheelReport)
@@ -75,6 +77,8 @@ namespace OpenTabletDriver.Plugin
                 sb.AppendOneLine(GetStringFormat(proximityReport));
             if (report is ITiltReport tiltReport)
                 sb.AppendOneLine(GetStringFormat(tiltReport));
+            if (report is IRotationReport rotationReport)
+                sb.AppendOneLine(GetStringFormat(rotationReport));
             if (report is ITouchReport touchReport)
                 sb.AppendOneLine(GetStringFormat(touchReport));
             if (report is IAbsoluteWheelReport absoluteWheelReport)
@@ -128,6 +132,11 @@ namespace OpenTabletDriver.Plugin
         private static IEnumerable<string> GetStringFormat(ITiltReport tiltReport)
         {
             yield return $"Tilt:[{tiltReport.Tilt.X},{tiltReport.Tilt.Y}]";
+        }
+
+        private static IEnumerable<string> GetStringFormat(IRotationReport rotationReport)
+        {
+            yield return $"Rotation:{rotationReport.Rotation}";
         }
 
         private static IEnumerable<string> GetStringFormat(ITouchReport touchReport)
