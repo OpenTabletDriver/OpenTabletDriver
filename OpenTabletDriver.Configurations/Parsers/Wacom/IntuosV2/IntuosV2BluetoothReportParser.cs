@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2
@@ -9,6 +10,8 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2
         private const int SubPacketSize = 8;
         private const int SubPacketStart = 1;
         private const int MaxSubPackets = 4;
+
+        private Vector2 _lastPosition = Vector2.Zero;
 
         public IDeviceReport Parse(byte[] data)
         {
@@ -29,20 +32,27 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2
                 lastOffset = offset;
             }
 
+            IntuosV2BluetoothReport report;
+
             if (lastOffset < 0)
-                return new DeviceReport(data);
+            {
+                report = new IntuosV2BluetoothReport(data, 0);
+            }
+            else
+            {
+                report = new IntuosV2BluetoothReport(data, lastOffset);
+            }
 
-            var status = data[lastOffset];
+            if (!report.NearProximity)
+            {
+                report.Position = _lastPosition;
+            }
+            else
+            {
+                _lastPosition = report.Position;
+            }
 
-            // 0x80 = pen leaving proximity
-            if (status == 0x80)
-                return new DeviceReport(data);
-
-            // bit 5 set = pen in proximity
-            if (status.IsBitSet(5))
-                return new IntuosV2BluetoothReport(data, lastOffset);
-
-            return new DeviceReport(data);
+            return report;
         }
     }
 }
