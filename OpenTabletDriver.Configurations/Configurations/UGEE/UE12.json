@@ -1,0 +1,33 @@
+{
+  "Name": "UGEE UE12",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 263.22,
+      "Height": 148.055,
+      "MaxX": 52644,
+      "MaxY": 29611
+    },
+    "Pen": {
+      "MaxPressure": 16383,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 8
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 10429,
+      "ProductID": 10506,
+      "InputReportLength": 12,
+      "OutputReportLength": 20,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "OutputInitReport": [
+        "ArAE"
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
