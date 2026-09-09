@@ -126,6 +126,7 @@
 | Wacom CTL-480                      |     Supported     |
 | Wacom CTL-490                      |     Supported     |
 | Wacom CTL-6100                     |     Supported     |
+| Wacom CTL-6100WL                   |     Supported     |
 | Wacom CTL-671                      |     Supported     |
 | Wacom CTL-672                      |     Supported     |
 | Wacom CTL-680                      |     Supported     |
@@ -323,7 +324,6 @@
 | Wacom CTH-300                      |  Missing Features | Touch is not yet supported.
 | Wacom CTH-301                      |  Missing Features | Touch is not yet supported.
 | Wacom CTH-461                      |  Missing Features | Tablet buttons and touch are not yet supported.
-| Wacom CTL-6100WL                   |  Missing Features | Wireless is not yet supported.
 | Wacom DTH-1320                     |  Missing Features | Touch is not yet supported.
 | Wacom Movink 13 (DTH-135)          |  Missing Features | Touch is not yet supported.
 | Wacom Cintiq 22HD Touch (DTH-2200) |  Missing Features | Touch is not yet supported.
