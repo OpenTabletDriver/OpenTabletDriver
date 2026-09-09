@@ -25,22 +25,19 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2
                 penByte.IsBitSet(1),
                 penByte.IsBitSet(2),
             ];
-            NearProximity = penByte.IsBitSet(5);
+            NearProximity = penByte.IsBitSet(6);
             HoverDistance = report[offset + 7];
 
-            var auxByte = report[44];
-            AuxButtons =
-            [
-                auxByte.IsBitSet(0),
-                auxByte.IsBitSet(1),
-                auxByte.IsBitSet(2),
-                auxByte.IsBitSet(3),
-                auxByte.IsBitSet(4),
-                auxByte.IsBitSet(5),
-                auxByte.IsBitSet(6),
-                auxByte.IsBitSet(7),
-            ];
+            AuxButtons = ParseAuxButtons(report[44]);
         }
+
+        internal static bool[] ParseAuxButtons(byte auxByte) =>
+        [
+            auxByte.IsBitSet(0),
+            auxByte.IsBitSet(1),
+            auxByte.IsBitSet(2),
+            auxByte.IsBitSet(3),
+        ];
 
         public byte[] Raw { set; get; }
         public Vector2 Position { set; get; }
