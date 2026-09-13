@@ -13,7 +13,13 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 8
-    }
+    },
+    "Wheels": [
+      {
+        "RelativeWheelSteps": 24,
+        "ButtonCount": 0
+      }
+    ]
   },
   "DigitizerIdentifiers": [
     {
@@ -21,7 +27,7 @@
       "ProductID": 10498,
       "InputReportLength": 12,
       "OutputReportLength": 20,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenM908ReportParser",
       "OutputInitReport": [
         "ArAE"
       ]
