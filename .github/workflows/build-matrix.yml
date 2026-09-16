@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         build: [windows, macos, BinaryTarBall, RedHat, Debian, Simple]
-        runtime-suffix: [x64]
+        runtime-suffix: [x64, arm64]
         include:
           - build: BinaryTarBall
             os: ubuntu-latest
@@ -32,11 +32,22 @@ jobs:
             os: ubuntu-latest
             runtime-prefix: linux-
           - build: macos
+            runtime-suffix: x64
             os: ubuntu-latest
             runtime-prefix: osx-
+          - build: macos
+            runtime-suffix: arm64
+            os: ubuntu-latest
+            runtime-prefix: osx-
+            signed: true
           - build: windows
             os: windows-latest
             runtime-prefix: win-
+        exclude:
+          - build: Debian
+            runtime-suffix: arm64
+          - build: RedHat
+            runtime-suffix: arm64
     # TODO: release or debug build
     name: ${{ matrix.build }} ${{ matrix.runtime-prefix }}${{ matrix.runtime-suffix }} Publish
     runs-on: ${{ matrix.os }}
@@ -49,3 +60,4 @@ jobs:
           runtime: ${{ matrix.runtime-prefix }}${{ matrix.runtime-suffix }}
           package-name: ${{ matrix.build }}
           container: ${{ matrix.container }}
+          signed: ${{ matrix.signed }}

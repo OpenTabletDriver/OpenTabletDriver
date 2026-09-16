@@ -9,6 +9,9 @@ inputs:
     required: true
   container:
     description: 'Set to anything to apply container workarounds'
+  signed:
+    description: 'Whether the package should be signed'
+    required: true
 runs:
   using: "composite"
   steps:
@@ -27,7 +30,7 @@ runs:
           git config --system --add safe.directory /__w/OpenTabletDriver/OpenTabletDriver
 
     - name: "Install rcodesign (macOS builds)"
-      if: inputs.package-name == 'macos-signed'
+      if: inputs.runtime == 'osx-arm64' && inputs.signed == 'true'
       shell: bash
       run: cargo install apple-codesign
 
