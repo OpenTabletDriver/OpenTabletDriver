@@ -3,6 +3,7 @@
 | Acepen AP906                       |     Supported     |
 | Acepen AP1060                      |     Supported     |
 | Adesso Cybertablet K8              |     Supported     |
+| Artisul A801                       |     Supported     |
 | Artisul D22S                       |     Supported     |
 | Artisul M0610                      |     Supported     |
 | Fansjoy FJ-S1                      |     Supported     | Rebranded XENX X1-640
