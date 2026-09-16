@@ -1,3 +1,4 @@
+#if LINUX
 using OpenTabletDriver.Devices.HidSharpBackend;
 using OpenTabletDriver.Tests.Fakes;
 using Xunit;
@@ -70,3 +71,4 @@ namespace OpenTabletDriver.Tests
         }
     }
 }
+#endif

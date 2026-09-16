@@ -6,6 +6,10 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Linux'))">
+    <DefineConstants>$(DefineConstants);LINUX</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup Label="NuGet Packages">
     <PackageReference Include="DiffPlex" Version="1.9.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
