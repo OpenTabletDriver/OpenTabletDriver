@@ -30,9 +30,9 @@ Por favor, consulte a [wiki oficial](https://opentabletdriver.net/Wiki) para pro
 
 # Executando OpenTabletDriver
 
-O OpenTabletDriver funciona como dois processos separados que comunicam-se entre si para poder funcionar perfeitamente. O programa ativo que lida com todo o manuseio de dados é `OpenTabletDriver.Daemon`, enquanto o GUI (interface) é `OpenTabletDriver.UX.*`, onde `*` depende da plataforma<sup>1</sup>. O daemon deve ser inicializado para que tudo possa rodar sem problemas, enquanto o GUI não é necessário. Se você possui uma configuração já pronta, elas devem ser aplicadas quando o daemon iniciar.
+O OpenTabletDriver funciona como dois processos separados que comunicam-se entre si para poder funcionar perfeitamente. O programa ativo que lida com todo o manuseio de dados é `OpenTabletDriver.Daemon`, enquanto o GUI (interface) é `OpenTabletDriver.UX.*`, onde `*` depende da sua plataforma<sup>1</sup>. O daemon deve ser inicializado para que tudo possa rodar sem problemas, enquanto o GUI não é necessário. Se você possui uma configuração já pronta, elas devem ser aplicadas quando o daemon iniciar.
 
-> <sup>1</sup>Windows usa `Wpf`, Linux usa `Gtk`, e MacOS usa `MacOS`. O que pode ser ignorado por grande parte da aplicação se você não compilar a partir da fonte, já que apenas a versão correta será fornecida.
+> <sup>1</sup>O Windows usa `Wpf`, O Linux usa `Gtk`, e MacOS usa `MacOS`. O que pode ser ignorado por grande parte da aplicação se você não compilar a partir da fonte, já que apenas a versão correta será fornecida.
 
 ## Compilando OpenTabletDriver a partir do codigo-fonte
 
@@ -57,21 +57,35 @@ Pacotes Necessários (alguns pacotes podem vir pre-instalados de acordo com sua 
 - libevdev2
 - GTK+3
 
-Para compilar no Linux, execute o arquivo fornecido chamado 'build.sh'. Irá executar o equivalente ao comando 'dotnet publish'
-usado para compilação do pacote AUR, e irá produzir as compilações binárias em 'OpenTabletDriver/bin'.
+Execute `./eng/bash/package.sh`. Se uma build do tipo "package" for desejada,
+o OpenTabletDriver possui suporte oficial para os seguintes formatos:
 
-Para compilar no ARM linux, execute o arquivo fornecido 'build.sh' passando o runtime apropriado como argumento. Por exemplo, para o arm64 seria: 'linux-arm64'.
+| Formato do Pacote | Comando |
+| --- | --- |
+| Generic binary tarball (`.tar.gz`) | `./eng/bash/package.sh --package BinaryTarBall` |
+| [Simple binary package](./eng/bash/Simple/README-SimplePackage.md) (`.tar.gz`) | `./eng/bash/package.sh --package Simple` |
+| Debian package (`.deb`) | `./eng/bash/package.sh --package Debian` |
+| Red Hat package (`.rpm`) | `./eng/bash/package.sh --package RedHat` |
+| Generic package (for package maintainers) | `./eng/bash/package.sh --package Generic` |
 
-Nota: Se você está compilando pela primeira vez, execute junto o script generate-rules.sh. Isso irá gerar um pacote de regras de udev em OpenTabletDriver/bin,
-chamado '99-opentabletdriver.rules'. Esse arquivo deve ser movido para `/etc/udev/rules.d/`:
+O Generic binary tarball é projetado para ser extraído a partir do diretório raiz.
 
-```
-sudo mv ./bin/99-opentabletdriver.rules /etc/udev/rules.d/
-```
+O Simple package deve ser usado apenas para testar novos recursos em instalações existentes,
+pois não instala os arquivos de sistema necessários.
+
+Você também pode executar `./build.sh linux` para gerar arquivos em `bin/`, porém isso não inclui arquivos de sistema.
 
 #### MacOS
 
-Sem outras dependências.
+Uma versão nova do Bash e do Coreutils é necessária para compilar o OpenTabletDriver. Você pode instalá-los usando o Homebrew.
+Execute `PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH" $(brew --prefix)/bin/bash ./eng/bash/package.sh -r osx-x64`.
+
+| Formato do Pacote | Comando |
+| --- | --- |
+| Pacote sem assinatura | `./eng/bash/package.sh --runtime osx-x64 --package macos` |
+| Pacote assinado | `./eng/bash/package.sh --signed true --runtime osx-x64 --package macos` |
+
+Para empacotar builds assinadas para macOS no Linux ou Windows, é necessário o `rcodesign`.
 
 # Funcionalidades
 
@@ -80,12 +94,12 @@ Sem outras dependências.
   - Linux: `GTK+3`
   - MacOS: `MonoMac`
 - Suporte a múltiplos tablets
-  - lida com múltiplos tablets de uma vasta seleção de modelos e fabricantes, cada um com seu próprio fluxo de plugins e configurações
+  - Lida com múltiplos tablets de uma vasta seleção de modelos e fabricantes, cada um com seu próprio fluxo de plugins e configurações
 - Especificações de tablets validadas, garantindo a transição mais suave possível ao trocar de dispositivo
 - Ferramenta de console completa
   - Obtenha, altere, carregue ou salve configurações rapidamente
   - Suporte a scripts (saída em JSON)
-- Posicionamento do cursor absoluto
+- Posicionamento absoluto do cursor
   - Área da tela e área do tablet
   - Deslocamentos (offsets) ancorados ao centro
   - Rotação de área precisa
@@ -118,12 +132,12 @@ Sem outras dependências.
   - Modos de saída
 - Ferramentas de depuração de dispositivo
   - Analisador de dados da mesa digitalizadora ("Tablet Debugger")
-  - Leitura de informações (strings) do dispositivo USB
+  - Leitura das strings do dispositivo USB
 - Notificação automática de atualização de versão
   - Pode ser desativado com a flag de linha de comando `--skipupdate`
 - Conversão de áreas de drivers de fabricantes
-  - Suporta a transformação da sua área de mesas Wacom / XP-Pen / Huion / Gaomon / VEIKK
-- Daemon independente, para sistemas de baixo desempenho ou sem interface gráfica (headless)
+  - Suporta a conversão das áreas de mesas Wacom / XP-Pen / Huion / Gaomon / VEIKK
+- Daemon independente para sistemas de baixo desempenho ou sem interface gráfica (headless)
 
 # Contribuindo com o OpenTabletDriver
 
