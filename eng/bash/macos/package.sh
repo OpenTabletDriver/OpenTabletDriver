@@ -6,7 +6,13 @@ pkg_script_root="$(readlink -f $(dirname "${BASH_SOURCE[0]}"))"
 
 echo -e "\nPreparing package..."
 
-PKG_FILE="${OTD_NAME}-${OTD_VERSION}_${NET_RUNTIME}.tar.gz"
+if [ "${NET_RUNTIME}" == "osx-universal" ]; then
+  # keep osx-x64 in asset name so existing Intel installs can discover and update to first Universal release
+  package_runtime="osx-x64-universal"
+else
+  package_runtime="${NET_RUNTIME}"
+fi
+PKG_FILE="${OTD_NAME}-${OTD_VERSION}_${package_runtime}.tar.gz"
 
 pkg_root="${OUTPUT}/${OTD_NAME}.app"
 

@@ -82,8 +82,15 @@ if [[ "${NET_RUNTIME}" =~ ^win-.*$ ]]; then
 fi
 
 if [[ "${NET_RUNTIME}" =~ ^osx-.*$ ]]; then
-  # signed builds must be single file, otherwise reduce package size by not using single file
-  SINGLE_FILE="${SIGNED}"
+  # Universal builds must use single-file publishing so all architecture-specific
+  # managed and native runtime code can be combined into Mach-O binaries.
+  if [ "${NET_RUNTIME}" == "osx-universal" ]; then
+    SINGLE_FILE="true"
+    SIGNED="true"
+  else
+    # signed builds must be single file, otherwise reduce package size by not using single file
+    SINGLE_FILE="${SIGNED}"
+  fi
   SELF_CONTAINED="true"
 
   PACKAGE_GEN=${PACKAGE_GEN:-"macos"}
