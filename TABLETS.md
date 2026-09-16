@@ -85,7 +85,6 @@
 | UGEE M708 V2                       |     Supported     |
 | UGEE M708 V3                       |     Supported     |
 | UGEE M808                          |     Supported     |
-| UGEE M908                          |     Supported     |
 | UGEE S640                          |     Supported     |
 | UGEE S1060                         |     Supported     |
 | UGEE U1200                         |     Supported     |
@@ -259,6 +258,7 @@
 | UC-Logic 1060N                     |    Has Quirks     | Windows: Some variants require Zadig's WinUSB to be installed on interface 0
 | UC-Logic TWMNA62                   |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | UGEE M708                          |    Has Quirks     | Windows: Might need Zadig's WinUSB to be installed on interface 0
+| UGEE M908                          |    Has Quirks     | Wheel report resets auxiliary buttons.
 | Wacom PTH-460                      |    Has Quirks     | Wheel reports in reverse direction.
 | Wacom PTH-660                      |    Has Quirks     | Wheel reports in reverse direction.
 | Wacom PTH-860                      |    Has Quirks     | Wheel reports in reverse direction.
