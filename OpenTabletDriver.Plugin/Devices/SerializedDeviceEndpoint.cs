@@ -28,8 +28,19 @@ namespace OpenTabletDriver.Plugin.Devices
             DeviceAttributes = endpoint.DeviceAttributes;
         }
 
-        [JsonProperty(nameof(DevicePath), Order = 1000)]
-        public required string DevicePath { get; set; }
+        public int VendorID { get; set; }
+
+        public int ProductID { get; set; }
+
+        public int InputReportLength { get; set; }
+
+        public int OutputReportLength { get; set; }
+
+        public int FeatureReportLength { get; set; }
+
+        public bool CanOpen { get; set; }
+
+        public IDictionary<string, string> DeviceAttributes { get; set; }
 
         [JsonProperty(nameof(Manufacturer))]
         public string? Manufacturer { get; set; }
@@ -43,25 +54,7 @@ namespace OpenTabletDriver.Plugin.Devices
         [JsonProperty(nameof(FriendlyName))]
         public string? FriendlyName { get; set; }
 
-        [JsonProperty(Order = -100)]
-        public int VendorID { get; set; }
-
-        [JsonProperty(Order = -90)]
-        public int ProductID { get; set; }
-
-        [JsonProperty(Order = -80)]
-        public int InputReportLength { get; set; }
-
-        [JsonProperty(Order = -70)]
-        public int OutputReportLength { get; set; }
-
-        [JsonProperty(Order = -60)]
-        public int FeatureReportLength { get; set; }
-
-        [JsonProperty(Order = -50)]
-        public bool CanOpen { get; set; }
-
-        [JsonProperty(nameof(DeviceAttributes), Order = -40)]
-        public IDictionary<string, string> DeviceAttributes { get; set; }
+        [JsonProperty(nameof(DevicePath))]
+        public required string DevicePath { get; set; }
     }
 }
