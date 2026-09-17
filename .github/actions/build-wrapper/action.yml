@@ -45,3 +45,4 @@ runs:
       with:
         runtime: ${{ inputs.runtime }}
         package-name: ${{ inputs.package-name }}
+        signed: ${{ inputs.signed }}
