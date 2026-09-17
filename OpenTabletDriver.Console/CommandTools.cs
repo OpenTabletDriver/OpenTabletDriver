@@ -1,6 +1,5 @@
 using System;
 using System.CommandLine;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace OpenTabletDriver.Console
@@ -11,7 +10,7 @@ namespace OpenTabletDriver.Console
             where T : Delegate
         {
             var command = new Command(action.Method.Name.ToLower(), description);
-            foreach (var alias in aliases.Skip(1))
+            foreach (var alias in aliases)
                 command.Aliases.Add(alias);
             return command;
         }

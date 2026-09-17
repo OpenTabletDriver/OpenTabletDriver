@@ -63,6 +63,13 @@ namespace OpenTabletDriver.Desktop.Binding
             }
         }
 
+        [BooleanProperty("Invert", "Scroll Direction")]
+        public bool Invert
+        {
+            get;
+            set;
+        }
+
         private int _amount = 120;
 
         [Property("Amount"),
@@ -101,10 +108,12 @@ namespace OpenTabletDriver.Desktop.Binding
 
         public void Scroll()
         {
+            int adjustedAmount = Invert ? Amount : Amount * -1;
+
             if (_direction == ScrollDirection.Vertical)
-                Pointer?.ScrollVertically(-Amount);
+                Pointer?.ScrollVertically(adjustedAmount);
             else
-                Pointer?.ScrollHorizontally(-Amount);
+                Pointer?.ScrollHorizontally(adjustedAmount);
 
             if (Pointer is ISynchronousPointer synchronousPointer)
                 synchronousPointer.Flush();

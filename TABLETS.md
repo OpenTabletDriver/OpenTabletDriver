@@ -3,6 +3,7 @@
 | Acepen AP906                       |     Supported     |
 | Acepen AP1060                      |     Supported     |
 | Adesso Cybertablet K8              |     Supported     |
+| Artisul A801                       |     Supported     |
 | Artisul D22S                       |     Supported     |
 | Artisul M0610                      |     Supported     |
 | Fansjoy FJ-S1                      |     Supported     | Rebranded XENX X1-640
@@ -59,6 +60,7 @@
 | Huion Kamvas Pro 19 (4K)           |     Supported     |
 | Huion Kamvas Pro 24 (4K)           |     Supported     |
 | Huion Kamvas Pro 27                |     Supported     |
+| Huion KD200                        |     Supported     | Only 6 keys are auxiliary buttons.
 | Huion L310                         |     Supported     |
 | Huion L610                         |     Supported     |
 | Huion New 1060 Plus                |     Supported     |
@@ -232,7 +234,7 @@
 | FlooGoo FMA100                     |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 1. Might also need to change the configuration depending on the tablet used.
 | Gaomon S56K                        |    Has Quirks     | Windows: Might need Zadig's WinUSB to be installed on interface 0 or 1
 | Gaomon S630                        |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
-| Gaomon S830                        |    Has Quirks     | User may have to replug their tablet until it is detected.
+| Gaomon S830                        |    Has Quirks     | Some variants may require user replugging their tablet until it is detected.
 | Genius G-Pen F509                  |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
 | Genius i405x                       |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
 | Genius i608x                       |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
@@ -329,6 +331,7 @@
 | Wacom Movink 13 (DTH-135)          |  Missing Features | Touch is not yet supported.
 | Wacom Cintiq 22HD Touch (DTH-2200) |  Missing Features | Touch is not yet supported.
 | Wacom Cintiq Pro 22 (DTH-227)      |  Missing Features | Touch is not yet supported.
+| Wacom Cintiq 27QHD (DTH-2700)      |  Missing Features | Touch is not yet supported.
 | Wacom Cintiq Pro 27 (DTH-271)      |  Missing Features | Aux buttons are not yet supported.
 | Wacom Cintiq Pro 32 (DTH-3220)     |  Missing Features | Touch is not yet supported.
 | Wacom Cintiq 13HD Touch (DTH-1300) |  Missing Features | Center button is not yet supported.
