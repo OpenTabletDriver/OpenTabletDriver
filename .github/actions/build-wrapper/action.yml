@@ -29,16 +29,30 @@ runs:
         hash git &>/dev/null && \
           git config --system --add safe.directory /__w/OpenTabletDriver/OpenTabletDriver
 
-    - name: "Install rcodesign (macOS builds)"
+    - name: "Fetch latest rcodesign version (macOS builds)"
+      id: rcodesign-version
       if: inputs.runtime == 'osx-arm64' && inputs.signed == 'true'
       shell: bash
-      env:
-        RCODESIGN_VERSION: 0.29.0
-      # Download binaries from github to avoid ~5 minute rust build times
-      # Alternative: `cargo install apple-codesign`
+      # crates.io API requires a user agent and recommends providing a way of contact
+      # https://crates.io/data-access#api
       run: |
-        curl -L "https://github.com/indygreg/apple-platform-rs/releases/download/apple-codesign%2F${RCODESIGN_VERSION}/apple-codesign-${RCODESIGN_VERSION}-x86_64-unknown-linux-musl.tar.gz" | tar -xz -C /tmp
-        sudo install /tmp/apple-codesign-${RCODESIGN_VERSION}-x86_64-unknown-linux-musl/rcodesign /usr/local/bin/rcodesign
+        echo "version=$(curl -s https://crates.io/api/v1/crates/apple-codesign -H 'User-Agent: https://github.com/OpenTabletDriver/OpenTabletDriver' | jq -r '.crate.max_version')" >> "$GITHUB_OUTPUT"
+
+    - name: "Cache rcodesign (macOS builds)"
+      if: inputs.runtime == 'osx-arm64' && inputs.signed == 'true'
+      id: cache-rcodesign
+      uses: actions/cache@v5
+      with:
+        path: |
+          ~/.cargo/bin/rcodesign
+          ~/.cargo/registry
+          ~/.cargo/git
+        key: ${{ inputs.runtime }}-rcodesign-${{ steps.rcodesign-version.outputs.version }}
+
+    - name: "Install rcodesign (macOS builds)"
+      if: steps.cache-rcodesign.outputs.cache-hit != 'true' && inputs.runtime == 'osx-arm64' && inputs.signed == 'true'
+      shell: bash
+      run: cargo install apple-codesign
 
     - name: "BASH Build Artifact"
       uses: ./.github/actions/build-bash
