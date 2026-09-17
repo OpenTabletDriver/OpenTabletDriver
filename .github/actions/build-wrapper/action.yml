@@ -43,10 +43,7 @@ runs:
       id: cache-rcodesign
       uses: actions/cache@v5
       with:
-        path: |
-          ~/.cargo/bin/rcodesign
-          ~/.cargo/registry
-          ~/.cargo/git
+        path: ~/.cargo/bin/rcodesign
         key: ${{ inputs.runtime }}-rcodesign-${{ steps.rcodesign-version.outputs.version }}
 
     - name: "Install rcodesign (macOS builds)"
