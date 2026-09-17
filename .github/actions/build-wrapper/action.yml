@@ -31,6 +31,11 @@ runs:
       shell: bash
       run: cargo install apple-codesign
 
+    - name: "Install macOS build tools"
+      if: startsWith(inputs.runtime, 'osx-')
+      shell: bash
+      run: brew install bash coreutils
+
     - name: "BASH Build Artifact"
       uses: ./.github/actions/build-bash
       with:

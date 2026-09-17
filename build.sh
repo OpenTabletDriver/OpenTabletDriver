@@ -3,7 +3,8 @@
 # Simple bash script to easily build to verify functionality.
 #
 # Usage of --runtime is preferred, but the arguments 'windows', 'macos' or
-# 'linux' can be used as a shorthand to specify an x64 runtime directly
+# 'linux' can be used as platform shorthands. The macOS shorthand creates a
+# signed Universal application for Apple Silicon and Intel Macs.
 
 output="bin"
 config="Release"
@@ -29,10 +30,10 @@ while [ $# -gt 0 ]; do
       options+=("--runtime" "win-x64")
       ;;
     macos)
-      options+=("--runtime" "osx-x64")
+      options+=("--runtime" "osx-universal")
       ;;
     macos-signed)
-      options+=("--runtime" "osx-x64" "--signed" "true")
+      options+=("--runtime" "osx-universal" "--signed" "true")
       ;;
     linux)
       options+=("--runtime" "linux-x64")

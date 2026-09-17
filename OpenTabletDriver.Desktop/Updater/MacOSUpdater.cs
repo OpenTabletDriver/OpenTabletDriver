@@ -32,7 +32,7 @@ namespace OpenTabletDriver.Desktop.Updater
         protected override async Task<Update> Download(Release release, Version version)
         {
             var downloadPath = GetDownloadPath();
-            var asset = release.Assets.First(r => r.Name.Contains("osx-x64"));
+            var asset = release.Assets.First(r => r.Name.Contains("osx-x64-universal"));
 
             // Download and extract tar gzip
             using (var httpClient = new HttpClient())

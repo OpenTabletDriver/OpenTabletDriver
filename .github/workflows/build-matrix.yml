@@ -17,6 +17,9 @@ jobs:
       matrix:
         build: [windows, macos, BinaryTarBall, RedHat, Debian, Simple]
         runtime-suffix: [x64]
+        exclude:
+          - build: macos
+            runtime-suffix: x64
         include:
           - build: BinaryTarBall
             os: ubuntu-latest
@@ -32,8 +35,9 @@ jobs:
             os: ubuntu-latest
             runtime-prefix: linux-
           - build: macos
-            os: ubuntu-latest
+            os: macos-latest
             runtime-prefix: osx-
+            runtime-suffix: universal
           - build: windows
             os: windows-latest
             runtime-prefix: win-

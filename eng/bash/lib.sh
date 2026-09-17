@@ -300,10 +300,24 @@ build() {
 
   local -n projects="$1"
   local -n extra_options="$2"
+
+  if [ "${NET_RUNTIME}" == "osx-universal" ]; then
+    build_macos_universal "$1" "$2"
+    return
+  fi
+
+  build_for_runtime "$1" "$2" "${NET_RUNTIME}" "${OUTPUT}"
+}
+
+build_for_runtime() {
+  local -n projects="$1"
+  local -n extra_options="$2"
+  local runtime="$3"
+  local output="$4"
   local options=(
     --configuration "${CONFIG}"
-    --runtime "${NET_RUNTIME}"
-    --output "${OUTPUT}"
+    --runtime "${runtime}"
+    --output "${output}"
     -p:PublishTrimmed=false
     -p:DebugType=embedded
     -p:SuppressNETCoreSdkPreviewMessage=true
@@ -316,7 +330,7 @@ build() {
   if [ "${SINGLE_FILE}" == "true" ]; then
     options+=( -p:PublishSingleFile=true )
   fi
-  if [ "${SIGNED}" == "false" ] && [[ "${NET_RUNTIME}" =~ ^osx-.*$ ]]; then
+  if [[ "${runtime}" =~ ^osx-.*$ ]] && { [ "${SIGNED}" == "false" ] || [ "${NET_RUNTIME}" == "osx-universal" ]; }; then
     options+=( /p:_EnableMacOSCodeSign=false )
   fi
   if [ "${SELF_CONTAINED}" == "true" ]; then
@@ -332,7 +346,7 @@ build() {
   # this initial restore is needed in cases projects changed dependencies
   # (e.g. added a new nuget package)
   echo "Restoring packages..."
-  dotnet restore --runtime "${NET_RUNTIME}" --verbosity quiet
+  dotnet restore --runtime "${runtime}" --verbosity quiet
 
   if [ "${PORTABLE}" = "true" ]; then
     mkdir -p "${OUTPUT}/userdata"
@@ -348,7 +362,56 @@ build() {
     dotnet publish "${project}" --framework "${local_framework}" "${options[@]}"
   done
 
-  echo -e "\nBuild finished! Binaries created in ${OUTPUT}"
+  echo -e "\nBuild finished! Binaries created in ${output}"
+}
+
+build_macos_universal() {
+  local -n projects="$1"
+  local -n extra_options="$2"
+
+  if ! hash lipo 2>/dev/null; then
+    exit_with_error "Creating a Universal macOS build requires lipo and must run on macOS."
+  fi
+
+  local staging
+  staging="$(mktemp -d "${TMPDIR:-/tmp}/opentabletdriver-universal.XXXXXX")"
+  local x64_output="${staging}/osx-x64"
+  local arm64_output="${staging}/osx-arm64"
+  mkdir -p "${x64_output}" "${arm64_output}"
+
+  build_for_runtime "$1" "$2" "osx-x64" "${x64_output}"
+  build_for_runtime "$1" "$2" "osx-arm64" "${arm64_output}"
+
+  cp -a "${x64_output}/." "${OUTPUT}/"
+
+  while IFS= read -r -d '' x64_file; do
+    local relative_path="${x64_file#"${x64_output}/"}"
+    local arm64_file="${arm64_output}/${relative_path}"
+    local universal_file="${OUTPUT}/${relative_path}"
+
+    if [ ! -f "${arm64_file}" ]; then
+      exit_with_error "The arm64 build is missing '${relative_path}'."
+    fi
+
+    if [ "$(file --mime-type -b "${x64_file}")" == "application/x-mach-binary" ]; then
+      if [ "$(file --mime-type -b "${arm64_file}")" != "application/x-mach-binary" ]; then
+        exit_with_error "Architecture outputs disagree about Mach-O file '${relative_path}'."
+      fi
+      lipo -create "${x64_file}" "${arm64_file}" -output "${universal_file}"
+    elif ! cmp -s "${x64_file}" "${arm64_file}"; then
+      exit_with_error "Architecture outputs differ for non-Mach-O file '${relative_path}'."
+    fi
+  done < <(find "${x64_output}" -type f -print0)
+
+  while IFS= read -r -d '' arm64_file; do
+    local relative_path="${arm64_file#"${arm64_output}/"}"
+    if [ ! -f "${x64_output}/${relative_path}" ]; then
+      exit_with_error "The x64 build is missing '${relative_path}'."
+    fi
+  done < <(find "${arm64_output}" -type f -print0)
+
+  rm -rf "${staging}"
+  echo -e "\nUniversal build finished! Binaries created in ${OUTPUT}"
 }
 
 # always creates a subfolder by changing directory to the parent folder of source ($1)
@@ -358,7 +421,7 @@ create_binary_tarball() {
 
   local last_pwd="${PWD}"
 
-  output="$(readlink -f "${output}")"
+  output="$(cd "$(dirname "${output}")" && pwd -P)/$(basename "${output}")"
   cd "${source}/.."
   tar -czf "${output}" "$(basename ${source})"
 
