@@ -31,7 +31,7 @@ namespace OpenTabletDriver.Console
 
             var storeSettings = store.Settings.Select(setting => setting.Format()).ToList();
 
-            string prefix = store.Name ?? store.Path;
+            string prefix = store.Name ?? store.Path ?? "<empty path??>";
             string? suffix = storeSettings.Count == 0 ? null : string.Join(", ", storeSettings);
 
             return string.IsNullOrEmpty(suffix) ? $"'{prefix}'" : $"'{prefix}: {suffix}'";
