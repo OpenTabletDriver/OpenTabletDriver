@@ -33,7 +33,7 @@ namespace OpenTabletDriver.UX.Windows
 
             var vendorIdCtrl = new Group("VendorID", vendorIdText, Orientation.Horizontal, false);
             var productIdCtrl = new Group("ProductID", productIdText, Orientation.Horizontal, false);
-            var interfaceCtrl = new Group("Interface", interfaceText, Orientation.Horizontal, false);
+            var interfaceCtrl = new Group("Interface", interfaceDropdown, Orientation.Horizontal, false);
             var initValueCtrl = new Group("Init Value", initValueText, Orientation.Horizontal, false);
             var initTypeCtrl = new Group("Init Type", initTypesButtonList, Orientation.Horizontal, false);
             var initFormatCtrl = new Group("Init Format", initFormatsButtonList, Orientation.Horizontal, false);
@@ -88,6 +88,9 @@ namespace OpenTabletDriver.UX.Windows
                 .Convert(x => x?.ProductID.ToString() ?? productIdText.Text, _ => null)
                 .Bind(productIdText.TextBinding);
 
+            deviceDropDown.SelectedValueChanged += (sender, e) => SetInterfaceDropDownDataStore();
+            SetInterfaceDropDownDataStore();
+
             if (App.Driver.IsConnected)
                 SetDeviceDropDownDataStore();
 
@@ -120,6 +123,27 @@ namespace OpenTabletDriver.UX.Windows
                     .DistinctBy(x => new { x.VendorID, x.ProductID });
         }
 
+        private void SetInterfaceDropDownDataStore()
+        {
+            if (this.deviceDropDown.SelectedItem == null)
+            {
+                // Sane max default of 10 interfaces, tablets should not be using this many interfaces
+                this.interfaceDropdown.DataStore = Enumerable.Range(0, 10).Select(x => x.ToString());
+                return;
+            }
+
+            var interfaces =
+                this.devicesCache
+                    .Where(d => d.VendorID == this.deviceDropDown.SelectedItem?.VendorID && d.ProductID == this.deviceDropDown.SelectedItem?.ProductID)
+                    .Select(d =>
+                    {
+                        d.DeviceAttributes.TryGetValue("USB_INTERFACE_NUMBER", out var usbInterface);
+                        return usbInterface ?? "0";
+                    })
+                    .Distinct();
+            this.interfaceDropdown.DataStore = interfaces;
+        }
+
         private const int NUMERICBOX_WIDTH = 150;
         private const string DecimalStyle = "Decimal Value";
         private const string OperationTimedOut = "Operation timed-out";
@@ -145,13 +169,13 @@ namespace OpenTabletDriver.UX.Windows
                 initData = Convert.FromBase64String(strInitData);
             }
 
-            if (deviceDropDown.SelectedItem == null)
+            if (interfaceDropdown.SelectedItem == null)
             {
-                MessageBox.Show("Unable to send init without a device selected", MessageBoxType.Error);
+                MessageBox.Show("Unable to send init without an interface selected", MessageBoxType.Error);
                 return;
             }
 
-            var request = SendInit(initData, initTypesButtonList.SelectedValue, intVid, intPid, interfaceText.Text);
+            var request = SendInit(initData, initTypesButtonList.SelectedValue, intVid, intPid, interfaceDropdown.SelectedItem);
             var timeout = Task.Delay(TimeSpan.FromSeconds(5));
             var completed = await Task.WhenAny(request, timeout);
             if (completed == timeout)
@@ -209,9 +233,8 @@ namespace OpenTabletDriver.UX.Windows
             Width = NUMERICBOX_WIDTH
         };
 
-        private readonly NumericMaskedTextBox<ushort> interfaceText = new()
+        private readonly DropDown<string> interfaceDropdown = new()
         {
-            PlaceholderText = DecimalStyle,
             Width = NUMERICBOX_WIDTH
         };
 
