@@ -22,5 +22,7 @@ namespace OpenTabletDriver.Plugin.Devices
         IDeviceEndpointStream Open();
 
         string? GetDeviceString(byte index);
+        void OpenAndSendFeatureInit(byte[] initData);
+        void OpenAndSendOutputInit(byte[] initData);
     }
 }
