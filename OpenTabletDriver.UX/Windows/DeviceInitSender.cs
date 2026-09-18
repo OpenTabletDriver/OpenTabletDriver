@@ -18,7 +18,7 @@ namespace OpenTabletDriver.UX.Windows
         {
             this.Title = "Device Init Sender";
             this.Icon = App.Logo.WithSize(App.Logo.Size);
-            this.ClientSize = new Size(400, 475);
+            this.ClientSize = new Size(400, 430);
 
             var sendButton = new Button
             {
@@ -26,7 +26,7 @@ namespace OpenTabletDriver.UX.Windows
             };
 
             sendButton.Click += async (_, _) => await SendInitWithTimeout(initValueText.Text,
-                (s) => resultText.Text = s,
+                (s) => MessageBox.Show($"Success: {s}", MessageBoxType.Information),
                 (e) => MessageBox.Show($"Error: {e.Message}", MessageBoxType.Error),
                 () => MessageBox.Show(OperationTimedOut)
             );
@@ -70,7 +70,6 @@ namespace OpenTabletDriver.UX.Windows
                         },
                         HorizontalAlignment.Center
                     ),
-                    new StackLayoutItem(resultText, true)
                 }
             };
 
@@ -242,12 +241,6 @@ namespace OpenTabletDriver.UX.Windows
         private readonly TextBox initValueText = new()
         {
             Width = NUMERICBOX_WIDTH
-        };
-
-        private readonly TextBox resultText = new()
-        {
-            PlaceholderText = "Result",
-            ReadOnly = true
         };
 
         private readonly EnumRadioButtonList<InitTypes> initTypesButtonList = new()
