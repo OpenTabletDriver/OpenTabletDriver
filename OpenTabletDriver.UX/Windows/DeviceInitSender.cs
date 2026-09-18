@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
-using HidSharp;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Devices;
 using OpenTabletDriver.UX.Controls.Generic;
 
@@ -151,7 +151,7 @@ namespace OpenTabletDriver.UX.Windows
                 return;
             }
 
-            var request = SendInit(this.devicesCache, initData, initTypesButtonList.SelectedValue, intVid, intPid, interfaceText.Text);
+            var request = SendInit(initData, initTypesButtonList.SelectedValue, intVid, intPid, interfaceText.Text);
             var timeout = Task.Delay(TimeSpan.FromSeconds(5));
             var completed = await Task.WhenAny(request, timeout);
             if (completed == timeout)
@@ -172,44 +172,24 @@ namespace OpenTabletDriver.UX.Windows
             }
         }
 
-        private static async Task<string> SendInit(IEnumerable<SerializedDeviceEndpoint> devicesInfo, byte[] initData, InitTypes initType, int intVid, int intPid, string strInterface)
+        private static async Task<string> SendInit(byte[] initData, InitTypes initType, int intVid, int intPid, string strInterface)
         {
             Debug.Assert(App.Driver.IsConnected, "Sending a request should not be able to be called without an active daemon");
 
             if (initData.Length == 0)
                 throw new ArgumentException("Init length cannot be zero");
 
-            var devicePaths = from d in devicesInfo
-                              where d.CanOpen && d.VendorID == intVid && d.ProductID == intPid && d.DeviceAttributes.TryGetValue("USB_INTERFACE_NUMBER", out var identifierInterface) && identifierInterface == strInterface
-                              select d.DevicePath;
-
-            var devicePath = devicePaths.First();
-
-            var device = DeviceList.Local.GetHidDevices().First(d => d.DevicePath == devicePath);
-
-            if (device.TryOpen(out HidStream hidStream))
+            if (initType == InitTypes.Feature)
             {
-                try
-                {
-                    if (initType == InitTypes.Feature)
-                    {
-                        hidStream.SetFeature(initData);
-                        return "Feature init success";
-                    }
-                    else if (initType == InitTypes.Output)
-                    {
-                        hidStream.Write(initData);
-                        return "Output init success";
-                    }
-                }
-                catch (Exception ex)
-                {
-                    return ex.ToString();
-                }
+                await App.Driver.Instance.SendFeatureInit(intVid, intPid, strInterface, initData);
+                Log.Debug("DeviceInitSender", "Set device feature: " + BitConverter.ToString(initData));
+                return "Successfully sent feature init";
             }
-            else
+            else if (initType == InitTypes.Output)
             {
-                throw new ArgumentException("Failed to open device");
+                await App.Driver.Instance.SendOutputInit(intVid, intPid, strInterface, initData);
+                Log.Debug("DeviceInitSender", "Set device output: " + BitConverter.ToString(initData));
+                return "Successfully sent output init";
             }
 
             throw new ArgumentException("Invalid init type or init type not selected");

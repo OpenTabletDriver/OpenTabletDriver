@@ -175,6 +175,9 @@ namespace OpenTabletDriver.Devices.WinUSB
             });
         }
 
+        public void OpenAndSendFeatureInit(byte[] initData) => Open().SetFeature(initData);
+        public void OpenAndSendOutputInit(byte[] initData) => Open().Write(initData);
+
         public IDeviceEndpointStream Open()
         {
             return new WinUSBInterfaceStream(new WeakReference<WinUSBInterface>(this));
