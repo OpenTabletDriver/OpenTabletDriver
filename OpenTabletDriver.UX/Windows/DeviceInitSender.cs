@@ -180,15 +180,17 @@ namespace OpenTabletDriver.UX.Windows
                 throw new ArgumentException("Init length cannot be zero");
 
             var devicePaths = from d in devicesInfo
-                                  where d.CanOpen && d.VendorID == intVid && d.ProductID == intPid && d.DeviceAttributes.TryGetValue("USB_INTERFACE_NUMBER", out var identifierInterface) && identifierInterface == strInterface
-                                  select d.DevicePath;
+                              where d.CanOpen && d.VendorID == intVid && d.ProductID == intPid && d.DeviceAttributes.TryGetValue("USB_INTERFACE_NUMBER", out var identifierInterface) && identifierInterface == strInterface
+                              select d.DevicePath;
 
             var devicePath = devicePaths.First();
 
             var device = DeviceList.Local.GetHidDevices().First(d => d.DevicePath == devicePath);
 
-            if (device.TryOpen(out HidStream hidStream)) {
-                try {
+            if (device.TryOpen(out HidStream hidStream))
+            {
+                try
+                {
                     if (initType == InitTypes.Feature)
                     {
                         hidStream.SetFeature(initData);
