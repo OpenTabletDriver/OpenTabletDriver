@@ -192,10 +192,12 @@ namespace OpenTabletDriver.UX.Windows
                     if (initType == InitTypes.Feature)
                     {
                         hidStream.SetFeature(initData);
+                        return "Feature init success";
                     }
                     else if (initType == InitTypes.Output)
                     {
                         hidStream.Write(initData);
+                        return "Output init success";
                     }
                 }
                 catch (Exception ex)
