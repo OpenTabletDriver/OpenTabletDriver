@@ -18,7 +18,7 @@ namespace OpenTabletDriver.UX.Windows
         {
             this.Title = "Device Init Sender";
             this.Icon = App.Logo.WithSize(App.Logo.Size);
-            this.ClientSize = new Size(400, 430);
+            this.ClientSize = new Size(400, 450);
 
             var sendButton = new Button
             {
@@ -171,7 +171,7 @@ namespace OpenTabletDriver.UX.Windows
 
             if (interfaceDropdown.SelectedItem == null)
             {
-                MessageBox.Show("Unable to send init without an interface selected", MessageBoxType.Error);
+                MessageBox.Show("Error: Unable to send init without an interface selected", MessageBoxType.Error);
                 return;
             }
 
