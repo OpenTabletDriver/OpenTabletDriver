@@ -165,6 +165,7 @@ namespace OpenTabletDriver.UX
         public WindowSingleton<PluginManagerWindow> PluginManagerWindow { get; } = new WindowSingleton<PluginManagerWindow>();
         public WindowSingleton<TabletDebugger> DebuggerWindow { get; } = new WindowSingleton<TabletDebugger>();
         public WindowSingleton<DeviceStringReader> StringReaderWindow { get; } = new WindowSingleton<DeviceStringReader>();
+        public WindowSingleton<DeviceInitSender> InitSenderWindow { get; } = new WindowSingleton<DeviceInitSender>();
         public WindowSingleton<UpdaterWindow> UpdaterWindow { get; } = new WindowSingleton<UpdaterWindow>();
 
         public WindowSingleton<AboutWindow> AboutWindow { get; } = new WindowSingleton<AboutWindow>();
@@ -175,6 +176,7 @@ namespace OpenTabletDriver.UX
             PluginManagerWindow.Close();
             DebuggerWindow.Close();
             StringReaderWindow.Close();
+            InitSenderWindow.Close();
             UpdaterWindow.Close();
             AboutWindow.Close();
         }
