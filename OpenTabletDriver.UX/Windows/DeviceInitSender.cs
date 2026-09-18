@@ -149,13 +149,12 @@ namespace OpenTabletDriver.UX.Windows
         private const int NUMERICBOX_WIDTH = 150;
         private const string DecimalStyle = "Decimal Value";
         private const string OperationTimedOut = "Operation timed-out";
-        private const string OperationFailed = "Operation failed";
 
         private async Task SendInitWithTimeout(string strInitData, Action<string> action, Action<Exception> error, Action timeoutAction)
         {
             if (!App.Driver.IsConnected)
             {
-                MessageBox.Show("Unable to send request without an active daemon", MessageBoxType.Error);
+                MessageBox.Show("Unable to send init without an active daemon", MessageBoxType.Error);
                 return;
             }
 
@@ -177,9 +176,9 @@ namespace OpenTabletDriver.UX.Windows
                 return;
             }
 
-            var request = SendInit(initData, initTypesButtonList.SelectedValue, intVid, intPid, interfaceDropdown.SelectedItem);
+            var init = SendInit(initData, initTypesButtonList.SelectedValue, intVid, intPid, interfaceDropdown.SelectedItem);
             var timeout = Task.Delay(TimeSpan.FromSeconds(5));
-            var completed = await Task.WhenAny(request, timeout);
+            var completed = await Task.WhenAny(init, timeout);
             if (completed == timeout)
             {
                 timeoutAction();
@@ -188,7 +187,7 @@ namespace OpenTabletDriver.UX.Windows
             {
                 try
                 {
-                    var str = await request;
+                    var str = await init;
                     action(str);
                 }
                 catch (Exception e)
@@ -200,7 +199,7 @@ namespace OpenTabletDriver.UX.Windows
 
         private static async Task<string> SendInit(byte[] initData, InitTypes initType, int intVid, int intPid, string strInterface)
         {
-            Debug.Assert(App.Driver.IsConnected, "Sending a request should not be able to be called without an active daemon");
+            Debug.Assert(App.Driver.IsConnected, "Sending an init should not be able to be called without an active daemon");
 
             if (initData.Length == 0)
                 throw new ArgumentException("Init length cannot be zero");
