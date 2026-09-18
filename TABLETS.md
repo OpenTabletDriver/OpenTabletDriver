@@ -260,6 +260,7 @@
 | UC-Logic 1060N                     |    Has Quirks     | Windows: Some variants require Zadig's WinUSB to be installed on interface 0
 | UC-Logic TWMNA62                   |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | UGEE M708                          |    Has Quirks     | Windows: Might need Zadig's WinUSB to be installed on interface 0
+| UGEE M908                          |    Has Quirks     | Wheel report resets auxiliary buttons.
 | Wacom PTH-460                      |    Has Quirks     | Wheel reports in reverse direction.
 | Wacom PTH-660                      |    Has Quirks     | Wheel reports in reverse direction.
 | Wacom PTH-860                      |    Has Quirks     | Wheel reports in reverse direction.
@@ -310,7 +311,6 @@
 | Parblo Intangbo M                  |  Missing Features | Wheel is not yet supported.
 | Parblo Intangbo S                  |  Missing Features | Wheel is not yet supported.
 | Parblo Intangbo SW                 |  Missing Features | Wheel and wireless are not yet supported.
-| UGEE M908                          |  Missing Features | Wheel is not yet supported.
 | UGEE UE16                          |  Missing Features | Wheel is not yet supported.
 | VEIKK A15 Pro                      |  Missing Features | Wheel is not yet supported.
 | VEIKK A30                          |  Missing Features | Touchpad is not yet supported.
