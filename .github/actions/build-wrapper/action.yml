@@ -9,6 +9,9 @@ inputs:
     required: true
   container:
     description: 'Set to anything to apply container workarounds'
+  signed:
+    description: 'Whether the package should be signed'
+    required: true
 runs:
   using: "composite"
   steps:
@@ -26,8 +29,25 @@ runs:
         hash git &>/dev/null && \
           git config --system --add safe.directory /__w/OpenTabletDriver/OpenTabletDriver
 
+    - name: "Fetch latest rcodesign version (macOS builds)"
+      id: rcodesign-version
+      if: inputs.runtime == 'osx-arm64' && inputs.signed == 'true'
+      shell: bash
+      # crates.io API requires a user agent and recommends providing a way of contact
+      # https://crates.io/data-access#api
+      run: |
+        echo "version=$(curl -s https://crates.io/api/v1/crates/apple-codesign -H 'User-Agent: https://github.com/OpenTabletDriver/OpenTabletDriver' | jq -r '.crate.max_version')" >> "$GITHUB_OUTPUT"
+
+    - name: "Cache rcodesign (macOS builds)"
+      if: inputs.runtime == 'osx-arm64' && inputs.signed == 'true'
+      id: cache-rcodesign
+      uses: actions/cache@v5
+      with:
+        path: ~/.cargo/bin/rcodesign
+        key: ${{ inputs.runtime }}-rcodesign-${{ steps.rcodesign-version.outputs.version }}
+
     - name: "Install rcodesign (macOS builds)"
-      if: inputs.package-name == 'macos-signed'
+      if: steps.cache-rcodesign.outputs.cache-hit != 'true' && inputs.runtime == 'osx-arm64' && inputs.signed == 'true'
       shell: bash
       run: cargo install apple-codesign
 
@@ -36,3 +56,4 @@ runs:
       with:
         runtime: ${{ inputs.runtime }}
         package-name: ${{ inputs.package-name }}
+        signed: ${{ inputs.signed }}
