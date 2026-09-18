@@ -125,6 +125,8 @@ namespace OpenTabletDriver.UX.Windows
 
         private void SetInterfaceDropDownDataStore()
         {
+            this.interfaceDropdown.SelectedItem = null;
+
             if (this.deviceDropDown.SelectedItem == null)
             {
                 // Sane max default of 10 interfaces, tablets should not be using this many interfaces
