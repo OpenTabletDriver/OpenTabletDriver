@@ -42,7 +42,7 @@ Source0: ${OTD_LNAME}-${version_to_use}.tar.gz
 License: LGPLv3
 URL: ${OTD_UPSTREAM_URL}
 
-BuildRequires: dotnet-sdk-${DOTNET_VERSION}
+BuildRequires: dotnet-sdk-10.0
 Requires: dotnet-runtime-${DOTNET_VERSION}
 Requires: gtk3
 Requires: udev

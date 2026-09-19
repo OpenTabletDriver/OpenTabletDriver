@@ -1,0 +1,22 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="OpenTabletDriver.Benchmarks/OpenTabletDriver.Benchmarks.csproj" />
+  <Project Path="OpenTabletDriver.Configurations/OpenTabletDriver.Configurations.csproj" />
+  <Project Path="OpenTabletDriver.Console/OpenTabletDriver.Console.csproj" />
+  <Project Path="OpenTabletDriver.Daemon/OpenTabletDriver.Daemon.csproj" />
+  <Project Path="OpenTabletDriver.Desktop/OpenTabletDriver.Desktop.csproj" />
+  <Project Path="OpenTabletDriver.Native/OpenTabletDriver.Native.csproj" />
+  <Project Path="OpenTabletDriver.Plugin/OpenTabletDriver.Plugin.csproj" />
+  <Project Path="OpenTabletDriver.Tests/OpenTabletDriver.Tests.csproj">
+    <BuildDependency Project="OpenTabletDriver.UX/OpenTabletDriver.UX.csproj" />
+  </Project>
+  <Project Path="OpenTabletDriver.UX.Gtk/OpenTabletDriver.UX.Gtk.csproj" />
+  <Project Path="OpenTabletDriver.UX.MacOS/OpenTabletDriver.UX.MacOS.csproj" />
+  <Project Path="OpenTabletDriver.UX.Wpf/OpenTabletDriver.UX.Wpf.csproj" />
+  <Project Path="OpenTabletDriver.UX/OpenTabletDriver.UX.csproj" />
+  <Project Path="OpenTabletDriver/OpenTabletDriver.csproj" />
+</Solution>
