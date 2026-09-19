@@ -27,12 +27,24 @@
     },
     {
       "VendorID": 1386,
+      "ProductID": 889,
+      "InputReportLength": 361,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2.IntuosV2BluetoothReportParser"
+    },
+    {
+      "VendorID": 1386,
       "ProductID": 967,
       "InputReportLength": 192,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2.IntuosV2ReportParser",
       "FeatureInitReport": [
         "AgI="
       ]
+    },
+    {
+      "VendorID": 1386,
+      "ProductID": 968,
+      "InputReportLength": 361,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2.IntuosV2BluetoothReportParser"
     }
   ]
 }
