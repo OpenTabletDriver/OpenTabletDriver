@@ -22,12 +22,15 @@
       "InputReportLength": 8,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
       "DeviceStrings": {
-        "201": "HVAN"
+        "121": "^H580\\x00*$"
       },
       "InitializationStrings": [
         100,
         123
-      ]
+      ],
+      "Attributes": {
+        "Interface": "0"
+      }
     }
   ],
   "Attributes": {
