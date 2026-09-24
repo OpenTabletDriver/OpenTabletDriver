@@ -119,6 +119,23 @@ namespace OpenTabletDriver.UX.Controls
                 };
                 enableButton.CheckedChanged += (sender, e) => store.Enable = enableButton.Checked ?? false;
                 yield return enableButton;
+
+                var resetButton = new Button
+                {
+                    Text = "Reset plugin settings",
+                    DataContext = store,
+                };
+
+                resetButton.Click += (sender, args) =>
+                {
+                    ArgumentNullException.ThrowIfNull(sender);
+                    if (sender is not Button button) return;
+                    if (button.DataContext is not PluginSettingStore pss) return;
+
+                    pss.Settings = [];
+                };
+
+                yield return resetButton;
             }
         }
     }
