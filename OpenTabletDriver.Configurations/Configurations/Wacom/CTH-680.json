@@ -13,6 +13,12 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 4
+    },
+    "Touch": {
+      "Width": 216,
+      "Height": 135,
+      "MaxX": 4095,
+      "MaxY": 4095
     }
   },
   "DigitizerIdentifiers": [
