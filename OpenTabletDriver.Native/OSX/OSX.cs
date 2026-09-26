@@ -57,6 +57,13 @@ namespace OpenTabletDriver.Native.OSX
         [DllImport(Quartz)]
         public extern static void CGEventSetLocation(CGEventRef eventRef, CGPoint location);
 
+        /// <remarks>
+        /// Upstream has marked this function as deprecated with no replacement:
+        /// <a href="https://developer.apple.com/documentation/coregraphics/cgcursorisvisible()">developer.apple.com</a>
+        /// </remarks>
+        [DllImport(Quartz)]
+        public extern static bool CGCursorIsVisible();
+
         [DllImport(Quartz)]
         public extern static CGEventRef CGEventCreateScrollWheelEvent2(CGEventRef eventRef, CGScrollEventUnit units, uint wheelCount, int wheel1, int wheel2, int wheel3);
 
