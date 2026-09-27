@@ -64,6 +64,7 @@ while read s; do
 
   echo \# $(echo $names | sed 's/,/\n# /g')
   echo KERNEL==\"hidraw*\", ATTRS{idVendor}==\"$vid\", ATTRS{idProduct}==\"$pid\", TAG+=\"uaccess\", TAG+=\"udev-acl\"
+  echo KERNEL==\"hidraw*\", KERNELS==\"0005:${vid^^}:${pid^^}.*\", TAG+=\"uaccess\", TAG+=\"udev-acl\"
   echo SUBSYSTEM==\"usb\", ATTRS{idVendor}==\"$vid\", ATTRS{idProduct}==\"$pid\", TAG+=\"uaccess\", TAG+=\"udev-acl\"
 
   if [[ $libinput > 0 ]]; then
