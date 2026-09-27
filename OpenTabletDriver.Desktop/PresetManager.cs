@@ -6,18 +6,7 @@ namespace OpenTabletDriver.Desktop
 {
     public class PresetManager
     {
-        public PresetManager()
-        {
-            PresetDirectory = new DirectoryInfo(AppInfo.Current.PresetDirectory);
-
-            if (!PresetDirectory.Exists)
-            {
-                PresetDirectory.Create();
-                Log.Write("Settings", $"The preset directory '{PresetDirectory.FullName}' has been created");
-            }
-        }
-
-        public DirectoryInfo PresetDirectory { get; }
+        public DirectoryInfo PresetDirectory { get; } = new DirectoryInfo(AppInfo.Current.PresetDirectory);
 
         private List<Preset> Presets { get; } = new List<Preset>();
 
