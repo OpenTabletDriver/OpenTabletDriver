@@ -1,5 +1,5 @@
 {
-  "Name": "Gaomon M6",
+  "Name": "Gaomon M6 (Variant 2)",
   "Specifications": {
     "Digitizer": {
       "Width": 254,
@@ -8,7 +8,7 @@
       "MaxY": 31750
     },
     "Pen": {
-      "MaxPressure": 8191,
+      "MaxPressure": 16383,
       "ButtonCount": 2
     },
     "AuxiliaryButtons": {
@@ -18,11 +18,11 @@
   "DigitizerIdentifiers": [
     {
       "VendorID": 9580,
-      "ProductID": 109,
+      "ProductID": 100,
       "InputReportLength": 12,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicV2ReportParser",
       "DeviceStrings": {
-        "201": "OEM02_T183_\\d{6}$"
+        "201": "GM001_T223_\\d{6}$"
       },
       "InitializationStrings": [
         200
