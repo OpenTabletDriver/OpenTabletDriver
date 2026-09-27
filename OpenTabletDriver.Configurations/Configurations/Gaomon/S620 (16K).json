@@ -1,14 +1,14 @@
 {
-  "Name": "Gaomon S830",
+  "Name": "Gaomon S620 (16K)",
   "Specifications": {
     "Digitizer": {
-      "Width": 172.3,
-      "Height": 107.7,
-      "MaxX": 34460,
-      "MaxY": 21540
+      "Width": 165.1,
+      "Height": 101.6,
+      "MaxX": 33020,
+      "MaxY": 20320
     },
     "Pen": {
-      "MaxPressure": 8191,
+      "MaxPressure": 16383,
       "ButtonCount": 2
     },
     "AuxiliaryButtons": {
@@ -18,23 +18,11 @@
   "DigitizerIdentifiers": [
     {
       "VendorID": 9580,
-      "ProductID": 109,
-      "InputReportLength": 12,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
-      "DeviceStrings": {
-        "2": "Gaomon Tablet_ S830"
-      },
-      "InitializationStrings": [
-        200
-      ]
-    },
-    {
-      "VendorID": 9580,
       "ProductID": 111,
       "InputReportLength": 12,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
       "DeviceStrings": {
-        "201": "GM001_T204_\\d{6}$"
+        "201": "GM001_T263_\\d{6}$"
       },
       "InitializationStrings": [
         200

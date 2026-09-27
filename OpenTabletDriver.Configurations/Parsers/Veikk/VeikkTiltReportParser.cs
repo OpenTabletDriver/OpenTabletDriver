@@ -12,6 +12,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Veikk
             {
                 0x41 when report[2] is 0xC0 => new OutOfRangeReport(report),
                 0x41 => new VeikkTiltTabletReport(report),
+                0x42 when report[2] is 0x03 => new VeikkRelativeWheelReport(report),
                 0x42 => new VeikkAuxReport(report),
                 0x43 => new DeviceReport(report),// touchpad report not supported yet
                 _ => new DeviceReport(report),

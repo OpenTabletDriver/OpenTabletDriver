@@ -3,8 +3,10 @@
 | Acepen AP906                       |     Supported     |
 | Acepen AP1060                      |     Supported     |
 | Adesso Cybertablet K8              |     Supported     |
+| Artisul A801                       |     Supported     |
 | Artisul D22S                       |     Supported     |
 | Artisul M0610                      |     Supported     |
+| Fansjoy FJ-S1                      |     Supported     | Rebranded XENX X1-640
 | Gaomon 1060 Pro                    |     Supported     |
 | Gaomon GM116HD                     |     Supported     |
 | Gaomon GM156HD                     |     Supported     |
@@ -19,6 +21,7 @@
 | Gaomon PD1561                      |     Supported     |
 | Gaomon PD2200                      |     Supported     |
 | Gaomon S620                        |     Supported     |
+| Gaomon S620 (16K)                  |     Supported     |
 | Genius G-Pen 560                   |     Supported     | Soft-buttons are bindable as aux buttons.
 | Huion 1060 Plus                    |     Supported     |
 | Huion G930L                        |     Supported     |
@@ -57,6 +60,7 @@
 | Huion Kamvas Pro 19 (4K)           |     Supported     |
 | Huion Kamvas Pro 24 (4K)           |     Supported     |
 | Huion Kamvas Pro 27                |     Supported     |
+| Huion KD200                        |     Supported     | Only 6 keys are auxiliary buttons.
 | Huion L310                         |     Supported     |
 | Huion L610                         |     Supported     |
 | Huion New 1060 Plus                |     Supported     |
@@ -96,6 +100,7 @@
 | VEIKK VK430                        |     Supported     |
 | VEIKK VK430 V2                     |     Supported     |
 | VEIKK VK640                        |     Supported     |
+| VEIKK VK850                        |     Supported     |
 | ViewSonic Woodpad PF0730           |     Supported     |
 | ViewSonic Woodpad PF1030           |     Supported     |
 | Wacom CTC-4110WL                   |     Supported     |
@@ -229,7 +234,7 @@
 | FlooGoo FMA100                     |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 1. Might also need to change the configuration depending on the tablet used.
 | Gaomon S56K                        |    Has Quirks     | Windows: Might need Zadig's WinUSB to be installed on interface 0 or 1
 | Gaomon S630                        |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
-| Gaomon S830                        |    Has Quirks     | User may have to replug their tablet until it is detected.
+| Gaomon S830                        |    Has Quirks     | Some variants may require user replugging their tablet until it is detected.
 | Genius G-Pen F509                  |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
 | Genius i405x                       |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
 | Genius i608x                       |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
@@ -241,6 +246,7 @@
 | Huion Kamvas 13 (Gen 3)            |    Has Quirks     | Function-switch buttons act as regular auxiliary keys.
 | Huion New 1060 Plus (2048)         |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 1
 | Huion osu! Tablet                  |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0. Uses the same configuration as the Huion 420.
+| Huion Q630M                        |    Has Quirks     | Aux buttons are not in order.
 | Huion WH1409 V2 (Variant 2)        |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | KENTING K5540                      |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
 | Monoprice 10594                    |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
@@ -297,7 +303,6 @@
 | Huion Kamvas Pro 24                |  Missing Features | Touch bar is not yet supported.
 | Huion Kamvas Pro 24 (Gen 3)        |  Missing Features | Touch is not yet supported.
 | Huion Q620M                        |  Missing Features | Wheel button is not yet supported.
-| Huion Q630M                        |  Missing Features | Dials/Wheels are not yet supported.
 | Huion RTM-500                      |  Missing Features | Touch bar is not yet supported.
 | Huion RTP-700                      |  Missing Features | Touch bar is not yet supported.
 | LifeTec LT9570                     |  Missing Features | Aux buttons and tilt is not yet supported.
@@ -326,7 +331,9 @@
 | Wacom Movink 13 (DTH-135)          |  Missing Features | Touch is not yet supported.
 | Wacom Cintiq 22HD Touch (DTH-2200) |  Missing Features | Touch is not yet supported.
 | Wacom Cintiq Pro 22 (DTH-227)      |  Missing Features | Touch is not yet supported.
+| Wacom Cintiq 27QHD (DTH-2700)      |  Missing Features | Touch is not yet supported.
 | Wacom Cintiq Pro 27 (DTH-271)      |  Missing Features | Aux buttons are not yet supported.
+| Wacom Cintiq Pro 32 (DTH-3220)     |  Missing Features | Touch is not yet supported.
 | Wacom Cintiq 13HD Touch (DTH-1300) |  Missing Features | Center button is not yet supported.
 | Wacom Cintiq 13HD (DTK-1300)       |  Missing Features | Center button is not yet supported.
 | Wacom Cintiq 21UX (DTZ-2100)       |  Missing Features | Touch bars are not yet supported.

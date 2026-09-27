@@ -25,7 +25,7 @@ namespace OpenTabletDriver.Desktop.Profiles
 
         private List<WheelBindingSettings> wheelBindings = [];
 
-        private bool disablePressure, disableTilt, enableDragBindings;
+        private bool disablePressure, disableTilt, disableRotation, enableDragBindings;
 
         [JsonProperty(nameof(TipActivationThreshold))]
         public float TipActivationThreshold
@@ -109,6 +109,13 @@ namespace OpenTabletDriver.Desktop.Profiles
         {
             set => this.RaiseAndSetIfChanged(ref this.disableTilt, value);
             get => this.disableTilt;
+        }
+
+        [JsonProperty(nameof(DisableRotation))]
+        public bool DisableRotation
+        {
+            set => this.RaiseAndSetIfChanged(ref this.disableRotation, value);
+            get => this.disableRotation;
         }
 
         [JsonProperty(nameof(EnableDragBindings))]

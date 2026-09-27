@@ -1,0 +1,26 @@
+{
+  "Name": "Wacom Cintiq 27QHD (DTH-2700)",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 600.7,
+      "Height": 339,
+      "MaxX": 120140,
+      "MaxY": 67800
+    },
+    "Pen": {
+      "MaxPressure": 2047,
+      "ButtonCount": 2
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 811,
+      "InputReportLength": 192,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.CintiqV1.CintiqV1ReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ]
+    }
+  ]
+}

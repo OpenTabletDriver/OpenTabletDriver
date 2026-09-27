@@ -1,18 +1,18 @@
 {
-  "Name": "UGEE UE16",
+  "Name": "VEIKK VK850",
   "Specifications": {
     "Digitizer": {
-      "Width": 340.995,
-      "Height": 191.995,
-      "MaxX": 68199,
-      "MaxY": 38399
+      "Width": 203.2,
+      "Height": 127,
+      "MaxX": 40640,
+      "MaxY": 25400
     },
     "Pen": {
       "MaxPressure": 16383,
       "ButtonCount": 2
     },
     "AuxiliaryButtons": {
-      "ButtonCount": 9
+      "ButtonCount": 10
     },
     "Wheels": [
       {
@@ -23,13 +23,15 @@
   },
   "DigitizerIdentifiers": [
     {
-      "VendorID": 10429,
-      "ProductID": 10508,
-      "InputReportLength": 12,
-      "OutputReportLength": 20,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "VendorID": 12267,
+      "ProductID": 32,
+      "InputReportLength": 13,
+      "OutputReportLength": 9,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Veikk.VeikkTiltReportParser",
       "OutputInitReport": [
-        "ArAE"
+        "CQEE",
+        "CQIC",
+        "CQMC"
       ]
     }
   ],

@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.DependencyInjection;
 using OpenTabletDriver.Plugin.Tablet;
@@ -13,10 +14,10 @@ namespace OpenTabletDriver.Desktop.Reflection
     {
         private static readonly Type _tabletRefType = typeof(TabletReference);
 
-        public PluginSettingStore(Type type, bool enable = true)
+        public PluginSettingStore(Type? type, bool enable = true)
         {
-            Path = type.FullName ?? throw new InvalidOperationException($"Could not look up full name for type {type}");
-            Settings = GetSettingsForType(type);
+            Path = type?.FullName;
+            Settings = type != null ? GetSettingsForType(type) : new ObservableCollection<PluginSetting>();
             Enable = enable;
         }
 
@@ -24,8 +25,7 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
             var sourceType = source.GetType();
 
-            Path = sourceType.FullName ??
-                   throw new InvalidOperationException($"Could not look up {nameof(Path)}'s full name via type '{sourceType}'");
+            Path = sourceType.FullName;
 
             Settings = GetSettingsForType(sourceType, source);
             Enable = enable;
@@ -38,10 +38,11 @@ namespace OpenTabletDriver.Desktop.Reflection
             Settings = settings;
         }
 
-        public string Path { set; get; }
+        // TODO: make non-nullable or similar fix, since it never makes sense to have a null/empty path? -gonX
+        public string? Path { set; get; }
 
         [JsonIgnore]
-        public string? Name => AppInfo.PluginManager.GetFriendlyName(Path);
+        public string? Name => Path != null ? AppInfo.PluginManager.GetFriendlyName(Path) : null;
 
         public ObservableCollection<PluginSetting> Settings { set; get; }
 
@@ -49,6 +50,12 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public T? Construct<T>(TabletReference? tabletReference = null, bool trigger = true) where T : class
         {
+            if (Path == null)
+            {
+                Log.Write($"Construct<T>", $"{nameof(Path)} is null, returning null", LogLevel.Debug);
+                return null;
+            }
+
             var obj = AppInfo.PluginManager.ConstructObject<T>(Path);
             ApplySettings(obj);
             if (trigger)

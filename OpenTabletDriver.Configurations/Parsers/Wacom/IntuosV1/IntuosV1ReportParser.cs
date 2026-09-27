@@ -26,9 +26,9 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1
             if (report[1] == 0x80)
                 return new OutOfRangeReport(report);
             if (report[1].IsBitSet(1) && report[1].IsBitSet(3))
-                return new IntuosV1RotationReport(report, ref _prevPressure, ref _prevTilt, ref _prevPenButtons);
+                return new IntuosV1RotationReport(report, ref _prevPressure, ref _prevTilt, ref _prevRotation, ref _prevPenButtons);
             if (report[1].IsBitSet(5))
-                return new IntuosV1TabletReport(report, ref _prevPressure, ref _prevTilt, ref _prevPenButtons);
+                return new IntuosV1TabletReport(report, ref _prevPressure, ref _prevTilt, ref _prevRotation, ref _prevPenButtons);
             else if (report[1] == 0xC2)
                 return new IntuosV1ToolReport(report);
 
@@ -37,6 +37,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1
 
         private uint _prevPressure;
         private Vector2 _prevTilt;
+        private int _prevRotation;
         private bool[] _prevPenButtons = Array.Empty<bool>();
     }
 }

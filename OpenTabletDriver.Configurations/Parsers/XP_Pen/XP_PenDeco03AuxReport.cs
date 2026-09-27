@@ -1,12 +1,23 @@
+using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Tablet.Wheel;
 
 namespace OpenTabletDriver.Configurations.Parsers.XP_Pen
 {
-    public struct XP_PenDeco03WheelReport : IRelativeWheelReport
+    public struct XP_PenDeco03AuxReport : IAuxReport, IRelativeWheelReport
     {
-        public XP_PenDeco03WheelReport(byte[] report, ref byte previousWheelByte, int wheelIndex = 7)
+        public XP_PenDeco03AuxReport(byte[] report, ref byte previousWheelByte, int wheelIndex = 7, int auxIndex = 2)
         {
             Raw = report;
+
+            AuxButtons =
+            [
+                report[auxIndex].IsBitSet(0),
+                report[auxIndex].IsBitSet(1),
+                report[auxIndex].IsBitSet(2),
+                report[auxIndex].IsBitSet(3),
+                report[auxIndex].IsBitSet(4),
+                report[auxIndex].IsBitSet(5),
+            ];
 
             // The XP-Pen Deco 03 wheel sequence is goofy. To track clockwise vs counterclockwise, the previous
             // report is needed. For example, if report[wheelIndex] is 0xC0, and the previous report has report[wheelIndex]
@@ -42,6 +53,7 @@ namespace OpenTabletDriver.Configurations.Parsers.XP_Pen
             previousWheelByte = report[wheelIndex];
         }
 
+        public bool[] AuxButtons { set; get; }
         public byte[] Raw { get; set; }
         public int[] AnalogDeltas { set; get; }
     }

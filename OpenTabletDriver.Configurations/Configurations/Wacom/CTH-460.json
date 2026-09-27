@@ -42,6 +42,15 @@
       "FeatureInitReport": [
         "AgI="
       ]
+    },
+    {
+      "VendorID": 1386,
+      "ProductID": 209,
+      "InputReportLength": 9,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos.IntuosReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ]
     }
   ],
   "AuxiliaryDeviceIdentifiers": [
