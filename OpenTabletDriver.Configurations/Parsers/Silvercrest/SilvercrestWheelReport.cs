@@ -8,9 +8,9 @@ public struct SilvercrestWheelReport(byte[] data) : IAuxReport, IRelativeWheelRe
     public byte[] Raw { get; set; } = data;
     public bool[] AuxButtons { get; set; } = 
     [
-        data[1].IsBitSet(2),
-        data[1].IsBitSet(3),
-        data[1].IsBitSet(4),
+        data[1].IsBitSet(2), // Scroll
+        data[1].IsBitSet(3), // Zoom
+        data[1].IsBitSet(4), // Volume
     ];
     public int[] AnalogDeltas { get; set; } = 
     [
