@@ -1,0 +1,38 @@
+{
+  "Name": "Silvercrest SGT 10.6 A2",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 228.6,
+      "Height": 139.7,
+      "MaxX": 36000,
+      "MaxY": 22000
+    },
+    "Pen": {
+      "MaxPressure": 1023,
+      "ButtonCount": 2
+    },
+    "Wheels": [
+      {
+        "RelativeWheelSteps": 24,
+        "ButtonCount": 1
+      }
+    ]
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 5935,
+      "ProductID": 1281,
+      "InputReportLength": 8,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Silvercrest.SilvercrestReportParser",
+      "FeatureInitReport": [
+        "AgQA",
+        "AgIA",
+        "AhAB"
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1",
+    "Interface": "0"
+  }
+}
