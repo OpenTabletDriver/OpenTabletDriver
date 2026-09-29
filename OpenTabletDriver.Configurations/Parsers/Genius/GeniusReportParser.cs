@@ -10,7 +10,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Genius
         {
             return data[0] switch
             {
-                0x10 => new TabletReport(data),
+                0x10 => new GeniusTabletReport(data),
                 0x11 => new GeniusMouseReport(data),
                 _ => new DeviceReport(data)
             };
