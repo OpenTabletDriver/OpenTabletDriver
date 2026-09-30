@@ -514,9 +514,17 @@ namespace OpenTabletDriver.Daemon
 
             if (pointer is IMouseButtonHandler mouseButtonHandler)
                 bindingServiceProvider.AddService(() => mouseButtonHandler);
+            // experimental mouse button handler was tried, it behaves very weird
 
             if (pointer is IMouseScrollHandler mouseScrollHandler)
                 bindingServiceProvider.AddService(() => mouseScrollHandler);
+            else if (DesktopInterop.RelativePointer is IMouseScrollHandler detachedMouseScrollHandler)
+            {
+                Log.Write(nameof(CreateBindingHandler),
+                    "Using experimental mouse scroll handler for output mode not implementing mouse scrolling",
+                    LogLevel.Debug);
+                bindingServiceProvider.AddService(() => detachedMouseScrollHandler);
+            }
 
             if (pointer is IPenActionHandler penActionHandler)
                 bindingServiceProvider.AddService(() => penActionHandler);
