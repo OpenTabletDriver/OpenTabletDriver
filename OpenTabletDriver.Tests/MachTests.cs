@@ -24,5 +24,26 @@ namespace OpenTabletDriver.Tests
 
             Assert.Equal(0, result);
         }
+
+        [SkippableFact]
+        public void TimeConstraintPolicy_FindsAnotherThreadByName()
+        {
+            Skip.IfNot(SystemInterop.CurrentPlatform == PluginPlatform.MacOS);
+
+            using var stop = new ManualResetEventSlim();
+            using var started = new ManualResetEventSlim();
+            var thread = new Thread(() => { started.Set(); stop.Wait(); }) { Name = "OTD Test Named Thread", IsBackground = true };
+            thread.Start();
+            started.Wait();
+            try
+            {
+                Assert.True(Mach.SetNamedThreadsTimeConstraint("OTD Test Named Thread", Computation, Constraint));
+                Assert.False(Mach.SetNamedThreadsTimeConstraint("OTD No Such Thread", Computation, Constraint));
+            }
+            finally
+            {
+                stop.Set();
+            }
+        }
     }
 }
