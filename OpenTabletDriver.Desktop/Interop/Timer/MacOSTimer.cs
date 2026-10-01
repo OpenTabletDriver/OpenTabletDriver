@@ -2,6 +2,7 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using OpenTabletDriver.Native.Linux;
+using OpenTabletDriver.Native.OSX;
 using OpenTabletDriver.Native.OSX.Timers;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Timers;
@@ -14,6 +15,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
     internal class MacOSTimer : ITimer, IDisposable
     {
         const int TIMER_CANCELLED = 1;
+        const float MAX_REALTIME_INTERVAL_MS = 20;
 
         private Thread? thread;
         private int kqueue;
@@ -92,6 +94,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
         }
         private void ThreadMain(object? data)
         {
+            SetRealtimePolicy();
             var events = new[] { new KEvent() };
 
             while (true)
@@ -111,6 +114,18 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
                     break;
                 }
             }
+        }
+
+        // At the default policy, idle cores coalesce the wakeups and a busy CPU delays them, so ticks arrive late or merge.
+        private void SetRealtimePolicy()
+        {
+            if (Interval > MAX_REALTIME_INTERVAL_MS)
+                return;
+
+            var period = TimeSpan.FromMilliseconds(Interval);
+            var result = Mach.SetCurrentThreadTimeConstraint(period, period / 2, period);
+            if (result != 0)
+                Log.Write("MacOSTimer", $"Failed to set real-time thread policy: kern_return {result}", LogLevel.Warning);
         }
 
         private void SendCancelEvent()
