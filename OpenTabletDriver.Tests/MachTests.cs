@@ -1,12 +1,12 @@
 using System;
+using System.Runtime.Versioning;
 using System.Threading;
-using OpenTabletDriver.Interop;
 using OpenTabletDriver.Native.OSX;
-using OpenTabletDriver.Plugin;
 using Xunit;
 
 namespace OpenTabletDriver.Tests
 {
+    [SupportedOSPlatform("macos")]
     public class MachTests
     {
         private static readonly TimeSpan Computation = TimeSpan.FromMilliseconds(1);
@@ -15,8 +15,6 @@ namespace OpenTabletDriver.Tests
         [SkippableFact]
         public void TimeConstraintPolicy_IsAcceptedForManagedThread()
         {
-            Skip.IfNot(SystemInterop.CurrentPlatform == PluginPlatform.MacOS);
-
             int result = -1;
             var thread = new Thread(() => result = Mach.SetCurrentThreadTimeConstraint(TimeSpan.Zero, Computation, Constraint));
             thread.Start();
@@ -26,24 +24,35 @@ namespace OpenTabletDriver.Tests
         }
 
         [SkippableFact]
-        public void TimeConstraintPolicy_FindsAnotherThreadByName()
+        public void TimeConstraintPolicy_FindsOnlyNewThreadByName()
         {
-            Skip.IfNot(SystemInterop.CurrentPlatform == PluginPlatform.MacOS);
-
+            const string name = "OTD Test Named Thread";
             using var stop = new ManualResetEventSlim();
-            using var started = new ManualResetEventSlim();
-            var thread = new Thread(() => { started.Set(); stop.Wait(); }) { Name = "OTD Test Named Thread", IsBackground = true };
-            thread.Start();
-            started.Wait();
+            StartNamedThread(name, stop);
             try
             {
-                Assert.True(Mach.SetNamedThreadsTimeConstraint("OTD Test Named Thread", Computation, Constraint));
-                Assert.False(Mach.SetNamedThreadsTimeConstraint("OTD No Such Thread", Computation, Constraint));
+                var existingThreadIds = Mach.GetThreadIds();
+                Assert.False(Mach.TrySetNewNamedThreadTimeConstraint(name, existingThreadIds, Computation, Constraint, out _));
+
+                StartNamedThread(name, stop);
+                Assert.True(Mach.TrySetNewNamedThreadTimeConstraint(name, existingThreadIds, Computation, Constraint, out var result));
+                Assert.Equal(0, result);
+
+                Assert.False(Mach.TrySetNewNamedThreadTimeConstraint(name, Mach.GetThreadIds(), Computation, Constraint, out _));
             }
             finally
             {
                 stop.Set();
             }
+        }
+
+        private static void StartNamedThread(string name, ManualResetEventSlim stop)
+        {
+            // Not disposed: the thread may still be inside Set() when Wait() returns.
+            var started = new ManualResetEventSlim();
+            var thread = new Thread(() => { started.Set(); stop.Wait(); }) { Name = name, IsBackground = true };
+            thread.Start();
+            started.Wait();
         }
     }
 }

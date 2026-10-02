@@ -116,9 +116,11 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
             }
         }
 
-        // At the default policy, idle cores coalesce the wakeups and a busy CPU delays them, so ticks arrive late or merge.
+        // Under the default policy, idle cores coalesce the wakeups and a busy CPU delays them, so ticks arrive late or merge.
         private void SetRealtimePolicy()
         {
+            // Real-time scheduling only pays off for short intervals; above 20 ms (below 50 Hz) the default policy is
+            // enough. The cap also keeps the computation (half the interval) well under the kernel's 50 ms limit.
             if (Interval > MAX_REALTIME_INTERVAL_MS)
                 return;
 
