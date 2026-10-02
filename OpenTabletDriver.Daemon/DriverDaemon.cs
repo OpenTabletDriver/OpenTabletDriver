@@ -244,6 +244,8 @@ namespace OpenTabletDriver.Daemon
                             LogPressureState(group, profile);
                         if (absoluteMode.Pointer is ITiltHandler)
                             LogTiltState(group, profile);
+                        if (absoluteMode.Pointer is IRotationHandler)
+                            LogRotationState(group, profile);
                     }
 
                     if (dev.OutputMode is RelativeOutputMode relativeMode)
@@ -256,6 +258,8 @@ namespace OpenTabletDriver.Daemon
                             LogPressureState(group, profile);
                         if (relativeMode.Pointer is ITiltHandler)
                             LogTiltState(group, profile);
+                        if (relativeMode.Pointer is IRotationHandler)
+                            LogRotationState(group, profile);
                     }
 
                     if (dev.OutputMode is { } outputMode)
