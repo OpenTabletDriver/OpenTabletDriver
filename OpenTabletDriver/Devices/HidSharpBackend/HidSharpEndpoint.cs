@@ -34,6 +34,8 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
 
         public IDeviceEndpointStream Open() => device.TryOpen(out var stream) ? new HidSharpEndpointStream(stream) : throw new InvalidOperationException("Unable to open device stream");
         public string GetDeviceString(byte index) => device.GetDeviceString(index);
+        public void OpenAndSendFeatureInit(byte[] initData) => device.Open().SetFeature(initData);
+        public void OpenAndSendOutputInit(byte[] initData) => device.Open().Write(initData);
 
         private static Dictionary<string, string> GetDeviceAttributes(string devicePath, Func<ReportDescriptor> reportDescriptorFunc)
         {
