@@ -3,9 +3,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
+using Autofac;
 using Eto.Drawing;
 using Eto.Forms;
-using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.UX.Controls.Generic;
@@ -295,8 +295,7 @@ namespace OpenTabletDriver.UX.Controls.Output
 
                 var subMenu = base.ContextMenu.Items.GetSubmenu("Set to display");
 
-                var displays = DesktopInterop.VirtualScreen?.Displays.ToArray()
-                    ?? throw new InvalidOperationException("Could not get VirtualScreen");
+                var displays = App.Current.LifetimeScope.Resolve<IVirtualScreen>().Displays.ToArray();
 
                 // account for monitor layouts with negative offsets (e.g. Wayland supports this)
                 // skip IVirtualScreen's as these tend to be normalized to 0,0, which may confuse these methods
@@ -325,7 +324,6 @@ namespace OpenTabletDriver.UX.Controls.Output
                                 }
                                 else
                                 {
-                                    virtualScreen = DesktopInterop.VirtualScreen;
                                     this.Area.X = display.Position.X - xOffset + (display.Width / 2);
                                     this.Area.Y = display.Position.Y - yOffset + (display.Height / 2);
                                 }

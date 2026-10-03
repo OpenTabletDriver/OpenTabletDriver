@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Autofac;
 using Eto.Drawing;
 using Eto.Forms;
 using Newtonsoft.Json.Linq;
@@ -113,6 +114,7 @@ namespace OpenTabletDriver.UX
         };
 
         private TrayIcon? trayIcon;
+        private ILifetimeScope? _lifetimeScope;
 
         public bool SilenceDaemonShutdown { get; set; }
         public bool SkipUpdate { get; set; }
@@ -425,8 +427,13 @@ namespace OpenTabletDriver.UX
             AppInfo.PluginManager = new DesktopPluginManager();
             AppInfo.PresetManager = new PresetManager();
 
+            App.Current.LifetimeScope = null;
+            _lifetimeScope?.Dispose();
+            _lifetimeScope = null;
             // Load any new plugins
             AppInfo.PluginManager.Load();
+            Debug.Assert(AppInfo.PluginManager.Container != null);
+            App.Current.LifetimeScope = AppInfo.PluginManager.Container.BeginLifetimeScope(); ;
 
             // Show the startup greeter
             if (!File.Exists(AppInfo.Current.SettingsFile) && this.WindowState != WindowState.Minimized)

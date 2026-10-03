@@ -1,41 +1,34 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.DependencyInjection;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Desktop.Binding
 {
     [PluginName(PluginName)]
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
     public class AdaptiveBinding : IStateBinding
     {
         private const string PluginName = "Adaptive Binding";
 
-        [Resolved] public IPenActionHandler? PenActionHandler { set; get; }
-
-        [Resolved] public IMouseButtonHandler? MouseButtonHandler { set; get; }
-
-        [OnDependencyLoad]
-        public void VerifyInitialization()
+        public AdaptiveBinding(IPenActionHandler penActionHandler)
         {
-            if (PenActionHandler == null && MouseButtonHandler == null)
-                Log.Write(PluginName,
-                    $"Neither {nameof(IPenActionHandler)} nor {nameof(IMouseButtonHandler)} is available. Your selected output mode is incompatible",
-                    LogLevel.Error);
+            PenActionHandler = penActionHandler;
         }
 
-        // ReSharper disable once UnusedMember.Global
-        public AdaptiveBinding()
+        public AdaptiveBinding(IMouseButtonHandler mouseButtonHandler)
         {
+            MouseButtonHandler = mouseButtonHandler;
         }
 
-        public AdaptiveBinding(PenAction action)
-        {
-            Binding = ActionToString(action);
-        }
+        public IPenActionHandler? PenActionHandler { set; get; }
+
+        public IMouseButtonHandler? MouseButtonHandler { set; get; }
 
         public static string[] ButtonNames => ValidButtons.Keys.ToArray();
 
@@ -109,5 +102,13 @@ namespace OpenTabletDriver.Desktop.Binding
             ValidButtons.Where(x => x.Value == button)
                 .Select(x => x.Key)
                 .First();
+
+        public static PluginSettingStore GenerateStoreWithBinding(PenAction button)
+        {
+            var store = new PluginSettingStore(typeof(AdaptiveBinding), false);
+            store[nameof(Binding)].SetValue(ActionToString(button));
+
+            return store;
+        }
     }
 }

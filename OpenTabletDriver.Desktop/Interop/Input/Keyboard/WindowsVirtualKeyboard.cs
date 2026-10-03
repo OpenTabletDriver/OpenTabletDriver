@@ -1,13 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using OpenTabletDriver.Native.Windows.Input;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Platform.Keyboard;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
 {
     using static OpenTabletDriver.Native.Windows.Windows;
 
+    [SupportedPlatform(PluginPlatform.Windows)]
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
     public class WindowsVirtualKeyboard : IVirtualKeyboard
     {
         private static void KeyEvent(string key, bool isPress)

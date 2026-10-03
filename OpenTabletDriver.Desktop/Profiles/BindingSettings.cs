@@ -129,12 +129,8 @@ namespace OpenTabletDriver.Desktop.Profiles
         {
             var bindingSettings = new BindingSettings
             {
-                TipButton = new PluginSettingStore(
-                    new AdaptiveBinding(PenAction.Tip)
-                ),
-                EraserButton = new PluginSettingStore(
-                    new AdaptiveBinding(PenAction.Eraser)
-                ),
+                TipButton = AdaptiveBinding.GenerateStoreWithBinding(PenAction.Tip),
+                EraserButton = AdaptiveBinding.GenerateStoreWithBinding(PenAction.Eraser),
                 PenButtons = new PluginSettingStoreCollection(),
                 AuxButtons = new PluginSettingStoreCollection(),
                 MouseButtons = new PluginSettingStoreCollection(),
@@ -203,12 +199,15 @@ namespace OpenTabletDriver.Desktop.Profiles
         private void AddPenButtons(TabletSpecifications tabletSpecifications)
         {
             uint buttonCount = tabletSpecifications.Pen.ButtonCount;
+
             if (buttonCount >= 1)
-                PenButtons.Add(new PluginSettingStore(new AdaptiveBinding(PenAction.BarrelButton1)));
+                PenButtons.Add(AdaptiveBinding.GenerateStoreWithBinding(PenAction.BarrelButton1));
+
             if (buttonCount >= 2)
-                PenButtons.Add(new PluginSettingStore(new AdaptiveBinding(PenAction.BarrelButton2)));
+                PenButtons.Add(AdaptiveBinding.GenerateStoreWithBinding(PenAction.BarrelButton2));
+
             if (buttonCount >= 3)
-                PenButtons.Add(new PluginSettingStore(new AdaptiveBinding(PenAction.BarrelButton3)));
+                PenButtons.Add(AdaptiveBinding.GenerateStoreWithBinding(PenAction.BarrelButton3));
         }
 
         private void SetupWheelDefaults(TabletSpecifications tabletSpecifications)

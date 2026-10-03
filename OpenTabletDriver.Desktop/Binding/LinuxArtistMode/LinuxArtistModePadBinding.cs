@@ -1,29 +1,19 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.DependencyInjection;
 using OpenTabletDriver.Plugin.Platform.Keyboard;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
 {
     [PluginName(_PLUGIN_NAME), SupportedPlatform(PluginPlatform.Linux)]
-    public class LinuxArtistModePadBinding : IStateBinding
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+    public class LinuxArtistModePadBinding(IVirtualPad virtualPad) : IStateBinding
     {
         private const string _PLUGIN_NAME = "Linux Artist Mode Pad Binding";
-
-        [Resolved]
-        public IVirtualPad? VirtualPad;
-
-        [OnDependencyLoad]
-        public void VerifyInitialization()
-        {
-            if (VirtualPad == null)
-                Log.Write(_PLUGIN_NAME,
-                    $"{nameof(IVirtualPad)} unavailable", LogLevel.Error);
-        }
 
         private static readonly Dictionary<string, TabletPadEvent> s_ValidButtons = new()
         {
@@ -38,7 +28,6 @@ namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
             { "Pad Button 9", TabletPadEvent.BUTTON_9 },
             { "Pad Button 10", TabletPadEvent.BUTTON_10 },
         };
-
 
         public static string[] ValidKeys => s_ValidButtons.Keys.ToArray();
 
@@ -73,7 +62,7 @@ namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
         {
             if (_buttonPadEvent == null) throw new InvalidOperationException("Cannot send null event");
 
-            VirtualPad?.KeyEvent(_buttonPadEvent.Value, isPress);
+            virtualPad.KeyEvent(_buttonPadEvent.Value, isPress);
         }
 
         public override string ToString() => $"{nameof(LinuxArtistModePadBinding)}: {Button ?? "<button not set>"}";

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
+using OpenTabletDriver.Native.Linux;
+using OpenTabletDriver.Native.Linux.Evdev;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
 
@@ -85,6 +87,21 @@ namespace OpenTabletDriver.Desktop
                        where type.IsAbstract || type.IsInterface
                        select type
                 ]);
+        }
+
+        public static void InitializeAndLog(this EvdevDevice evdevDevice)
+        {
+            var result = evdevDevice.Initialize();
+            var deviceName = evdevDevice.DeviceName;
+            switch (result)
+            {
+                case ERRNO.NONE:
+                    Log.Debug("Evdev", $"Successfully initialized {deviceName}");
+                    break;
+                default:
+                    Log.WriteNotify("Evdev", $"Failed to initialize '{deviceName}' (error code {result})", LogLevel.Error);
+                    break;
+            }
         }
     }
 }

@@ -130,7 +130,7 @@ namespace OpenTabletDriver.UX.Controls
                                                 select tablet;
 
                     foreach (var tablet in tabletsWithoutProfile)
-                        profiles.Generate(tablet);
+                        profiles.Generate(App.Current.LifetimeScope, tablet);
 
                     foreach (var tablet in tablets)
                         visibleProfiles.Add(Profiles.First(p => p.Tablet == tablet.Properties.Name));

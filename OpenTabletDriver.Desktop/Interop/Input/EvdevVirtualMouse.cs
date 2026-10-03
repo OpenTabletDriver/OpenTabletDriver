@@ -3,7 +3,7 @@ using OpenTabletDriver.Native.Linux.Evdev;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 
-namespace OpenTabletDriver.Desktop.Interop
+namespace OpenTabletDriver.Desktop.Interop.Input
 {
     [PluginIgnore]
     public abstract class EvdevVirtualMouse : IMouseButtonHandler, IMouseScrollHandler, ISynchronousPointer, IDisposable

@@ -1,90 +1,106 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using Autofac;
+using OpenTabletDriver.Desktop.Interop.Timer;
+using OpenTabletDriver.Desktop.Reflection.Autofac;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.DependencyInjection;
+using OpenTabletDriver.Plugin.Platform.Display;
+using OpenTabletDriver.Plugin.Platform.Keyboard;
+using OpenTabletDriver.Plugin.Platform.Pointer;
+using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Plugin.Timers;
 
 namespace OpenTabletDriver.Desktop.Reflection
 {
-    public class PluginManager : ServiceManager
+    public class PluginManager
     {
+        internal ContainerBuilder ContainerBuilder;
+        internal Assembly[] assemblies =
+        [
+            Assembly.Load("OpenTabletDriver.Desktop"),
+            Assembly.Load("OpenTabletDriver.Configurations"),
+            Assembly.Load("OpenTabletDriver.Plugin"),
+        ];
+
         public PluginManager()
         {
-            var assemblies = new[]
+            TypeInfo[] localInternalTypes =
+            [
+                ..
+                from asm in assemblies
+                from type in asm.DefinedTypes
+                where type.IsPublic && !(type.IsInterface || type.IsAbstract)
+                where IsPluginType(type)
+                where IsPlatformSupported(type)
+                select type
+            ];
+
+            if (localInternalTypes.Count(x => x.ImplementedInterfaces.Contains(typeof(ITimer))) > 1)
             {
-                Assembly.Load("OpenTabletDriver.Desktop"),
-                Assembly.Load("OpenTabletDriver.Configurations"),
-                Assembly.Load("OpenTabletDriver.Plugin")
-            };
+                // remove FallbackTimer if another timer is present
+                localInternalTypes =
+                    [.. localInternalTypes.Where(x => x.FullName != typeof(FallbackTimer).GetTypeInfo().FullName)];
+            }
+            else
+                localInternalTypes = [.. localInternalTypes];
 
-#pragma warning disable CS0618 // Type or member is obsolete
-            libTypes = OpenTabletDriver.Desktop.Extensions.GetLibTypes().ToArray();
-#pragma warning restore CS0618 // Type or member is obsolete
+            pluginTypes = new ConcurrentBag<TypeInfo>(localInternalTypes);
 
-            var internalTypes = from asm in assemblies
-                                from type in asm.DefinedTypes
-                                where type.IsPublic && !(type.IsInterface || type.IsAbstract)
-                                where IsPluginType(type)
-                                where IsPlatformSupported(type)
-                                select type;
-
-            pluginTypes = new ConcurrentBag<TypeInfo>(internalTypes);
+            RegisterContainer();
+            Debug.Assert(ContainerBuilder != null, "ContainerBuilder should be initialized at the end of constructor");
         }
 
         public IReadOnlyCollection<TypeInfo> PluginTypes => pluginTypes;
         protected ConcurrentBag<TypeInfo> pluginTypes;
 
-        [Obsolete($"Use {nameof(OpenTabletDriver.Desktop.Extensions.GetLibTypes)} from OpenTabletDriver.Desktop.Extensions")]
-        protected readonly Type[] libTypes;
+        private Type[] _bannedAutoloadTypes =
+        [
+            typeof(IDeviceReport), // skip parser structs as they don't make sense to DI
+            typeof(IVirtualScreen), // handled with module
+        ];
 
-        public virtual T? ConstructObject<T>(string name, object[]? args = null) where T : class
+        // types that should have 1 instance per scope
+        private Type[] _scopedAutoloadTypes =
+        [
+            typeof(IAbsolutePointer),
+            typeof(IRelativePointer),
+            typeof(IVirtualPad),
+            typeof(IVirtualKeyboard),
+            typeof(IPressureHandler),
+        ];
+
+        protected virtual void RegisterContainer()
         {
-            args ??= [];
-            if (!string.IsNullOrWhiteSpace(name))
+            ContainerBuilder = new();
+            foreach (var t in pluginTypes)
             {
-                try
-                {
-                    if (PluginTypes.FirstOrDefault(t => t.FullName == name) is TypeInfo type)
-                    {
-                        var matchingConstructors = from ctor in type.GetConstructors()
-                                                   let parameters = ctor.GetParameters()
-                                                   where parameters.Length == args.Length
-                                                   where IsValidParameterFor(args, parameters)
-                                                   select ctor;
+                if (_bannedAutoloadTypes.Any(autoloadType => t.IsAssignableTo(autoloadType)))
+                    continue; // skip banned types
 
-                        if (matchingConstructors.FirstOrDefault() is ConstructorInfo constructor)
-                        {
-                            T obj = (T)constructor.Invoke(args);
+                Debug.Assert(!string.IsNullOrEmpty(t.FullName));
 
-                            if (obj != null)
-                                Inject(this, obj, type);
-                            return obj;
-                        }
-                        else
-                        {
-                            Log.Write("Plugin", $"No constructor found for '{name}'", LogLevel.Error);
-                        }
-                    }
-                    else
-                    {
-                        Log.Write("Plugin", $"Unable to find plugin matching name '{name}'", LogLevel.Error);
-                    }
-                }
-                catch (TargetInvocationException e) when (e.Message == "Exception has been thrown by the target of an invocation.")
-                {
-                    Log.Write("Plugin", "Object construction has thrown an error", LogLevel.Error);
-                    Log.Exception(e.InnerException);
-                }
-                catch (Exception e)
-                {
-                    Log.Write("Plugin", $"Unable to construct object '{name}'", LogLevel.Error);
-                    Log.Exception(e);
-                }
+                Type keyType = t.ImplementedInterfaces.FirstOrDefault() ?? t;
+
+                var key =
+                        ContainerBuilder
+                            .RegisterType(t)
+                            .AsSelf()
+                            .AsImplementedInterfaces()
+                            .Keyed(t.FullName, keyType)
+                            .UsingConstructor(new OTDConstructorSelector())
+                    ;
+                if (t.ImplementedInterfaces.Contains(typeof(IBinding))) // otherwise IStateBindings won't be picked up by key
+                    key.Keyed<IBinding>(t.FullName);
+                if (_scopedAutoloadTypes.Any(at => t.IsAssignableTo(at))) // TODO: can simplifyy any() lambda
+                    key.InstancePerLifetimeScope();
             }
-            return null;
+
+            ContainerBuilder.RegisterAssemblyModules(assemblies); // discover modules
         }
 
         public virtual IReadOnlyCollection<TypeInfo> GetChildTypes<T>()
@@ -109,40 +125,6 @@ namespace OpenTabletDriver.Desktop.Reflection
             return null;
         }
 
-        public static void Inject(IServiceProvider serviceProvider, object? obj)
-        {
-            if (obj != null)
-                Inject(serviceProvider, obj, obj.GetType());
-        }
-
-        public static void Inject(IServiceProvider serviceProvider, object? obj, Type type)
-        {
-            if (obj == null)
-                return;
-
-            var resolvedProperties = from property in type.GetProperties()
-                                     where property.GetCustomAttribute<ResolvedAttribute>() is ResolvedAttribute
-                                     select property;
-
-            foreach (var property in resolvedProperties)
-            {
-                var service = serviceProvider.GetService(property.PropertyType);
-                if (service != null)
-                    property.SetValue(obj, service);
-            }
-
-            var resolvedFields = from field in type.GetFields()
-                                 where field.GetCustomAttribute<ResolvedAttribute>() is ResolvedAttribute
-                                 select field;
-
-            foreach (var field in resolvedFields)
-            {
-                var service = serviceProvider.GetService(field.FieldType);
-                if (service != null)
-                    field.SetValue(obj, service);
-            }
-        }
-
         protected virtual bool IsValidParameterFor(object[] args, ParameterInfo[] parameters)
         {
             for (int i = 0; i < parameters.Length; i++)
@@ -159,8 +141,8 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         protected virtual bool IsPlatformSupported(Type type)
         {
-            var attr = (SupportedPlatformAttribute?)type.GetCustomAttribute(typeof(SupportedPlatformAttribute), false);
-            return attr?.IsCurrentPlatform ?? true;
+            var customAttr = (SupportedPlatformAttribute?)type.GetCustomAttribute(typeof(SupportedPlatformAttribute), false);
+            return customAttr?.IsCurrentPlatform ?? true;
         }
 
         protected virtual bool IsPluginIgnored(Type type)

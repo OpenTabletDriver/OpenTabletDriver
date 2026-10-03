@@ -6,7 +6,7 @@ using System.Linq;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 
-namespace OpenTabletDriver.Desktop
+namespace OpenTabletDriver.Desktop.Diagnostics
 {
     public class OSInfo
     {

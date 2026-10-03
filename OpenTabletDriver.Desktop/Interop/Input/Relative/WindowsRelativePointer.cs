@@ -1,9 +1,14 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using OpenTabletDriver.Native.Windows.Input;
+using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Relative
 {
+    [SupportedPlatform(PluginPlatform.Windows)]
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
     public class WindowsRelativePointer : WindowsVirtualMouse, IRelativePointer
     {
         private Vector2 error;

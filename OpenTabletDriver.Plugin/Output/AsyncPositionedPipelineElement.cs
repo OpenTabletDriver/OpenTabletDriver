@@ -1,6 +1,5 @@
 using System;
 using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.DependencyInjection;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Tablet.Touch;
 using OpenTabletDriver.Plugin.Timers;
@@ -12,9 +11,13 @@ namespace OpenTabletDriver.Plugin.Output
     {
         private readonly object synchronizationObject = new object();
         private HPETDeltaStopwatch consumeWatch = new HPETDeltaStopwatch(false);
-        private ITimer? scheduler;
         private float? reportMsAvg;
         private float frequency;
+
+        protected AsyncPositionedPipelineElement(ITimer iTimer)
+        {
+            Scheduler = iTimer;
+        }
 
         /// <summary>
         /// The current state of the <see cref="AsyncPositionedPipelineElement{T}"/>.
@@ -25,27 +28,27 @@ namespace OpenTabletDriver.Plugin.Output
 
         public abstract PipelinePosition Position { get; }
 
-        [Resolved]
         public ITimer? Scheduler
         {
             set
             {
-                this.scheduler = value;
+                field = value;
 
-                if (this.scheduler != null)
+                if (field != null)
                 {
-                    this.scheduler.Elapsed += () =>
+                    field.Elapsed += () =>
                     {
                         lock (synchronizationObject)
                         {
                             UpdateState();
                         }
                     };
-                    this.scheduler.Interval = 1000 / Frequency;
-                    this.scheduler.Start();
+
+                    field.Interval = 1000 / Frequency;
+                    field.Start();
                 }
             }
-            get => this.scheduler;
+            get;
         }
 
         [Property("Frequency"), Unit("hz"), DefaultPropertyValue(1000.0f)]

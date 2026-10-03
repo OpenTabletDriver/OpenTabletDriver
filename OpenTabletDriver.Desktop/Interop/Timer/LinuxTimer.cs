@@ -1,17 +1,21 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Threading;
 using OpenTabletDriver.Native.Linux;
 using OpenTabletDriver.Native.Linux.Timers;
 using OpenTabletDriver.Native.Linux.Timers.Structs;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Attributes;
 
 namespace OpenTabletDriver.Desktop.Interop.Timer
 {
     using static Timers;
     using ITimer = Plugin.Timers.ITimer;
 
-    internal class LinuxTimer : ITimer, IDisposable
+    [SupportedPlatform(PluginPlatform.Linux)]
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+    public sealed class LinuxTimer : ITimer, IDisposable
     {
         private Thread? _timerThread;
         private readonly object _stateLock = new object();

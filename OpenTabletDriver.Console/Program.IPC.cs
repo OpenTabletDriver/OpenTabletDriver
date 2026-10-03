@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Threading.Tasks;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Contracts;
@@ -31,6 +32,9 @@ namespace OpenTabletDriver.Console
             {
                 pluginsLoaded = true;
                 AppInfo.PluginManager.Load();
+                Debug.Assert(AppInfo.PluginManager.Container != null);
+                _lifetimeScope?.Dispose();
+                LifetimeScope = AppInfo.PluginManager.Container.BeginLifetimeScope();
             }
 
             return true;

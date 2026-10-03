@@ -19,6 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup Label="NuGet Packages">
+    <PackageReference Include="Autofac" Version="9.3.4" />
     <PackageReference Include="HidSharpCore" Version="1.3.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />

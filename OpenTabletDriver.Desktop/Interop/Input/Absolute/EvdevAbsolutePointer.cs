@@ -1,25 +1,29 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
-using OpenTabletDriver.Native.Linux;
 using OpenTabletDriver.Native.Linux.Evdev;
 using OpenTabletDriver.Native.Linux.Evdev.Structs;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Attributes;
+using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Platform.Pointer;
+using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
+    [SupportedPlatform(PluginPlatform.Linux)]
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
     public class EvdevAbsolutePointer : EvdevVirtualMouse, IAbsolutePointer
     {
         [SetsRequiredMembers]
-        public unsafe EvdevAbsolutePointer()
+        public unsafe EvdevAbsolutePointer(IVirtualScreen virtualScreen, TabletReference tabletReference)
         {
-            Device = new EvdevDevice("OpenTabletDriver Virtual Tablet");
+            var tabletName = tabletReference.Properties.Name;
+            var deviceName = $"OpenTabletDriver {tabletName} Absolute Pointer";
+            Device = new EvdevDevice(deviceName);
 
             Device.EnableType(EventType.EV_ABS);
             Device.EnableType(EventType.EV_REL);
-
-            var virtualScreen = DesktopInterop.VirtualScreen ?? throw new InvalidOperationException("Could not get virtual screen");
 
             var xAbs = new input_absinfo
             {
@@ -52,16 +56,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
                 EventCode.REL_HWHEEL_HI_RES
             );
 
-            var result = Device.Initialize();
-            switch (result)
-            {
-                case ERRNO.NONE:
-                    Log.Debug("Evdev", $"Successfully initialized virtual tablet. (code {result})");
-                    break;
-                default:
-                    Log.WriteNotify("Evdev", $"Failed to initialize virtual tablet. (error code {result})", LogLevel.Error);
-                    break;
-            }
+            Device.InitializeAndLog();
         }
 
         public void SetPosition(Vector2 pos)

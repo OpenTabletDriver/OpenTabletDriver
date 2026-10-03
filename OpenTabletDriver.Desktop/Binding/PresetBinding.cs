@@ -1,16 +1,17 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.DependencyInjection;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Timing;
 
 namespace OpenTabletDriver.Desktop.Binding
 {
     [PluginName("Preset Binding")]
-    public class PresetBinding : IStateBinding
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+    public class PresetBinding(IDriverDaemon driverDaemon) : IStateBinding
     {
         private const int TIMEOUT = 50;
         private readonly static HPETDeltaStopwatch _stopwatch = new();
@@ -21,9 +22,6 @@ namespace OpenTabletDriver.Desktop.Binding
         [Property("Preset"), PropertyValidated(nameof(ValidPresets))]
         public string? Preset { set; get; }
 
-        [Resolved]
-        public IDriverDaemon? Daemon { set; get; }
-
         public void Press(TabletReference tablet, IDeviceReport report)
         {
             if (Preset != null && _stopwatch.Elapsed.Milliseconds > TIMEOUT)
@@ -33,10 +31,10 @@ namespace OpenTabletDriver.Desktop.Binding
 
                 var preset = AppInfo.PresetManager.FindPreset(Preset);
 
-                if (preset != null && Daemon != null)
+                if (preset != null)
                 {
-                    Daemon.SetSettings(preset.Settings);
-                    Daemon.ForceResynchronize();
+                    driverDaemon.SetSettings(preset.Settings);
+                    driverDaemon.ForceResynchronize();
                     Log.Write("Settings", $"Applied preset '{preset.Name}'.");
                 }
                 else

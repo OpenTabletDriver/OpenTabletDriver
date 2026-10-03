@@ -1,11 +1,13 @@
 using System;
 using System.CommandLine;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Pipes;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Autofac;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
@@ -150,11 +152,15 @@ namespace OpenTabletDriver.UX
         public static string License { get; } = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.LICENSE")!).ReadToEnd();
 
         private Settings? settings;
+
         public Settings Settings
         {
             set => this.RaiseAndSetIfChanged(ref this.settings!, value);
             get => this.settings ?? throw new InvalidOperationException("Settings cannot be null");
         }
+
+        [AllowNull]
+        public ILifetimeScope LifetimeScope { get => field ?? throw new InvalidOperationException("Lifetime scope not ready yet"); set; }
 
         private const string APPNAME = "OpenTabletDriver.UX";
         public readonly static bool EnableTrayIcon = (PluginPlatform.Windows | PluginPlatform.MacOS).HasFlag(SystemInterop.CurrentPlatform);
@@ -166,7 +172,6 @@ namespace OpenTabletDriver.UX
         public WindowSingleton<TabletDebugger> DebuggerWindow { get; } = new WindowSingleton<TabletDebugger>();
         public WindowSingleton<DeviceStringReader> StringReaderWindow { get; } = new WindowSingleton<DeviceStringReader>();
         public WindowSingleton<UpdaterWindow> UpdaterWindow { get; } = new WindowSingleton<UpdaterWindow>();
-
         public WindowSingleton<AboutWindow> AboutWindow { get; } = new WindowSingleton<AboutWindow>();
 
         private void HandleClosing(object? sender, CancelEventArgs args)

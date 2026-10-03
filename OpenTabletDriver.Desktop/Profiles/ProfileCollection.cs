@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Autofac;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Desktop.Profiles
@@ -16,15 +17,9 @@ namespace OpenTabletDriver.Desktop.Profiles
         {
         }
 
-        public ProfileCollection(IEnumerable<TabletReference> tablets)
-            : this(tablets.Select(Profile.GetDefaults))
+        public ProfileCollection(ILifetimeScope lifetimeScope, IEnumerable<TabletReference> tablets)
+            : this(tablets.Select(tablet => Profile.GetDefaults(lifetimeScope, tablet)))
         {
-        }
-
-        public Profile this[TabletReference tablet]
-        {
-            set => SetProfile(tablet, value);
-            get => GetProfile(tablet);
         }
 
         public void SetProfile(TabletReference tablet, Profile profile)
@@ -36,9 +31,9 @@ namespace OpenTabletDriver.Desktop.Profiles
             this.Add(profile);
         }
 
-        public Profile GetProfile(TabletReference tablet)
+        public Profile GetProfile(ILifetimeScope lifetimeScope, TabletReference tablet)
         {
-            return this.FirstOrDefault(t => t.Tablet == tablet.Properties.Name) is Profile profile ? profile : Generate(tablet);
+            return this.FirstOrDefault(t => t.Tablet == tablet.Properties.Name) ?? Generate(lifetimeScope, tablet);
         }
 
         public Profile? GetProfile(string tablet)
@@ -46,9 +41,9 @@ namespace OpenTabletDriver.Desktop.Profiles
             return this.FirstOrDefault(t => t.Tablet == tablet);
         }
 
-        public Profile Generate(TabletReference tablet)
+        public Profile Generate(ILifetimeScope lifetimeScope, TabletReference tablet)
         {
-            var profile = Profile.GetDefaults(tablet);
+            var profile = Profile.GetDefaults(lifetimeScope, tablet);
             SetProfile(tablet, profile);
             return profile;
         }

@@ -68,10 +68,6 @@ namespace OpenTabletDriver.UX
             return tablets.FirstOrDefault(t => t.Properties.Name == profile.Tablet);
         }
 
-        [Obsolete("Please use method specifying an initialFileName. 'null' is an acceptable value")]
-        public static T BuildFileDialog<T>(string? title, string? directory, IEnumerable<FileFilter>? filters, bool? multiSelect = null)
-            where T : FileDialog, new() => BuildFileDialog<T>(title, directory, filters, null, multiSelect);
-
         public static T BuildFileDialog<T>(string? title, string? directory, IEnumerable<FileFilter>? filters, string? initialFileName, bool? multiSelect = null)
             where T : FileDialog, new()
         {
@@ -106,10 +102,6 @@ namespace OpenTabletDriver.UX
 
         public static OpenFileDialog OpenFileDialog(string? title, string? directory, IEnumerable<FileFilter>? filters, bool? multiSelect = null) =>
             BuildFileDialog<OpenFileDialog>(title, directory, filters, null, multiSelect);
-
-        [Obsolete("Please use method specifying an initialFileName. 'null' is an acceptable value")]
-        public static SaveFileDialog SaveFileDialog(string? title, string? directory, IEnumerable<FileFilter>? filters) =>
-            BuildFileDialog<SaveFileDialog>(title, directory, filters);
 
         public static SaveFileDialog SaveFileDialog(string? title, string? directory, IEnumerable<FileFilter>? filters, string? initialFilename) =>
             BuildFileDialog<SaveFileDialog>(title, directory, filters, initialFilename);
