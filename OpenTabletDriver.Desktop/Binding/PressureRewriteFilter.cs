@@ -26,7 +26,7 @@ namespace OpenTabletDriver.Desktop.Binding
         {
             if (report is ITabletReport tabletReport && tabletReport.Pressure != MaxPenPressure)
             {
-                float activationThreshold = report is IEraserReport ? EraserPressureThreshold : TipPressureThreshold;
+                float activationThreshold = report is IEraserReport eraserReport && eraserReport.Eraser ? EraserPressureThreshold : TipPressureThreshold;
 
                 float pressurePercent = tabletReport.Pressure / (float)MaxPenPressure;
 
