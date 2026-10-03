@@ -205,12 +205,12 @@ namespace OpenTabletDriver.Desktop
         {
             if (path != null)
             {
-                var configurationDirectoryInfo = new DirectoryInfo(path);
+                var appDirectory = new DirectoryInfo(path);
 
-                if (!configurationDirectoryInfo.Exists)
+                if (!appDirectory.Exists)
                 {
-                    configurationDirectoryInfo.Create();
-                    Log.Write("Settings", $"The {nature} directory '{configurationDirectoryInfo.FullName}' has been created");
+                    appDirectory.Create();
+                    Log.Write("Settings", $"The {nature} directory '{appDirectory.FullName}' has been created");
                 }
             }
         }
