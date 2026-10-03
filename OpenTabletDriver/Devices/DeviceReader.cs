@@ -8,7 +8,7 @@ using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Devices
 {
-    public class DeviceReader<T> : IDisposable where T : IDeviceReport
+    public class DeviceReader<T> : IDisposable where T : class, IDeviceReport
     {
         public DeviceReader(IDeviceEndpoint endpoint, IReportParser<T> reportParser)
         {
@@ -110,12 +110,25 @@ namespace OpenTabletDriver.Devices
                 while (Connected)
                 {
                     data = ReportStream!.Read();
-                    if (Parser.Parse(data) is T report)
-                        OnReport(report);
 
-                    // We create a clone of the report to avoid data being modified on the tablet debugger.
-                    if (RawClone && RawReport != null && Parser.Parse(data) is T debugReport)
-                        OnRawReport(debugReport);
+                    T? parsed;
+
+                    try
+                    {
+                        parsed = Parser.Parse(data);
+                    }
+                    catch (IndexOutOfRangeException e)
+                    {
+                        Log.Write("Device", $"Unable to parse tablet data {Extensions.PrettyPrintHex(data)}", LogLevel.Warning);
+                        Log.Exception(e);
+                        parsed = new DeviceReport(data) as T;
+                    }
+
+                    if (parsed is not { } report) continue;
+
+                    if (RawClone)
+                        OnRawReport(report);
+                    OnReport(report);
                 }
             }
             catch (ObjectDisposedException dex)
