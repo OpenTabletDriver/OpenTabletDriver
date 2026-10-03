@@ -9,6 +9,7 @@ namespace OpenTabletDriver.Plugin.Output
         PreTransform = 1 << 0,
         PostTransform = 1 << 1,
         Raw = PreTransform,
-        Pixels = PostTransform
+        Pixels = PostTransform,
+        Internal = 1 << 2,
     }
 }
