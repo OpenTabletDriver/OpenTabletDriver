@@ -1,4 +1,3 @@
-using System;
 using OpenTabletDriver.Plugin;
 using Xunit;
 
