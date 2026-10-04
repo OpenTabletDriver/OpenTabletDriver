@@ -67,6 +67,11 @@ namespace OpenTabletDriver.Plugin
                 return sb.ToString();
             }
 
+            /// <remarks>
+            /// If you're working with a file, consider
+            /// <see cref="M:OpenTabletDriver.Plugin.Extensions.extension(System.IO.Stream).GetSHA256"/>
+            /// instead to avoid large allocations
+            /// </remarks>
             [Pure]
             public ReadOnlySpan<byte> GetSHA256() => SHA256.HashData(data);
         }
