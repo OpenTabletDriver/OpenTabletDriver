@@ -104,7 +104,7 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
         [JsonProperty(nameof(LicenseIdentifier))]
         public string? LicenseIdentifier { set; get; }
 
-        public bool VerifySHA256(Stream stream) => !string.IsNullOrEmpty(SHA256) && stream.VerifySHA256(SHA256);
+        public bool VerifySHA256(Stream stream) => !string.IsNullOrEmpty(SHA256) && stream.VerifySHA256(SHA256, out _);
 
         public async Task<Stream> GetDownloadStream()
         {

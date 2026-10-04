@@ -68,17 +68,19 @@ namespace OpenTabletDriver.Plugin
             }
 
             [Pure]
-            public byte[] GetSHA256() => SHA256.HashData(data);
+            public ReadOnlySpan<byte> GetSHA256() => SHA256.HashData(data);
         }
 
         extension(Stream stream)
         {
             [Pure]
-            public byte[] GetSHA256()
+            public ReadOnlySpan<byte> GetSHA256()
             {
                 long oldPos = stream.Position;
 
-                byte[] hashData = SHA256.HashData(stream);
+                stream.Position = 0; // must reset otherwise hashing becomes incomplete
+
+                ReadOnlySpan<byte> hashData = SHA256.HashData(stream);
 
                 stream.Position = oldPos;
 
@@ -86,15 +88,16 @@ namespace OpenTabletDriver.Plugin
             }
 
             [Pure]
-            public bool VerifySHA256(byte[] hash)
+            public bool VerifySHA256(ReadOnlySpan<byte> hash, out ReadOnlySpan<byte> actual)
             {
                 Debug.Assert(hash.Length == 32);
-                return stream.GetSHA256().SequenceEqual(hash);
+                actual = stream.GetSHA256();
+                return actual.SequenceEqual(hash);
             }
 
             [Pure]
-            public bool VerifySHA256(string hash) =>
-                stream.VerifySHA256(Convert.FromHexString(hash.ToLower().Replace(" ", "")));
+            public bool VerifySHA256(string hash, out ReadOnlySpan<byte> actual) =>
+                stream.VerifySHA256(Convert.FromHexString(hash.ToLower().Replace(" ", "")), out actual);
         }
     }
 }
