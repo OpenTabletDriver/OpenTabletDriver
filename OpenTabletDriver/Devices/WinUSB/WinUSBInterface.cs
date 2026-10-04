@@ -91,17 +91,17 @@ namespace OpenTabletDriver.Devices.WinUSB
                     ? GetDeviceString(deviceDescriptor.iSerialNumber)
                     : "Unknown Serial Number";
 
-                var reportDescriptorBuffer = ArrayPool<byte>.Shared.Rent(256);
+                var reportDescriptorBuffer = ArrayPool<byte>.Shared.Rent(4096);
                 fixed (void* reportDescriptorPtr = &reportDescriptorBuffer[0])
                 {
                     var reportDescriptorPacket = SetupPacket.MakeGetDescriptor(
                         RequestInternalType.Standard,
                         RequestRecipient.Interface,
                         DescriptorType.Report, 0,
-                        256
+                        4096
                     );
 
-                    if (!WinUsb_ControlTransfer(winUsbHandle, reportDescriptorPacket, reportDescriptorPtr, 256, out var lengthTransferred, null))
+                    if (!WinUsb_ControlTransfer(winUsbHandle, reportDescriptorPacket, reportDescriptorPtr, 4096, out var lengthTransferred, null))
                         throw new IOException("Failed to retrieve report descriptor");
 
                     _reportDescriptor = new byte[lengthTransferred];
