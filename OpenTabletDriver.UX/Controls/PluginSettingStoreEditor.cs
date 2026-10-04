@@ -75,11 +75,23 @@ namespace OpenTabletDriver.UX.Controls
 
                 if (type != null)
                     return GetControlsForType(store, type);
-                else
+
+                if (store.Path is string path)
                 {
-                    var isStorePathNull = store.Path == null ? "(store path is null)" : "";
-                    Log.Write("PluginSettingStoreEditor", $"Failed to get type info. {isStorePathNull}", LogLevel.Error);
+                    string message = $"Settings for '{path}' are unavailable. The plugin providing it may have been uninstalled.";
+                    Log.Write(nameof(PluginSettingStoreEditor<TSource>), message, LogLevel.Warning);
+                    return new Control[]
+                    {
+                        new Label
+                        {
+                            Text = message,
+                            Wrap = WrapMode.Word,
+                            TextAlignment = TextAlignment.Center
+                        }
+                    };
                 }
+
+                Log.Write(nameof(PluginSettingStoreEditor<TSource>), "Failed to get type info. (store path is null)", LogLevel.Error);
             }
 
             return Array.Empty<Control>();
