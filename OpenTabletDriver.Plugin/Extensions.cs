@@ -48,10 +48,13 @@ namespace OpenTabletDriver.Plugin
 
                 // initialize with exact size and appropriate initial value
                 int segmentSizeMultiplier = 2 + (spaced ? 1 : 0);
-                var sb = new StringBuilder(
-                    wrap ? "{ " : string.Empty,
-                    data.Length * segmentSizeMultiplier + (wrap ? 3 : 0)
-                );
+                string startString = string.Empty;
+                if (wrap)
+                    startString = spaced ? "{ " : "{";
+
+                var exactLength = data.Length * segmentSizeMultiplier + (wrap ? 3 : 0);
+
+                var sb = new StringBuilder(startString, exactLength);
 
                 foreach (byte b in data)
                     sb.AppendFormat(format, b);
