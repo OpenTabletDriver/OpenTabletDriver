@@ -13,10 +13,13 @@ namespace OpenTabletDriver.Plugin
         extension(string str)
         {
             [Pure]
-            public string Elide(int maxLength, string elisionMarker = "...") =>
-                str.Length > maxLength
+            public string Elide(int maxLength, string elisionMarker = "...")
+            {
+                ArgumentOutOfRangeException.ThrowIfNegative(maxLength - elisionMarker.Length);
+                return str.Length > maxLength
                     ? str[..(maxLength - elisionMarker.Length)] + elisionMarker
                     : str;
+            }
         }
 
         extension(ReadOnlySpan<byte> data)
