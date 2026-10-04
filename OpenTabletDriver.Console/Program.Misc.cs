@@ -85,7 +85,7 @@ namespace OpenTabletDriver.Console
             }
         }
 
-        static string GetSHA256(string path) => File.ReadAllBytes(path).AsSpan().GetSHA256().PrintHex();
+        static string GetSHA256(string path) => File.OpenRead(path).GetSHA256().PrintHex();
 
         static void AppendPluginStoreSettingsCollectionByPaths<T>(PluginSettingStoreCollection pssc, params string[] paths) where T : class
         {
