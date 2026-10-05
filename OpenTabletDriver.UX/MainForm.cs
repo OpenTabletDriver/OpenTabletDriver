@@ -487,6 +487,7 @@ namespace OpenTabletDriver.UX
             {
                 base.Content = placeholder;
                 base.Menu = null;
+                SetTitle(); // reset title to avoid last connected tablets from showing up
 
                 Application.Instance.InvokeAsync(ConnectToDaemon).ConfigureAwait(false);
             });
