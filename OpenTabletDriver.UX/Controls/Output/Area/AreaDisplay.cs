@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Profiles;
@@ -29,6 +30,11 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             }
         }
 
+        public AreaDisplay()
+        {
+            RotationBinding.Bind(AreaBinding.Child(x => x.Rotation));
+        }
+
         private AreaSettings? area;
         private bool lockToUsableArea;
         private string? unit, invalidForegroundError;
@@ -42,6 +48,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
         public event EventHandler<EventArgs>? AreaBoundsChanged;
         public event EventHandler<EventArgs>? FullAreaBoundsChanged;
         public event EventHandler<EventArgs>? InvalidForegroundErrorChanged;
+        public event EventHandler<EventArgs>? RotationChanged;
 
         protected virtual void OnAreaChanged() => AreaChanged?.Invoke(this, EventArgs.Empty);
         protected virtual void OnLockToUsableAreaChanged() => LockToUsableAreaChanged?.Invoke(this, EventArgs.Empty);
@@ -49,6 +56,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
         protected virtual void OnAreaBoundsChanged() => AreaBoundsChanged?.Invoke(this, EventArgs.Empty);
         protected virtual void OnFullAreaBoundsChanged() => FullAreaBoundsChanged?.Invoke(this, EventArgs.Empty);
         protected virtual void OnInvalidForegroundErrorChanged() => InvalidForegroundErrorChanged?.Invoke(this, EventArgs.Empty);
+        protected virtual void OnRotationChanged() => RotationChanged?.Invoke(this, EventArgs.Empty);
 
         public AreaSettings? Area
         {
@@ -109,6 +117,31 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             }
             get => this.invalidForegroundError;
         }
+
+        public float Rotation
+        {
+            get;
+            set
+            {
+                field = value;
+                OnRotationChanged();
+            }
+        }
+
+        public BindableBinding<AreaDisplay, float> RotationBinding
+        {
+            get
+            {
+                return new BindableBinding<AreaDisplay, float>(
+                    this,
+                    c => c.Rotation,
+                    (c, v) => c.Rotation = v,
+                    (c, h) => c.RotationChanged += h,
+                    (c, h) => c.RotationChanged -= h
+                );
+            }
+        }
+
 
         public BindableBinding<AreaDisplay, AreaSettings?> AreaBinding
         {
@@ -254,6 +287,9 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                 if (mouseOffset != null && viewModelOffset.HasValue)
                 {
                     var delta = e.Location - mouseOffset.Value;
+
+                    delta.Rotate(Rotation);
+
                     var newX = viewModelOffset.Value.X + (delta.X / PixelScale);
                     var newY = viewModelOffset.Value.Y + (delta.Y / PixelScale);
 
@@ -291,6 +327,10 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                         var backgroundCenter = new PointF(fullAreaBoundsVal.Width, fullAreaBoundsVal.Height) / 2 * scale;
                         var offset = clientCenter - backgroundCenter;
 
+                        graphics.TranslateTransform(clientCenter);
+                        graphics.RotateTransform(-Rotation);
+                        graphics.TranslateTransform(-clientCenter);
+
                         graphics.TranslateTransform(offset);
 
                         DrawBackground(graphics, scale);
@@ -320,6 +360,9 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                     var scaledRect = rect * scale;
                     graphics.FillRectangle(AreaBoundsFillColor, scaledRect);
                     graphics.DrawRectangle(AreaBoundsBorderColor, scaledRect);
+
+                    var markerRect = new RectangleF(scaledRect.TopLeft, scaledRect.TopLeft + 4 * (scale < 1 ? 1 : scale));
+                    graphics.FillRectangle(SystemColors.HighlightText, markerRect);
                 }
             }
         }
@@ -333,19 +376,26 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                 var area = ForegroundRect * scale;
 
                 graphics.TranslateTransform(area.Center);
-                graphics.RotateTransform(Area.Rotation);
+                graphics.RotateTransform(Rotation);
                 graphics.TranslateTransform(-area.Center);
 
                 graphics.FillRectangle(AccentColor, area);
-                graphics.DrawRectangle(SystemColors.ControlText, area);
 
                 var originEllipse = new RectangleF(0, 0, 1, 1);
                 originEllipse.Offset(area.Center - (originEllipse.Size / 2));
                 graphics.DrawEllipse(SystemColors.ControlText, originEllipse);
 
+                // draw rotation marker helper in top left
+                var markerRect = new RectangleF(area.TopLeft + 1, area.TopLeft + 4 * (scale < 1 ? 1 : scale));
+                graphics.FillRectangle(SystemColors.WindowBackground, markerRect);
+
+                // draw gadgets
                 DrawRatioText(graphics, area, Area);
                 DrawWidthText(graphics, area, Area);
                 DrawHeightText(graphics, area, Area);
+
+                // draw outline rectangle last to ensure crisp outline
+                graphics.DrawRectangle(SystemColors.ControlText, area);
             }
         }
 
@@ -404,8 +454,17 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
 
         private float CalculateScale(RectangleF rect)
         {
+            if ((Area?.Rotation ?? 0) != 0)
+            {
+                var corners = rect.GetAreaCorners(Area?.Rotation ?? 0);
+                var topLeft = new PointF(corners.MinBy(x => x.X).X, corners.MinBy(x => x.Y).Y);
+                var bottomRight = new PointF(corners.MaxBy(x => x.X).X, corners.MaxBy(x => x.Y).Y);
+                rect = new RectangleF(topLeft, bottomRight);
+            }
+
             float scaleX = (this.ClientSize.Width - 2) / rect.Width;
             float scaleY = (this.ClientSize.Height - 2) / rect.Height;
+
             return scaleX > scaleY ? scaleY : scaleX;
         }
 

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -160,30 +159,10 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             get => this.areaBounds;
         }
 
-        public Vector2[] GetAreaCorners()
-        {
-            Debug.Assert(Area != null, "Tried to get area corners but Area is null");
-
-            var origin = new Vector2(Area.X, Area.Y);
-            var matrix = Matrix3x2.CreateTranslation(-origin);
-            matrix *= Matrix3x2.CreateRotation((float)(Area.Rotation * Math.PI / 180));
-            matrix *= Matrix3x2.CreateTranslation(origin);
-
-            float halfWidth = Area.Width / 2;
-            float halfHeight = Area.Height / 2;
-
-            return
-            [
-                Vector2.Transform(new Vector2(Area.X - halfWidth, Area.Y - halfHeight), matrix),
-                Vector2.Transform(new Vector2(Area.X - halfWidth, Area.Y + halfHeight), matrix),
-                Vector2.Transform(new Vector2(Area.X + halfWidth, Area.Y + halfHeight), matrix),
-                Vector2.Transform(new Vector2(Area.X + halfWidth, Area.Y - halfHeight), matrix),
-            ];
-        }
-
         public Vector2 GetAreaCenterOffset()
         {
-            var corners = GetAreaCorners();
+            Debug.Assert(Area != null, "Tried to get area corners but Area is null");
+            var corners = this.Area.GetRectangleF().GetAreaCorners(Area.Rotation);
             var min = new Vector2(
                 corners.Min(v => v.X),
                 corners.Min(v => v.Y)
