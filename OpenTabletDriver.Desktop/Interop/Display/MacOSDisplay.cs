@@ -4,12 +4,15 @@ using System.Linq;
 using System.Numerics;
 using OpenTabletDriver.Native.OSX;
 using OpenTabletDriver.Native.OSX.Generic;
+using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Platform.Display;
 
 namespace OpenTabletDriver.Desktop.Interop.Display
 {
     using static OSX;
 
+    [SupportedPlatform(PluginPlatform.MacOS)]
     public class MacOSDisplay : IVirtualScreen
     {
         public float Width

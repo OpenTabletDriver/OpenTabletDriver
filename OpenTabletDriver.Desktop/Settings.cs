@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
+using Autofac;
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
@@ -51,21 +52,18 @@ namespace OpenTabletDriver.Desktop
             get => this.tools;
         }
 
-        public static Settings GetDefaults()
+        public static Settings GetDefaults(ILifetimeScope lifetimeScope)
         {
             return new Settings
             {
-                Profiles = GetDefaultProfiles(),
+                Profiles = GetDefaultProfiles(lifetimeScope),
                 LockUsableAreaDisplay = true,
                 LockUsableAreaTablet = true
             };
         }
 
-        private static ProfileCollection GetDefaultProfiles()
-        {
-            // nullable warning suppressed because IDriver should always be provided by DI
-            return new ProfileCollection(AppInfo.PluginManager.GetService<IDriver>()!.Tablets);
-        }
+        private static ProfileCollection GetDefaultProfiles(ILifetimeScope lifetimeScope) =>
+            new(lifetimeScope, lifetimeScope.Resolve<IDriver>().Tablets);
 
         #region Custom Serialization
 

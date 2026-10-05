@@ -1,9 +1,12 @@
 using System.Numerics;
+using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Platform.Display;
 using WaylandNET.Client.Protocol;
 
 namespace OpenTabletDriver.Desktop.Interop.Display
 {
+    [SupportedPlatform(PluginPlatform.Linux)]
     public class WaylandOutput : IDisplay
     {
         internal WlOutput? WlOutput { set; get; }

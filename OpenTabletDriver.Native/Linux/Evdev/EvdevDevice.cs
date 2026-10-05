@@ -13,9 +13,12 @@ namespace OpenTabletDriver.Native.Linux.Evdev
         {
             this.device = libevdev_new();
             libevdev_set_name(this.device, deviceName);
+            DeviceName = deviceName;
         }
 
         public bool CanWrite { private set; get; }
+
+        public string DeviceName { get; }
 
         private IntPtr device, uidev;
 

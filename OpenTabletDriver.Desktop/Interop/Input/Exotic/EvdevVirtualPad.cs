@@ -1,15 +1,18 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using OpenTabletDriver.Native.Linux;
 using OpenTabletDriver.Native.Linux.Evdev;
 using OpenTabletDriver.Native.Linux.Evdev.Structs;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Platform.Keyboard;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Exotic;
 
+[SupportedPlatform(PluginPlatform.Linux)]
+[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
 public sealed class EvdevVirtualPad : IVirtualPad, IDisposable
 {
     private static readonly Dictionary<TabletPadEvent, EventCode> s_ValidButtons = new()
@@ -28,9 +31,11 @@ public sealed class EvdevVirtualPad : IVirtualPad, IDisposable
 
     private static readonly EventCode[] s_SupportedEventCodes = s_ValidButtons.Values.ToArray();
 
-    public unsafe EvdevVirtualPad()
+    public unsafe EvdevVirtualPad(TabletReference tabletReference)
     {
-        Device = new EvdevDevice("OpenTabletDriver Virtual Pad");
+        var tabletName = tabletReference.Properties.Name;
+        var deviceName = $"OpenTabletDriver {tabletName} Pad";
+        Device = new EvdevDevice(deviceName);
 
         // we want to send ABS_MISC on button presses to match wacom driver behavior
         var miscInfo = new input_absinfo(); // intentionally empty
@@ -58,16 +63,7 @@ public sealed class EvdevVirtualPad : IVirtualPad, IDisposable
 
         Device.EnableTypeCodes(EventType.EV_KEY, s_SupportedEventCodes);
 
-        var result = Device.Initialize();
-        switch (result)
-        {
-            case ERRNO.NONE:
-                Log.Debug("Evdev", "Successfully initialized virtual pad");
-                break;
-            default:
-                Log.Write("Evdev", $"Failed to initialize virtual pad. (error code {result})", LogLevel.Error);
-                break;
-        }
+        Device.InitializeAndLog();
     }
 
     private EvdevDevice Device { set; get; }

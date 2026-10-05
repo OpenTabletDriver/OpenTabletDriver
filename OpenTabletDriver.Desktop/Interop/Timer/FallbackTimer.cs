@@ -1,12 +1,14 @@
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 
 using ITimer = OpenTabletDriver.Plugin.Timers.ITimer;
 
 namespace OpenTabletDriver.Desktop.Interop.Timer
 {
-    internal class FallbackTimer : ITimer, IDisposable
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+    public sealed class FallbackTimer : ITimer, IDisposable
     {
         private Thread? threadTimer;
         private bool runTimer = true;

@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using Autofac;
 using Eto.Forms;
-using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
+using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls.Bindings;
 using OpenTabletDriver.UX.Controls.Output;
@@ -82,7 +83,7 @@ namespace OpenTabletDriver.UX.Controls
             filterEditor.StoreCollectionBinding.Bind(ProfileBinding.Child(p => p!.Filters)!);
             toolEditor.StoreCollectionBinding.Bind(App.Current, a => a.Settings.Tools);
 
-            outputModeEditor.SetDisplaySize(DesktopInterop.VirtualScreen?.Displays);
+            outputModeEditor.SetDisplaySize(App.Current.LifetimeScope.Resolve<IVirtualScreen>().Displays);
 
             Log.Output += (_, message) => Application.Instance.AsyncInvoke(() =>
             {

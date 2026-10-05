@@ -1,31 +1,28 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using OpenTabletDriver.Native.Linux;
 using OpenTabletDriver.Native.Linux.Evdev;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Platform.Keyboard;
+using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
 {
+    [SupportedPlatform(PluginPlatform.Linux)]
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
     public sealed class EvdevVirtualKeyboard : IVirtualKeyboard, IDisposable
     {
-        public EvdevVirtualKeyboard()
+        public EvdevVirtualKeyboard(TabletReference tabletReference)
         {
-            Device = new EvdevDevice("OpenTabletDriver Virtual Keyboard");
+            var tabletName = tabletReference.Properties.Name;
+            var deviceName = $"OpenTabletDriver {tabletName} Keyboard";
+            Device = new EvdevDevice(deviceName);
 
             Device.EnableTypeCodes(EventType.EV_KEY, EtoKeysymToEventCode.Values.Distinct().ToArray());
 
-            var result = Device.Initialize();
-            switch (result)
-            {
-                case ERRNO.NONE:
-                    Log.Debug("Evdev", $"Successfully initialized virtual keyboard. (code {result})");
-                    break;
-                default:
-                    Log.WriteNotify("Evdev", $"Failed to initialize virtual keyboard. (error code {result})", LogLevel.Error);
-                    break;
-            }
+            Device.InitializeAndLog();
         }
 
         private EvdevDevice Device { set; get; }

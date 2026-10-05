@@ -4,12 +4,15 @@ using System.Numerics;
 using OpenTabletDriver.Desktop.Interop.Input.Keyboard;
 using OpenTabletDriver.Native.OSX;
 using OpenTabletDriver.Native.OSX.Input;
+using OpenTabletDriver.Plugin.Attributes;
+using OpenTabletDriver.Plugin.Platform.Keyboard;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input
 {
     using static OSX;
 
+    [PluginIgnore]
     public abstract class MacOSVirtualMouse : IMouseButtonHandler, IMouseScrollHandler, ISynchronousPointer, ITiltHandler, IEraserHandler, IPressureHandler
     {
         private const int DoubleClickMoveTolerance = 8;
@@ -53,7 +56,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
         private readonly double _doubleClickIntervalInMs;
         private readonly MacOSVirtualKeyboard _keyboard;
 
-        public MacOSVirtualMouse()
+        public MacOSVirtualMouse(IVirtualKeyboard virtualKeyboard)
         {
             _doubleClickIntervalInMs = GetDoubleClickInterval() * 1000;
             _doubleClickStopWatch = new Stopwatch();
@@ -61,7 +64,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             _stopWatch.Start();
             _eventSource = CGEventSourceCreate(CGEventSourceStatePrivate);
             _mouseEvent = CGEventCreate(_eventSource);
-            _keyboard = DesktopInterop.VirtualKeyboard as MacOSVirtualKeyboard
+            _keyboard = virtualKeyboard as MacOSVirtualKeyboard
                         ?? throw new InvalidOperationException("Could not get virtual keyboard");
         }
 

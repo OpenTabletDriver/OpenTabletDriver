@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
+using Autofac;
 
 namespace OpenTabletDriver.Console
 {
@@ -16,9 +18,17 @@ namespace OpenTabletDriver.Console
         }
 
         private static bool pluginsLoaded;
+        private static ILifetimeScope? _lifetimeScope;
 
         private static readonly Lazy<RootCommand> root = new Lazy<RootCommand>(GenerateRoot);
         public static RootCommand Root => root.Value;
+
+        [AllowNull]
+        public static ILifetimeScope LifetimeScope
+        {
+            get => _lifetimeScope ?? throw new InvalidOperationException("DI scope not ready yet");
+            set => _lifetimeScope = value;
+        }
 
         private static RootCommand GenerateRoot()
         {

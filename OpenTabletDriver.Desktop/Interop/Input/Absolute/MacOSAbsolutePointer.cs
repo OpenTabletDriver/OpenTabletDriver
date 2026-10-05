@@ -1,24 +1,29 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Numerics;
 using OpenTabletDriver.Native.OSX;
 using OpenTabletDriver.Native.OSX.Input;
+using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Attributes;
+using OpenTabletDriver.Plugin.Platform.Display;
+using OpenTabletDriver.Plugin.Platform.Keyboard;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
     using static OSX;
 
+    [SupportedPlatform(PluginPlatform.MacOS)]
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
     public class MacOSAbsolutePointer : MacOSVirtualMouse, IAbsolutePointer
     {
         private Vector2 _offset;
         private Vector2? _lastPos;
         private Vector2? _delta;
 
-        public MacOSAbsolutePointer()
+        public MacOSAbsolutePointer(IVirtualScreen virtualScreen, IVirtualKeyboard virtualKeyboard) : base(virtualKeyboard)
         {
-            var virtualScreen = DesktopInterop.VirtualScreen
-                                ?? throw new InvalidOperationException("Could not get virtual screen");
             var primary = virtualScreen.Displays.First();
             _offset = primary.Position;
         }

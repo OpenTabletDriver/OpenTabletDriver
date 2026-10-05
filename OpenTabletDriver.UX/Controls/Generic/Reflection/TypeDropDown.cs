@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Autofac;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
 
@@ -19,14 +20,14 @@ namespace OpenTabletDriver.UX.Controls.Generic.Reflection
 
         public T? ConstructSelectedType()
         {
-            return SelectedItem != null ? AppInfo.PluginManager.ConstructObject<T>(SelectedItem.FullName!) : null;
+            return SelectedItem != null ? App.Current.LifetimeScope.ResolveKeyed<T>(SelectedItem.FullName!) : null;
         }
 
         public void Select(Func<T?, bool> predicate)
         {
             foreach (TypeInfo type in DataStore)
             {
-                var obj = AppInfo.PluginManager.ConstructObject<T>(type.FullName!);
+                var obj = App.Current.LifetimeScope.ResolveKeyed<T>(type.FullName!);
                 if (predicate(obj))
                 {
                     this.SelectedValue = type;

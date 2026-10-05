@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using OpenTabletDriver.Native.Linux.Xorg;
+using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Platform.Display;
 
 namespace OpenTabletDriver.Desktop.Interop.Display
@@ -10,6 +12,7 @@ namespace OpenTabletDriver.Desktop.Interop.Display
     using static XLib;
     using static XRandr;
 
+    [SupportedPlatform(PluginPlatform.Linux)]
     public class XScreen : IVirtualScreen, IDisposable
     {
         public unsafe XScreen()

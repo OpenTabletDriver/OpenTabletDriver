@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Autofac;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
 
@@ -23,6 +24,8 @@ namespace OpenTabletDriver
                     {
                         this.connected = false;
                         Disconnected?.Invoke(this, new EventArgs());
+                        LifetimeScope?.Dispose();
+                        LifetimeScope = null;
                     }
                 };
             }
@@ -61,6 +64,8 @@ namespace OpenTabletDriver
                 OutputMode?.Read(report);
             }
         }
+
+        public ILifetimeScope? LifetimeScope { get; set; }
 
         public static implicit operator TabletReference(InputDeviceTree deviceGroup) => deviceGroup.CreateReference();
     }

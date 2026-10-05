@@ -1,13 +1,18 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using OpenTabletDriver.Native.OSX;
 using OpenTabletDriver.Native.OSX.Input;
+using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Platform.Keyboard;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
 {
     using static OSX;
 
+    [SupportedPlatform(PluginPlatform.MacOS)]
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
     public class MacOSVirtualKeyboard : IVirtualKeyboard
     {
         // Keep track of current modifier flags, as CGEventSourceFlagsState does not return updated flags immediately after an event is posted.

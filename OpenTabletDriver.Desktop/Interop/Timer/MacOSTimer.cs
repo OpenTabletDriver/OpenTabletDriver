@@ -1,9 +1,11 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using OpenTabletDriver.Native.Linux;
 using OpenTabletDriver.Native.OSX.Timers;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Timers;
 using static OpenTabletDriver.Native.OSX.Timers.Timers;
 using static OpenTabletDriver.Native.Posix.Utility;
@@ -11,7 +13,9 @@ using Thread = System.Threading.Thread;
 
 namespace OpenTabletDriver.Desktop.Interop.Timer
 {
-    internal class MacOSTimer : ITimer, IDisposable
+    [SupportedPlatform(PluginPlatform.MacOS)]
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+    public sealed class MacOSTimer : ITimer, IDisposable
     {
         const int TIMER_CANCELLED = 1;
 

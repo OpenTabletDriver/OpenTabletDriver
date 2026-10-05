@@ -1,33 +1,20 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using OpenTabletDriver.Desktop.Interop.Input.Absolute;
 using OpenTabletDriver.Native.Linux.Evdev;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.DependencyInjection;
-using OpenTabletDriver.Plugin.Platform.Pointer;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
 {
     [PluginName(_PLUGIN_NAME), SupportedPlatform(PluginPlatform.Linux)]
-    public class LinuxArtistModeButtonBinding : IStateBinding
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+    public class LinuxArtistModeButtonBinding(EvdevVirtualTablet virtualTablet) : IStateBinding
     {
         private const string _PLUGIN_NAME = "Linux Artist Mode Button Binding";
-
-        [Resolved] public IPressureHandler? PressureHandler;
-
-        private EvdevVirtualTablet? _virtualTablet;
-        private EvdevVirtualTablet? VirtualTablet => _virtualTablet ??= PressureHandler as EvdevVirtualTablet;
-
-        [OnDependencyLoad]
-        public void VerifyInitialization()
-        {
-            if (VirtualTablet == null)
-                Log.Write(_PLUGIN_NAME,
-                    $"{nameof(EvdevVirtualTablet)} unavailable", LogLevel.Error);
-        }
 
         public static Dictionary<string, EventCode> SupportedButtons { get; } = new() {
             { "Pen Button 1", EventCode.BTN_STYLUS },
@@ -55,7 +42,7 @@ namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
             if (Button == null || !SupportedButtons.TryGetValue(Button, out var eventCode))
                 throw new InvalidOperationException($"Invalid Button '{Button}'");
 
-            VirtualTablet?.SetKeyState(eventCode, state);
+            virtualTablet.SetKeyState(eventCode, state);
         }
 
         public override string ToString() => $"{nameof(LinuxArtistModeButtonBinding)}: {Button}";

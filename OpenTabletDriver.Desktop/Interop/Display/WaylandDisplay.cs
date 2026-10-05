@@ -2,12 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Platform.Display;
 using WaylandNET.Client;
 using WaylandNET.Client.Protocol;
 
 namespace OpenTabletDriver.Desktop.Interop.Display
 {
+    [SupportedPlatform(PluginPlatform.Linux)]
     public class WaylandDisplay : IVirtualScreen
     {
         private List<WaylandOutput> _outputs;

@@ -1,14 +1,21 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using OpenTabletDriver.Native.OSX;
 using OpenTabletDriver.Native.OSX.Input;
+using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Attributes;
+using OpenTabletDriver.Plugin.Platform.Keyboard;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Relative
 {
     using static OSX;
 
-    public class MacOSRelativePointer : MacOSVirtualMouse, IRelativePointer
+    [SupportedPlatform(PluginPlatform.MacOS)]
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+    public class MacOSRelativePointer(IVirtualKeyboard virtualKeyboard)
+        : MacOSVirtualMouse(virtualKeyboard), IRelativePointer
     {
         public void SetPosition(Vector2 delta)
         {

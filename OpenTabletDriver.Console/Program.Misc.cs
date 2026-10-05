@@ -57,7 +57,7 @@ namespace OpenTabletDriver.Console
                 var tablets = await Driver.Instance!.GetTablets();
                 var tablet = tablets.FirstOrDefault(t => t.Properties.Name.Equals(profileName, comparer));
                 if (tablet != null)
-                    profile = Profile.GetDefaults(tablet);
+                    profile = Profile.GetDefaults(LifetimeScope, tablet);
             }
 
             return profile ?? throw new ArgumentException($"Cannot find profile for tablet '{profileName}'");
@@ -101,7 +101,7 @@ namespace OpenTabletDriver.Console
                 var existing = pssc.FirstOrDefault(x => x?.Path == path);
                 if (existing == null)
                 {
-                    var obj = PluginSettingStore.FromPath(path)?.Construct<T>() ?? throw new InvalidOperationException($"Could not construct settings from path {path}");
+                    var obj = PluginSettingStore.FromPath(path)?.Construct<T>(LifetimeScope) ?? throw new InvalidOperationException($"Could not construct settings from path {path}");
                     pssc.Add(new PluginSettingStore(obj));
                 }
                 else

@@ -1,4 +1,5 @@
 using System;
+using Autofac;
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop.Output;
 using OpenTabletDriver.Desktop.Reflection;
@@ -64,13 +65,13 @@ namespace OpenTabletDriver.Desktop.Profiles
                 _ => typeof(AbsoluteMode)
             };
 
-        public static Profile GetDefaults(TabletReference tablet)
+        public static Profile GetDefaults(ILifetimeScope lifetimeScope, TabletReference tablet)
         {
             return new Profile
             {
                 Tablet = tablet.Properties.Name,
                 OutputMode = new PluginSettingStore(DefaultOutputModeType),
-                AbsoluteModeSettings = AbsoluteModeSettings.GetDefaults(tablet.Properties.Specifications.Digitizer),
+                AbsoluteModeSettings = AbsoluteModeSettings.GetDefaults(lifetimeScope, tablet.Properties.Specifications.Digitizer),
                 RelativeModeSettings = RelativeModeSettings.GetDefaults(),
                 BindingSettings = BindingSettings.GetDefaults(tablet.Properties.Specifications)
             };

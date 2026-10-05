@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using Autofac;
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
@@ -122,10 +122,8 @@ namespace OpenTabletDriver.Console
 
         private static async Task MapToDisplayIndex(string tablet, uint index)
         {
-            if (DesktopInterop.VirtualScreen == null)
-                throw new InvalidOperationException($"Could not look up {nameof(DesktopInterop.VirtualScreen)}");
-
-            var displays = DesktopInterop.VirtualScreen.Displays.ToArray();
+            var resolvedVirtualScreen = LifetimeScope.Resolve<IVirtualScreen>();
+            var displays = resolvedVirtualScreen.Displays.ToArray();
 
             ArgumentOutOfRangeException.ThrowIfGreaterThan(index, (uint)displays.Length);
 
@@ -148,9 +146,8 @@ namespace OpenTabletDriver.Console
             }
             else
             {
-                virtualScreen = DesktopInterop.VirtualScreen;
-                x = display.Position.X - xOffset + virtualScreen.Position.X + (width / 2);
-                y = display.Position.Y - yOffset + virtualScreen.Position.Y + (height / 2);
+                x = display.Position.X - xOffset + resolvedVirtualScreen.Position.X + (width / 2);
+                y = display.Position.Y - yOffset + resolvedVirtualScreen.Position.Y + (height / 2);
             }
 
             await SetDisplayArea(tablet, width, height, x, y);
@@ -199,7 +196,7 @@ namespace OpenTabletDriver.Console
         {
             await ModifyProfile(tablet, p =>
             {
-                var tipBinding = AppInfo.PluginManager.ConstructObject<IBinding>(name) ?? throw new InvalidOperationException($"Could not construct binding with name {name}");
+                var tipBinding = LifetimeScope.ResolveKeyed<IBinding>(name);
 
                 p.BindingSettings.TipButton = new PluginSettingStore(tipBinding);
                 p.BindingSettings.TipActivationThreshold = threshold;
@@ -210,7 +207,7 @@ namespace OpenTabletDriver.Console
         {
             await ModifyProfile(tablet, p =>
             {
-                var binding = AppInfo.PluginManager.ConstructObject<IBinding>(name) ?? throw new InvalidOperationException($"Could not construct binding with name {name}");
+                var binding = LifetimeScope.ResolveKeyed<IBinding>(name);
 
                 p.BindingSettings.PenButtons[index] = new PluginSettingStore(binding);
             });
@@ -220,7 +217,7 @@ namespace OpenTabletDriver.Console
         {
             await ModifyProfile(tablet, p =>
             {
-                var binding = AppInfo.PluginManager.ConstructObject<IBinding>(name) ?? throw new InvalidOperationException($"Could not construct binding with name {name}");
+                var binding = LifetimeScope.ResolveKeyed<IBinding>(name);
 
                 p.BindingSettings.AuxButtons[index] = new PluginSettingStore(binding);
             });
@@ -478,11 +475,10 @@ namespace OpenTabletDriver.Console
         // BUG: DesktopInterop takes the CLI's view of the display layout - this may be desynched
         private static async Task ListDisplays()
         {
-            if (DesktopInterop.VirtualScreen == null)
-                throw new InvalidOperationException($"Unable to look up {nameof(DesktopInterop.VirtualScreen)}");
+            var virtualScreen = LifetimeScope.Resolve<IVirtualScreen>();
 
             int index = 0;
-            foreach (var display in DesktopInterop.VirtualScreen.Displays)
+            foreach (var display in virtualScreen.Displays)
                 await Out.WriteLineAsync($"{index++}: {display}");
         }
 

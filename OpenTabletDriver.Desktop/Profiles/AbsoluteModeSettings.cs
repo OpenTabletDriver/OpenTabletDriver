@@ -1,4 +1,4 @@
-using System;
+using Autofac;
 using Newtonsoft.Json;
 using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Tablet;
@@ -44,9 +44,9 @@ namespace OpenTabletDriver.Desktop.Profiles
             get => _lockar;
         }
 
-        public static AbsoluteModeSettings GetDefaults(DigitizerSpecifications digitizer)
+        public static AbsoluteModeSettings GetDefaults(ILifetimeScope lifetimeScope, DigitizerSpecifications digitizer)
         {
-            var display = AppInfo.PluginManager.GetService<IVirtualScreen>() ?? throw new InvalidOperationException($"Could not get {nameof(IVirtualScreen)} from DI");
+            var display = lifetimeScope.Resolve<IVirtualScreen>();
 
             return new AbsoluteModeSettings
             {

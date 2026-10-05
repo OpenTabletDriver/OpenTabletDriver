@@ -1,14 +1,18 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using OpenTabletDriver.Native.Windows.Timers;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Timers;
 
 namespace OpenTabletDriver.Desktop.Interop.Timer
 {
     using static OpenTabletDriver.Native.Windows.Windows;
 
-    internal class WindowsTimer : ITimer, IDisposable
+    [SupportedPlatform(PluginPlatform.Windows)]
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+    public sealed class WindowsTimer : ITimer, IDisposable
     {
         public WindowsTimer()
         {

@@ -1,18 +1,14 @@
 using System;
 using System.Diagnostics;
+using Autofac;
+using JetBrains.Annotations;
 using Octokit;
 using OpenTabletDriver.Desktop.Interop.Display;
-using OpenTabletDriver.Desktop.Interop.Input.Absolute;
-using OpenTabletDriver.Desktop.Interop.Input.Exotic;
-using OpenTabletDriver.Desktop.Interop.Input.Keyboard;
-using OpenTabletDriver.Desktop.Interop.Input.Relative;
 using OpenTabletDriver.Desktop.Interop.Timer;
 using OpenTabletDriver.Desktop.Updater;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Platform.Display;
-using OpenTabletDriver.Plugin.Platform.Keyboard;
-using OpenTabletDriver.Plugin.Platform.Pointer;
 using OpenTabletDriver.Plugin.Timers;
 
 namespace OpenTabletDriver.Desktop.Interop
@@ -22,14 +18,6 @@ namespace OpenTabletDriver.Desktop.Interop
         protected DesktopInterop()
         {
         }
-
-        private static IUpdater? updater;
-        private static IVirtualScreen? virtualScreen;
-        private static IAbsolutePointer? absolutePointer;
-        private static IRelativePointer? relativePointer;
-        private static IPressureHandler? virtualTablet;
-        private static IVirtualKeyboard? virtualKeyboard;
-        private static IVirtualPad? virtualPad;
 
         public static void Open(string path)
         {
@@ -69,11 +57,12 @@ namespace OpenTabletDriver.Desktop.Interop
 
         public static IUpdater? Updater => CurrentPlatform switch
         {
-            PluginPlatform.Windows => updater ??= new WindowsUpdater(AppInfo.Current, GitHubClient),
-            PluginPlatform.MacOS => updater ??= new MacOSUpdater(AppInfo.Current, GitHubClient),
+            PluginPlatform.Windows => new WindowsUpdater(AppInfo.Current, GitHubClient),
+            PluginPlatform.MacOS => new MacOSUpdater(AppInfo.Current, GitHubClient),
             _ => null
         };
 
+        [Obsolete("Retrieve via DI instead")]
         public static ITimer Timer => CurrentPlatform switch
         {
             PluginPlatform.Windows => new WindowsTimer(),
@@ -81,60 +70,28 @@ namespace OpenTabletDriver.Desktop.Interop
             PluginPlatform.MacOS => new MacOSTimer(),
             _ => new FallbackTimer()
         };
+    }
 
-        public static IAbsolutePointer? AbsolutePointer => CurrentPlatform switch
+    [UsedImplicitly] // used via autofac module discovery
+    public class IVirtualScreenModule : Module
+    {
+        protected override void Load(ContainerBuilder builder)
         {
-            PluginPlatform.Windows => new WindowsAbsolutePointer(),
-            PluginPlatform.Linux => absolutePointer ??= new EvdevAbsolutePointer(),
-            PluginPlatform.MacOS => new MacOSAbsolutePointer(),
-            _ => null
-        };
-
-        public static IRelativePointer? RelativePointer => CurrentPlatform switch
-        {
-            PluginPlatform.Windows => new WindowsRelativePointer(),
-            PluginPlatform.Linux => relativePointer ??= new EvdevRelativePointer(),
-            PluginPlatform.MacOS => new MacOSRelativePointer(),
-            _ => null
-        };
-
-        public static IPressureHandler? VirtualTablet => CurrentPlatform switch
-        {
-            PluginPlatform.Linux => virtualTablet ??= new EvdevVirtualTablet(),
-            _ => null
-        };
-
-        public static IVirtualKeyboard? VirtualKeyboard => CurrentPlatform switch
-        {
-            PluginPlatform.Windows => new WindowsVirtualKeyboard(),
-            PluginPlatform.Linux => virtualKeyboard ??= new EvdevVirtualKeyboard(),
-            PluginPlatform.MacOS => virtualKeyboard ??= new MacOSVirtualKeyboard(),
-            _ => null
-        };
-
-        public static IVirtualPad? VirtualPad => CurrentPlatform switch
-        {
-            PluginPlatform.Linux => virtualPad ??= new EvdevVirtualPad(),
-            _ => null
-        };
-
-        public static IVirtualScreen? VirtualScreen => virtualScreen ??= CurrentPlatform switch
-        {
-            PluginPlatform.Windows => new WindowsDisplay(),
-            PluginPlatform.Linux => ConstructLinuxDisplay(),
-            PluginPlatform.MacOS => new MacOSDisplay(),
-            _ => null
-        };
-
-        private static IVirtualScreen ConstructLinuxDisplay()
-        {
-            if (Environment.GetEnvironmentVariable("WAYLAND_DISPLAY") != null)
-                return new WaylandDisplay();
-            else if (Environment.GetEnvironmentVariable("DISPLAY") != null)
-                return new XScreen();
-
-            Log.Write("Display", "Neither Wayland nor X11 were detected, defaulting to X11.", LogLevel.Warning);
-            return new XScreen();
+            if (OperatingSystem.IsWindows())
+            {
+                builder.Register(_ => new WindowsDisplay()).As<IVirtualScreen>().InstancePerLifetimeScope();
+            }
+            else if (OperatingSystem.IsMacOS())
+            {
+                builder.Register(_ => new MacOSDisplay()).As<IVirtualScreen>().InstancePerLifetimeScope();
+            }
+            else if (OperatingSystem.IsLinux())
+            {
+                if (Environment.GetEnvironmentVariable("WAYLAND_DISPLAY") != null)
+                    builder.Register(_ => new WaylandDisplay()).As<IVirtualScreen>().InstancePerLifetimeScope();
+                else if (Environment.GetEnvironmentVariable("DISPLAY") != null)
+                    builder.Register(_ => new XScreen()).As<IVirtualScreen>().InstancePerLifetimeScope();
+            }
         }
     }
 }
