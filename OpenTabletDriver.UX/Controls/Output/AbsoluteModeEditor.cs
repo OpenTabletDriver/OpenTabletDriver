@@ -208,7 +208,7 @@ namespace OpenTabletDriver.UX.Controls.Output
                 {
                     var fullHeight = tabletAreaEditor.FullAreaBounds!.Value.Height;
                     var scaledHeight = displayHeight.DataValue / displayWidth.DataValue * tabletWidth.DataValue;
-                    if (tabletAreaEditor.FullAreaCommandExecuting && scaledHeight > fullHeight)
+                    if (scaledHeight > fullHeight)
                     {
                         tabletHeight.DataValue = fullHeight;
                         tabletWidth.DataValue = displayWidth.DataValue / displayHeight.DataValue * fullHeight;
