@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
@@ -120,11 +122,44 @@ namespace OpenTabletDriver.UX
                 fileDialog.Filters.Add(filter);
         }
 
+        [Pure]
         public static SizeF Measure(this Font font, string text, int repeats = 1) =>
             font.MeasureString(
                 repeats > 1
                     ? string.Concat(Enumerable.Repeat(text, repeats))
                     : text);
 
+        [Pure]
+        public static Corners GetAreaCorners(this RectangleF area, float rotation)
+        {
+            var origin = new Vector2(area.X, area.Y);
+            var matrix = Matrix3x2.CreateTranslation(-origin);
+            matrix *= Matrix3x2.CreateRotation((float)(rotation * Math.PI / 180));
+            matrix *= Matrix3x2.CreateTranslation(origin);
+
+            float halfWidth = area.Width / 2;
+            float halfHeight = area.Height / 2;
+
+            return new Corners
+            {
+                TopLeft = Vector2.Transform(new Vector2(area.X - halfWidth, area.Y + halfHeight), matrix),
+                TopRight = Vector2.Transform(new Vector2(area.X + halfWidth, area.Y + halfHeight), matrix),
+                BottomLeft = Vector2.Transform(new Vector2(area.X - halfWidth, area.Y - halfHeight), matrix),
+                BottomRight = Vector2.Transform(new Vector2(area.X + halfWidth, area.Y - halfHeight), matrix),
+            };
+        }
+
+        [Pure]
+        public static RectangleF GetRectangleF(this AreaSettings areaSettings) =>
+            new(areaSettings.X, areaSettings.Y, areaSettings.Width, areaSettings.Height);
+
+
+        public record struct Corners(Vector2 TopLeft, Vector2 TopRight, Vector2 BottomLeft, Vector2 BottomRight);
+
+        [Pure]
+        public static Vector2[] ToArray(this Corners corners)
+        {
+            return [corners.TopLeft, corners.TopRight, corners.BottomLeft, corners.BottomRight];
+        }
     }
 }
