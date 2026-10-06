@@ -319,7 +319,7 @@ namespace OpenTabletDriver.UX.Controls.Output
             var rotationAngleRadians = Math.PI / 180 * rotationAngleDegrees;
 
             if (width <= 0 || height <= 0)
-                return new Vector2(0,0);
+                return new Vector2(0, 0);
 
             bool widthIsLonger = width >= height;
             var (long_side, short_side) = widthIsLonger ? (width, height) : (height, width);
