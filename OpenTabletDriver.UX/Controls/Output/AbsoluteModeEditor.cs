@@ -203,7 +203,12 @@ namespace OpenTabletDriver.UX.Controls.Output
             // Avoids looping
             handlingArLock = true;
 
-            if (sender == tabletWidth || sender == displayHeight || sender == tabletAreaEditor)
+            var displayRatio = displayAreaEditor.Area!.Width / displayAreaEditor.Area!.Height;
+
+            var tryHeightFirst = sender == tabletWidth || sender == displayHeight || sender == tabletAreaEditor || sender == displayAreaEditor && displayRatio <= 1;
+            var tryWidthFirst = sender == tabletHeight || sender == displayWidth || sender == displayAreaEditor && displayRatio > 1;
+
+            if (tryHeightFirst)
             {
                 var fullHeight = tabletAreaEditor.FullAreaBounds!.Value.Height;
                 var scaledHeight = displayHeight.DataValue / displayWidth.DataValue * tabletWidth.DataValue;
@@ -217,7 +222,7 @@ namespace OpenTabletDriver.UX.Controls.Output
                     tabletHeight.DataValue = scaledHeight;
                 }
             }
-            else if (sender == tabletHeight || sender == displayWidth || sender == displayAreaEditor)
+            else if (tryWidthFirst)
             {
                 var fullWidth = tabletAreaEditor.FullAreaBounds!.Value.Width;
                 var scaledWidth = displayWidth.DataValue / displayHeight.DataValue * tabletHeight.DataValue;
