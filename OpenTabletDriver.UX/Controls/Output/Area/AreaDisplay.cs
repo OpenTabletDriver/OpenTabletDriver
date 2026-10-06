@@ -358,12 +358,14 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                 foreach (var rect in AreaBounds)
                 {
                     var scaledRect = rect * scale;
-                    graphics.FillRectangle(AreaBoundsFillColor, scaledRect);
-                    graphics.DrawRectangle(AreaBoundsBorderColor, scaledRect);
-
                     var markerRect = new RectangleF(scaledRect.TopLeft, scaledRect.TopLeft + 4 * (scale < 1 ? 1 : scale));
+                    graphics.FillRectangle(AreaBoundsFillColor, scaledRect);
+
                     graphics.FillRectangle(SystemColors.HighlightText, markerRect);
                     graphics.DrawRectangle(SystemColors.DisabledText, markerRect);
+
+                    // draw border last
+                    graphics.DrawRectangle(AreaBoundsBorderColor, scaledRect);
                 }
             }
         }
