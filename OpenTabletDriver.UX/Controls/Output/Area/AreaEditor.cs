@@ -282,5 +282,31 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                 }
             }
         }
+
+        // Converted from python code from stackoverflow:
+        // https://stackoverflow.com/questions/16702966/rotate-image-and-crop-out-black-borders/16778797#16778797
+        public static Vector2 GetLargestRectInRotatedRect(Vector2 rotatedRectDimensions, float rotationAngleDegrees)
+        {
+            var width = rotatedRectDimensions.X;
+            var height = rotatedRectDimensions.Y;
+            var rotationAngleRadians = Math.PI / 180 * rotationAngleDegrees;
+
+            if (width <= 0 || height <= 0)
+                return new Vector2(0,0);
+
+            bool widthIsLonger = width >= height;
+            var (long_side, short_side) = widthIsLonger ? (width, height) : (height, width);
+            var (sinA, cosA) = (Math.Abs(Math.Sin(rotationAngleRadians)), Math.Abs(Math.Cos(rotationAngleRadians)));
+            if (short_side <= 2.0 * sinA * cosA * long_side || Math.Abs(sinA - cosA) < 1E-10)
+            {
+                var x = 0.5 * short_side;
+                return widthIsLonger ? new Vector2((float)(x / sinA), (float)(x / cosA)) : new Vector2((float)(x / cosA), (float)(x / sinA));
+            }
+            else
+            {
+                var cos2A = cosA * cosA - sinA * sinA;
+                return new Vector2((float)((width * cosA - height * sinA) / cos2A), (float)((height * cosA - width * sinA) / cos2A));
+            }
+        }
     }
 }
