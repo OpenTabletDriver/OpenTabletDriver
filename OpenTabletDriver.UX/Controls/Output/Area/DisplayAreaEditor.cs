@@ -9,9 +9,12 @@ namespace OpenTabletDriver.UX.Controls.Output
 {
     public class DisplayAreaEditor : AreaEditor
     {
-        public DisplayAreaEditor()
+        public bool handlingDisplayAreaResize;
+        private Action triggerAspectRatioLock;
+        public DisplayAreaEditor(Action triggerAspectRatioLock)
         {
             this.ToolTip = "You can right click the area editor to set the area to a display, adjust alignment, or resize the area.";
+            this.triggerAspectRatioLock = triggerAspectRatioLock;
         }
 
         protected override void CreateMenu()
@@ -24,10 +27,15 @@ namespace OpenTabletDriver.UX.Controls.Output
                     MenuText = "Full area",
                     Action = () =>
                     {
+                        handlingDisplayAreaResize = true;
+
                         Area!.Y = FullAreaBounds!.Value.Center.Y;
                         Area!.X = FullAreaBounds!.Value.Center.X;
                         Area!.Width = FullAreaBounds!.Value.Width;
                         Area!.Height = FullAreaBounds!.Value.Height;
+
+                        handlingDisplayAreaResize = false;
+                        triggerAspectRatioLock();
                     }
                 },
                 new ActionCommand
@@ -35,10 +43,15 @@ namespace OpenTabletDriver.UX.Controls.Output
                     MenuText = "Quarter area",
                     Action = () =>
                     {
+                        handlingDisplayAreaResize = true;
+
                         Area!.Y = FullAreaBounds!.Value.Center.Y;
                         Area!.X = FullAreaBounds!.Value.Center.X;
                         Area!.Height = FullAreaBounds!.Value.Height / 2;
                         Area!.Width = FullAreaBounds!.Value.Width / 2;
+
+                        handlingDisplayAreaResize = false;
+                        triggerAspectRatioLock();
                     }
                 }
             ]);
@@ -68,6 +81,8 @@ namespace OpenTabletDriver.UX.Controls.Output
                             if (this.Area == null)
                                 throw new InvalidOperationException("Area null, somehow?");
 
+                            handlingDisplayAreaResize = true;
+
                             this.Area.Width = display.Width;
                             this.Area.Height = display.Height;
                             if (display is IVirtualScreen virtualScreen)
@@ -81,6 +96,9 @@ namespace OpenTabletDriver.UX.Controls.Output
                                 this.Area.X = display.Position.X - xOffset + (display.Width / 2);
                                 this.Area.Y = display.Position.Y - yOffset + (display.Height / 2);
                             }
+
+                            handlingDisplayAreaResize = false;
+                            triggerAspectRatioLock();
                         }
                     }
                 );
