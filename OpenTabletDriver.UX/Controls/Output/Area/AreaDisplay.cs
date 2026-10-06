@@ -363,6 +363,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
 
                     var markerRect = new RectangleF(scaledRect.TopLeft, scaledRect.TopLeft + 4 * (scale < 1 ? 1 : scale));
                     graphics.FillRectangle(SystemColors.HighlightText, markerRect);
+                    graphics.DrawRectangle(SystemColors.DisabledText, markerRect);
                 }
             }
         }
