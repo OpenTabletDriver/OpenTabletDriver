@@ -26,7 +26,7 @@ namespace OpenTabletDriver.UX.Controls.Output
                         Control = new Group
                         {
                             Text = "Display",
-                            Content = displayAreaEditor = new DisplayAreaEditor
+                            Content = displayAreaEditor = new DisplayAreaEditor(() => HandleAspectRatioLock(displayAreaEditor, EventArgs.Empty))
                             {
                                 InvalidForegroundError = "Invalid display area.",
                                 Unit = "px"
@@ -125,8 +125,6 @@ namespace OpenTabletDriver.UX.Controls.Output
         private bool handlingArLock;
         private bool handlingForcedArConstraint;
         private bool handlingSettingsChanging;
-        private float? prevDisplayWidth;
-        private float? prevDisplayHeight;
         private DirectBinding<float> displayWidth;
         private DirectBinding<float> displayHeight;
         private DirectBinding<float> tabletWidth;
@@ -199,43 +197,47 @@ namespace OpenTabletDriver.UX.Controls.Output
 
         private void HandleAspectRatioLock(object? sender, EventArgs e)
         {
-            if (!handlingArLock && !handlingSettingsChanging)
+            if (!tabletAreaEditor.LockAspectRatio) return;
+            if (handlingArLock || handlingSettingsChanging || displayAreaEditor.handlingDisplayAreaResize) return;
+
+            // Avoids looping
+            handlingArLock = true;
+
+            var displayRatio = displayAreaEditor.Area!.Width / displayAreaEditor.Area!.Height;
+
+            var tryHeightFirst = sender == tabletWidth || sender == displayHeight || sender == tabletAreaEditor || sender == displayAreaEditor && displayRatio <= 1;
+            var tryWidthFirst = sender == tabletHeight || sender == displayWidth || sender == displayAreaEditor && displayRatio > 1;
+
+            if (tryHeightFirst)
             {
-                // Avoids looping
-                handlingArLock = true;
-
-                if (sender == tabletWidth || sender == tabletAreaEditor)
+                var fullHeight = tabletAreaEditor.FullAreaBounds!.Value.Height;
+                var scaledHeight = displayHeight.DataValue / displayWidth.DataValue * tabletWidth.DataValue;
+                if (scaledHeight > fullHeight)
                 {
-                    var fullHeight = tabletAreaEditor.FullAreaBounds!.Value.Height;
-                    var scaledHeight = displayHeight.DataValue / displayWidth.DataValue * tabletWidth.DataValue;
-                    if (scaledHeight > fullHeight)
-                    {
-                        tabletHeight.DataValue = fullHeight;
-                        tabletWidth.DataValue = displayWidth.DataValue / displayHeight.DataValue * fullHeight;
-                    }
-                    else
-                    {
-                        tabletHeight.DataValue = scaledHeight;
-                    }
+                    tabletHeight.DataValue = fullHeight;
+                    tabletWidth.DataValue = displayWidth.DataValue / displayHeight.DataValue * fullHeight;
                 }
-                else if (sender == tabletHeight)
+                else
                 {
-                    tabletWidth.DataValue = displayWidth.DataValue / displayHeight.DataValue * tabletHeight.DataValue;
+                    tabletHeight.DataValue = scaledHeight;
                 }
-                else if ((sender == displayWidth) && prevDisplayWidth is float prevWidth)
-                {
-                    tabletWidth.DataValue *= displayWidth.DataValue / prevWidth;
-                }
-                else if ((sender == displayHeight) && prevDisplayHeight is float prevHeight)
-                {
-                    tabletHeight.DataValue *= displayHeight.DataValue / prevHeight;
-                }
-
-                prevDisplayWidth = displayWidth.DataValue;
-                prevDisplayHeight = displayHeight.DataValue;
-
-                handlingArLock = false;
             }
+            else if (tryWidthFirst)
+            {
+                var fullWidth = tabletAreaEditor.FullAreaBounds!.Value.Width;
+                var scaledWidth = displayWidth.DataValue / displayHeight.DataValue * tabletHeight.DataValue;
+                if (scaledWidth > fullWidth)
+                {
+                    tabletWidth.DataValue = fullWidth;
+                    tabletHeight.DataValue = displayHeight.DataValue / displayWidth.DataValue * fullWidth;
+                }
+                else
+                {
+                    tabletWidth.DataValue = scaledWidth;
+                }
+            }
+
+            handlingArLock = false;
         }
 
         private void HandleTabletAreaConstraint(object? sender, EventArgs args)
@@ -394,7 +396,7 @@ namespace OpenTabletDriver.UX.Controls.Output
             Vector2[] points = [leftTopPoint, rightTopPoint, rightSidePoint];
             // Discard points that dont fit within the area
             // Get the closest point to the center (measured diagonally, pythagorean this thing) and put it in Vector3.Z, besides special cases of 90 and 270 this will the correct point to choose
-            var distances = points.Where(p => p.X <= rotatedRectDimensions.X && p.Y <= rotatedRectDimensions.Y).Select(p => new Vector3(p.X, p.Y, p.X * p.X + p.Y * p.Y));
+            var distances = points.Where(p => aspectRatio <= 1 ? p.Y <= rotatedRectDimensions.X && p.X <= rotatedRectDimensions.Y : p.X <= rotatedRectDimensions.X && p.Y <= rotatedRectDimensions.Y).Select(p => new Vector3(p.X, p.Y, p.X * p.X + p.Y * p.Y));
 
             var closest = distances.MinBy(p => p.Z);
             return new Vector2(closest.X * 2, closest.Y * 2);
