@@ -340,13 +340,6 @@ namespace OpenTabletDriver.UX.Controls.Output
         // https://www.desmos.com/calculator/fnszuodzlh
         public static Vector2 GetLargestRectInRotatedRectRatioLocked(Vector2 rotatedRectDimensions, float rotationAngleDegrees, float aspectRatio)
         {
-            // Special cases for 0, 90, 180, 270, 360
-            // These could also be handled by adding another intercept but this is easier
-            if (rotationAngleDegrees % 180 < 0.01)
-                return new Vector2(rotatedRectDimensions.X, rotatedRectDimensions.X / aspectRatio);
-            if (rotationAngleDegrees % 90 < 0.01)
-                return new Vector2(rotatedRectDimensions.Y, rotatedRectDimensions.Y / aspectRatio);
-
             var corners = new RectangleF(0, 0, rotatedRectDimensions.X, rotatedRectDimensions.Y).GetAreaCorners(rotationAngleDegrees);
             var (topLeft, topRight, bottomLeft, bottomRight) = (corners.TopLeft, corners.TopRight, corners.BottomLeft, corners.BottomRight);
 
@@ -355,10 +348,15 @@ namespace OpenTabletDriver.UX.Controls.Output
             // m: slope
             double mTopBottom = (topRight.Y - topLeft.Y) / (topRight.X - topLeft.X);
             double mRightLeft = (topLeft.Y - bottomLeft.Y) / (topLeft.X - bottomLeft.X);
-            if (Double.IsInfinity(mTopBottom))
-                mTopBottom = 0;
-            if (Double.IsInfinity(mRightLeft))
-                mRightLeft = 0;
+
+            // Infinity obviously doesnt work in the calculations, set some really high number to approximate instead
+            // This occurs when y = 0
+            // For example, at 90 or 270 degrees the right side will be a perfectly straight vertical line
+            // When `x = -b` (`x = 0m - b` or `0y = mx + b`) is converted to `y = mx + b` notation it equates to `y = ∞x + b`, instead lets use `y = 9999999x + b`
+            if (Double.IsInfinity(mTopBottom) || Math.Abs(mRightLeft) == 0)
+                mTopBottom = 9999999;
+            if (Double.IsInfinity(mRightLeft) || Math.Abs(mRightLeft) == 0)
+                mRightLeft = 9999999;
 
             // Aspect ratio slope is reversed from what we want: x = mRatio * y
             // Later it must become: y = x / mRatio
@@ -374,7 +372,7 @@ namespace OpenTabletDriver.UX.Controls.Output
             double topIntersectionXPos = (bTop * mRatio) / (1 - mTopBottom * mRatio);
             double rightIntersectionXPos = (bRight * mRatio) / (1 - mRightLeft * mRatio);
             double topIntersectionXNeg = (bTop * -mRatio) / (1 - mTopBottom * -mRatio);
-            // var rightIntersectionXNeg = (bRight * -mRatio) / (1 - mRightLeft * -mRatio);
+            double rightIntersectionXNeg = (bRight * -mRatio) / (1 - mRightLeft * -mRatio);
 
             // Solve for Y now that we have X
             // y = mx + b
@@ -383,7 +381,7 @@ namespace OpenTabletDriver.UX.Controls.Output
             double topIntersectionYPos = mTopBottom * topIntersectionXPos + bTop;
             double rightIntersectionYPos = mRightLeft * rightIntersectionXPos + bRight;
             double topIntersectionYNeg = mTopBottom * topIntersectionXNeg + bTop;
-            // var rightIntersectionYNeg = mRightLeft * rightIntersectionXNeg + bRight;
+            // double rightIntersectionYNeg = mRightLeft * rightIntersectionXNeg + bRight;
 
             var leftTopPoint = new Vector2((float)Math.Abs(topIntersectionXNeg), (float)Math.Abs(topIntersectionYNeg));
             var rightTopPoint = new Vector2((float)Math.Abs(topIntersectionXPos), (float)Math.Abs(topIntersectionYPos));
