@@ -391,7 +391,7 @@ namespace OpenTabletDriver.UX.Controls.Output
             Vector2[] points = [leftTopPoint, rightTopPoint, rightSidePoint];
             // Discard points that dont fit within the area
             // Get the closest point to the center (measured diagonally, pythagorean this thing) and put it in Vector3.Z, besides special cases of 90 and 270 this will the correct point to choose
-            var distances = points.Where(p => p.X <= rotatedRectDimensions.X && p.Y <= rotatedRectDimensions.Y).Select(p => new Vector3(p.X, p.Y, p.X * p.X + p.Y * p.Y));
+            var distances = points.Where(p => aspectRatio <= 1 ? p.Y <= rotatedRectDimensions.X && p.X <= rotatedRectDimensions.Y : p.X <= rotatedRectDimensions.X && p.Y <= rotatedRectDimensions.Y).Select(p => new Vector3(p.X, p.Y, p.X * p.X + p.Y * p.Y));
 
             var closest = distances.MinBy(p => p.Z);
             return new Vector2(closest.X * 2, closest.Y * 2);
