@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using OpenTabletDriver.Plugin.Tablet;
 
@@ -13,21 +12,19 @@ namespace OpenTabletDriver.Configurations.Parsers.ISKN
     {
         private const byte PenFrame = 0x05;
         private const byte ButtonFrame = 0x08;
-        private const long ButtonHoldMs = 100;
 
-        private readonly Stopwatch _buttonHeld = new();
-        private byte _buttonCode;
+        private bool _buttonPressed;
 
         public IDeviceReport Parse(byte[] report)
         {
-            if (_buttonHeld.IsRunning)
+            if (_buttonPressed)
             {
-                // The tablet only reports button presses, so hold the button for a short
-                // while and release it on the first report after that.
-                if (_buttonHeld.ElapsedMilliseconds < ButtonHoldMs)
-                    return new SlateAuxReport(report, _buttonCode);
-                _buttonHeld.Reset();
-                return new SlateAuxReport(report, 0);
+                // The tablet sends a single frame per button gesture, on release, and never
+                // reports the button going back up. Release it on the following report instead:
+                // the next pen sample while the pen is in range, or at worst the heartbeat
+                // frame the tablet sends every second.
+                _buttonPressed = false;
+                return new SlateAuxReport(report, released: true);
             }
 
             if (report.Length < 6 || report[1] != 0xB3 || report[2] != 0xA5 || report[3] != 0xE1)
@@ -37,10 +34,9 @@ namespace OpenTabletDriver.Configurations.Parsers.ISKN
             {
                 case PenFrame when report.Length >= 18:
                     return new SlateTabletReport(report);
-                case ButtonFrame:
-                    _buttonCode = report[5];
-                    _buttonHeld.Restart();
-                    return new SlateAuxReport(report, _buttonCode);
+                case ButtonFrame when report.Length >= 6:
+                    _buttonPressed = true;
+                    return new SlateAuxReport(report);
                 default:
                     return new DeviceReport(report);
             }

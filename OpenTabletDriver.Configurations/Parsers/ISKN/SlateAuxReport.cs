@@ -11,9 +11,12 @@ namespace OpenTabletDriver.Configurations.Parsers.ISKN
     /// </summary>
     public struct SlateAuxReport : IAuxReport
     {
-        public SlateAuxReport(byte[] report, byte code)
+        private const int CodeIndex = 5;
+
+        public SlateAuxReport(byte[] report, bool released = false)
         {
             Raw = report;
+            var code = released ? 0 : report[CodeIndex];
             AuxButtons =
             [
                 code == 0x03,
