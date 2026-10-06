@@ -225,11 +225,10 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                                 MenuText = "Full area",
                                 Action = () =>
                                 {
-                                    var maxRotated = GetLargestRectInRotatedRectRatioLocked(new Vector2(FullAreaBounds!.Value.Width, FullAreaBounds!.Value.Height), Area!.Rotation, 5.0f);
                                     Area!.Y = FullAreaBounds!.Value.Center.Y;
                                     Area!.X = FullAreaBounds!.Value.Center.X;
-                                    Area!.Width = maxRotated.X;
-                                    Area!.Height = maxRotated.Y;
+                                    Area!.Width = FullAreaBounds!.Value.Width;
+                                    Area!.Height = FullAreaBounds!.Value.Height;
                                 }
                             },
                             new ActionCommand
