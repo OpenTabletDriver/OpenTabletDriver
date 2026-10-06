@@ -457,8 +457,8 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             if ((Area?.Rotation ?? 0) != 0)
             {
                 var corners = rect.GetAreaCorners(Area?.Rotation ?? 0);
-                var topLeft = new PointF(corners.MinBy(x => x.X).X, corners.MinBy(x => x.Y).Y);
-                var bottomRight = new PointF(corners.MaxBy(x => x.X).X, corners.MaxBy(x => x.Y).Y);
+                var topLeft = new PointF(corners.ToArray().MinBy(x => x.X).X, corners.ToArray().MinBy(x => x.Y).Y);
+                var bottomRight = new PointF(corners.ToArray().MaxBy(x => x.X).X, corners.ToArray().MaxBy(x => x.Y).Y);
                 rect = new RectangleF(topLeft, bottomRight);
             }
 

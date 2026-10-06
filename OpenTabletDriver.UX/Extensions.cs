@@ -130,7 +130,7 @@ namespace OpenTabletDriver.UX
                     : text);
 
         [Pure]
-        public static Vector2[] GetAreaCorners(this RectangleF area, float rotation)
+        public static Corners GetAreaCorners(this RectangleF area, float rotation)
         {
             var origin = new Vector2(area.X, area.Y);
             var matrix = Matrix3x2.CreateTranslation(-origin);
@@ -140,17 +140,31 @@ namespace OpenTabletDriver.UX
             float halfWidth = area.Width / 2;
             float halfHeight = area.Height / 2;
 
-            return
-            [
-                Vector2.Transform(new Vector2(area.X - halfWidth, area.Y + halfHeight), matrix),
-                Vector2.Transform(new Vector2(area.X + halfWidth, area.Y + halfHeight), matrix),
-                Vector2.Transform(new Vector2(area.X - halfWidth, area.Y - halfHeight), matrix),
-                Vector2.Transform(new Vector2(area.X + halfWidth, area.Y - halfHeight), matrix),
-            ];
+            return new Corners
+            {
+                TopLeft = Vector2.Transform(new Vector2(area.X - halfWidth, area.Y + halfHeight), matrix),
+                TopRight = Vector2.Transform(new Vector2(area.X + halfWidth, area.Y + halfHeight), matrix),
+                BottomLeft = Vector2.Transform(new Vector2(area.X - halfWidth, area.Y - halfHeight), matrix),
+                BottomRight = Vector2.Transform(new Vector2(area.X + halfWidth, area.Y - halfHeight), matrix),
+            };
         }
 
         [Pure]
         public static RectangleF GetRectangleF(this AreaSettings areaSettings) =>
             new(areaSettings.X, areaSettings.Y, areaSettings.Width, areaSettings.Height);
+
+
+        public struct Corners
+        {
+            public Vector2 TopLeft;
+            public Vector2 TopRight;
+            public Vector2 BottomLeft;
+            public Vector2 BottomRight;
+        }
+
+        public static Vector2[] ToArray(this Corners corners)
+        {
+            return [corners.TopLeft, corners.TopRight, corners.BottomLeft, corners.BottomRight];
+        }
     }
 }

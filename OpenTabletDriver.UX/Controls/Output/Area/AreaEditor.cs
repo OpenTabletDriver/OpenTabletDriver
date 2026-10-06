@@ -161,7 +161,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
         public Vector2 GetAreaCenterOffset()
         {
             Debug.Assert(Area != null, "Tried to get area corners but Area is null");
-            var corners = this.Area.GetRectangleF().GetAreaCorners(Area.Rotation);
+            var corners = this.Area.GetRectangleF().GetAreaCorners(Area.Rotation).ToArray();
             var min = new Vector2(
                 corners.Min(v => v.X),
                 corners.Min(v => v.Y)
@@ -225,7 +225,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                                 MenuText = "Full area",
                                 Action = () =>
                                 {
-                                    var maxRotated = GetLargestRectInRotatedRectRatioLocked(new Vector2(FullAreaBounds!.Value.Width, FullAreaBounds!.Value.Height), Area!.Rotation, 1.7777777777f);
+                                    var maxRotated = GetLargestRectInRotatedRectRatioLocked(new Vector2(FullAreaBounds!.Value.Width, FullAreaBounds!.Value.Height), Area!.Rotation, 5.0f);
                                     Area!.Y = FullAreaBounds!.Value.Center.Y;
                                     Area!.X = FullAreaBounds!.Value.Center.X;
                                     Area!.Width = maxRotated.X;
@@ -321,7 +321,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                 return new Vector2(rotatedRectDimensions.Y, rotatedRectDimensions.Y / aspectRatio);
 
             var corners = new RectangleF(0, 0, rotatedRectDimensions.X, rotatedRectDimensions.Y).GetAreaCorners(rotationAngleDegrees);
-            var (topLeft, topRight, bottomLeft, bottomRight) = (corners[0], corners[1], corners[2], corners[3]);
+            var (topLeft, topRight, bottomLeft, bottomRight) = (corners.TopLeft, corners.TopRight, corners.BottomLeft, corners.BottomRight);
 
             // y = mx + b
 
