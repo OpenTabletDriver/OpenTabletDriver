@@ -356,7 +356,7 @@ namespace OpenTabletDriver.UX.Controls.Output
             // This occurs when y = 0
             // For example, at 90 or 270 degrees the right side will be a perfectly straight vertical line
             // When `x = -b` (`x = 0m - b` or `0y = mx + b`) is converted to `y = mx + b` notation it equates to `y = ∞x + b`, instead lets use `y = 9999999x + b`
-            if (Double.IsInfinity(mTopBottom) || Math.Abs(mRightLeft) == 0)
+            if (Double.IsInfinity(mTopBottom) || Math.Abs(mTopBottom) == 0)
                 mTopBottom = 9999999;
             if (Double.IsInfinity(mRightLeft) || Math.Abs(mRightLeft) == 0)
                 mRightLeft = 9999999;

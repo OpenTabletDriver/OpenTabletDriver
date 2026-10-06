@@ -154,14 +154,9 @@ namespace OpenTabletDriver.UX
             new(areaSettings.X, areaSettings.Y, areaSettings.Width, areaSettings.Height);
 
 
-        public struct Corners
-        {
-            public Vector2 TopLeft;
-            public Vector2 TopRight;
-            public Vector2 BottomLeft;
-            public Vector2 BottomRight;
-        }
+        public record struct Corners(Vector2 TopLeft, Vector2 TopRight, Vector2 BottomLeft, Vector2 BottomRight);
 
+        [Pure]
         public static Vector2[] ToArray(this Corners corners)
         {
             return [corners.TopLeft, corners.TopRight, corners.BottomLeft, corners.BottomRight];
