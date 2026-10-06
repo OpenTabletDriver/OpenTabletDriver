@@ -7,6 +7,7 @@ using Eto.Forms;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Controls.Output.Area;
+using OpenTabletDriver.UX.Controls.Utilities;
 
 namespace OpenTabletDriver.UX.Controls.Output
 {
@@ -47,6 +48,39 @@ namespace OpenTabletDriver.UX.Controls.Output
                     }
                 }
             };
+
+            tabletAreaEditor.ContextMenu.Items.GetSubmenu("Resize").Items.AddRange(
+                [
+                    new ActionCommand
+                    {
+                        MenuText = "Full area",
+                        Action = () =>
+                        {
+                            Vector2 tabletSize = new Vector2(tabletAreaEditor.FullAreaBounds!.Value.Width, tabletAreaEditor.FullAreaBounds!.Value.Height);
+                            var displayRatio = displayAreaEditor.Area!.Width / displayAreaEditor.Area!.Height;
+                            var largestArea = tabletAreaEditor.LockAspectRatio ? GetLargestRectInRotatedRectRatioLocked(tabletSize, tabletAreaEditor.Area!.Rotation, displayRatio) : GetLargestRectInRotatedRect(tabletSize, tabletAreaEditor.Area!.Rotation);
+                            tabletAreaEditor.Area!.Y = tabletAreaEditor.FullAreaBounds!.Value.Center.Y;
+                            tabletAreaEditor.Area!.X = tabletAreaEditor.FullAreaBounds!.Value.Center.X;
+                            tabletAreaEditor.Area!.Width = largestArea.X;
+                            tabletAreaEditor.Area!.Height = largestArea.Y;
+                        }
+                    },
+                    new ActionCommand
+                    {
+                        MenuText = "Quarter area",
+                        Action = () =>
+                        {
+                            Vector2 tabletSize = new Vector2(tabletAreaEditor.FullAreaBounds!.Value.Width, tabletAreaEditor.FullAreaBounds!.Value.Height);
+                            var displayRatio = displayAreaEditor.Area!.Width / displayAreaEditor.Area!.Height;
+                            var largestArea = tabletAreaEditor.LockAspectRatio ? GetLargestRectInRotatedRectRatioLocked(tabletSize, tabletAreaEditor.Area!.Rotation, displayRatio) : GetLargestRectInRotatedRect(tabletSize, tabletAreaEditor.Area!.Rotation);
+                            tabletAreaEditor.Area!.Y = tabletAreaEditor.FullAreaBounds!.Value.Center.Y;
+                            tabletAreaEditor.Area!.X = tabletAreaEditor.FullAreaBounds!.Value.Center.X;
+                            tabletAreaEditor.Area!.Width = largestArea.X / 2;
+                            tabletAreaEditor.Area!.Height = largestArea.Y / 2;
+                        }
+                    }
+                ]
+            );
 
             displayAreaEditor.AreaBinding.Bind(SettingsBinding.Child(c => c!.Display)!);
             displayAreaEditor.LockToUsableAreaBinding.Bind(App.Current, c => c.Settings.LockUsableAreaDisplay);
@@ -273,6 +307,96 @@ namespace OpenTabletDriver.UX.Controls.Output
                 X = Math.Max(pseudoArea.Right - bounds.Right - 1, 0) + Math.Min(pseudoArea.Left - bounds.Left, 0),
                 Y = Math.Max(pseudoArea.Bottom - bounds.Bottom - 1, 0) + Math.Min(pseudoArea.Top - bounds.Top, 0)
             };
+        }
+
+
+        // Converted from python code from stackoverflow:
+        // https://stackoverflow.com/questions/16702966/rotate-image-and-crop-out-black-borders/16778797#16778797
+        public static Vector2 GetLargestRectInRotatedRect(Vector2 rotatedRectDimensions, float rotationAngleDegrees)
+        {
+            var width = rotatedRectDimensions.X;
+            var height = rotatedRectDimensions.Y;
+            var rotationAngleRadians = Math.PI / 180 * rotationAngleDegrees;
+
+            if (width <= 0 || height <= 0)
+                return new Vector2(0,0);
+
+            bool widthIsLonger = width >= height;
+            var (long_side, short_side) = widthIsLonger ? (width, height) : (height, width);
+            var (sinA, cosA) = (Math.Abs(Math.Sin(rotationAngleRadians)), Math.Abs(Math.Cos(rotationAngleRadians)));
+            if (short_side <= 2.0 * sinA * cosA * long_side || Math.Abs(sinA - cosA) < 1E-10)
+            {
+                var x = 0.5 * short_side;
+                return widthIsLonger ? new Vector2((float)(x / sinA), (float)(x / cosA)) : new Vector2((float)(x / cosA), (float)(x / sinA));
+            }
+            else
+            {
+                var cos2A = cosA * cosA - sinA * sinA;
+                return new Vector2((float)((width * cosA - height * sinA) / cos2A), (float)((height * cosA - width * sinA) / cos2A));
+            }
+        }
+
+        // https://www.desmos.com/calculator/jueq5tuwv7
+        // https://www.desmos.com/calculator/fnszuodzlh
+        public static Vector2 GetLargestRectInRotatedRectRatioLocked(Vector2 rotatedRectDimensions, float rotationAngleDegrees, float aspectRatio)
+        {
+            // Special cases for 0, 90, 180, 270, 360
+            // These could also be handled by adding another intercept but this is easier
+            if (rotationAngleDegrees % 180 < 0.01)
+                return new Vector2(rotatedRectDimensions.X, rotatedRectDimensions.X / aspectRatio);
+            if (rotationAngleDegrees % 90 < 0.01)
+                return new Vector2(rotatedRectDimensions.Y, rotatedRectDimensions.Y / aspectRatio);
+
+            var corners = new RectangleF(0, 0, rotatedRectDimensions.X, rotatedRectDimensions.Y).GetAreaCorners(rotationAngleDegrees);
+            var (topLeft, topRight, bottomLeft, bottomRight) = (corners.TopLeft, corners.TopRight, corners.BottomLeft, corners.BottomRight);
+
+            // y = mx + b
+
+            // m: slope
+            double mTopBottom = (topRight.Y - topLeft.Y) / (topRight.X - topLeft.X);
+            double mRightLeft = (topLeft.Y - bottomLeft.Y) / (topLeft.X - bottomLeft.X);
+            if (Double.IsInfinity(mTopBottom))
+                mTopBottom = 0;
+            if (Double.IsInfinity(mRightLeft))
+                mRightLeft = 0;
+
+            // Aspect ratio slope is reversed from what we want: x = mRatio * y
+            // Later it must become: y = x / mRatio
+            double mRatio = aspectRatio;
+
+            // b: x intercept
+            double bTop = topRight.Y - mTopBottom * topRight.X;
+            double bRight = topRight.Y - mRightLeft * topRight.X;
+
+            // Get intersection on X axis of ratio and side by setting them equal
+            // x / mRatio = mTopBottom * x + bTop -> x = (bTop * mRatio) / (1 - mTopBottom * mRatio)
+            // x / mRatio = mRightLeft * x + bRight -> x = (bRight * mRatio) / (1 - mRightLeft * mRatio)
+            double topIntersectionXPos = (bTop * mRatio) / (1 - mTopBottom * mRatio);
+            double rightIntersectionXPos = (bRight * mRatio) / (1 - mRightLeft * mRatio);
+            double topIntersectionXNeg = (bTop * -mRatio) / (1 - mTopBottom * -mRatio);
+            // var rightIntersectionXNeg = (bRight * -mRatio) / (1 - mRightLeft * -mRatio);
+
+            // Solve for Y now that we have X
+            // y = mx + b
+            // y = mTopBottom * topIntersectionX + bTop
+            // y = mRightLeft * rightIntersectionX + bRight
+            double topIntersectionYPos = mTopBottom * topIntersectionXPos + bTop;
+            double rightIntersectionYPos = mRightLeft * rightIntersectionXPos + bRight;
+            double topIntersectionYNeg = mTopBottom * topIntersectionXNeg + bTop;
+            // var rightIntersectionYNeg = mRightLeft * rightIntersectionXNeg + bRight;
+
+            var leftTopPoint = new Vector2((float)Math.Abs(topIntersectionXNeg), (float)Math.Abs(topIntersectionYNeg));
+            var rightTopPoint = new Vector2((float)Math.Abs(topIntersectionXPos), (float)Math.Abs(topIntersectionYPos));
+            // leftSidePoint is redundant, only three points are necessary
+            var rightSidePoint = new Vector2((float)Math.Abs(rightIntersectionXPos), (float)Math.Abs(rightIntersectionYPos));
+
+            Vector2[] points = [leftTopPoint, rightTopPoint, rightSidePoint];
+            // Discard points that dont fit within the area
+            // Get the closest point to the center (measured diagonally, pythagorean this thing) and put it in Vector3.Z, besides special cases of 90 and 270 this will the correct point to choose
+            var distances = points.Where(p => p.X <= rotatedRectDimensions.X && p.Y <= rotatedRectDimensions.Y).Select(p => new Vector3(p.X, p.Y, p.X * p.X + p.Y * p.Y));
+
+            var closest = distances.MinBy(p => p.Z);
+            return new Vector2(closest.X * 2, closest.Y * 2);
         }
     }
 }
