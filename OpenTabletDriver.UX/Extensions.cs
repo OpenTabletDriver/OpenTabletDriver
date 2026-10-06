@@ -142,9 +142,9 @@ namespace OpenTabletDriver.UX
 
             return
             [
-                Vector2.Transform(new Vector2(area.X - halfWidth, area.Y - halfHeight), matrix),
                 Vector2.Transform(new Vector2(area.X - halfWidth, area.Y + halfHeight), matrix),
                 Vector2.Transform(new Vector2(area.X + halfWidth, area.Y + halfHeight), matrix),
+                Vector2.Transform(new Vector2(area.X - halfWidth, area.Y - halfHeight), matrix),
                 Vector2.Transform(new Vector2(area.X + halfWidth, area.Y - halfHeight), matrix),
             ];
         }

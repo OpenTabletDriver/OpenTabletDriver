@@ -308,5 +308,74 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                 return new Vector2((float)((width * cosA - height * sinA) / cos2A), (float)((height * cosA - width * sinA) / cos2A));
             }
         }
+
+        // https://www.desmos.com/calculator/jueq5tuwv7
+        public static Vector2 GetLargestRectInRotatedRectRatioLocked(Vector2 rotatedRectDimensions, float rotationAngleDegrees, float aspectRatio)
+        {
+            // special cases for 0, 90, 180, 270, 360
+            // if (rotationAngleDegrees % 180 < 1E-10)
+            //     return rotatedRectDimensions;
+            // if (rotationAngleDegrees % 90 < 1E-10)
+            //     return new Vector2(rotatedRectDimensions.Y, rotatedRectDimensions.Y / aspectRatio);
+
+            var corners = new RectangleF(0, 0, rotatedRectDimensions.X, rotatedRectDimensions.Y).GetAreaCorners(rotationAngleDegrees);
+            var (topLeft, topRight, bottomLeft, bottomRight) = (corners[0], corners[1], corners[2], corners[3]);
+
+            // y = mx + b
+
+            // m: slope
+            var mTopBottom = (topRight.Y - topLeft.Y) / (topRight.X - topLeft.X);
+            var mRightLeft = (topLeft.Y - bottomLeft.Y) / (topLeft.X - bottomLeft.X);
+            if (Double.IsInfinity(mTopBottom))
+                mTopBottom = 0;
+            if (Double.IsInfinity(mRightLeft))
+                mRightLeft = 0;
+
+            // Aspect ratio slope is reversed from what we want: x = mRatio * y
+            // Later it must become: y = x / mRatio
+            var mRatio = aspectRatio;
+
+            // b: x intercept
+            var bTop = topRight.Y - mTopBottom * topRight.X;
+            var bRight = topRight.Y - mRightLeft * topRight.X;
+
+            // Get intersection on X axis of ratio and side by setting them equal
+            // x / mRatio = mTopBottom * x + bTop -> x = (bTop * mRatio) / (1 - mTopBottom * mRatio)
+            // x / mRatio = mRightLeft * x + bRight -> x = (bRight * mRatio) / (1 - mRightLeft * mRatio)
+            var topIntersectionXPos = (bTop * mRatio) / (1 - mTopBottom * mRatio);
+            var rightIntersectionXPos = (bRight * mRatio) / (1 - mRightLeft * mRatio);
+            var topIntersectionXNeg = (bTop * -mRatio) / (1 - mTopBottom * -mRatio);
+            // var rightIntersectionXNeg = (bRight * -mRatio) / (1 - mRightLeft * -mRatio);
+
+            // Solve for Y now that we have X
+            // y = mx + b
+            // y = mTopBottom * topIntersectionX + bTop
+            // y = mRightLeft * rightIntersectionX + bRight
+            var topIntersectionYPos = mTopBottom * topIntersectionXPos + bTop;
+            var rightIntersectionYPos = mRightLeft * rightIntersectionXPos + bRight;
+            var topIntersectionYNeg = mTopBottom * topIntersectionXNeg + bTop;
+            // var rightIntersectionYNeg = mRightLeft * rightIntersectionXNeg + bRight;
+
+            var leftTopPoint = new Vector2(Math.Abs(topIntersectionXNeg), Math.Abs(topIntersectionYNeg));
+            var rightTopPoint = new Vector2(Math.Abs(topIntersectionXPos), Math.Abs(topIntersectionYPos));
+            // leftSidePoint is redundant, only three points are necessary
+            var rightSidePoint = new Vector2(Math.Abs(rightIntersectionXPos), Math.Abs(rightIntersectionYPos));
+
+            // The closest point to the center (measured diagonally, pythagorean this thing) is the correct point
+            var leftTopPointDistance = leftTopPoint.X * leftTopPoint.X + leftTopPoint.Y * leftTopPoint.Y;
+            var rightTopPointDistance = rightTopPoint.X * rightTopPoint.X + rightTopPoint.Y * rightTopPoint.Y;
+            var rightSidePointDistance = rightSidePoint.X * rightSidePoint.X + rightSidePoint.Y * rightSidePoint.Y;
+
+            float[] distances = [leftTopPointDistance, rightTopPointDistance, rightSidePointDistance];
+            var closest = distances.Min();
+            if (leftTopPointDistance == closest)
+                return new Vector2(leftTopPoint.X * 2, leftTopPoint.Y * 2);
+            if (rightTopPointDistance == closest)
+                return new Vector2(rightTopPoint.X * 2, rightTopPoint.Y * 2);
+            if (rightSidePointDistance == closest)
+                return new Vector2(rightSidePoint.X * 2, rightSidePoint.Y * 2);
+
+            return rotatedRectDimensions;
+        }
     }
 }
