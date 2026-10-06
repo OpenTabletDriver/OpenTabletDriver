@@ -131,8 +131,6 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
 
         public AreaDisplay Display { get; }
 
-        public bool FullAreaCommandExecuting { get; private set; }
-
         public override IEnumerable<RectangleF>? AreaBounds
         {
             set
@@ -162,7 +160,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
         public Vector2 GetAreaCenterOffset()
         {
             Debug.Assert(Area != null, "Tried to get area corners but Area is null");
-            var corners = this.Area.GetRectangleF().GetAreaCorners(Area.Rotation);
+            var corners = this.Area.GetRectangleF().GetAreaCorners(Area.Rotation).ToArray();
             var min = new Vector2(
                 corners.Min(v => v.X),
                 corners.Min(v => v.Y)
@@ -219,31 +217,6 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                     new ButtonMenuItem
                     {
                         Text = "Resize",
-                        Items =
-                        {
-                            new ActionCommand
-                            {
-                                MenuText = "Full area",
-                                Action = () =>
-                                {
-                                    FullAreaCommandExecuting = true;
-                                    Area!.Height = FullAreaBounds!.Value.Height;
-                                    Area!.Width = FullAreaBounds!.Value.Width;
-                                    Area!.Y = FullAreaBounds!.Value.Center.Y;
-                                    Area!.X = FullAreaBounds!.Value.Center.X;
-                                    FullAreaCommandExecuting = false;
-                                }
-                            },
-                            new ActionCommand
-                            {
-                                MenuText = "Quarter area",
-                                Action = () =>
-                                {
-                                    Area!.Height = FullAreaBounds!.Value.Height / 2;
-                                    Area!.Width = FullAreaBounds!.Value.Width / 2;
-                                }
-                            }
-                        }
                     },
                     new ButtonMenuItem
                     {
