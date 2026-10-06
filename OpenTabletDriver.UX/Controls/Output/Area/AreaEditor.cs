@@ -8,6 +8,7 @@ using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Controls.Generic.Text;
 using OpenTabletDriver.UX.Controls.Utilities;
+using System;
 
 namespace OpenTabletDriver.UX.Controls.Output.Area
 {
@@ -131,8 +132,6 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
 
         public AreaDisplay Display { get; }
 
-        public bool FullAreaCommandExecuting { get; private set; }
-
         public override IEnumerable<RectangleF>? AreaBounds
         {
             set
@@ -226,12 +225,11 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                                 MenuText = "Full area",
                                 Action = () =>
                                 {
-                                    FullAreaCommandExecuting = true;
-                                    Area!.Height = FullAreaBounds!.Value.Height;
-                                    Area!.Width = FullAreaBounds!.Value.Width;
+                                    var maxRotated = GetLargestRectInRotatedRectRatioLocked(new Vector2(FullAreaBounds!.Value.Width, FullAreaBounds!.Value.Height), Area!.Rotation, 1.7777777777f);
                                     Area!.Y = FullAreaBounds!.Value.Center.Y;
                                     Area!.X = FullAreaBounds!.Value.Center.X;
-                                    FullAreaCommandExecuting = false;
+                                    Area!.Width = maxRotated.X;
+                                    Area!.Height = maxRotated.Y;
                                 }
                             },
                             new ActionCommand
@@ -239,6 +237,8 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                                 MenuText = "Quarter area",
                                 Action = () =>
                                 {
+                                    Area!.Y = FullAreaBounds!.Value.Center.Y;
+                                    Area!.X = FullAreaBounds!.Value.Center.X;
                                     Area!.Height = FullAreaBounds!.Value.Height / 2;
                                     Area!.Width = FullAreaBounds!.Value.Width / 2;
                                 }
@@ -310,13 +310,15 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
         }
 
         // https://www.desmos.com/calculator/jueq5tuwv7
+        // https://www.desmos.com/calculator/fnszuodzlh
         public static Vector2 GetLargestRectInRotatedRectRatioLocked(Vector2 rotatedRectDimensions, float rotationAngleDegrees, float aspectRatio)
         {
-            // special cases for 0, 90, 180, 270, 360
-            // if (rotationAngleDegrees % 180 < 1E-10)
-            //     return rotatedRectDimensions;
-            // if (rotationAngleDegrees % 90 < 1E-10)
-            //     return new Vector2(rotatedRectDimensions.Y, rotatedRectDimensions.Y / aspectRatio);
+            // Special cases for 0, 90, 180, 270, 360
+            // These could also be handled by adding another intercept but this is easier
+            if (rotationAngleDegrees % 180 < 0.01)
+                return new Vector2(rotatedRectDimensions.X, rotatedRectDimensions.X / aspectRatio);
+            if (rotationAngleDegrees % 90 < 0.01)
+                return new Vector2(rotatedRectDimensions.Y, rotatedRectDimensions.Y / aspectRatio);
 
             var corners = new RectangleF(0, 0, rotatedRectDimensions.X, rotatedRectDimensions.Y).GetAreaCorners(rotationAngleDegrees);
             var (topLeft, topRight, bottomLeft, bottomRight) = (corners[0], corners[1], corners[2], corners[3]);
@@ -324,8 +326,8 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             // y = mx + b
 
             // m: slope
-            var mTopBottom = (topRight.Y - topLeft.Y) / (topRight.X - topLeft.X);
-            var mRightLeft = (topLeft.Y - bottomLeft.Y) / (topLeft.X - bottomLeft.X);
+            double mTopBottom = (topRight.Y - topLeft.Y) / (topRight.X - topLeft.X);
+            double mRightLeft = (topLeft.Y - bottomLeft.Y) / (topLeft.X - bottomLeft.X);
             if (Double.IsInfinity(mTopBottom))
                 mTopBottom = 0;
             if (Double.IsInfinity(mRightLeft))
@@ -333,49 +335,41 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
 
             // Aspect ratio slope is reversed from what we want: x = mRatio * y
             // Later it must become: y = x / mRatio
-            var mRatio = aspectRatio;
+            double mRatio = aspectRatio;
 
             // b: x intercept
-            var bTop = topRight.Y - mTopBottom * topRight.X;
-            var bRight = topRight.Y - mRightLeft * topRight.X;
+            double bTop = topRight.Y - mTopBottom * topRight.X;
+            double bRight = topRight.Y - mRightLeft * topRight.X;
 
             // Get intersection on X axis of ratio and side by setting them equal
             // x / mRatio = mTopBottom * x + bTop -> x = (bTop * mRatio) / (1 - mTopBottom * mRatio)
             // x / mRatio = mRightLeft * x + bRight -> x = (bRight * mRatio) / (1 - mRightLeft * mRatio)
-            var topIntersectionXPos = (bTop * mRatio) / (1 - mTopBottom * mRatio);
-            var rightIntersectionXPos = (bRight * mRatio) / (1 - mRightLeft * mRatio);
-            var topIntersectionXNeg = (bTop * -mRatio) / (1 - mTopBottom * -mRatio);
+            double topIntersectionXPos = (bTop * mRatio) / (1 - mTopBottom * mRatio);
+            double rightIntersectionXPos = (bRight * mRatio) / (1 - mRightLeft * mRatio);
+            double topIntersectionXNeg = (bTop * -mRatio) / (1 - mTopBottom * -mRatio);
             // var rightIntersectionXNeg = (bRight * -mRatio) / (1 - mRightLeft * -mRatio);
 
             // Solve for Y now that we have X
             // y = mx + b
             // y = mTopBottom * topIntersectionX + bTop
             // y = mRightLeft * rightIntersectionX + bRight
-            var topIntersectionYPos = mTopBottom * topIntersectionXPos + bTop;
-            var rightIntersectionYPos = mRightLeft * rightIntersectionXPos + bRight;
-            var topIntersectionYNeg = mTopBottom * topIntersectionXNeg + bTop;
+            double topIntersectionYPos = mTopBottom * topIntersectionXPos + bTop;
+            double rightIntersectionYPos = mRightLeft * rightIntersectionXPos + bRight;
+            double topIntersectionYNeg = mTopBottom * topIntersectionXNeg + bTop;
             // var rightIntersectionYNeg = mRightLeft * rightIntersectionXNeg + bRight;
 
-            var leftTopPoint = new Vector2(Math.Abs(topIntersectionXNeg), Math.Abs(topIntersectionYNeg));
-            var rightTopPoint = new Vector2(Math.Abs(topIntersectionXPos), Math.Abs(topIntersectionYPos));
+            var leftTopPoint = new Vector2((float)Math.Abs(topIntersectionXNeg), (float)Math.Abs(topIntersectionYNeg));
+            var rightTopPoint = new Vector2((float)Math.Abs(topIntersectionXPos), (float)Math.Abs(topIntersectionYPos));
             // leftSidePoint is redundant, only three points are necessary
-            var rightSidePoint = new Vector2(Math.Abs(rightIntersectionXPos), Math.Abs(rightIntersectionYPos));
+            var rightSidePoint = new Vector2((float)Math.Abs(rightIntersectionXPos), (float)Math.Abs(rightIntersectionYPos));
 
-            // The closest point to the center (measured diagonally, pythagorean this thing) is the correct point
-            var leftTopPointDistance = leftTopPoint.X * leftTopPoint.X + leftTopPoint.Y * leftTopPoint.Y;
-            var rightTopPointDistance = rightTopPoint.X * rightTopPoint.X + rightTopPoint.Y * rightTopPoint.Y;
-            var rightSidePointDistance = rightSidePoint.X * rightSidePoint.X + rightSidePoint.Y * rightSidePoint.Y;
+            Vector2[] points = [leftTopPoint, rightTopPoint, rightSidePoint];
+            // Discard points that dont fit within the area
+            // Get the closest point to the center (measured diagonally, pythagorean this thing) and put it in Vector3.Z, besides special cases of 90 and 270 this will the correct point to choose
+            var distances = points.Where(p => p.X <= rotatedRectDimensions.X && p.Y <= rotatedRectDimensions.Y).Select(p => new Vector3(p.X, p.Y, p.X * p.X + p.Y * p.Y));
 
-            float[] distances = [leftTopPointDistance, rightTopPointDistance, rightSidePointDistance];
-            var closest = distances.Min();
-            if (leftTopPointDistance == closest)
-                return new Vector2(leftTopPoint.X * 2, leftTopPoint.Y * 2);
-            if (rightTopPointDistance == closest)
-                return new Vector2(rightTopPoint.X * 2, rightTopPoint.Y * 2);
-            if (rightSidePointDistance == closest)
-                return new Vector2(rightSidePoint.X * 2, rightSidePoint.Y * 2);
-
-            return rotatedRectDimensions;
+            var closest = distances.MinBy(p => p.Z);
+            return new Vector2(closest.X * 2, closest.Y * 2);
         }
     }
 }
