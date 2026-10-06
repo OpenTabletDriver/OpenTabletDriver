@@ -336,6 +336,9 @@ namespace OpenTabletDriver.UX.Controls.Output
             }
         }
 
+        // Due to the aspect ratio being locked, there is a known slope to calculate the largest aspect ratio locked area from (x = ratio * y)
+        // Both the negative and positive variants of this slope must be used
+        // Then we find the intersections along the top and right side lines of the tablet area (bottom and left would also be equivalent)
         // https://www.desmos.com/calculator/jueq5tuwv7
         // https://www.desmos.com/calculator/fnszuodzlh
         public static Vector2 GetLargestRectInRotatedRectRatioLocked(Vector2 rotatedRectDimensions, float rotationAngleDegrees, float aspectRatio)
