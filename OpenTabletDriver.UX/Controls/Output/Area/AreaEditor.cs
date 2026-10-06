@@ -8,7 +8,6 @@ using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Controls.Generic.Text;
 using OpenTabletDriver.UX.Controls.Utilities;
-using System;
 
 namespace OpenTabletDriver.UX.Controls.Output.Area
 {
@@ -218,31 +217,6 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                     new ButtonMenuItem
                     {
                         Text = "Resize",
-                        Items =
-                        {
-                            new ActionCommand
-                            {
-                                MenuText = "Full area",
-                                Action = () =>
-                                {
-                                    Area!.Y = FullAreaBounds!.Value.Center.Y;
-                                    Area!.X = FullAreaBounds!.Value.Center.X;
-                                    Area!.Width = FullAreaBounds!.Value.Width;
-                                    Area!.Height = FullAreaBounds!.Value.Height;
-                                }
-                            },
-                            new ActionCommand
-                            {
-                                MenuText = "Quarter area",
-                                Action = () =>
-                                {
-                                    Area!.Y = FullAreaBounds!.Value.Center.Y;
-                                    Area!.X = FullAreaBounds!.Value.Center.X;
-                                    Area!.Height = FullAreaBounds!.Value.Height / 2;
-                                    Area!.Width = FullAreaBounds!.Value.Width / 2;
-                                }
-                            }
-                        }
                     },
                     new ButtonMenuItem
                     {

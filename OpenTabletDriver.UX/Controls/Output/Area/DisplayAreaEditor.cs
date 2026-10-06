@@ -18,6 +18,31 @@ namespace OpenTabletDriver.UX.Controls.Output
         {
             base.CreateMenu();
 
+            this.ContextMenu.Items.GetSubmenu("Resize").Items.AddRange([
+                new ActionCommand
+                {
+                    MenuText = "Full area",
+                    Action = () =>
+                    {
+                        Area!.Y = FullAreaBounds!.Value.Center.Y;
+                        Area!.X = FullAreaBounds!.Value.Center.X;
+                        Area!.Width = FullAreaBounds!.Value.Width;
+                        Area!.Height = FullAreaBounds!.Value.Height;
+                    }
+                },
+                new ActionCommand
+                {
+                    MenuText = "Quarter area",
+                    Action = () =>
+                    {
+                        Area!.Y = FullAreaBounds!.Value.Center.Y;
+                        Area!.X = FullAreaBounds!.Value.Center.X;
+                        Area!.Height = FullAreaBounds!.Value.Height / 2;
+                        Area!.Width = FullAreaBounds!.Value.Width / 2;
+                    }
+                }
+            ]);
+
             base.ContextMenu.Items.AddSeparator();
 
             var subMenu = base.ContextMenu.Items.GetSubmenu("Set to display");
