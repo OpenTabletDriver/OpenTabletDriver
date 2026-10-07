@@ -35,6 +35,7 @@ jobs:
             runtime-suffix: x64
             os: ubuntu-latest
             runtime-prefix: osx-
+            signed: false
           - build: macos
             runtime-suffix: arm64
             os: ubuntu-latest
