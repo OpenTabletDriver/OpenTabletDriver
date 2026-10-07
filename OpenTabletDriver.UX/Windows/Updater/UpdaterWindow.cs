@@ -1,9 +1,9 @@
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Interop;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.UX.Controls;
 using OpenTabletDriver.UX.Controls.Generic;
 
@@ -39,7 +39,15 @@ namespace OpenTabletDriver.UX.Windows.Updater
 
         private async Task InitializeAsync()
         {
-            Debug.Assert(App.Driver.IsConnected, "Tried checking for updates with no connected daemon");
+            if (!App.Driver.IsConnected)
+            {
+                Log.Write(nameof(UpdaterWindow),
+                    "Initialized without a connected driver. Spoofing 'no update' situation and returning early. You may need to check for updates manually.",
+                    LogLevel.Warning);
+                _updateAvailable.SetResult(false);
+                return;
+            }
+
             var updateAvailable = await App.Driver.Instance.CheckForUpdates();
             if (updateAvailable is not null)
             {
