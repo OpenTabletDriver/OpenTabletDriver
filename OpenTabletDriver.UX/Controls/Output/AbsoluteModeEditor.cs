@@ -408,7 +408,7 @@ namespace OpenTabletDriver.UX.Controls.Output
                     // y = cornerPoint
                     new Vector2((float)Math.Abs(topRight.Y * mRatio), Math.Abs(topRight.Y)),
                 ];
-                filteredPoints = filteredPoints.Concat(specialPoints);
+                filteredPoints = specialPoints;
             }
 
             // Get the closest point to the center (measured diagonally, pythagorean this thing) and put it in Vector3.Z, besides special cases of 90 and 270 this will the correct point to choose
