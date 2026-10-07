@@ -367,7 +367,7 @@ namespace OpenTabletDriver.UX.Controls.Output
             // Later it must become: y = x / mRatio
             double mRatio = aspectRatio;
 
-            // b: x intercept
+            // b: y intercept
             double bVerticalRight = topRight.Y - mVertical * topRight.X;
             double bHorizontalTop = topLeft.Y - mHorizontal * topLeft.X;
 
