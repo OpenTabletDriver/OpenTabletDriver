@@ -386,14 +386,14 @@ namespace OpenTabletDriver.UX.Controls.Output
             double topIntersectionYPos = mTopBottom * topIntersectionXPos + bTop;
             double rightIntersectionYPos = mRightLeft * rightIntersectionXPos + bRight;
             double topIntersectionYNeg = mTopBottom * topIntersectionXNeg + bTop;
-            // double rightIntersectionYNeg = mRightLeft * rightIntersectionXNeg + bRight;
+            double rightIntersectionYNeg = mRightLeft * rightIntersectionXNeg + bRight;
 
-            var leftTopPoint = new Vector2((float)Math.Abs(topIntersectionXNeg), (float)Math.Abs(topIntersectionYNeg));
-            var rightTopPoint = new Vector2((float)Math.Abs(topIntersectionXPos), (float)Math.Abs(topIntersectionYPos));
-            // leftSidePoint is redundant, only three points are necessary
-            var rightSidePoint = new Vector2((float)Math.Abs(rightIntersectionXPos), (float)Math.Abs(rightIntersectionYPos));
+            var rightBottomPoint = new Vector2((float)Math.Abs(topIntersectionXNeg), (float)Math.Abs(topIntersectionYNeg));
+            var rightSidePoint = new Vector2((float)Math.Abs(topIntersectionXPos), (float)Math.Abs(topIntersectionYPos));
+            var leftTopPoint = new Vector2((float)Math.Abs(rightIntersectionXNeg), (float)Math.Abs(rightIntersectionYNeg));
+            var rightTopPoint = new Vector2((float)Math.Abs(rightIntersectionXPos), (float)Math.Abs(rightIntersectionYPos));
 
-            Vector2[] points = [leftTopPoint, rightTopPoint, rightSidePoint];
+            Vector2[] points = [rightBottomPoint, rightSidePoint, leftTopPoint, rightTopPoint];
             // Discard points that dont fit within the area
             var filteredPoints = points.Where(p => aspectRatio <= 1 ? p.Y <= rotatedRectDimensions.X && p.X <= rotatedRectDimensions.Y : p.X <= rotatedRectDimensions.X && p.Y <= rotatedRectDimensions.Y);
 
