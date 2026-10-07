@@ -15,26 +15,23 @@ namespace OpenTabletDriver.Desktop.Reflection
 {
     public class DesktopPluginManager : PluginManager
     {
-        public DesktopPluginManager()
-            : this(AppInfo.Current.PluginDirectory, AppInfo.Current.TrashDirectory, AppInfo.Current.TemporaryDirectory)
+        public DirectoryInfo PluginDirectory
         {
+            get { return field ??= new DirectoryInfo(AppInfo.Current.PluginDirectory); }
+            private set;
         }
 
-        protected DesktopPluginManager(string pluginDirectory, string trashDirectory, string tempDirectory)
-            : this(new DirectoryInfo(pluginDirectory), new DirectoryInfo(trashDirectory), new DirectoryInfo(tempDirectory))
+        protected DirectoryInfo TrashDirectory
         {
+            get { return field ??= new DirectoryInfo(AppInfo.Current.TrashDirectory); }
+            private set;
         }
 
-        public DesktopPluginManager(DirectoryInfo pluginDirectory, DirectoryInfo trashDirectory, DirectoryInfo tempDirectory)
+        protected DirectoryInfo TemporaryDirectory
         {
-            PluginDirectory = pluginDirectory;
-            TrashDirectory = trashDirectory;
-            TemporaryDirectory = tempDirectory;
+            get { return field ??= new DirectoryInfo(AppInfo.Current.TemporaryDirectory); }
+            private set;
         }
-
-        public DirectoryInfo PluginDirectory { get; }
-        protected DirectoryInfo TrashDirectory { get; }
-        protected DirectoryInfo TemporaryDirectory { get; }
 
         protected List<DesktopPluginContext> Plugins { get; } = new List<DesktopPluginContext>();
 
@@ -67,6 +64,8 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public void Load()
         {
+            PluginDirectory = TrashDirectory = TemporaryDirectory = null!; // reset directories
+
             foreach (var dir in PluginDirectory.GetDirectories())
                 LoadPlugin(dir);
 
