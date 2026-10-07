@@ -6,7 +6,7 @@ namespace OpenTabletDriver.Desktop
 {
     public class PresetManager
     {
-        public DirectoryInfo PresetDirectory { get; } = new DirectoryInfo(AppInfo.Current.PresetDirectory);
+        public static DirectoryInfo PresetDirectory => new(AppInfo.Current.PresetDirectory);
 
         private List<Preset> Presets { get; } = new List<Preset>();
 
