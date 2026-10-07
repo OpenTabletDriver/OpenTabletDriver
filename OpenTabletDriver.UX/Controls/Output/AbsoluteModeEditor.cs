@@ -369,7 +369,7 @@ namespace OpenTabletDriver.UX.Controls.Output
 
             // b: x intercept
             double bTop = topRight.Y - mTopBottom * topRight.X;
-            double bRight = topRight.Y - mRightLeft * topRight.X;
+            double bRight = topLeft.Y - mRightLeft * topLeft.X;
 
             // Get intersection on X axis of ratio and side by setting them equal
             // x / mRatio = mTopBottom * x + bTop -> x = (bTop * mRatio) / (1 - mTopBottom * mRatio)
