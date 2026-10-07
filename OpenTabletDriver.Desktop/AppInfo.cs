@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
@@ -112,28 +113,28 @@ namespace OpenTabletDriver.Desktop
         public string SettingsFile
         {
             set => this.settingsFile = value; // Generated on save
-            get => this.settingsFile ?? GetDefaultSettingsFile();
+            get => this.settingsFile ??= GetDefaultSettingsFile();
         }
 
         [AllowNull]
         public string PluginDirectory
         {
-            set => EnsureDirectoryExists(this.pluginDirectory = value, "plugin");
-            get => this.pluginDirectory ??= GetDefaultPluginDirectory();
+            set => EnsureDirectoryExists(this.pluginDirectory = value);
+            get => this.pluginDirectory ??= EnsureDirectoryExists(GetDefaultPluginDirectory());
         }
 
         [AllowNull]
         public string PresetDirectory
         {
-            set => EnsureDirectoryExists(this.presetDirectory = value, "preset");
-            get => this.presetDirectory ??= GetDefaultPresetDirectory();
+            set => EnsureDirectoryExists(this.presetDirectory = value);
+            get => this.presetDirectory ??= EnsureDirectoryExists(GetDefaultPresetDirectory());
         }
 
         [AllowNull]
         public string LogDirectory
         {
-            set => EnsureDirectoryExists(this.logDirectory = value, "log");
-            get => this.logDirectory ??= GetDefaultLogDirectory();
+            set => EnsureDirectoryExists(this.logDirectory = value);
+            get => this.logDirectory ??= EnsureDirectoryExists(GetDefaultLogDirectory());
         }
 
         [AllowNull]
@@ -201,7 +202,8 @@ namespace OpenTabletDriver.Desktop
         private static bool IsEnvVarUnset(string envVar) =>
             string.IsNullOrEmpty(Environment.GetEnvironmentVariable(envVar));
 
-        private static void EnsureDirectoryExists(string? path, string nature)
+        [return: NotNullIfNotNull("path")]
+        private static string? EnsureDirectoryExists(string? path, [CallerMemberName] string memberName = "")
         {
             if (path != null)
             {
@@ -210,9 +212,13 @@ namespace OpenTabletDriver.Desktop
                 if (!appDirectory.Exists)
                 {
                     appDirectory.Create();
-                    Log.Write("Settings", $"The {nature} directory '{appDirectory.FullName}' has been created");
+                    Log.Write("Settings", $"The directory '{appDirectory.FullName}' has been created ({memberName})");
                 }
+
+                return path;
             }
+
+            return null;
         }
     }
 }

@@ -155,14 +155,6 @@ namespace OpenTabletDriver.Daemon
 
         public Task LoadPlugins()
         {
-            var pluginDir = new DirectoryInfo(AppInfo.Current.PluginDirectory);
-
-            if (!pluginDir.Exists)
-            {
-                pluginDir.Create();
-                Log.Write("Plugin", $"The plugin directory '{pluginDir.FullName}' has been created");
-            }
-
             AppInfo.PluginManager.Load();
 
             // Add services to inject on plugin construction
