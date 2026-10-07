@@ -7,111 +7,132 @@ namespace OpenTabletDriver.Tests
     public class LargestRectTest
     {
         [Theory, MemberData(nameof(testData))]
-        public void TestGetLargestRectInRotatedRectRatioLocked(GetLargestRectInRotatedRectRatioLockedData data)
+        public void TestGetLargestRectInRotatedRectRatioLocked(GetLargestRectInRotatedRectData data)
         {
             Assert.Equal(
-                data.Result,
+                data.ResultLocked,
                 AbsoluteModeEditor.GetLargestRectInRotatedRectRatioLocked(data.RotatedRectDimensions, data.RotationAngleDegrees, data.AspectRatio)
             );
         }
 
-        public static TheoryData<GetLargestRectInRotatedRectRatioLockedData> testData =
+        [Theory, MemberData(nameof(testData))]
+        public void TestGetLargestRectInRotatedRect(GetLargestRectInRotatedRectData data)
+        {
+            Assert.Equal(
+                data.ResultUnlocked,
+                AbsoluteModeEditor.GetLargestRectInRotatedRect(data.RotatedRectDimensions, data.RotationAngleDegrees)
+            );
+        }
+        public static TheoryData<GetLargestRectInRotatedRectData> testData =
         [
-            new GetLargestRectInRotatedRectRatioLockedData
+            new GetLargestRectInRotatedRectData
             {
                 RotatedRectDimensions = new Vector2(299, 171),
                 RotationAngleDegrees = 15f,
                 AspectRatio = 16f / 9f,
-                Result = new Vector2(213.17647f, 119.911766f),
+                ResultLocked = new Vector2(213.17647f, 119.911766f),
+                ResultUnlocked = new Vector2(282.38635f, 101.36703f),
             },
-            new GetLargestRectInRotatedRectRatioLockedData
+            new GetLargestRectInRotatedRectData
             {
                 RotatedRectDimensions = new Vector2(299, 171),
                 RotationAngleDegrees = 90f,
                 AspectRatio = 16f / 9f,
-                Result = new Vector2(170.99995f, 96.18748f),
+                ResultLocked = new Vector2(170.99995f, 96.18748f),
+                ResultUnlocked = new Vector2(171f, 299f),
             },
-            new GetLargestRectInRotatedRectRatioLockedData
+            new GetLargestRectInRotatedRectData
             {
                 RotatedRectDimensions = new Vector2(299, 171),
                 RotationAngleDegrees = 0.1f,
                 AspectRatio = 16f / 9f,
-                Result = new Vector2(298.70718f, 168.0228f),
+                ResultLocked = new Vector2(298.70718f, 168.0228f),
+                ResultUnlocked = new Vector2(298.7029f, 170.47893f),
             },
             // ensure runaway infinities do not break
-            new GetLargestRectInRotatedRectRatioLockedData
+            new GetLargestRectInRotatedRectData
             {
                 RotatedRectDimensions = new Vector2(299, 171),
                 RotationAngleDegrees = 90f,
                 AspectRatio = 0.01f,
-                Result = new Vector2(2.99f, 299f),
+                ResultLocked = new Vector2(2.99f, 299f),
+                ResultUnlocked = new Vector2(171f, 299f),
             },
-            new GetLargestRectInRotatedRectRatioLockedData
+            new GetLargestRectInRotatedRectData
             {
                 RotatedRectDimensions = new Vector2(1, 1),
                 RotationAngleDegrees = 0f,
                 AspectRatio = 1f,
-                Result = new Vector2(0.9999998f, 0.9999998f),
+                ResultLocked = new Vector2(0.9999998f, 0.9999998f),
+                ResultUnlocked = new Vector2(1f, 1f),
             },
             // NaN return is kinda jank but just ensure it doesn't error
-            new GetLargestRectInRotatedRectRatioLockedData
+            new GetLargestRectInRotatedRectData
             {
                 RotatedRectDimensions = new Vector2(0, 0),
                 RotationAngleDegrees = 0f,
                 AspectRatio = 0f,
-                Result = new Vector2(0f, float.NaN),
+                ResultLocked = new Vector2(0f, float.NaN),
+                ResultUnlocked = new Vector2(0f, 0f),
             },
-            new GetLargestRectInRotatedRectRatioLockedData
+            new GetLargestRectInRotatedRectData
             {
                 RotatedRectDimensions = new Vector2(299, 171),
                 RotationAngleDegrees = 0f,
                 AspectRatio = 1000f,
-                Result = new Vector2(298.99997f, 0.29900026f),
+                ResultLocked = new Vector2(298.99997f, 0.29900026f),
+                ResultUnlocked = new Vector2(299f, 171f),
             },
-            new GetLargestRectInRotatedRectRatioLockedData
+            new GetLargestRectInRotatedRectData
             {
                 RotatedRectDimensions = new Vector2(299, 171),
                 RotationAngleDegrees = 99999999f,
                 AspectRatio = 9f / 16f,
-                Result = new Vector2(141.07127f, 250.79338f),
+                ResultLocked = new Vector2(141.07127f, 250.79338f),
+                ResultUnlocked = new Vector2(123.95683f, 281.7556f),
             },
-            new GetLargestRectInRotatedRectRatioLockedData
+            new GetLargestRectInRotatedRectData
             {
                 RotatedRectDimensions = new Vector2(100, 200),
                 RotationAngleDegrees = 0f,
                 AspectRatio = 0.5f,
-                Result = new Vector2(99.99996f, 199.99992f),
+                ResultLocked = new Vector2(99.99996f, 199.99992f),
+                ResultUnlocked = new Vector2(100f, 200f),
             },
-            new GetLargestRectInRotatedRectRatioLockedData
+            new GetLargestRectInRotatedRectData
             {
                 RotatedRectDimensions = new Vector2(100, 200),
                 RotationAngleDegrees = 90f,
                 AspectRatio = 0.5f,
-                Result = new Vector2(50f, 100f),
+                ResultLocked = new Vector2(50f, 100f),
+                ResultUnlocked = new Vector2(200f, 100f),
             },
-            new GetLargestRectInRotatedRectRatioLockedData
+            new GetLargestRectInRotatedRectData
             {
                 RotatedRectDimensions = new Vector2(100, 200),
                 RotationAngleDegrees = 90f,
                 AspectRatio = 2f,
-                Result = new Vector2(199.99998f, 99.99999f),
+                ResultLocked = new Vector2(199.99998f, 99.99999f),
+                ResultUnlocked = new Vector2(200f, 100f),
             },
-            new GetLargestRectInRotatedRectRatioLockedData
+            new GetLargestRectInRotatedRectData
             {
                 RotatedRectDimensions = new Vector2(200, 100),
                 RotationAngleDegrees = 0f,
                 AspectRatio = 2f,
-                Result = new Vector2(199.99998f, 99.99999f),
+                ResultLocked = new Vector2(199.99998f, 99.99999f),
+                ResultUnlocked = new Vector2(200f, 100f),
             },
-            new GetLargestRectInRotatedRectRatioLockedData
+            new GetLargestRectInRotatedRectData
             {
                 RotatedRectDimensions = new Vector2(103.002f, 100.01f),
                 RotationAngleDegrees = 45f,
                 AspectRatio = 1f,
-                Result = new Vector2(70.71775f, 70.71775f),
+                ResultLocked = new Vector2(70.71775f, 70.71775f),
+                ResultUnlocked = new Vector2(70.71775f, 70.71775f),
             },
         ];
 
-        public record struct GetLargestRectInRotatedRectRatioLockedData(Vector2 RotatedRectDimensions, float RotationAngleDegrees, float AspectRatio, Vector2 Result);
+        public record struct GetLargestRectInRotatedRectData(Vector2 RotatedRectDimensions, float RotationAngleDegrees, float AspectRatio, Vector2 ResultLocked, Vector2 ResultUnlocked);
     }
 }
