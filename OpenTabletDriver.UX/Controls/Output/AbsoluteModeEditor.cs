@@ -374,24 +374,24 @@ namespace OpenTabletDriver.UX.Controls.Output
             // Get intersection on X axis of ratio and side by setting them equal
             // x / mRatio = mVertical * x + bVerticalRight -> x = (bVerticalRight * mRatio) / (1 - mVertical * mRatio)
             // x / mRatio = mHorizontal * x + bHorizontalTop -> x = (bHorizontalTop * mRatio) / (1 - mHorizontal * mRatio)
-            double topIntersectionXPos = (bVerticalRight * mRatio) / (1 - mVertical * mRatio);
-            double rightIntersectionXPos = (bHorizontalTop * mRatio) / (1 - mHorizontal * mRatio);
-            double topIntersectionXNeg = (bVerticalRight * -mRatio) / (1 - mVertical * -mRatio);
-            double rightIntersectionXNeg = (bHorizontalTop * -mRatio) / (1 - mHorizontal * -mRatio);
+            double rightSideIntersectionXPos = (bVerticalRight * mRatio) / (1 - mVertical * mRatio);
+            double rightTopIntersectionXPos = (bHorizontalTop * mRatio) / (1 - mHorizontal * mRatio);
+            double rightBottomIntersectionXNeg = (bVerticalRight * -mRatio) / (1 - mVertical * -mRatio);
+            double leftTopIntersectionXNeg = (bHorizontalTop * -mRatio) / (1 - mHorizontal * -mRatio);
 
             // Solve for Y now that we have X
             // y = mx + b
             // y = mVertical * topIntersectionX + bVerticalRight
             // y = mHorizontal * rightIntersectionX + bHorizontalTop
-            double topIntersectionYPos = mVertical * topIntersectionXPos + bVerticalRight;
-            double rightIntersectionYPos = mHorizontal * rightIntersectionXPos + bHorizontalTop;
-            double topIntersectionYNeg = mVertical * topIntersectionXNeg + bVerticalRight;
-            double rightIntersectionYNeg = mHorizontal * rightIntersectionXNeg + bHorizontalTop;
+            double rightSideIntersectionYPos = mVertical * rightSideIntersectionXPos + bVerticalRight;
+            double rightTopIntersectionYPos = mHorizontal * rightTopIntersectionXPos + bHorizontalTop;
+            double rightBottomIntersectionYNeg = mVertical * rightBottomIntersectionXNeg + bVerticalRight;
+            double leftTopIntersectionYNeg = mHorizontal * leftTopIntersectionXNeg + bHorizontalTop;
 
-            var rightBottomPoint = new Vector2((float)Math.Abs(topIntersectionXNeg), (float)Math.Abs(topIntersectionYNeg));
-            var rightSidePoint = new Vector2((float)Math.Abs(topIntersectionXPos), (float)Math.Abs(topIntersectionYPos));
-            var leftTopPoint = new Vector2((float)Math.Abs(rightIntersectionXNeg), (float)Math.Abs(rightIntersectionYNeg));
-            var rightTopPoint = new Vector2((float)Math.Abs(rightIntersectionXPos), (float)Math.Abs(rightIntersectionYPos));
+            var rightBottomPoint = new Vector2((float)Math.Abs(rightBottomIntersectionXNeg), (float)Math.Abs(rightBottomIntersectionYNeg));
+            var rightSidePoint = new Vector2((float)Math.Abs(rightSideIntersectionXPos), (float)Math.Abs(rightSideIntersectionYPos));
+            var leftTopPoint = new Vector2((float)Math.Abs(leftTopIntersectionXNeg), (float)Math.Abs(leftTopIntersectionYNeg));
+            var rightTopPoint = new Vector2((float)Math.Abs(rightTopIntersectionXPos), (float)Math.Abs(rightTopIntersectionYPos));
 
             Vector2[] points = [rightBottomPoint, rightSidePoint, leftTopPoint, rightTopPoint];
             // Discard points that dont fit within the area
