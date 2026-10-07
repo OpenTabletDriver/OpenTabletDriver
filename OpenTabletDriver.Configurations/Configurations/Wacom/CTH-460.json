@@ -37,20 +37,16 @@
     {
       "VendorID": 1386,
       "ProductID": 209,
-      "InputReportLength": 20,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos.IntuosReportParser",
-      "FeatureInitReport": [
-        "AgI="
-      ]
-    },
-    {
-      "VendorID": 1386,
-      "ProductID": 209,
       "InputReportLength": 9,
+      "FeatureReportLength": 17,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos.IntuosReportParser",
       "FeatureInitReport": [
         "AgI="
-      ]
+      ],
+      "Attributes": {
+        "Interface": "0",
+        "WinUsage": "02"
+      }
     }
   ],
   "AuxiliaryDeviceIdentifiers": [
@@ -59,6 +55,16 @@
       "ProductID": 214,
       "InputReportLength": 20,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.BambooV2.BambooV2AuxReportParser"
+    },
+    {
+      "VendorID": 1386,
+      "ProductID": 209,
+      "InputReportLength": 20,
+      "FeatureReportLength": 0,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.BambooV2.BambooV2AuxReportParser",
+      "Attributes": {
+        "Interface": "1"
+      }
     },
     {
       "VendorID": 1386,
