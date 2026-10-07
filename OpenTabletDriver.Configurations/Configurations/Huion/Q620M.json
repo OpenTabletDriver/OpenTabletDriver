@@ -33,6 +33,18 @@
       "InitializationStrings": [
         200
       ]
+    },
+    {
+      "VendorID": 9580,
+      "ProductID": 100,
+      "InputReportLength": 12,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.GianoReportParser",
+      "DeviceStrings": {
+        "201": "HUION_T222_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
     }
   ],
   "Attributes": {
