@@ -10,7 +10,8 @@ namespace OpenTabletDriver.UX.Windows.Plugins
     {
         public PluginDropPanel()
         {
-            AllowDrop = true;
+            // TODO on Eto dependency bump: Check if Linux works
+            AllowDrop = !OperatingSystem.IsLinux();
 
             DropContent = new StackLayout
             {
