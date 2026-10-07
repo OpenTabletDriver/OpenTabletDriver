@@ -346,7 +346,8 @@ namespace OpenTabletDriver.UX.Controls.Output
         public static Vector2 GetLargestRectInRotatedRectRatioLocked(Vector2 rotatedRectDimensions, float rotationAngleDegrees, float aspectRatio)
         {
             var corners = new RectangleF(0, 0, rotatedRectDimensions.X, rotatedRectDimensions.Y).GetAreaCorners(rotationAngleDegrees);
-            var (topLeft, topRight, bottomLeft, bottomRight) = (corners.TopLeft, corners.TopRight, corners.BottomLeft, corners.BottomRight);
+            // flip the bottom and top corners to account for different coordinate system
+            var (bottomLeft, bottomRight, topLeft, topRight) = (corners.TopLeft, corners.TopRight, corners.BottomLeft, corners.BottomRight);
 
             // y = mx + b
 

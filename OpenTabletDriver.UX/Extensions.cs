@@ -145,10 +145,10 @@ namespace OpenTabletDriver.UX
 
             return new Corners
             {
-                TopLeft = Vector2.Transform(new Vector2(area.X - halfWidth, area.Y + halfHeight), matrix),
-                TopRight = Vector2.Transform(new Vector2(area.X + halfWidth, area.Y + halfHeight), matrix),
-                BottomLeft = Vector2.Transform(new Vector2(area.X - halfWidth, area.Y - halfHeight), matrix),
-                BottomRight = Vector2.Transform(new Vector2(area.X + halfWidth, area.Y - halfHeight), matrix),
+                TopLeft = Vector2.Transform(new Vector2(area.X - halfWidth, area.Y - halfHeight), matrix),
+                TopRight = Vector2.Transform(new Vector2(area.X + halfWidth, area.Y - halfHeight), matrix),
+                BottomLeft = Vector2.Transform(new Vector2(area.X - halfWidth, area.Y + halfHeight), matrix),
+                BottomRight = Vector2.Transform(new Vector2(area.X + halfWidth, area.Y + halfHeight), matrix),
             };
         }
 
