@@ -388,11 +388,12 @@ namespace OpenTabletDriver.UX.Controls.Output
 
             List<Vector2> points = [];
 
-            // Fix special cases when all points end up broken from 90 or 270 degree rotation and unrecoverable infinite slope
+            // Fix special cases when all points end up broken from 90 or 270 degree rotation and unrecoverable infinite slope (typically 0 or 360 degrees doesnt break but it adds unnecessary inaccuracies)
             // Infinity obviously doesnt work in the calculations and setting some really high number to approximate instead isn't ideal
             // This occurs when y = 0 or x = 0
-            // For example, at 90 or 270 degrees the right side will be a perfectly straight vertical line
-            // When `x = -b` (`x = 0m - b` or `0y = mx + b`) is converted to `y = mx + b` notation it equates to `y = ∞x + b`, instead lets use `y = 9999999x + b`
+            // For example, at 0, 90, 270, or 360 degrees the right or left sides will be a perfectly straight vertical line and the top or bottom sides will be a perfectly straight horizontal line
+            // When `x = -b` (`x = 0m - b` or `0y = mx + b`) is converted to `y = mx + b` notation it equates to `y = ∞x + b`
+            // When `y = b`, it equates to `y = 0x + b` also breaking calculations (sometimes the zero is computed to -0)
             if (Double.IsInfinity(mVertical) || Math.Abs(mVertical) == 0)
             {
                 // x = cornerPoint
@@ -416,10 +417,11 @@ namespace OpenTabletDriver.UX.Controls.Output
                 points.Add(leftTopPoint);
             }
 
-            // Get the closest point to the center (measured diagonally, pythagorean this thing) and put it in Vector3.Z, besides special cases of 90 and 270 this will the correct point to choose
+            // Get the closest point to the center (measured diagonally, pythagorean this thing) and put it in Vector3.Z
             var distances = points.Select(p => new Vector3(p.X, p.Y, p.X * p.X + p.Y * p.Y));
             var closest = distances.MinBy(p => p.Z);
 
+            // Optional rounding to make things cleaner, round at the 4th place whichever is closer to a whole number and relock the ratio of the other value
             Vector2 fullSize = new Vector2(closest.X * 2, closest.Y * 2);
             if (Math.Abs(fullSize.X - Math.Round(fullSize.X)) <= Math.Abs(fullSize.Y - Math.Round(fullSize.Y)))
             {
