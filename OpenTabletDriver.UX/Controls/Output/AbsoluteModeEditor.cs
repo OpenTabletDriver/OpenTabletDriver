@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
@@ -341,65 +342,99 @@ namespace OpenTabletDriver.UX.Controls.Output
         // Due to the aspect ratio being locked, there is a known slope to calculate the largest aspect ratio locked area from (x = ratio * y)
         // Both the negative and positive variants of this slope must be used
         // Then we find the intersections along the top and right side lines of the tablet area (bottom and left would also be equivalent)
-        // https://www.desmos.com/calculator/jueq5tuwv7
-        // https://www.desmos.com/calculator/fnszuodzlh
+        // https://www.desmos.com/calculator/hc53wxwpdc
+        // https://www.desmos.com/calculator/yyy1o4n094
         public static Vector2 GetLargestRectInRotatedRectRatioLocked(Vector2 rotatedRectDimensions, float rotationAngleDegrees, float aspectRatio)
         {
             var corners = new RectangleF(0, 0, rotatedRectDimensions.X, rotatedRectDimensions.Y).GetAreaCorners(rotationAngleDegrees);
-            var (topLeft, topRight, bottomLeft, bottomRight) = (corners.TopLeft, corners.TopRight, corners.BottomLeft, corners.BottomRight);
+            // flip the bottom and top corners to account for different coordinate system
+            var (bottomLeft, bottomRight, topLeft, topRight) = (corners.TopLeft, corners.TopRight, corners.BottomLeft, corners.BottomRight);
 
             // y = mx + b
 
             // m: slope
-            double mTopBottom = (topRight.Y - topLeft.Y) / (topRight.X - topLeft.X);
-            double mRightLeft = (topLeft.Y - bottomLeft.Y) / (topLeft.X - bottomLeft.X);
-
-            // Infinity obviously doesnt work in the calculations, set some really high number to approximate instead
-            // This occurs when y = 0
-            // For example, at 90 or 270 degrees the right side will be a perfectly straight vertical line
-            // When `x = -b` (`x = 0m - b` or `0y = mx + b`) is converted to `y = mx + b` notation it equates to `y = ∞x + b`, instead lets use `y = 9999999x + b`
-            if (Double.IsInfinity(mTopBottom) || Math.Abs(mTopBottom) == 0)
-                mTopBottom = 9999999;
-            if (Double.IsInfinity(mRightLeft) || Math.Abs(mRightLeft) == 0)
-                mRightLeft = 9999999;
+            double mVertical = (topRight.Y - topLeft.Y) / (topRight.X - topLeft.X);
+            double mHorizontal = (topLeft.Y - bottomLeft.Y) / (topLeft.X - bottomLeft.X);
 
             // Aspect ratio slope is reversed from what we want: x = mRatio * y
             // Later it must become: y = x / mRatio
             double mRatio = aspectRatio;
 
-            // b: x intercept
-            double bTop = topRight.Y - mTopBottom * topRight.X;
-            double bRight = topRight.Y - mRightLeft * topRight.X;
+            // b: y intercept
+            double bVerticalRight = topRight.Y - mVertical * topRight.X;
+            double bHorizontalTop = topLeft.Y - mHorizontal * topLeft.X;
 
             // Get intersection on X axis of ratio and side by setting them equal
-            // x / mRatio = mTopBottom * x + bTop -> x = (bTop * mRatio) / (1 - mTopBottom * mRatio)
-            // x / mRatio = mRightLeft * x + bRight -> x = (bRight * mRatio) / (1 - mRightLeft * mRatio)
-            double topIntersectionXPos = (bTop * mRatio) / (1 - mTopBottom * mRatio);
-            double rightIntersectionXPos = (bRight * mRatio) / (1 - mRightLeft * mRatio);
-            double topIntersectionXNeg = (bTop * -mRatio) / (1 - mTopBottom * -mRatio);
-            double rightIntersectionXNeg = (bRight * -mRatio) / (1 - mRightLeft * -mRatio);
+            // x / mRatio = mVertical * x + bVerticalRight -> x = (bVerticalRight * mRatio) / (1 - mVertical * mRatio)
+            // x / mRatio = mHorizontal * x + bHorizontalTop -> x = (bHorizontalTop * mRatio) / (1 - mHorizontal * mRatio)
+            double rightSideIntersectionXPos = (bVerticalRight * mRatio) / (1 - mVertical * mRatio);
+            double rightBottomIntersectionXNeg = (bVerticalRight * -mRatio) / (1 - mVertical * -mRatio);
+            double rightTopIntersectionXPos = (bHorizontalTop * mRatio) / (1 - mHorizontal * mRatio);
+            double leftTopIntersectionXNeg = (bHorizontalTop * -mRatio) / (1 - mHorizontal * -mRatio);
 
             // Solve for Y now that we have X
             // y = mx + b
-            // y = mTopBottom * topIntersectionX + bTop
-            // y = mRightLeft * rightIntersectionX + bRight
-            double topIntersectionYPos = mTopBottom * topIntersectionXPos + bTop;
-            double rightIntersectionYPos = mRightLeft * rightIntersectionXPos + bRight;
-            double topIntersectionYNeg = mTopBottom * topIntersectionXNeg + bTop;
-            // double rightIntersectionYNeg = mRightLeft * rightIntersectionXNeg + bRight;
+            // y = mVertical * topIntersectionX + bVerticalRight
+            // y = mHorizontal * rightIntersectionX + bHorizontalTop
+            double rightSideIntersectionYPos = mVertical * rightSideIntersectionXPos + bVerticalRight;
+            double rightBottomIntersectionYNeg = mVertical * rightBottomIntersectionXNeg + bVerticalRight;
+            double rightTopIntersectionYPos = mHorizontal * rightTopIntersectionXPos + bHorizontalTop;
+            double leftTopIntersectionYNeg = mHorizontal * leftTopIntersectionXNeg + bHorizontalTop;
 
-            var leftTopPoint = new Vector2((float)Math.Abs(topIntersectionXNeg), (float)Math.Abs(topIntersectionYNeg));
-            var rightTopPoint = new Vector2((float)Math.Abs(topIntersectionXPos), (float)Math.Abs(topIntersectionYPos));
-            // leftSidePoint is redundant, only three points are necessary
-            var rightSidePoint = new Vector2((float)Math.Abs(rightIntersectionXPos), (float)Math.Abs(rightIntersectionYPos));
+            var rightSidePoint = new Vector2((float)Math.Abs(rightSideIntersectionXPos), (float)Math.Abs(rightSideIntersectionYPos));
+            var rightBottomPoint = new Vector2((float)Math.Abs(rightBottomIntersectionXNeg), (float)Math.Abs(rightBottomIntersectionYNeg));
+            var rightTopPoint = new Vector2((float)Math.Abs(rightTopIntersectionXPos), (float)Math.Abs(rightTopIntersectionYPos));
+            var leftTopPoint = new Vector2((float)Math.Abs(leftTopIntersectionXNeg), (float)Math.Abs(leftTopIntersectionYNeg));
 
-            Vector2[] points = [leftTopPoint, rightTopPoint, rightSidePoint];
-            // Discard points that dont fit within the area
-            // Get the closest point to the center (measured diagonally, pythagorean this thing) and put it in Vector3.Z, besides special cases of 90 and 270 this will the correct point to choose
-            var distances = points.Where(p => aspectRatio <= 1 ? p.Y <= rotatedRectDimensions.X && p.X <= rotatedRectDimensions.Y : p.X <= rotatedRectDimensions.X && p.Y <= rotatedRectDimensions.Y).Select(p => new Vector3(p.X, p.Y, p.X * p.X + p.Y * p.Y));
+            List<Vector2> points = [];
 
+            // Fix special cases when all points end up broken from 90 or 270 degree rotation and unrecoverable infinite slope (typically 0 or 360 degrees doesnt break but it adds unnecessary inaccuracies)
+            // Infinity obviously doesnt work in the calculations and setting some really high number to approximate instead isn't ideal
+            // This occurs when y = 0 or x = 0
+            // For example, at 0, 90, 270, or 360 degrees the right or left sides will be a perfectly straight vertical line and the top or bottom sides will be a perfectly straight horizontal line
+            // When `x = -b` (`x = 0m - b` or `0y = mx + b`) is converted to `y = mx + b` notation it equates to `y = ∞x + b`
+            // When `y = b`, it equates to `y = 0x + b` also breaking calculations (sometimes the zero is computed to -0)
+            if (Double.IsInfinity(mVertical) || Math.Abs(mVertical) == 0)
+            {
+                // x = cornerPoint
+                // y = x * mRatio
+                points.Add(new Vector2(Math.Abs(topRight.X), (float)Math.Abs(topRight.X / mRatio)));
+            }
+            else
+            {
+                points.Add(rightSidePoint);
+                points.Add(rightBottomPoint);
+            }
+            if (Double.IsInfinity(mHorizontal) || Math.Abs(mHorizontal) == 0)
+            {
+                // x = y * mRatio
+                // y = cornerPoint
+                points.Add(new Vector2((float)Math.Abs(topRight.Y * mRatio), Math.Abs(topRight.Y)));
+            }
+            else
+            {
+                points.Add(rightTopPoint);
+                points.Add(leftTopPoint);
+            }
+
+            // Get the closest point to the center (measured diagonally, pythagorean this thing) and put it in Vector3.Z
+            var distances = points.Select(p => new Vector3(p.X, p.Y, p.X * p.X + p.Y * p.Y));
             var closest = distances.MinBy(p => p.Z);
-            return new Vector2(closest.X * 2, closest.Y * 2);
+
+            // Optional rounding to make things cleaner, round at the 4th place whichever is closer to a whole number and relock the ratio of the other value
+            Vector2 fullSize = new Vector2(closest.X * 2, closest.Y * 2);
+            if (Math.Abs(fullSize.X - Math.Round(fullSize.X)) <= Math.Abs(fullSize.Y - Math.Round(fullSize.Y)))
+            {
+                fullSize.X = MathF.Round(fullSize.X, 4);
+                fullSize.Y = fullSize.X / aspectRatio;
+            }
+            else
+            {
+                fullSize.Y = MathF.Round(fullSize.Y, 4);
+                fullSize.X = fullSize.Y * aspectRatio;
+            }
+
+            return fullSize;
         }
     }
 }

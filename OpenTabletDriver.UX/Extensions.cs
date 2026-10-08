@@ -129,6 +129,9 @@ namespace OpenTabletDriver.UX
                     ? string.Concat(Enumerable.Repeat(text, repeats))
                     : text);
 
+        /// <summary>
+        /// Returns the corners of a rotated <see cref="RectangleF"/>. Corner names are assigned before the rotation transform and may not be accurate in absolute terms.
+        /// </summary>
         [Pure]
         public static Corners GetAreaCorners(this RectangleF area, float rotation)
         {
@@ -142,10 +145,10 @@ namespace OpenTabletDriver.UX
 
             return new Corners
             {
-                TopLeft = Vector2.Transform(new Vector2(area.X - halfWidth, area.Y + halfHeight), matrix),
-                TopRight = Vector2.Transform(new Vector2(area.X + halfWidth, area.Y + halfHeight), matrix),
-                BottomLeft = Vector2.Transform(new Vector2(area.X - halfWidth, area.Y - halfHeight), matrix),
-                BottomRight = Vector2.Transform(new Vector2(area.X + halfWidth, area.Y - halfHeight), matrix),
+                TopLeft = Vector2.Transform(new Vector2(area.X - halfWidth, area.Y - halfHeight), matrix),
+                TopRight = Vector2.Transform(new Vector2(area.X + halfWidth, area.Y - halfHeight), matrix),
+                BottomLeft = Vector2.Transform(new Vector2(area.X - halfWidth, area.Y + halfHeight), matrix),
+                BottomRight = Vector2.Transform(new Vector2(area.X + halfWidth, area.Y + halfHeight), matrix),
             };
         }
 
