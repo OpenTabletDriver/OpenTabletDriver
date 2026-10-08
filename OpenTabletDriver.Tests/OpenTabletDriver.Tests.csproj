@@ -32,4 +32,8 @@
     <ProjectReference Include="..\OpenTabletDriver.UX\OpenTabletDriver.UX.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="TabletMatching\SingleTabletIdentifiers\" />
+  </ItemGroup>
+
 </Project>
