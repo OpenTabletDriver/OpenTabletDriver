@@ -2,6 +2,8 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading;
+using OpenTabletDriver.Interop;
+using OpenTabletDriver.Native.OSX;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Devices;
 using OpenTabletDriver.Plugin.Tablet;
@@ -103,6 +105,9 @@ namespace OpenTabletDriver.Devices
 
         protected void Main()
         {
+            if (SystemInterop.CurrentPlatform == PluginPlatform.MacOS)
+                SetMacOSRealtimePolicy();
+
             byte[]? data = null;
             try
             {
@@ -154,6 +159,19 @@ namespace OpenTabletDriver.Devices
             {
                 Connected = false;
             }
+        }
+
+        // Under CPU load the default policy delays this thread by up to ~100 ms, so reports arrive in bursts.
+        // HidSharpEndpoint.Open() gives HidSharp's reader thread the same policy.
+        private static void SetMacOSRealtimePolicy()
+        {
+            var result = Mach.SetCurrentThreadTimeConstraint(
+                period: TimeSpan.Zero,
+                computation: TimeSpan.FromMilliseconds(1),
+                constraint: TimeSpan.FromMilliseconds(2)
+            );
+            if (result != 0)
+                Log.Write("Device", $"Failed to set real-time thread policy: kern_return {result}", LogLevel.Warning);
         }
 
         protected virtual void OnReport(T report) => Report?.Invoke(this, report);
