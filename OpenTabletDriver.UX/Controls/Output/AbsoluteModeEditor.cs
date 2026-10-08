@@ -418,9 +418,21 @@ namespace OpenTabletDriver.UX.Controls.Output
 
             // Get the closest point to the center (measured diagonally, pythagorean this thing) and put it in Vector3.Z, besides special cases of 90 and 270 this will the correct point to choose
             var distances = points.Select(p => new Vector3(p.X, p.Y, p.X * p.X + p.Y * p.Y));
-
             var closest = distances.MinBy(p => p.Z);
-            return new Vector2(closest.X * 2, closest.Y * 2);
+
+            Vector2 fullSize = new Vector2(closest.X * 2, closest.Y * 2);
+            if (Math.Abs(fullSize.X - Math.Round(fullSize.X)) <= Math.Abs(fullSize.Y - Math.Round(fullSize.Y)))
+            {
+                fullSize.X = MathF.Round(fullSize.X, 4);
+                fullSize.Y = fullSize.X / aspectRatio;
+            }
+            else
+            {
+                fullSize.Y = MathF.Round(fullSize.Y, 4);
+                fullSize.X = fullSize.Y * aspectRatio;
+            }
+
+            return fullSize;
         }
     }
 }
