@@ -25,12 +25,12 @@ namespace OpenTabletDriver.Tests.TabletMatching
         {
             var foundNames = new List<string>();
 
+            var endpoints =
+                tabletIdentifier.DeviceIdentifiers.Select(IDeviceEndpoint (x) =>
+                    new MockedDeviceEndpoint(x, tabletIdentifier.DeviceStrings)).ToArray();
+
             foreach (var tabletConfig in DeviceConfigurationProvider.TabletConfigurations)
             {
-                var endpoints =
-                    tabletIdentifier.DeviceIdentifiers.Select(IDeviceEndpoint (x) =>
-                        new MockedDeviceEndpoint(x, tabletIdentifier.DeviceStrings));
-
                 // aux untested, unsure if that's a problem
                 var identifiers =
                     Driver.MatchDevice(tabletConfig, tabletConfig.DigitizerIdentifiers, endpoints, null);
