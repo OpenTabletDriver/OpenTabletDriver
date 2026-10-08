@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
@@ -355,15 +356,6 @@ namespace OpenTabletDriver.UX.Controls.Output
             double mVertical = (topRight.Y - topLeft.Y) / (topRight.X - topLeft.X);
             double mHorizontal = (topLeft.Y - bottomLeft.Y) / (topLeft.X - bottomLeft.X);
 
-            // Infinity obviously doesnt work in the calculations, set some really high number to approximate instead
-            // This occurs when y = 0
-            // For example, at 90 or 270 degrees the right side will be a perfectly straight vertical line
-            // When `x = -b` (`x = 0m - b` or `0y = mx + b`) is converted to `y = mx + b` notation it equates to `y = ∞x + b`, instead lets use `y = 9999999x + b`
-            if (Double.IsInfinity(mVertical) || Math.Abs(mVertical) == 0)
-                mVertical = 9999999;
-            if (Double.IsInfinity(mHorizontal) || Math.Abs(mHorizontal) == 0)
-                mHorizontal = 9999999;
-
             // Aspect ratio slope is reversed from what we want: x = mRatio * y
             // Later it must become: y = x / mRatio
             double mRatio = aspectRatio;
@@ -376,8 +368,8 @@ namespace OpenTabletDriver.UX.Controls.Output
             // x / mRatio = mVertical * x + bVerticalRight -> x = (bVerticalRight * mRatio) / (1 - mVertical * mRatio)
             // x / mRatio = mHorizontal * x + bHorizontalTop -> x = (bHorizontalTop * mRatio) / (1 - mHorizontal * mRatio)
             double rightSideIntersectionXPos = (bVerticalRight * mRatio) / (1 - mVertical * mRatio);
-            double rightTopIntersectionXPos = (bHorizontalTop * mRatio) / (1 - mHorizontal * mRatio);
             double rightBottomIntersectionXNeg = (bVerticalRight * -mRatio) / (1 - mVertical * -mRatio);
+            double rightTopIntersectionXPos = (bHorizontalTop * mRatio) / (1 - mHorizontal * mRatio);
             double leftTopIntersectionXNeg = (bHorizontalTop * -mRatio) / (1 - mHorizontal * -mRatio);
 
             // Solve for Y now that we have X
@@ -385,35 +377,47 @@ namespace OpenTabletDriver.UX.Controls.Output
             // y = mVertical * topIntersectionX + bVerticalRight
             // y = mHorizontal * rightIntersectionX + bHorizontalTop
             double rightSideIntersectionYPos = mVertical * rightSideIntersectionXPos + bVerticalRight;
-            double rightTopIntersectionYPos = mHorizontal * rightTopIntersectionXPos + bHorizontalTop;
             double rightBottomIntersectionYNeg = mVertical * rightBottomIntersectionXNeg + bVerticalRight;
+            double rightTopIntersectionYPos = mHorizontal * rightTopIntersectionXPos + bHorizontalTop;
             double leftTopIntersectionYNeg = mHorizontal * leftTopIntersectionXNeg + bHorizontalTop;
 
-            var rightBottomPoint = new Vector2((float)Math.Abs(rightBottomIntersectionXNeg), (float)Math.Abs(rightBottomIntersectionYNeg));
             var rightSidePoint = new Vector2((float)Math.Abs(rightSideIntersectionXPos), (float)Math.Abs(rightSideIntersectionYPos));
-            var leftTopPoint = new Vector2((float)Math.Abs(leftTopIntersectionXNeg), (float)Math.Abs(leftTopIntersectionYNeg));
+            var rightBottomPoint = new Vector2((float)Math.Abs(rightBottomIntersectionXNeg), (float)Math.Abs(rightBottomIntersectionYNeg));
             var rightTopPoint = new Vector2((float)Math.Abs(rightTopIntersectionXPos), (float)Math.Abs(rightTopIntersectionYPos));
+            var leftTopPoint = new Vector2((float)Math.Abs(leftTopIntersectionXNeg), (float)Math.Abs(leftTopIntersectionYNeg));
 
-            Vector2[] points = [rightBottomPoint, rightSidePoint, leftTopPoint, rightTopPoint];
-            // Discard points that dont fit within the area
-            var filteredPoints = points.Where(p => aspectRatio <= 1 ? p.Y <= rotatedRectDimensions.X && p.X <= rotatedRectDimensions.Y : p.X <= rotatedRectDimensions.X && p.Y <= rotatedRectDimensions.Y);
+            List<Vector2> points = [];
 
-            // Fix special case when all points end up broken from 90 or 270 degree rotation and unrecoverable infinite slope
-            if (filteredPoints.Count() == 0)
+            // Fix special cases when all points end up broken from 90 or 270 degree rotation and unrecoverable infinite slope
+            // Infinity obviously doesnt work in the calculations and setting some really high number to approximate instead isn't ideal
+            // This occurs when y = 0 or x = 0
+            // For example, at 90 or 270 degrees the right side will be a perfectly straight vertical line
+            // When `x = -b` (`x = 0m - b` or `0y = mx + b`) is converted to `y = mx + b` notation it equates to `y = ∞x + b`, instead lets use `y = 9999999x + b`
+            if (Double.IsInfinity(mVertical) || Math.Abs(mVertical) == 0)
             {
-                Vector2[] specialPoints = [
-                    // x = cornerPoint
-                    // y = x * mRatio
-                    new Vector2(Math.Abs(topRight.X), (float)Math.Abs(topRight.X / mRatio)),
-                    // x = y * mRatio
-                    // y = cornerPoint
-                    new Vector2((float)Math.Abs(topRight.Y * mRatio), Math.Abs(topRight.Y)),
-                ];
-                filteredPoints = specialPoints;
+                // x = cornerPoint
+                // y = x * mRatio
+                points.Add(new Vector2(Math.Abs(topRight.X), (float)Math.Abs(topRight.X / mRatio)));
+            }
+            else
+            {
+                points.Add(rightSidePoint);
+                points.Add(rightBottomPoint);
+            }
+            if (Double.IsInfinity(mHorizontal) || Math.Abs(mHorizontal) == 0)
+            {
+                // x = y * mRatio
+                // y = cornerPoint
+                points.Add(new Vector2((float)Math.Abs(topRight.Y * mRatio), Math.Abs(topRight.Y)));
+            }
+            else
+            {
+                points.Add(rightTopPoint);
+                points.Add(leftTopPoint);
             }
 
             // Get the closest point to the center (measured diagonally, pythagorean this thing) and put it in Vector3.Z, besides special cases of 90 and 270 this will the correct point to choose
-            var distances = filteredPoints.Select(p => new Vector3(p.X, p.Y, p.X * p.X + p.Y * p.Y));
+            var distances = points.Select(p => new Vector3(p.X, p.Y, p.X * p.X + p.Y * p.Y));
 
             var closest = distances.MinBy(p => p.Z);
             return new Vector2(closest.X * 2, closest.Y * 2);
