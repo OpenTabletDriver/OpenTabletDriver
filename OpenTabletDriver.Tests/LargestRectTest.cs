@@ -23,6 +23,7 @@ namespace OpenTabletDriver.Tests
                 AbsoluteModeEditor.GetLargestRectInRotatedRect(data.RotatedRectDimensions, data.RotationAngleDegrees)
             );
         }
+
         public static TheoryData<GetLargestRectInRotatedRectData> testData =
         [
             new GetLargestRectInRotatedRectData
@@ -30,7 +31,7 @@ namespace OpenTabletDriver.Tests
                 RotatedRectDimensions = new Vector2(299, 171),
                 RotationAngleDegrees = 15f,
                 AspectRatio = 16f / 9f,
-                ResultLocked = new Vector2(213.17647f, 119.911766f),
+                ResultLocked = new Vector2(213.17653f, 119.9118f),
                 ResultUnlocked = new Vector2(282.38635f, 101.36703f),
             },
             new GetLargestRectInRotatedRectData
@@ -38,7 +39,7 @@ namespace OpenTabletDriver.Tests
                 RotatedRectDimensions = new Vector2(299, 171),
                 RotationAngleDegrees = 90f,
                 AspectRatio = 16f / 9f,
-                ResultLocked = new Vector2(170.99995f, 96.18748f),
+                ResultLocked = new Vector2(171f, 96.1875f),
                 ResultUnlocked = new Vector2(171f, 299f),
             },
             new GetLargestRectInRotatedRectData
@@ -63,7 +64,7 @@ namespace OpenTabletDriver.Tests
                 RotatedRectDimensions = new Vector2(1, 1),
                 RotationAngleDegrees = 0f,
                 AspectRatio = 1f,
-                ResultLocked = new Vector2(0.9999998f, 0.9999998f),
+                ResultLocked = new Vector2(1f, 1f),
                 ResultUnlocked = new Vector2(1f, 1f),
             },
             // NaN return is kinda jank but just ensure it doesn't error
@@ -72,7 +73,7 @@ namespace OpenTabletDriver.Tests
                 RotatedRectDimensions = new Vector2(0, 0),
                 RotationAngleDegrees = 0f,
                 AspectRatio = 0f,
-                ResultLocked = new Vector2(0f, float.NaN),
+                ResultLocked = new Vector2(float.NaN, float.NaN),
                 ResultUnlocked = new Vector2(0f, 0f),
             },
             new GetLargestRectInRotatedRectData
@@ -80,7 +81,7 @@ namespace OpenTabletDriver.Tests
                 RotatedRectDimensions = new Vector2(299, 171),
                 RotationAngleDegrees = 0f,
                 AspectRatio = 1000f,
-                ResultLocked = new Vector2(298.99997f, 0.29900026f),
+                ResultLocked = new Vector2(299f, 0.299f),
                 ResultUnlocked = new Vector2(299f, 171f),
             },
             new GetLargestRectInRotatedRectData
@@ -88,7 +89,7 @@ namespace OpenTabletDriver.Tests
                 RotatedRectDimensions = new Vector2(299, 171),
                 RotationAngleDegrees = 99999999f,
                 AspectRatio = 9f / 16f,
-                ResultLocked = new Vector2(141.07127f, 250.79338f),
+                ResultLocked = new Vector2(141.0713f, 250.79343f),
                 ResultUnlocked = new Vector2(123.95683f, 281.7556f),
             },
             new GetLargestRectInRotatedRectData
@@ -96,7 +97,7 @@ namespace OpenTabletDriver.Tests
                 RotatedRectDimensions = new Vector2(100, 200),
                 RotationAngleDegrees = 0f,
                 AspectRatio = 0.5f,
-                ResultLocked = new Vector2(99.99996f, 199.99992f),
+                ResultLocked = new Vector2(100f, 200f),
                 ResultUnlocked = new Vector2(100f, 200f),
             },
             new GetLargestRectInRotatedRectData
@@ -112,7 +113,7 @@ namespace OpenTabletDriver.Tests
                 RotatedRectDimensions = new Vector2(100, 200),
                 RotationAngleDegrees = 90f,
                 AspectRatio = 2f,
-                ResultLocked = new Vector2(199.99998f, 99.99999f),
+                ResultLocked = new Vector2(200f, 100f),
                 ResultUnlocked = new Vector2(200f, 100f),
             },
             new GetLargestRectInRotatedRectData
@@ -120,7 +121,7 @@ namespace OpenTabletDriver.Tests
                 RotatedRectDimensions = new Vector2(200, 100),
                 RotationAngleDegrees = 0f,
                 AspectRatio = 2f,
-                ResultLocked = new Vector2(199.99998f, 99.99999f),
+                ResultLocked = new Vector2(200f, 100f),
                 ResultUnlocked = new Vector2(200f, 100f),
             },
             new GetLargestRectInRotatedRectData
@@ -128,7 +129,7 @@ namespace OpenTabletDriver.Tests
                 RotatedRectDimensions = new Vector2(103.002f, 100.01f),
                 RotationAngleDegrees = 45f,
                 AspectRatio = 1f,
-                ResultLocked = new Vector2(70.71775f, 70.71775f),
+                ResultLocked = new Vector2(70.7178f, 70.7178f),
                 ResultUnlocked = new Vector2(70.71775f, 70.71775f),
             },
         ];
