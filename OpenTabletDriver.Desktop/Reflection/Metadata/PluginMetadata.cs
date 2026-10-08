@@ -1,10 +1,10 @@
 using System;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop.Compression;
+using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Desktop.Reflection.Metadata
 {
@@ -104,20 +104,7 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
         [JsonProperty(nameof(LicenseIdentifier))]
         public string? LicenseIdentifier { set; get; }
 
-        public static string GetSHA256(Stream stream)
-        {
-            using (var sha256 = System.Security.Cryptography.SHA256.Create())
-            {
-                var hashData = sha256.ComputeHash(stream);
-                stream.Position = 0;
-                return string.Concat(hashData.Select(b => b.ToString("x2")));
-            }
-        }
-
-        public bool VerifySHA256(Stream stream)
-        {
-            return GetSHA256(stream) == SHA256;
-        }
+        public bool VerifySHA256(Stream stream) => !string.IsNullOrEmpty(SHA256) && stream.VerifySHA256(SHA256, out _);
 
         public async Task<Stream> GetDownloadStream()
         {

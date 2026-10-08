@@ -1,19 +1,17 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
+using OpenTabletDriver.Plugin;
 using static System.Console;
 
 namespace OpenTabletDriver.Console
 {
     partial class Program
     {
-        static SHA256 sha256 = SHA256.Create();
-
         static async Task<Settings> GetSettings()
         {
             if (!await EnsureDaemonReady())
@@ -87,12 +85,7 @@ namespace OpenTabletDriver.Console
             }
         }
 
-        static string GetSHA256(string path)
-        {
-            var data = File.ReadAllBytes(path);
-            var hash = sha256.ComputeHash(data);
-            return string.Join(null, hash.Select(b => b.ToString("X")));
-        }
+        static string GetSHA256(string path) => File.OpenRead(path).GetSHA256().PrintHex();
 
         static void AppendPluginStoreSettingsCollectionByPaths<T>(PluginSettingStoreCollection pssc, params string[] paths) where T : class
         {

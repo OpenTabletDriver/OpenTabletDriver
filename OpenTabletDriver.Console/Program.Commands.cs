@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop;
@@ -504,7 +503,6 @@ namespace OpenTabletDriver.Console
                 var settings = await GetSettings();
                 var tempDir = Environment.GetEnvironmentVariable("TEMP") ?? AppInfo.Current.TemporaryDirectory;
                 var tempFile = $"OpenTabletDriver-{Guid.NewGuid()}.json";
-                var sha256 = SHA256.Create();
 
                 var path = Path.Join(tempDir, tempFile);
                 var cmd = $"{editor} {path}";

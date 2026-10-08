@@ -98,10 +98,7 @@ namespace OpenTabletDriver.UX.Windows
                 // don't include manufacturer if it's already in the product name (e.g. Razer)
                 string name = x.ProductName ?? x.FriendlyName ?? "null";
                 string manufacturer = x.Manufacturer ?? "null";
-                string title = name.Contains(manufacturer) ? name : $"{manufacturer} {name}";
-
-                if (title.Length >= 32) // truncate if too long, used in GUI
-                    title = title[..29] + "...";
+                string title = (name.Contains(manufacturer) ? name : $"{manufacturer} {name}").Elide(32);
 
                 // hex value preferable (but not consistent.. yet?)
                 return $"[0x{x.VendorID:x4} 0x{x.ProductID:x4}]{Environment.NewLine}{title}";

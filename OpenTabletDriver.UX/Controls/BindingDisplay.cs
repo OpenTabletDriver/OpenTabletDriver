@@ -2,6 +2,7 @@ using System;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Reflection;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.UX.Windows.Bindings;
 
 namespace OpenTabletDriver.UX.Controls
@@ -33,7 +34,7 @@ namespace OpenTabletDriver.UX.Controls
                 }
             };
 
-            mainButton.TextBinding.Bind(this.StoreBinding.Convert<string?>(s => s?.GetElidedHumanReadableString(100)));
+            mainButton.TextBinding.Bind(this.StoreBinding.Convert<string?>(s => s?.GetHumanReadableString().Elide(100)));
 
             mainButton.Click += async (sender, e) =>
             {
