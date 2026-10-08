@@ -138,6 +138,7 @@
 | Wacom DTC-121                      |     Supported     |
 | Wacom DTC-133                      |     Supported     |
 | Wacom Cintiq 16 (DTK-1660)         |     Supported     |
+| Wacom Cintiq 24HD (DTK-2400)       |     Supported     |
 | Wacom ET-0405-U                    |     Supported     |
 | Wacom ET-0405A-U                   |     Supported     |
 | Wacom FT-0405-U                    |     Supported     |
