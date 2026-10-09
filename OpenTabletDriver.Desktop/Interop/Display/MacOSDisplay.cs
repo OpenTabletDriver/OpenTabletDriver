@@ -34,7 +34,7 @@ namespace OpenTabletDriver.Desktop.Interop.Display
 
         public Vector2 Position => new Vector2(0, 0);
 
-        public IEnumerable<IDisplay> Displays => _displays.Value;
+        public IEnumerable<IDisplay> Displays => new IDisplay[] { this }.Concat(_displays.Value);
 
         public int Index => 0;
 
