@@ -1,0 +1,39 @@
+{
+  "Name": "XP-Pen Artist 12 (3rd Gen)",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 264.00,
+      "Height": 149.00,
+      "MaxX": 52694,
+      "MaxY": 29697
+    },
+    "Pen": {
+      "MaxPressure": 16383,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 8
+    },
+    "Wheel": {
+      "StepCount": 24,
+      "IsRelative": true,
+      "AngleOfZeroReading": 0.0,
+      "Buttons": {
+        "ButtonCount": 0
+      }
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 10429,
+      "ProductID": 2429,
+      "InputReportLength": 14,
+      "OutputReportLength": 14,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenGen2ReportParser",
+      "OutputInitReport": ["ArAE"]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
