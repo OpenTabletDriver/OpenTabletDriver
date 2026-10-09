@@ -247,6 +247,7 @@
 | Huion osu! Tablet                  |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0. Uses the same configuration as the Huion 420.
 | Huion Q630M                        |    Has Quirks     | Aux buttons are not in order.
 | Huion WH1409 V2 (Variant 2)        |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
+| iskn Slate                         |  Missing Features | No pressure (hardware reports tip contact only). Buttons report on release: aux 1-2 are taps, 3-4 long presses, 5 both held (also makes the tablet recalibrate itself, keep it unbound).
 | KENTING K5540                      |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
 | Monoprice 10594                    |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | Monoprice 21826                    |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
