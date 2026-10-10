@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Eto.Forms;
 using MonoMac.AppKit;
+using MonoMac.ObjCRuntime;
 
 namespace OpenTabletDriver.UX.MacOS;
 
@@ -17,7 +18,7 @@ internal class FormHandler : Eto.Mac.Forms.FormHandler
 
     public override void Show()
     {
-        NSApplication.SharedApplication.ActivateIgnoringOtherApps(true);
+        Activate();
         base.Show();
     }
 
@@ -30,13 +31,21 @@ internal class FormHandler : Eto.Mac.Forms.FormHandler
         set
         {
             if (value)
-                NSApplication.SharedApplication.ActivateIgnoringOtherApps(true);
+                Activate();
 
             base.Visible = value;
         }
     }
 
-    private void UpdateActivationPolicy(object sender, EventArgs e)
+    private static void Activate()
+    {
+        if (Environment.OSVersion.Version < new Version(10, 14))
+            NSApplication.SharedApplication.ActivateIgnoringOtherApps(true);
+        else
+            NSApplication.SharedApplication.PerformSelector(new Selector("activate"), NSApplication.SharedApplication, 0);
+    }
+
+    private static void UpdateActivationPolicy(object sender, EventArgs e)
     {
         var hasNonMinimizedVisibleWindow =
             Application.Instance.Windows.Any(window => window.Visible && window.WindowState != WindowState.Minimized);
