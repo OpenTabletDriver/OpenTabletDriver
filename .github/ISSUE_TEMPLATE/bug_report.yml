@@ -46,25 +46,36 @@ body:
     validations:
       required: true
 
-  - type: textarea
+  - type: upload
     id: diagnostics
     attributes:
-      label: Diagnostic Information
+      label: Upload Diagnostic Information
       description: |
         Export diagnostics through the OpenTabletDriver GUI from menu <kbd>Help</kbd> → <kbd>Export Diagnostics</kbd>.
-        Then, in the text area below, It is much preferred that you attach the file, but you can also or paste its contents\*.
+        Then, in the box below, attach the file. You can also use <kbd>Export Diagnostics to Clipboard</kbd> and save it to a file manually.
 
         **If you are not able to export diagnostics** for some reason (i.e., crashes), then retrieve logs for your platform following
-        [these](https://opentabletdriver.net/Wiki/Documentation/Logs#daemon-log) instructions, if you cannot retrieve logs or you have nothing else you can contribute here type "N/A".
-
-        \*: If pasting diagnostics, it would be helpful to use a JSON code block, as you can see in the placeholder text below.
-      placeholder: |
-        ```json
-        <paste file contents>
-        ```
-        (Notice the triple backticks)
+        [these](https://opentabletdriver.net/Wiki/Documentation/Logs#daemon-log) instructions.
     validations:
-      required: true
+      required: false
+      accept: ".json"
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional Notes
+      description: |
+        If you have anything else to add that could help diagnose the bug
+      placeholder: |
+        This bug prevents me from getting a diagnostics file, but I am using OpenTabletDriver v0.6.8 on Windows 11.
+        -or-
+        This started happening after updating my operating system.
+        -or-
+        Issue #1234 is unrelated to this issue because so and so...
+        -or-
+        This didn't happen before I upgraded my tablet firmware.
+    validations:
+      required: false
 
   - type: checkboxes
     id: acknowledgements
@@ -82,4 +93,4 @@ body:
         - label: I have written a concise and meaningful title.
           required: true
         - label: I am on the latest version of OpenTabletDriver.
-          required: false
+          required: true
