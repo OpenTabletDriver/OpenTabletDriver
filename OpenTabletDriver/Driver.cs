@@ -56,11 +56,13 @@ namespace OpenTabletDriver
                 bool success = false;
 
                 Log.Write("Detect", "Searching for tablets...");
+                var devicesEnumerable = CompositeDeviceHub.GetDevices();
+                var devices = devicesEnumerable as IDeviceEndpoint[] ?? [.. devicesEnumerable];
 
                 var treeBuilder = ImmutableArray.CreateBuilder<InputDeviceTree>();
                 foreach (var config in _deviceConfigurationProvider.TabletConfigurations)
                 {
-                    if (Match(config) is InputDeviceTree tree)
+                    if (Match(config, devices) is InputDeviceTree tree)
                     {
                         success = true;
                         treeBuilder.Add(tree);
@@ -83,6 +85,8 @@ namespace OpenTabletDriver
                     }
                 }
 
+                Log.Write("Detect", "Searching for tablets finished");
+
                 // atomically update InputDevices
                 var oldDevices = _inputDeviceTrees;
                 _inputDeviceTrees = treeBuilder.ToImmutable();
@@ -98,21 +102,56 @@ namespace OpenTabletDriver
             }
         }
 
-        protected virtual InputDeviceTree? Match(TabletConfiguration config)
+        protected virtual InputDeviceTree? Match(TabletConfiguration config, IEnumerable<IDeviceEndpoint> deviceHubDevices)
         {
+#if DEBUG
+            // having this on release builds makes diagnostics quite unwieldy,
+            //   and makes searching issues for a specific supported tablet confusing as anyone who posted a
+            //   raw diagnostics file as text in another issue makes that issue unrelatedly show up for those searched
             Log.Debug("Detect", $"Searching for tablet '{config.Name}'");
+#endif
+
             try
             {
+                var allDevices = deviceHubDevices as IDeviceEndpoint[] ?? [.. deviceHubDevices];
+
                 var devices = new List<InputDevice>();
-                if (MatchDevice(config, config.DigitizerIdentifiers) is InputDevice digitizer)
+
+                var matchedDevices = MatchDevice(config, config.DigitizerIdentifiers, allDevices, DeviceStringCache);
+
+                foreach (var (identifier, endpoints) in matchedDevices)
                 {
+                    try
+                    {
+                        devices.Add(new InputDevice(this, endpoints.First(), config, identifier));
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Exception(e);
+                        continue; // other identifiers may work, let's try those
+                    }
+
                     Log.Write("Detect", $"Found tablet '{config.Name}'");
-                    devices.Add(digitizer);
 
                     if ((config.AuxiliaryDeviceIdentifiers?.Count ?? 0) > 0)
                     {
-                        if (MatchDevice(config, config.AuxiliaryDeviceIdentifiers!) is InputDevice aux)
-                            devices.Add(aux);
+                        var matchedAuxDevices = MatchDevice(config, config.AuxiliaryDeviceIdentifiers!, allDevices, DeviceStringCache);
+                        bool configuredAuxDevice = false;
+                        foreach (var (auxIdentifier, auxEndpoints) in matchedAuxDevices)
+                        {
+                            try
+                            {
+                                devices.Add(new InputDevice(this, auxEndpoints.First(), config, auxIdentifier));
+                                configuredAuxDevice = true;
+                                break;
+                            }
+                            catch (Exception e)
+                            {
+                                Log.Exception(e);
+                            }
+                        }
+                        if (configuredAuxDevice)
+                            Log.Debug("Detect", "Successfully found auxiliary device");
                         else
                             Log.Write("Detect", "Failed to find auxiliary device, express keys may be unavailable.", LogLevel.Warning);
                     }
@@ -147,45 +186,50 @@ namespace OpenTabletDriver
             return null;
         }
 
-        private InputDevice? MatchDevice(TabletConfiguration config, IList<DeviceIdentifier> identifiers)
+        public static IEnumerable<(DeviceIdentifier identifier, IDeviceEndpoint[] matches)> MatchDevice(
+            TabletConfiguration config,
+            IReadOnlyCollection<DeviceIdentifier> identifiers,
+            IEnumerable<IDeviceEndpoint> deviceEndpoints,
+            Dictionary<IDeviceEndpoint, Dictionary<byte, string?>>? deviceStringCache,
+            [CallerArgumentExpression("identifiers")] string? identifierName = null)
         {
+            var deviceEndpointsArray = deviceEndpoints as IDeviceEndpoint[] ?? [.. deviceEndpoints];
             foreach (var identifier in identifiers)
             {
-                var matches = GetMatchingDevices(config, identifier);
+                var matches = GetMatchingDevices(config, identifier, deviceEndpointsArray, deviceStringCache);
 
-                if (matches.Count() > 1)
-                    Log.Write("Detect", "More than 1 matching device has been found.", LogLevel.Warning);
-
-                foreach (IDeviceEndpoint dev in matches)
+                switch (matches.Length)
                 {
-                    try
-                    {
-                        return new InputDevice(this, dev, config, identifier);
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Exception(ex, LogLevel.Warning);
-                    }
+                    case 0:
+                        continue;
+                    case > 1:
+                        Log.Write(config.Name, "More than 1 matching device has been found.", LogLevel.Warning);
+                        goto case 1;
+                    case 1:
+                        Log.Debug("Detect", $"Identified '{config.Name}' on {identifierName}");
+                        yield return (identifier, matches);
+                        break;
                 }
             }
-            return null;
         }
 
-        private IDeviceEndpoint[] GetMatchingDevices(TabletConfiguration configuration, DeviceIdentifier identifier)
+        private static IDeviceEndpoint[] GetMatchingDevices(TabletConfiguration configuration,
+            DeviceIdentifier identifier, IEnumerable<IDeviceEndpoint> deviceEndpoints,
+            Dictionary<IDeviceEndpoint, Dictionary<byte, string?>>? deviceStringCache)
         {
-            return [.. from device in CompositeDeviceHub.GetDevices()
+            return [.. from device in deviceEndpoints
                    where identifier.VendorID == device.VendorID
                    where identifier.ProductID == device.ProductID
                    where device.CanOpen
                    where identifier.InputReportLength == null || identifier.InputReportLength == device.InputReportLength
                    where identifier.OutputReportLength == null || identifier.OutputReportLength == device.OutputReportLength
                    where identifier.FeatureReportLength == null || identifier.FeatureReportLength == device.FeatureReportLength
-                   where DeviceMatchesStrings(device, identifier.DeviceStrings, DeviceStringCache)
+                   where DeviceMatchesStrings(device, identifier.DeviceStrings, deviceStringCache)
                    where DeviceMatchesAttribute(device, identifier.Attributes, configuration.Attributes)
                    select device];
         }
 
-        private static bool DeviceMatchesStrings(IDeviceEndpoint device, Dictionary<byte, string>? deviceStrings, Dictionary<IDeviceEndpoint, Dictionary<byte, string?>> stringCache)
+        private static bool DeviceMatchesStrings(IDeviceEndpoint device, Dictionary<byte, string>? deviceStrings, Dictionary<IDeviceEndpoint, Dictionary<byte, string?>>? stringCache)
         {
             if (deviceStrings == null || deviceStrings.Count == 0)
                 return true;
@@ -196,7 +240,9 @@ namespace OpenTabletDriver
                 try
                 {
                     string? deviceString = null;
-                    if (stringCache.TryGetValue(device, out var deviceCachedStrings) && deviceCachedStrings.TryGetValue(matchQuery.Key, out var cacheDeviceString))
+                    if (stringCache != null
+                        && stringCache.TryGetValue(device, out var deviceCachedStrings)
+                        && deviceCachedStrings.TryGetValue(matchQuery.Key, out var cacheDeviceString))
                     {
                         if (cacheDeviceString == null)
                         {
@@ -208,7 +254,7 @@ namespace OpenTabletDriver
 
                     deviceString ??= device.GetDeviceString(matchQuery.Key);
 
-                    if (!stringCache.TryAdd(device, new Dictionary<byte, string?> { { matchQuery.Key, deviceString } }))
+                    if (stringCache != null && !stringCache.TryAdd(device, new Dictionary<byte, string?> { { matchQuery.Key, deviceString } }))
                         stringCache[device].TryAdd(matchQuery.Key, deviceString);
 
                     // nullcheck after cache update to ensure nulls are cached
