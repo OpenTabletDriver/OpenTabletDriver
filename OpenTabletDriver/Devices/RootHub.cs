@@ -37,7 +37,14 @@ namespace OpenTabletDriver.Devices
 
         public event EventHandler<DevicesChangedEventArgs>? DevicesChanged;
 
-        public IEnumerable<IDeviceHub> DeviceHubs => hubs;
+        public IEnumerable<IDeviceHub> DeviceHubs
+        {
+            get
+            {
+                lock (syncObject)
+                    return hubs.ToArray();
+            }
+        }
 
         public static RootHub WithProvider(IServiceProvider provider)
         {
@@ -47,7 +54,8 @@ namespace OpenTabletDriver.Devices
 
         public IEnumerable<IDeviceEndpoint> GetDevices()
         {
-            return endpoints;
+            lock (syncObject)
+                return endpoints.ToArray();
         }
 
         public void ConnectDeviceHub<T>() where T : IDeviceHub
@@ -61,15 +69,20 @@ namespace OpenTabletDriver.Devices
         public void ConnectDeviceHub(IDeviceHub rootHub)
         {
             Log.Write(nameof(RootHub), $"Connecting hub: {rootHub.GetType().Name}", LogLevel.Debug);
-            if (hubs.Add(rootHub))
+            DevicesChangedEventArgs changes;
+            lock (syncObject)
             {
-                CommitHubChange();
-                HookDeviceNotification(rootHub);
+                if (!hubs.Add(rootHub))
+                {
+                    Log.Write(nameof(RootHub), $"Connection failed, {rootHub.GetType().Name} is already connected", LogLevel.Debug);
+                    return;
+                }
+
+                changes = CommitHubChange();
             }
-            else
-            {
-                Log.Write(nameof(RootHub), $"Connection failed, {rootHub.GetType().Name} is already connected", LogLevel.Debug);
-            }
+
+            NotifyHubChange(changes);
+            HookDeviceNotification(rootHub);
         }
 
         public void DisconnectDeviceHub<T>() where T : IDeviceHub
@@ -83,38 +96,51 @@ namespace OpenTabletDriver.Devices
         public void DisconnectDeviceHub(IDeviceHub rootHub)
         {
             Log.Write(nameof(RootHub), $"Disconnecting hub: {rootHub.GetType().Name}", LogLevel.Debug);
-            if (hubs.Remove(rootHub))
+            DevicesChangedEventArgs changes;
+            lock (syncObject)
             {
-                CommitHubChange();
-                UnhookDeviceNotification(rootHub);
+                if (!hubs.Remove(rootHub))
+                {
+                    Log.Write(nameof(RootHub), $"Disconnection failed, {rootHub.GetType().Name} is not a connected hub", LogLevel.Debug);
+                    return;
+                }
+
+                changes = CommitHubChange();
             }
-            else
-            {
-                Log.Write(nameof(RootHub), $"Disconnection failed, {rootHub.GetType().Name} is not a connected hub", LogLevel.Debug);
-            }
+
+            NotifyHubChange(changes);
+            UnhookDeviceNotification(rootHub);
         }
 
         private async void OnDevicesChanged(object? sender, DevicesChangedEventArgs eventArgs)
         {
-            var lastVersion = Interlocked.Increment(ref version);
-            if (Interlocked.Increment(ref currentlyDebouncing) == 1)
-            {
-                // This event is the first of a potential sequence of events, copy old endpoint list
-                oldEndpoints = new List<IDeviceEndpoint>(endpoints);
-            }
-
+            long lastVersion;
             lock (syncObject)
             {
+                lastVersion = ++version;
+                if (Interlocked.Increment(ref currentlyDebouncing) == 1)
+                {
+                    // This event is the first of a potential sequence of events, copy old endpoint list
+                    oldEndpoints = new List<IDeviceEndpoint>(endpoints);
+                }
+
                 endpoints.RemoveAll(e => eventArgs.Removals.Contains(e, DevicesChangedEventArgs.Comparer));
                 endpoints.AddRange(eventArgs.Additions);
             }
 
             await Task.Delay(20);
 
-            if (version == lastVersion)
+            DevicesChangedEventArgs? changes = null;
+            lock (syncObject)
+            {
+                if (version == lastVersion)
+                    changes = new DevicesChangedEventArgs(oldEndpoints, endpoints);
+            }
+
+            if (changes != null)
             {
                 Log.Write(nameof(RootHub), "Invoking DevicesChanged", LogLevel.Debug);
-                DevicesChanged?.Invoke(this, new DevicesChangedEventArgs(oldEndpoints, endpoints));
+                DevicesChanged?.Invoke(this, changes);
             }
             else
             {
@@ -143,12 +169,19 @@ namespace OpenTabletDriver.Devices
             }
         }
 
-        private void CommitHubChange()
+        // Called with syncObject held.
+        private DevicesChangedEventArgs CommitHubChange()
         {
             oldEndpoints = new List<IDeviceEndpoint>(endpoints);
             ForceEnumeration();
-            DevicesChanged?.Invoke(this, new DevicesChangedEventArgs(endpoints, oldEndpoints));
-            oldEndpoints.Clear();
+            return new DevicesChangedEventArgs(oldEndpoints, endpoints);
+        }
+
+        private void NotifyHubChange(DevicesChangedEventArgs changes)
+        {
+            DevicesChanged?.Invoke(this, changes);
+            lock (syncObject)
+                oldEndpoints.Clear();
         }
 
         private void ForceEnumeration()
