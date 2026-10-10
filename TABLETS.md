@@ -168,6 +168,8 @@
 | Wacom XD-1212-U                    |     Supported     |
 | Wacom XD-1218-U                    |     Supported     |
 | Waltop Slim Tablet 5.8"            |     Supported     |
+    shown as 'Waltop Slim Tablet' for compatibility
+| Waltop Slim Tablet 12.1"           |     Supported     |
 | XenceLabs Pen Tablet Medium        |     Supported     |
 | XenceLabs Pen Tablet Small         |     Supported     |
 | XENX P1-640                        |     Supported     |
