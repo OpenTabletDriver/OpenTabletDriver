@@ -21,6 +21,21 @@ internal class FormHandler : Eto.Mac.Forms.FormHandler
         base.Show();
     }
 
+    // Form.Show() only calls the handler's Show() the first time the form is shown.
+    // Any later call (e.g. the tray icon's "Show OpenTabletDriver" menu item) just sets
+    // Visible = true, so the app has to be activated from here to be brought to the front.
+    public override bool Visible
+    {
+        get => base.Visible;
+        set
+        {
+            if (value)
+                NSApplication.SharedApplication.ActivateIgnoringOtherApps(true);
+
+            base.Visible = value;
+        }
+    }
+
     private void UpdateActivationPolicy(object sender, EventArgs e)
     {
         var hasNonMinimizedVisibleWindow =
