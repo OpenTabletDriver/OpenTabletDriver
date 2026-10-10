@@ -76,10 +76,47 @@ namespace OpenTabletDriver.Tests
             await completion.Task.WaitAsync(TimeSpan.FromSeconds(5));
         }
 
-        private static RootHub CreateRoot(IDeviceHub child)
+        [Fact]
+        public void ConnectingHub_ReportsItsDevicesAsAdditions()
+        {
+            var existing = Endpoint("existing");
+            var added = Endpoint("added");
+            var root = CreateRoot(new FakeHub(existing));
+            DevicesChangedEventArgs? received = null;
+            root.DevicesChanged += (_, changes) => received = changes;
+
+            root.ConnectDeviceHub(new FakeHub(added));
+
+            Assert.NotNull(received);
+            Assert.Equal(new[] { added }, received.Additions);
+            Assert.Empty(received.Removals);
+            Assert.Equal(new[] { existing }, received.Previous);
+            Assert.Equal(new[] { existing, added }, received.Current);
+        }
+
+        [Fact]
+        public void DisconnectingHub_ReportsItsDevicesAsRemovals()
+        {
+            var existing = Endpoint("existing");
+            var removed = Endpoint("removed");
+            var child = new FakeHub(removed);
+            var root = CreateRoot(new FakeHub(existing), child);
+            DevicesChangedEventArgs? received = null;
+            root.DevicesChanged += (_, changes) => received = changes;
+
+            root.DisconnectDeviceHub(child);
+
+            Assert.NotNull(received);
+            Assert.Empty(received.Additions);
+            Assert.Equal(new[] { removed }, received.Removals);
+            Assert.Equal(new[] { existing, removed }, received.Previous);
+            Assert.Equal(new[] { existing }, received.Current);
+        }
+
+        private static RootHub CreateRoot(params IDeviceHub[] children)
         {
             var provider = Substitute.For<IDeviceHubsProvider>();
-            provider.DeviceHubs.Returns(new[] { child });
+            provider.DeviceHubs.Returns(children);
             return new RootHub(provider);
         }
 

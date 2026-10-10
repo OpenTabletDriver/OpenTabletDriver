@@ -117,7 +117,7 @@ namespace OpenTabletDriver.Devices
             long lastVersion;
             lock (syncObject)
             {
-                lastVersion = Interlocked.Increment(ref version);
+                lastVersion = ++version;
                 if (Interlocked.Increment(ref currentlyDebouncing) == 1)
                 {
                     // This event is the first of a potential sequence of events, copy old endpoint list
@@ -174,7 +174,7 @@ namespace OpenTabletDriver.Devices
         {
             oldEndpoints = new List<IDeviceEndpoint>(endpoints);
             ForceEnumeration();
-            return new DevicesChangedEventArgs(endpoints, oldEndpoints);
+            return new DevicesChangedEventArgs(oldEndpoints, endpoints);
         }
 
         private void NotifyHubChange(DevicesChangedEventArgs changes)
