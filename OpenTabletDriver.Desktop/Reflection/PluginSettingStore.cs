@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.DependencyInjection;
@@ -44,9 +45,41 @@ namespace OpenTabletDriver.Desktop.Reflection
         [JsonIgnore]
         public string? Name => Path != null ? AppInfo.PluginManager.GetFriendlyName(Path) : null;
 
-        public ObservableCollection<PluginSetting> Settings { set; get; }
+        public ObservableCollection<PluginSetting> Settings
+        {
+            set => field = SanitizeSettings(value);
+            get;
+        }
+
+        /// <summary>
+        /// Accepts a missing collection ("Settings": null) and drops null entries
+        /// ("Settings": [null] in a corrupt or hand-edited settings.json), which would
+        /// otherwise NRE every consumer - <see cref="ApplySettings"/>, the indexer and
+        /// <see cref="GetHumanReadableString"/> - and take the whole settings
+        /// application down with them.
+        /// </summary>
+        private static ObservableCollection<PluginSetting> SanitizeSettings(ObservableCollection<PluginSetting>? settings)
+        {
+            if (settings == null)
+                return new ObservableCollection<PluginSetting>();
+
+            if (!settings.Any(setting => setting == null))
+                return settings;
+
+            return new ObservableCollection<PluginSetting>(settings.Where(setting => setting != null));
+        }
 
         public bool Enable { set; get; }
+
+        /// <summary>
+        /// The service manager of the host this store belongs to (the profile's binding
+        /// service manager when constructed through <see cref="Construct{T}(IServiceManager, TabletReference?)"/>).
+        /// Services not present in <see cref="AppInfo.PluginManager"/> - most importantly the
+        /// output mode's pointer handlers - are injected from here, and propagated to nested
+        /// stores such as bindings stored in [BindingProperty] plugin options.
+        /// </summary>
+        [JsonIgnore]
+        public IServiceManager? Provider { set; get; }
 
         public T? Construct<T>(TabletReference? tabletReference = null, bool trigger = true) where T : class
         {
@@ -58,6 +91,11 @@ namespace OpenTabletDriver.Desktop.Reflection
 
             var obj = AppInfo.PluginManager.ConstructObject<T>(Path);
             ApplySettings(obj);
+            if (obj != null && Provider != null)
+            {
+                PluginManager.Inject(Provider, obj);
+                PropagateProvider(obj, Provider);
+            }
             if (trigger)
                 TriggerEventMethods(obj, tabletReference);
             return obj;
@@ -65,10 +103,35 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public T? Construct<T>(IServiceManager provider, TabletReference? tabletReference = null) where T : class
         {
-            var obj = Construct<T>(tabletReference, false);
-            PluginManager.Inject(provider, obj);
-            TriggerEventMethods(obj, tabletReference);
-            return obj;
+            Provider = provider;
+            return Construct<T>(tabletReference);
+        }
+
+        /// <summary>
+        /// Passes this store's <see cref="Provider"/> to stores held in plugin properties
+        /// (e.g. a binding stored in a [BindingProperty] option), so plugins can construct
+        /// them with the parameterless Construct overload and still receive the host's services.
+        /// </summary>
+        private static void PropagateProvider(object target, IServiceManager provider)
+        {
+            foreach (var property in target.GetType().GetProperties())
+            {
+                if (property.GetIndexParameters().Length != 0)
+                    continue;
+                if (!typeof(PluginSettingStore).IsAssignableFrom(property.PropertyType))
+                    continue;
+
+                try
+                {
+                    if (property.GetValue(target) is PluginSettingStore nested)
+                        nested.Provider = provider;
+                }
+                catch (Exception e)
+                {
+                    Log.Write(nameof(PluginSettingStore), $"Failed to propagate the service provider through '{property.Name}'.", LogLevel.Warning);
+                    Log.Exception(e);
+                }
+            }
         }
 
         public static PluginSettingStore? FromPath(string? path)
@@ -93,12 +156,25 @@ namespace OpenTabletDriver.Desktop.Reflection
 
             foreach (var setting in Settings)
             {
-                if (properties.FirstOrDefault(d => d.Name == setting.Property) is PropertyInfo property)
+                if (properties.FirstOrDefault(d => d.Name == setting.Property) is not PropertyInfo property)
+                    continue;
+
+                try
                 {
                     if (setting.HasValue)
                         property.SetValue(target, setting.GetValue(property.PropertyType));
                     else if (property.GetCustomAttribute<DefaultPropertyValueAttribute>() is DefaultPropertyValueAttribute defaults)
                         property.SetValue(target, defaults.Value);
+                }
+                catch (Exception e)
+                {
+                    // A stored value whose shape no longer matches the property (hand-edited or
+                    // otherwise corrupt settings.json) must not escape: it would abort this
+                    // store's Construct, and with it the daemon's entire SetSettings pass.
+                    // Skip the setting and keep the property's current value - the same
+                    // graceful handling the settings UI already applies when it reads one.
+                    Log.Write(nameof(PluginSettingStore), $"Failed to apply '{setting.Property}' of '{Path}': {e.Message}", LogLevel.Warning);
+                    Log.Exception(e);
                 }
             }
         }
@@ -146,8 +222,8 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public string GetHumanReadableString()
         {
-            var name = Name;
-            string settings = string.Join(", ", this.Settings.Select(s => $"({s.Property}: {s.Value})"));
+            var name = Name ?? Path ?? string.Empty;
+            string settings = string.Join(", ", this.Settings.Select(s => $"({s.Property}: {FormatSettingValue(s.Value)})"));
             string suffix = Settings.Any() ? $": {settings}" : string.Empty;
             return name + suffix;
         }
@@ -158,6 +234,52 @@ namespace OpenTabletDriver.Desktop.Reflection
             if (baseString.Length > elideAt)
                 return baseString[..elideAt] + "...";
             return baseString;
+        }
+
+        /// <summary>
+        /// Renders a stored setting value for the summary. A value that holds another
+        /// store (a [BindingProperty] option) is summarised through
+        /// <see cref="GetHumanReadableString"/> instead of being dumped as the indented
+        /// JSON that <see cref="JToken.ToString()"/> produces.
+        /// </summary>
+        private static string FormatSettingValue(JToken? value)
+        {
+            switch (value)
+            {
+                case null:
+                    return string.Empty;
+                case JValue jvalue:
+                    return jvalue.ToString() ?? string.Empty;
+                case JObject json when TryGetNestedStore(json, out var nested):
+                    return nested.GetHumanReadableString();
+                default:
+                    // Any other JSON container: compact, without indentation.
+                    return value.ToString(Formatting.None);
+            }
+        }
+
+        private static bool TryGetNestedStore(JObject json, out PluginSettingStore nested)
+        {
+            nested = null!;
+
+            if (json["Path"]?.Type != JTokenType.String)
+                return false;
+
+            try
+            {
+                if (json.ToObject<PluginSettingStore>() is PluginSettingStore store)
+                {
+                    nested = store;
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Write(nameof(PluginSettingStore), $"Failed to read the nested store of '{json["Path"]}'.", LogLevel.Warning);
+                Log.Exception(e);
+            }
+
+            return false;
         }
 
         public TypeInfo? GetTypeInfo()

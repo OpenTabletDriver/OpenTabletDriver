@@ -4,9 +4,11 @@ using System.Linq;
 using System.Reflection;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Reflection;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Controls.Generic.Text;
+using IBinding = OpenTabletDriver.Plugin.IBinding;
 
 namespace OpenTabletDriver.UX.Controls
 {
@@ -36,7 +38,7 @@ namespace OpenTabletDriver.UX.Controls
                 (v) => store[property] = v
             );
 
-            var control = GetControlForSetting(property, settingBinding);
+            var control = GetControlForSetting(store, property, settingBinding);
 
             // Apply all visual modifier attributes
             control = property.GetCustomAttributes<ModifierAttribute>().Aggregate(control, ApplyModifierAttribute);
@@ -45,10 +47,15 @@ namespace OpenTabletDriver.UX.Controls
             return new Group(attr?.DisplayName ?? property.Name, control, Orientation.Horizontal, false);
         }
 
-        private static Control GetControlForSetting(PropertyInfo property, DirectBinding<PluginSetting> binding)
+        private static Control GetControlForSetting(PluginSettingStore store, PropertyInfo property, DirectBinding<PluginSetting> binding)
         {
             Control? rv = null;
-            if (property.PropertyType == typeof(string))
+            if (IsBindingProperty(property))
+            {
+                WarnIfStoredValueIsNotABinding(store, property);
+                rv = GetBindingControl(store, property);
+            }
+            else if (property.PropertyType == typeof(string))
             {
                 if (property.GetCustomAttribute<PropertyValidatedAttribute>() is PropertyValidatedAttribute validateAttr)
                 {
@@ -105,10 +112,89 @@ namespace OpenTabletDriver.UX.Controls
             }
 
             if (rv == null)
-                throw new NotSupportedException($"'{property.PropertyType}' is not supported for generated controls.");
+                rv = GetUnsupportedControl(property);
 
             rv.UpdateBindings(); // avoid empty/default values becoming null in settings
             return rv;
+        }
+
+        private static bool IsBindingProperty(PropertyInfo property)
+        {
+            return typeof(PluginSettingStore).IsAssignableFrom(property.PropertyType)
+                && property.GetCustomAttribute<BindingPropertyAttribute>() != null;
+        }
+
+        private static BindingDisplay GetBindingControl(PluginSettingStore store, PropertyInfo property)
+        {
+            var bindingDisplay = new BindingDisplay();
+
+            // Assigned before subscribing: StoreChanged also fires on this assignment,
+            // and a binding that cannot be read would be written back as null.
+            bindingDisplay.Store = GetStoredBinding(store[property], property);
+
+            // Wired by hand instead of StoreBinding.Bind(): Bind() links the display
+            // and the setting in both directions, and GetControlForSetting ends with
+            // UpdateBindings(), which pushes the display's value into the setting.
+            // After a failed read the display holds null, so that push would overwrite
+            // the original binding.
+            //
+            // Without this, the user's saved binding silently disappears from their
+            // config with no error shown - they would have to bind it again, and it is
+            // gone for good if the plugin that owned it was uninstalled. This
+            // subscription is then the only write, so a binding changes only when the
+            // user actually changes it.
+            bindingDisplay.StoreChanged += (sender, e) => store[property] = new PluginSetting(property, bindingDisplay.Store);
+
+            return bindingDisplay;
+        }
+
+        private static PluginSettingStore? GetStoredBinding(PluginSetting setting, PropertyInfo property)
+        {
+            try
+            {
+                return setting.GetValueOrDefault<PluginSettingStore>(property);
+            }
+            catch (Exception e)
+            {
+                Log.Write(nameof(GeneratedControls), $"Failed to read the binding of '{property.Name}'. The stored value is left untouched.", LogLevel.Warning);
+                Log.Exception(e);
+                return null;
+            }
+        }
+
+        private static void WarnIfStoredValueIsNotABinding(PluginSettingStore store, PropertyInfo property)
+        {
+            try
+            {
+                var setting = store[property];
+                if (setting.HasValue
+                    && setting.GetValue<PluginSettingStore>() is PluginSettingStore stored
+                    && stored.GetTypeInfo() is { } type
+                    && !typeof(IBinding).IsAssignableFrom(type))
+                {
+                    Log.Write(nameof(GeneratedControls), $"'{property.Name}' is marked as a binding, but holds '{stored.Path}' which is not a binding.", LogLevel.Warning);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Write(nameof(GeneratedControls), $"Failed to inspect the binding of '{property.Name}'.", LogLevel.Warning);
+                Log.Exception(e);
+            }
+        }
+
+        private static Label GetUnsupportedControl(PropertyInfo property)
+        {
+            string message = typeof(PluginSettingStore).IsAssignableFrom(property.PropertyType)
+                ? $"'{property.Name}' must be marked with [{nameof(BindingPropertyAttribute)}] to be edited as a binding."
+                : $"'{property.PropertyType}' is not supported for generated controls.";
+
+            Log.Write(nameof(GeneratedControls), message, LogLevel.Warning);
+            return new Label
+            {
+                Text = message,
+                Wrap = WrapMode.Word,
+                TextAlignment = TextAlignment.Center
+            };
         }
 
         private static Control ApplyModifierAttribute(Control control, ModifierAttribute attribute)

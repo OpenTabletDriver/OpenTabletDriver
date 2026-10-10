@@ -89,7 +89,11 @@ namespace OpenTabletDriver.UX.Windows.Bindings
         {
             if (bindingTypeDropDown.SelectedItem == null)
             {
-                Close(null);
+                // An empty type dropdown means either that no binding is set, or that the
+                // current binding's type could not be resolved (e.g. its plugin was
+                // uninstalled). Only the former should clear the binding.
+                var store = settingStoreEditor.Store;
+                Close(store?.Path != null ? store : null);
                 return;
             }
 
