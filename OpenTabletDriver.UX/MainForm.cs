@@ -18,6 +18,7 @@ using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls;
+using StreamJsonRpc;
 
 namespace OpenTabletDriver.UX
 {
@@ -415,56 +416,65 @@ namespace OpenTabletDriver.UX
         // ReSharper disable once AsyncVoidMethod
         private void HandleDaemonConnected(object? sender, EventArgs e) => Application.Instance.AsyncInvoke(async void () =>
         {
-            Debug.Assert(App.Driver.IsConnected);
-            // Hook events after the instance is (re)instantiated
-            Log.Output += LogToDriver;
-            App.Driver.TabletsChanged += (sender, tablet) => SetTitle(tablet);
-
-            // Load full menu
-            this.Menu = fullMenu;
-
-            // Load the application information from the daemon
-            AppInfo.Current = await App.Driver.Instance.GetApplicationInfo();
-
-            AppInfo.PluginManager = new DesktopPluginManager();
-            AppInfo.PresetManager = new PresetManager();
-
-            // Load any new plugins
-            AppInfo.PluginManager.Load();
-
-            // Show the startup greeter
-            if (!File.Exists(AppInfo.Current.SettingsFile) && this.WindowState != WindowState.Minimized)
-                App.Current.StartupGreeterWindow.Show();
-
-            // Synchronize settings
-            await SyncSettings();
-            App.Driver.Resynchronize += async (sender, e) => await SyncSettings();
-
-            // Set window content
-            base.Content = new TabletSwitcherPanel
+            try
             {
-                CommandsControl = new StackLayout
+                Debug.Assert(App.Driver.IsConnected);
+                // Hook events after the instance is (re)instantiated
+                Log.Output += LogToDriver;
+                App.Driver.TabletsChanged += (sender, tablet) => SetTitle(tablet);
+
+                // Load full menu
+                this.Menu = fullMenu;
+
+                // Load the application information from the daemon
+                AppInfo.Current = await App.Driver.Instance.GetApplicationInfo();
+
+                AppInfo.PluginManager = new DesktopPluginManager();
+                AppInfo.PresetManager = new PresetManager();
+
+                // Load any new plugins
+                AppInfo.PluginManager.Load();
+
+                // Show the startup greeter
+                if (!File.Exists(AppInfo.Current.SettingsFile) && this.WindowState != WindowState.Minimized)
+                    App.Current.StartupGreeterWindow.Show();
+
+                // Synchronize settings
+                await SyncSettings();
+                App.Driver.Resynchronize += async (sender, e) => await SyncSettings();
+
+                // Set window content
+                base.Content = new TabletSwitcherPanel
                 {
-                    Orientation = Orientation.Horizontal,
-                    HorizontalContentAlignment = HorizontalAlignment.Right,
-                    Spacing = 5,
-                    Items =
+                    CommandsControl = new StackLayout
                     {
-                        saveButton,
-                        applyButton,
+                        Orientation = Orientation.Horizontal,
+                        HorizontalContentAlignment = HorizontalAlignment.Right,
+                        Spacing = 5,
+                        Items =
+                        {
+                            saveButton,
+                            applyButton,
+                        }
                     }
-                }
-            };
+                };
 
-            // Update preset options in File menu and tray icon
-            await RefreshPresets();
+                // Update preset options in File menu and tray icon
+                await RefreshPresets();
 
-            // Update title to new instance
-            if (await App.Driver.Instance.GetTablets() is IEnumerable<TabletReference> tablets)
-                SetTitle(tablets);
+                // Update title to new instance
+                if (await App.Driver.Instance.GetTablets() is IEnumerable<TabletReference> tablets)
+                    SetTitle(tablets);
 
-            // Having a mismatch between the version of the daemon and the application will cause issues
-            MatchDaemonVersion();
+                // Having a mismatch between the version of the daemon and the application will cause issues
+                MatchDaemonVersion();
+            }
+            catch (ConnectionLostException ex)
+            {
+                // The disconnected event restores the placeholder and starts reconnection.
+                // Do not log through the daemon while its connection is unavailable.
+                Console.Error.WriteLine(ex);
+            }
         });
 
         private Button saveButton;
@@ -472,8 +482,15 @@ namespace OpenTabletDriver.UX
 
         private static async void LogToDriver(object? sender, LogMessage message)
         {
-            if (App.Driver.IsConnected)
-                await App.Driver.Instance.WriteMessage(message);
+            try
+            {
+                if (App.Driver.IsConnected)
+                    await App.Driver.Instance.WriteMessage(message);
+            }
+            catch (ConnectionLostException ex)
+            {
+                Console.Error.WriteLine(ex);
+            }
         }
 
         private void HandleDaemonDisconnected(object? sender, EventArgs e)
