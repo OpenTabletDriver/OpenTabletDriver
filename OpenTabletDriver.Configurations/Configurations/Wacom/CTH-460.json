@@ -57,8 +57,8 @@
     {
       "VendorID": 1386,
       "ProductID": 214,
-      "InputReportLength": 64,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Wacom64bAuxReportParser"
+      "InputReportLength": 20,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.BambooV2.BambooV2AuxReportParser"
     },
     {
       "VendorID": 1386,

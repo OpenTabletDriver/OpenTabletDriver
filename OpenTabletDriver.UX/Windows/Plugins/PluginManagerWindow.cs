@@ -47,7 +47,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                         new StackLayoutItem
                         {
                             HorizontalAlignment = HorizontalAlignment.Center,
-                            Control = new Panel
+                            Control = dragAndDropHereInfoPanel = new Panel
                             {
                                 Padding = 5,
                                 Content = new Label
@@ -61,6 +61,8 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                 }
             };
 
+            dragAndDropHereInfoPanel.Visible = !OperatingSystem.IsLinux();
+
             metadataViewer.MetadataBinding.Bind(pluginList.SelectedItemBinding, DualBindingMode.OneWay);
 
             dropPanel.RequestPluginInstall += Install;
@@ -68,6 +70,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             metadataViewer.RequestPluginUninstall += Uninstall;
         }
 
+        private readonly Panel dragAndDropHereInfoPanel;
         private readonly PluginDropPanel dropPanel;
         private readonly PluginMetadataList pluginList;
         private readonly MetadataViewer metadataViewer;

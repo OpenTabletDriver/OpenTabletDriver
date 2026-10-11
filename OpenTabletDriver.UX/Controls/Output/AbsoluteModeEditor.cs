@@ -1,17 +1,14 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
-using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
-using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Profiles;
-using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Controls.Output.Area;
 using OpenTabletDriver.UX.Controls.Utilities;
-using OpenTabletDriver.UX.Windows;
 
 namespace OpenTabletDriver.UX.Controls.Output
 {
@@ -30,7 +27,7 @@ namespace OpenTabletDriver.UX.Controls.Output
                         Control = new Group
                         {
                             Text = "Display",
-                            Content = displayAreaEditor = new DisplayAreaEditor
+                            Content = displayAreaEditor = new DisplayAreaEditor(() => HandleAspectRatioLock(displayAreaEditor, EventArgs.Empty))
                             {
                                 InvalidForegroundError = "Invalid display area.",
                                 Unit = "px"
@@ -52,6 +49,39 @@ namespace OpenTabletDriver.UX.Controls.Output
                     }
                 }
             };
+
+            tabletAreaEditor.ContextMenu.Items.GetSubmenu("Resize").Items.AddRange(
+                [
+                    new ActionCommand
+                    {
+                        MenuText = "Full area",
+                        Action = () =>
+                        {
+                            Vector2 tabletSize = new Vector2(tabletAreaEditor.FullAreaBounds!.Value.Width, tabletAreaEditor.FullAreaBounds!.Value.Height);
+                            var displayRatio = displayAreaEditor.Area!.Width / displayAreaEditor.Area!.Height;
+                            var largestArea = tabletAreaEditor.LockAspectRatio ? GetLargestRectInRotatedRectRatioLocked(tabletSize, tabletAreaEditor.Area!.Rotation, displayRatio) : GetLargestRectInRotatedRect(tabletSize, tabletAreaEditor.Area!.Rotation);
+                            tabletAreaEditor.Area!.Y = tabletAreaEditor.FullAreaBounds!.Value.Center.Y;
+                            tabletAreaEditor.Area!.X = tabletAreaEditor.FullAreaBounds!.Value.Center.X;
+                            tabletAreaEditor.Area!.Width = largestArea.X;
+                            tabletAreaEditor.Area!.Height = largestArea.Y;
+                        }
+                    },
+                    new ActionCommand
+                    {
+                        MenuText = "Quarter area",
+                        Action = () =>
+                        {
+                            Vector2 tabletSize = new Vector2(tabletAreaEditor.FullAreaBounds!.Value.Width, tabletAreaEditor.FullAreaBounds!.Value.Height);
+                            var displayRatio = displayAreaEditor.Area!.Width / displayAreaEditor.Area!.Height;
+                            var largestArea = tabletAreaEditor.LockAspectRatio ? GetLargestRectInRotatedRectRatioLocked(tabletSize, tabletAreaEditor.Area!.Rotation, displayRatio) : GetLargestRectInRotatedRect(tabletSize, tabletAreaEditor.Area!.Rotation);
+                            tabletAreaEditor.Area!.Y = tabletAreaEditor.FullAreaBounds!.Value.Center.Y;
+                            tabletAreaEditor.Area!.X = tabletAreaEditor.FullAreaBounds!.Value.Center.X;
+                            tabletAreaEditor.Area!.Width = largestArea.X / 2;
+                            tabletAreaEditor.Area!.Height = largestArea.Y / 2;
+                        }
+                    }
+                ]
+            );
 
             displayAreaEditor.AreaBinding.Bind(SettingsBinding.Child(c => c!.Display)!);
             displayAreaEditor.LockToUsableAreaBinding.Bind(App.Current, c => c.Settings.LockUsableAreaDisplay);
@@ -96,8 +126,6 @@ namespace OpenTabletDriver.UX.Controls.Output
         private bool handlingArLock;
         private bool handlingForcedArConstraint;
         private bool handlingSettingsChanging;
-        private float? prevDisplayWidth;
-        private float? prevDisplayHeight;
         private DirectBinding<float> displayWidth;
         private DirectBinding<float> displayHeight;
         private DirectBinding<float> tabletWidth;
@@ -170,43 +198,47 @@ namespace OpenTabletDriver.UX.Controls.Output
 
         private void HandleAspectRatioLock(object? sender, EventArgs e)
         {
-            if (!handlingArLock && !handlingSettingsChanging)
+            if (!tabletAreaEditor.LockAspectRatio) return;
+            if (handlingArLock || handlingSettingsChanging || displayAreaEditor.handlingDisplayAreaResize) return;
+
+            // Avoids looping
+            handlingArLock = true;
+
+            var displayRatio = displayAreaEditor.Area!.Width / displayAreaEditor.Area!.Height;
+
+            var tryHeightFirst = sender == tabletWidth || sender == displayHeight || sender == tabletAreaEditor || sender == displayAreaEditor && displayRatio <= 1;
+            var tryWidthFirst = sender == tabletHeight || sender == displayWidth || sender == displayAreaEditor && displayRatio > 1;
+
+            if (tryHeightFirst)
             {
-                // Avoids looping
-                handlingArLock = true;
-
-                if (sender == tabletWidth || sender == tabletAreaEditor)
+                var fullHeight = tabletAreaEditor.FullAreaBounds!.Value.Height;
+                var scaledHeight = displayHeight.DataValue / displayWidth.DataValue * tabletWidth.DataValue;
+                if (scaledHeight > fullHeight)
                 {
-                    var fullHeight = tabletAreaEditor.FullAreaBounds!.Value.Height;
-                    var scaledHeight = displayHeight.DataValue / displayWidth.DataValue * tabletWidth.DataValue;
-                    if (tabletAreaEditor.FullAreaCommandExecuting && scaledHeight > fullHeight)
-                    {
-                        tabletHeight.DataValue = fullHeight;
-                        tabletWidth.DataValue = displayWidth.DataValue / displayHeight.DataValue * fullHeight;
-                    }
-                    else
-                    {
-                        tabletHeight.DataValue = scaledHeight;
-                    }
+                    tabletHeight.DataValue = fullHeight;
+                    tabletWidth.DataValue = displayWidth.DataValue / displayHeight.DataValue * fullHeight;
                 }
-                else if (sender == tabletHeight)
+                else
                 {
-                    tabletWidth.DataValue = displayWidth.DataValue / displayHeight.DataValue * tabletHeight.DataValue;
+                    tabletHeight.DataValue = scaledHeight;
                 }
-                else if ((sender == displayWidth) && prevDisplayWidth is float prevWidth)
-                {
-                    tabletWidth.DataValue *= displayWidth.DataValue / prevWidth;
-                }
-                else if ((sender == displayHeight) && prevDisplayHeight is float prevHeight)
-                {
-                    tabletHeight.DataValue *= displayHeight.DataValue / prevHeight;
-                }
-
-                prevDisplayWidth = displayWidth.DataValue;
-                prevDisplayHeight = displayHeight.DataValue;
-
-                handlingArLock = false;
             }
+            else if (tryWidthFirst)
+            {
+                var fullWidth = tabletAreaEditor.FullAreaBounds!.Value.Width;
+                var scaledWidth = displayWidth.DataValue / displayHeight.DataValue * tabletHeight.DataValue;
+                if (scaledWidth > fullWidth)
+                {
+                    tabletWidth.DataValue = fullWidth;
+                    tabletHeight.DataValue = displayHeight.DataValue / displayWidth.DataValue * fullWidth;
+                }
+                else
+                {
+                    tabletWidth.DataValue = scaledWidth;
+                }
+            }
+
+            handlingArLock = false;
         }
 
         private void HandleTabletAreaConstraint(object? sender, EventArgs args)
@@ -280,205 +312,129 @@ namespace OpenTabletDriver.UX.Controls.Output
             };
         }
 
-        public class DisplayAreaEditor : AreaEditor
+
+        // Converted from python code from stackoverflow:
+        // https://stackoverflow.com/questions/16702966/rotate-image-and-crop-out-black-borders/16778797#16778797
+        public static Vector2 GetLargestRectInRotatedRect(Vector2 rotatedRectDimensions, float rotationAngleDegrees)
         {
-            public DisplayAreaEditor()
+            var width = rotatedRectDimensions.X;
+            var height = rotatedRectDimensions.Y;
+            var rotationAngleRadians = Math.PI / 180 * rotationAngleDegrees;
+
+            if (width <= 0 || height <= 0)
+                return new Vector2(0, 0);
+
+            bool widthIsLonger = width >= height;
+            var (long_side, short_side) = widthIsLonger ? (width, height) : (height, width);
+            var (sinA, cosA) = (Math.Abs(Math.Sin(rotationAngleRadians)), Math.Abs(Math.Cos(rotationAngleRadians)));
+            if (short_side <= 2.0 * sinA * cosA * long_side || Math.Abs(sinA - cosA) < 1E-10)
             {
-                this.ToolTip = "You can right click the area editor to set the area to a display, adjust alignment, or resize the area.";
+                var x = 0.5 * short_side;
+                return widthIsLonger ? new Vector2((float)(x / sinA), (float)(x / cosA)) : new Vector2((float)(x / cosA), (float)(x / sinA));
             }
-
-            protected override void CreateMenu()
+            else
             {
-                base.CreateMenu();
-
-                base.ContextMenu.Items.AddSeparator();
-
-                var subMenu = base.ContextMenu.Items.GetSubmenu("Set to display");
-
-                var displays = DesktopInterop.VirtualScreen?.Displays.ToArray()
-                    ?? throw new InvalidOperationException("Could not get VirtualScreen");
-
-                // account for monitor layouts with negative offsets (e.g. Wayland supports this)
-                // skip IVirtualScreen's as these tend to be normalized to 0,0, which may confuse these methods
-                float xOffset = displays.Where(d => d is not IVirtualScreen).MinBy(d => d.Position.X)?.Position.X
-                    ?? throw new InvalidOperationException("Unable to look up X offset");
-                float yOffset = displays.Where(d => d is not IVirtualScreen).MinBy(d => d.Position.Y)?.Position.Y
-                    ?? throw new InvalidOperationException("Unable to look up Y offset");
-
-                foreach (var display in displays)
-                {
-                    subMenu.Items.Add(
-                        new ActionCommand
-                        {
-                            MenuText = display.ToString(),
-                            Action = () =>
-                            {
-                                if (this.Area == null)
-                                    throw new InvalidOperationException("Area null, somehow?");
-
-                                this.Area.Width = display.Width;
-                                this.Area.Height = display.Height;
-                                if (display is IVirtualScreen virtualScreen)
-                                {
-                                    this.Area.X = virtualScreen.Width / 2;
-                                    this.Area.Y = virtualScreen.Height / 2;
-                                }
-                                else
-                                {
-                                    virtualScreen = DesktopInterop.VirtualScreen;
-                                    this.Area.X = display.Position.X - xOffset + (display.Width / 2);
-                                    this.Area.Y = display.Position.Y - yOffset + (display.Height / 2);
-                                }
-                            }
-                        }
-                    );
-                }
+                var cos2A = cosA * cosA - sinA * sinA;
+                return new Vector2((float)((width * cosA - height * sinA) / cos2A), (float)((height * cosA - width * sinA) / cos2A));
             }
         }
 
-        public class TabletAreaEditor : RotationAreaEditor
+        // Due to the aspect ratio being locked, there is a known slope to calculate the largest aspect ratio locked area from (x = ratio * y)
+        // Both the negative and positive variants of this slope must be used
+        // Then we find the intersections along the top and right side lines of the tablet area (bottom and left would also be equivalent)
+        // https://www.desmos.com/calculator/hc53wxwpdc
+        // https://www.desmos.com/calculator/yyy1o4n094
+        public static Vector2 GetLargestRectInRotatedRectRatioLocked(Vector2 rotatedRectDimensions, float rotationAngleDegrees, float aspectRatio)
         {
-            public TabletAreaEditor()
+            var corners = new RectangleF(0, 0, rotatedRectDimensions.X, rotatedRectDimensions.Y).GetAreaCorners(rotationAngleDegrees);
+            // flip the bottom and top corners to account for different coordinate system
+            var (bottomLeft, bottomRight, topLeft, topRight) = (corners.TopLeft, corners.TopRight, corners.BottomLeft, corners.BottomRight);
+
+            // y = mx + b
+
+            // m: slope
+            double mVertical = (topRight.Y - topLeft.Y) / (topRight.X - topLeft.X);
+            double mHorizontal = (topLeft.Y - bottomLeft.Y) / (topLeft.X - bottomLeft.X);
+
+            // Aspect ratio slope is reversed from what we want: x = mRatio * y
+            // Later it must become: y = x / mRatio
+            double mRatio = aspectRatio;
+
+            // b: y intercept
+            double bVerticalRight = topRight.Y - mVertical * topRight.X;
+            double bHorizontalTop = topLeft.Y - mHorizontal * topLeft.X;
+
+            // Get intersection on X axis of ratio and side by setting them equal
+            // x / mRatio = mVertical * x + bVerticalRight -> x = (bVerticalRight * mRatio) / (1 - mVertical * mRatio)
+            // x / mRatio = mHorizontal * x + bHorizontalTop -> x = (bHorizontalTop * mRatio) / (1 - mHorizontal * mRatio)
+            double rightSideIntersectionXPos = (bVerticalRight * mRatio) / (1 - mVertical * mRatio);
+            double rightBottomIntersectionXNeg = (bVerticalRight * -mRatio) / (1 - mVertical * -mRatio);
+            double rightTopIntersectionXPos = (bHorizontalTop * mRatio) / (1 - mHorizontal * mRatio);
+            double leftTopIntersectionXNeg = (bHorizontalTop * -mRatio) / (1 - mHorizontal * -mRatio);
+
+            // Solve for Y now that we have X
+            // y = mx + b
+            // y = mVertical * topIntersectionX + bVerticalRight
+            // y = mHorizontal * rightIntersectionX + bHorizontalTop
+            double rightSideIntersectionYPos = mVertical * rightSideIntersectionXPos + bVerticalRight;
+            double rightBottomIntersectionYNeg = mVertical * rightBottomIntersectionXNeg + bVerticalRight;
+            double rightTopIntersectionYPos = mHorizontal * rightTopIntersectionXPos + bHorizontalTop;
+            double leftTopIntersectionYNeg = mHorizontal * leftTopIntersectionXNeg + bHorizontalTop;
+
+            var rightSidePoint = new Vector2((float)Math.Abs(rightSideIntersectionXPos), (float)Math.Abs(rightSideIntersectionYPos));
+            var rightBottomPoint = new Vector2((float)Math.Abs(rightBottomIntersectionXNeg), (float)Math.Abs(rightBottomIntersectionYNeg));
+            var rightTopPoint = new Vector2((float)Math.Abs(rightTopIntersectionXPos), (float)Math.Abs(rightTopIntersectionYPos));
+            var leftTopPoint = new Vector2((float)Math.Abs(leftTopIntersectionXNeg), (float)Math.Abs(leftTopIntersectionYNeg));
+
+            List<Vector2> points = [];
+
+            // Fix special cases when all points end up broken from 90 or 270 degree rotation and unrecoverable infinite slope (typically 0 or 360 degrees doesnt break but it adds unnecessary inaccuracies)
+            // Infinity obviously doesnt work in the calculations and setting some really high number to approximate instead isn't ideal
+            // This occurs when y = 0 or x = 0
+            // For example, at 0, 90, 270, or 360 degrees the right or left sides will be a perfectly straight vertical line and the top or bottom sides will be a perfectly straight horizontal line
+            // When `x = -b` (`x = 0m - b` or `0y = mx + b`) is converted to `y = mx + b` notation it equates to `y = ∞x + b`
+            // When `y = b`, it equates to `y = 0x + b` also breaking calculations (sometimes the zero is computed to -0)
+            if (Double.IsInfinity(mVertical) || Math.Abs(mVertical) == 0)
             {
-                this.ToolTip = "You can right click the area editor to enable aspect ratio locking, adjust alignment, or resize the area.";
+                // x = cornerPoint
+                // y = x * mRatio
+                points.Add(new Vector2(Math.Abs(topRight.X), (float)Math.Abs(topRight.X / mRatio)));
+            }
+            else
+            {
+                points.Add(rightSidePoint);
+                points.Add(rightBottomPoint);
+            }
+            if (Double.IsInfinity(mHorizontal) || Math.Abs(mHorizontal) == 0)
+            {
+                // x = y * mRatio
+                // y = cornerPoint
+                points.Add(new Vector2((float)Math.Abs(topRight.Y * mRatio), Math.Abs(topRight.Y)));
+            }
+            else
+            {
+                points.Add(rightTopPoint);
+                points.Add(leftTopPoint);
             }
 
-            private BooleanCommand? lockArCmd, areaClippingCmd, ignoreOutsideAreaCmd;
-            private bool lockAspectRatio, areaClipping, ignoreOutsideArea;
+            // Get the closest point to the center (measured diagonally, pythagorean this thing) and put it in Vector3.Z
+            var distances = points.Select(p => new Vector3(p.X, p.Y, p.X * p.X + p.Y * p.Y));
+            var closest = distances.MinBy(p => p.Z);
 
-            public event EventHandler<EventArgs>? LockAspectRatioChanged;
-            public event EventHandler<EventArgs>? AreaClippingChanged;
-            public event EventHandler<EventArgs>? IgnoreOutsideAreaChanged;
-
-            protected virtual void OnLockAspectRatioChanged() => LockAspectRatioChanged?.Invoke(this, new EventArgs());
-            protected virtual void OnAreaClippingChanged() => AreaClippingChanged?.Invoke(this, new EventArgs());
-            protected virtual void OnIgnoreOutsideAreaChanged() => IgnoreOutsideAreaChanged?.Invoke(this, new EventArgs());
-
-            public bool LockAspectRatio
+            // Optional rounding to make things cleaner, round at the 4th place whichever is closer to a whole number and relock the ratio of the other value
+            Vector2 fullSize = new Vector2(closest.X * 2, closest.Y * 2);
+            if (Math.Abs(fullSize.X - Math.Round(fullSize.X)) <= Math.Abs(fullSize.Y - Math.Round(fullSize.Y)))
             {
-                set
-                {
-                    this.lockAspectRatio = value;
-                    this.OnLockAspectRatioChanged();
-                }
-                get => this.lockAspectRatio;
+                fullSize.X = MathF.Round(fullSize.X, 4);
+                fullSize.Y = fullSize.X / aspectRatio;
+            }
+            else
+            {
+                fullSize.Y = MathF.Round(fullSize.Y, 4);
+                fullSize.X = fullSize.Y * aspectRatio;
             }
 
-            public bool AreaClipping
-            {
-                set
-                {
-                    this.areaClipping = value;
-                    this.OnAreaClippingChanged();
-                }
-                get => this.areaClipping;
-            }
-
-            public bool IgnoreOutsideArea
-            {
-                set
-                {
-                    this.ignoreOutsideArea = value;
-                    this.OnIgnoreOutsideAreaChanged();
-                }
-                get => this.ignoreOutsideArea;
-            }
-
-            public BindableBinding<TabletAreaEditor, bool> LockAspectRatioBinding
-            {
-                get
-                {
-                    return new BindableBinding<TabletAreaEditor, bool>(
-                        this,
-                        c => c.LockAspectRatio,
-                        (c, v) => c.LockAspectRatio = v,
-                        (c, h) => c.LockAspectRatioChanged += h,
-                        (c, h) => c.LockAspectRatioChanged -= h
-                    );
-                }
-            }
-
-            public BindableBinding<TabletAreaEditor, bool> AreaClippingBinding
-            {
-                get
-                {
-                    return new BindableBinding<TabletAreaEditor, bool>(
-                        this,
-                        c => c.AreaClipping,
-                        (c, v) => c.AreaClipping = v,
-                        (c, h) => c.AreaClippingChanged += h,
-                        (c, h) => c.AreaClippingChanged -= h
-                    );
-                }
-            }
-
-            public BindableBinding<TabletAreaEditor, bool> IgnoreOutsideAreaBinding
-            {
-                get
-                {
-                    return new BindableBinding<TabletAreaEditor, bool>(
-                        this,
-                        c => c.IgnoreOutsideArea,
-                        (c, v) => c.IgnoreOutsideArea = v,
-                        (c, h) => c.IgnoreOutsideAreaChanged += h,
-                        (c, h) => c.IgnoreOutsideAreaChanged -= h
-                    );
-                }
-            }
-
-            protected override void CreateMenu()
-            {
-                base.CreateMenu();
-
-                base.ContextMenu.Items.AddSeparator();
-
-                lockArCmd = new BooleanCommand
-                {
-                    MenuText = "Lock aspect ratio"
-                };
-
-                areaClippingCmd = new BooleanCommand
-                {
-                    MenuText = "Clamp input outside area"
-                };
-
-                ignoreOutsideAreaCmd = new BooleanCommand
-                {
-                    MenuText = "Ignore input outside area"
-                };
-
-                base.ContextMenu.Items.AddRange(
-                    new Command[]
-                    {
-                        lockArCmd,
-                        areaClippingCmd,
-                        ignoreOutsideAreaCmd
-                    }
-                );
-
-                base.ContextMenu.Items.AddSeparator();
-
-                base.ContextMenu.Items.Add(
-                    new ActionCommand
-                    {
-                        MenuText = "Convert area...",
-                        Action = async () => await ConvertAreaDialog()
-                    }
-                );
-
-                lockArCmd.CheckedBinding.Cast<bool>().Bind(LockAspectRatioBinding);
-                areaClippingCmd.CheckedBinding.Cast<bool>().Bind(AreaClippingBinding);
-                ignoreOutsideAreaCmd.CheckedBinding.Cast<bool>().Bind(IgnoreOutsideAreaBinding);
-            }
-
-            private async Task ConvertAreaDialog()
-            {
-                var converter = new AreaConverterDialog
-                {
-                    DataContext = base.Area
-                };
-                await converter.ShowModalAsync(base.ParentWindow);
-            }
+            return fullSize;
         }
     }
 }

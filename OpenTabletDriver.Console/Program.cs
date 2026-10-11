@@ -110,8 +110,8 @@ namespace OpenTabletDriver.Console
 
         private static readonly IEnumerable<Command> ScriptingCommands =
         [
-            CreateCommand(GetDiagnostics, "Gets diagnostic information"),
-            CreateCommand(STDIO, "Open with standard input and output", "stdio"),
+            CreateCommand(GetDiagnostics, "Gets diagnostic information", "diag"),
+            CreateCommand(STDIO, "Open with standard input and output"),
             CreateCommand(EditSettings, "Opens the settings file with the editor defined in the EDITOR environment variable.", "edit"),
         ];
     }

@@ -287,6 +287,9 @@ namespace OpenTabletDriver.UX
             var deviceStringReader = new Command { MenuText = "Device string reader..." };
             deviceStringReader.Executed += (sender, e) => App.Current.StringReaderWindow.Show();
 
+            var deviceInitSender = new Command { MenuText = "Device init sender..." };
+            deviceInitSender.Executed += (sender, e) => App.Current.InitSenderWindow.Show();
+
             var pluginManager = new Command { MenuText = "Open Plugin Manager..." };
             pluginManager.Executed += (sender, e) => App.Current.PluginManagerWindow.Show();
 
@@ -347,6 +350,7 @@ namespace OpenTabletDriver.UX
                             detectTablet,
                             showTabletDebugger,
                             deviceStringReader,
+                            deviceInitSender,
                         }
                     },
                     // Plugins submenu
@@ -483,6 +487,7 @@ namespace OpenTabletDriver.UX
             {
                 base.Content = placeholder;
                 base.Menu = null;
+                SetTitle(); // reset title to avoid last connected tablets from showing up
 
                 Application.Instance.InvokeAsync(ConnectToDaemon).ConfigureAwait(false);
             });
