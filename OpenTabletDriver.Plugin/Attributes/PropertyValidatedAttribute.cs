@@ -2,24 +2,21 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using JetBrains.Annotations;
 
 namespace OpenTabletDriver.Plugin.Attributes
 {
+    [PublicAPI]
     [AttributeUsage(AttributeTargets.Property)]
-    public partial class PropertyValidatedAttribute : Attribute
+    public partial class PropertyValidatedAttribute(string memberName) : Attribute
     {
-        public PropertyValidatedAttribute(string memberName)
-        {
-            MemberName = memberName;
-        }
-
         /// <summary>
         /// The name of the member in which the property this is assigned to is allowed to have.
         /// </summary>
         /// <remarks>
         /// This member must return <see cref="System.Collections.Generic.IEnumerable{T}"/> statically.
         /// </remarks>
-        public string MemberName { get; }
+        public string MemberName { get; } = memberName;
 
         public T? GetValue<T>(PropertyInfo property)
         {
