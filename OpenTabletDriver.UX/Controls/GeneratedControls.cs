@@ -57,6 +57,7 @@ namespace OpenTabletDriver.UX.Controls
                         DataStore = validateAttr.GetValue<IEnumerable<string>>(property),
                     };
                     comboBox.SelectedItemBinding.Bind(binding.Convert<string?>(property));
+                    comboBox.SelectedIndex = 0; // ensure something is selected
                     rv = comboBox;
                 }
                 else
