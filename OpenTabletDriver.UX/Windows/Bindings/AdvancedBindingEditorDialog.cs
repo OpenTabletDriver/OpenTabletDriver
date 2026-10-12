@@ -16,6 +16,7 @@ namespace OpenTabletDriver.UX.Windows.Bindings
             Result = currentBinding;
             Padding = 5;
             Size = new Eto.Drawing.Size(500, 450);
+            Resizable = true;
 
             this.Content = new StackLayout
             {
@@ -34,7 +35,7 @@ namespace OpenTabletDriver.UX.Windows.Bindings
                         {
                             Padding = 5,
                             Border = BorderType.None,
-                            Content = new StackLayout
+                            Content = settingsScrollableContent = new StackLayout
                             {
                                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
                                 Width = 1, // forces HorizontalAlignment.Stretch to start at 1 instead of the default size which eliminates the Scrollable's horizontal scrollbar
@@ -80,10 +81,16 @@ namespace OpenTabletDriver.UX.Windows.Bindings
             bindingTypeDropDown.SelectedItemBinding.Convert(t => new PluginSettingStore(t)).Bind(settingStoreEditor.StoreBinding!);
             bindingTypeDropDown.SelectedItem = currentBinding?.GetTypeInfo();
             settingStoreEditor.Store = currentBinding;
+
+            settingsScrollableContent.SizeChanged += (sender, e) =>
+            {
+                settingStoreEditor.ResizeLayoutItems();
+            };
         }
 
         private TypeDropDown<IBinding> bindingTypeDropDown;
         private PluginSettingStoreEditor<IBinding> settingStoreEditor = new PluginSettingStoreEditor<IBinding>();
+        private StackLayout settingsScrollableContent = new();
 
         private void ClearBinding(object? sender, EventArgs e)
         {

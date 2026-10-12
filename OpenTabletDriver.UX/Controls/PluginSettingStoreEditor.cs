@@ -5,6 +5,7 @@ using Eto.Forms;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
+using OpenTabletDriver.UX.Controls.Generic;
 
 namespace OpenTabletDriver.UX.Controls
 {
@@ -33,6 +34,17 @@ namespace OpenTabletDriver.UX.Controls
         }
 
         public event EventHandler<EventArgs>? StoreChanged;
+
+        public void ResizeLayoutItems()
+        {
+            foreach (var layoutItem in layout.Items)
+            {
+                if (layoutItem.Control is Group groupControl && groupControl.Content != null)
+                {
+                    groupControl.Content.Width = this.Parent.Size.Width / 2;
+                }
+            }
+        }
 
         protected virtual void OnStoreChanged()
         {
@@ -67,14 +79,14 @@ namespace OpenTabletDriver.UX.Controls
             return Array.Empty<Control>();
         }
 
-        private static IEnumerable<Control> GetControlsForStore(PluginSettingStore store)
+        private IEnumerable<Control> GetControlsForStore(PluginSettingStore store)
         {
             if (store != null)
             {
                 var type = store.GetTypeInfo<TSource>();
 
                 if (type != null)
-                    return GetControlsForType(store, type);
+                    return GetControlsForType(store, type, this.Parent.Size.Width / 2);
                 else
                 {
                     var isStorePathNull = store.Path == null ? "(store path is null)" : "";
@@ -85,7 +97,7 @@ namespace OpenTabletDriver.UX.Controls
             return Array.Empty<Control>();
         }
 
-        private static IEnumerable<Control> GetControlsForType(PluginSettingStore store, Type type)
+        private static IEnumerable<Control> GetControlsForType(PluginSettingStore store, Type type, int width)
         {
             var properties = from property in type.GetProperties()
                              let attrs = property.GetCustomAttributes(true)
@@ -93,7 +105,7 @@ namespace OpenTabletDriver.UX.Controls
                              select property;
 
             foreach (var property in properties)
-                yield return GeneratedControls.GetControlForProperty(store, property);
+                yield return GeneratedControls.GetControlForProperty(store, property, width);
         }
     }
 }
