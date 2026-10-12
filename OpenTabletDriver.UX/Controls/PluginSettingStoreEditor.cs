@@ -19,25 +19,22 @@ namespace OpenTabletDriver.UX.Controls
             };
         }
 
-        private StackLayout layout;
+        private readonly StackLayout layout;
 
-        private PluginSettingStore? store;
         public PluginSettingStore? Store
         {
             set
             {
-                this.store = value;
+                field = value;
                 this.OnStoreChanged();
             }
-            get => this.store;
+            get;
         }
 
         public event EventHandler<EventArgs>? StoreChanged;
 
         protected virtual void OnStoreChanged()
         {
-            StoreChanged?.Invoke(this, new EventArgs());
-
             layout.Items.Clear();
             if (Store != null)
             {
@@ -46,6 +43,9 @@ namespace OpenTabletDriver.UX.Controls
                     layout.Items.Add(control);
                 }
             }
+
+            // invoke after adding items to allow subscribers to act on new contents
+            StoreChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public BindableBinding<PluginSettingStoreEditor<TSource>, PluginSettingStore?> StoreBinding
@@ -67,25 +67,21 @@ namespace OpenTabletDriver.UX.Controls
             return Array.Empty<Control>();
         }
 
-        private static IEnumerable<Control> GetControlsForStore(PluginSettingStore store)
+        private IEnumerable<Control> GetControlsForStore(PluginSettingStore store)
         {
-            if (store != null)
-            {
-                var type = store.GetTypeInfo<TSource>();
+            var type = store.GetTypeInfo<TSource>();
 
-                if (type != null)
-                    return GetControlsForType(store, type);
-                else
-                {
-                    var isStorePathNull = store.Path == null ? "(store path is null)" : "";
-                    Log.Write("PluginSettingStoreEditor", $"Failed to get type info. {isStorePathNull}", LogLevel.Error);
-                }
+            if (type == null)
+            {
+                string storePath = store.Path ?? "(store path is null)";
+                Log.Write("PluginSettingStoreEditor", $"Failed to get type info for store: {storePath}", LogLevel.Error);
+                return [];
             }
 
-            return Array.Empty<Control>();
+            return GetControlsForType(store, type, this.Parent.Size.Width / 2);
         }
 
-        private static IEnumerable<Control> GetControlsForType(PluginSettingStore store, Type type)
+        private static IEnumerable<Control> GetControlsForType(PluginSettingStore store, Type type, int width)
         {
             var properties = from property in type.GetProperties()
                              let attrs = property.GetCustomAttributes(true)
@@ -93,7 +89,7 @@ namespace OpenTabletDriver.UX.Controls
                              select property;
 
             foreach (var property in properties)
-                yield return GeneratedControls.GetControlForProperty(store, property);
+                yield return GeneratedControls.GetControlForProperty(store, property, width);
         }
     }
 }

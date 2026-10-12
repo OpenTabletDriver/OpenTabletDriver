@@ -27,7 +27,7 @@ namespace OpenTabletDriver.UX.Controls
             { typeof(TimeSpan), GetMaskedTextBox<TimeSpan> }
         };
 
-        public static Control GetControlForProperty(PluginSettingStore store, PropertyInfo property)
+        public static Control GetControlForProperty(PluginSettingStore store, PropertyInfo property, int width = 400)
         {
             var attr = property.GetCustomAttribute<PropertyAttribute>();
 
@@ -41,7 +41,7 @@ namespace OpenTabletDriver.UX.Controls
             // Apply all visual modifier attributes
             control = property.GetCustomAttributes<ModifierAttribute>().Aggregate(control, ApplyModifierAttribute);
 
-            control.Width = 400;
+            control.Width = width;
             return new Group(attr?.DisplayName ?? property.Name, control, Orientation.Horizontal, false);
         }
 

@@ -1,4 +1,5 @@
 using System;
+using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.UX.Controls;
@@ -23,23 +24,21 @@ namespace OpenTabletDriver.UX.Windows.Bindings
                 {
                     new Group
                     {
-                        Text = "Type",
+                        Text = "Binding Type",
                         Content = bindingTypeDropDown = new TypeDropDown<IBinding>()
                     },
-                    new Scrollable
+                    new Group
                     {
-                        Padding = 5,
-                        Border = BorderType.None,
-                        Size = new Eto.Drawing.Size(500, 350),
+                        Text = "Settings",
                         Content = new StackLayout
                         {
+                            Size = new Size(400, -1),
                             HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                            Width = 1, // forces HorizontalAlignment.Stretch to start at 1 instead of the default size which eliminates the Scrollable's horizontal scrollbar
                             Items =
                             {
                                 settingStoreEditor,
-                            }
-                        }
+                            },
+                        },
                     },
                     new StackLayoutItem
                     {
@@ -74,11 +73,19 @@ namespace OpenTabletDriver.UX.Windows.Bindings
 
             bindingTypeDropDown.SelectedItemBinding.Convert(t => new PluginSettingStore(t)).Bind(settingStoreEditor.StoreBinding!);
             bindingTypeDropDown.SelectedItem = currentBinding?.GetTypeInfo();
+            settingStoreEditor.StoreChanged += OnSettingStoreEditorOnStoreChanged;
             settingStoreEditor.Store = currentBinding;
         }
 
-        private TypeDropDown<IBinding> bindingTypeDropDown;
-        private PluginSettingStoreEditor<IBinding> settingStoreEditor = new PluginSettingStoreEditor<IBinding>();
+        private readonly TypeDropDown<IBinding> bindingTypeDropDown;
+        private readonly PluginSettingStoreEditor<IBinding> settingStoreEditor = new();
+
+        private static void OnSettingStoreEditorOnStoreChanged(object? sender, EventArgs args)
+        {
+            var pan = sender as Panel;
+            // Size -1 = Eto must rescale axis based on new contents
+            pan?.Parent.Size = new Size(pan.Parent.Size.Width, -1);
+        }
 
         private void ClearBinding(object? sender, EventArgs e)
         {
