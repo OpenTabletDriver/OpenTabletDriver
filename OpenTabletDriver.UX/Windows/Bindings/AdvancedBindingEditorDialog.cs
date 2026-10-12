@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Reflection;
@@ -75,16 +76,31 @@ namespace OpenTabletDriver.UX.Windows.Bindings
             bindingTypeDropDown.SelectedItem = currentBinding?.GetTypeInfo();
             settingStoreEditor.StoreChanged += OnSettingStoreEditorOnStoreChanged;
             settingStoreEditor.Store = currentBinding;
+
+            // store starting value to be able to potentially recover it later
+            initialStore = currentBinding;
+            initialStoreTypeInfo = initialStore?.GetTypeInfo(); // caching this saves a little bit of time on recoveries
         }
 
+        private readonly PluginSettingStore? initialStore;
+        private readonly TypeInfo? initialStoreTypeInfo;
         private readonly TypeDropDown<IBinding> bindingTypeDropDown;
         private readonly PluginSettingStoreEditor<IBinding> settingStoreEditor = new();
 
-        private static void OnSettingStoreEditorOnStoreChanged(object? sender, EventArgs args)
+        private void OnSettingStoreEditorOnStoreChanged(object? sender, EventArgs args)
         {
-            var pan = sender as Panel;
+            // restore binding settings in case user goes back to the initial type
+            if (settingStoreEditor.Store != initialStore // avoid recursion
+                && initialStore != null && initialStoreTypeInfo != null) // avoid restoring null
+            {
+                var storeTypeInfo = settingStoreEditor.Store?.GetTypeInfo();
+
+                if (storeTypeInfo == initialStoreTypeInfo)
+                    settingStoreEditor.Store = initialStore;
+            }
+
             // Size -1 = Eto must rescale axis based on new contents
-            pan?.Parent.Size = new Size(pan.Parent.Size.Width, -1);
+            settingStoreEditor.Parent.Size = new Size(settingStoreEditor.Parent.Size.Width, -1);
         }
 
         private void ClearBinding(object? sender, EventArgs e)
