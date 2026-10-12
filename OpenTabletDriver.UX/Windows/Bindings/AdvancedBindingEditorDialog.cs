@@ -15,7 +15,7 @@ namespace OpenTabletDriver.UX.Windows.Bindings
             Title = "Advanced Binding Editor";
             Result = currentBinding;
             Padding = 5;
-            Size = new Eto.Drawing.Size(550, 450);
+            Size = new Eto.Drawing.Size(500, 450);
 
             this.Content = new StackLayout
             {
@@ -34,7 +34,6 @@ namespace OpenTabletDriver.UX.Windows.Bindings
                         {
                             Padding = 5,
                             Border = BorderType.None,
-                            // Size = new Eto.Drawing.Size(500, 350),
                             Content = new StackLayout
                             {
                                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
