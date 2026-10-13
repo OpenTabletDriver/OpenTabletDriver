@@ -46,10 +46,7 @@ namespace OpenTabletDriver.UX.Controls
                 sourceSelector.SelectedItemBinding.Convert(t => t != null ? StoreCollection?.FromType(t) : null)
             );
 
-            settingStoreEditorScrollable.SizeChanged += (sender, e) =>
-            {
-                settingStoreEditor.ResizeLayoutItems();
-            };
+            settingStoreEditorScrollable.SizeChanged += (sender, e) => settingStoreEditor.ResizeLayoutItems();
 
             if (!Platform.IsMac) // Don't do this on macOS, causes poor UI performance.
                 settingStoreEditor.BackgroundColor = SystemColors.WindowBackground;

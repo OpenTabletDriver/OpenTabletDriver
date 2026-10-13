@@ -82,10 +82,7 @@ namespace OpenTabletDriver.UX.Windows.Bindings
             bindingTypeDropDown.SelectedItem = currentBinding?.GetTypeInfo();
             settingStoreEditor.Store = currentBinding;
 
-            settingsScrollableContent.SizeChanged += (sender, e) =>
-            {
-                settingStoreEditor.ResizeLayoutItems();
-            };
+            settingsScrollableContent.SizeChanged += (sender, e) => settingStoreEditor.ResizeLayoutItems();
         }
 
         private TypeDropDown<IBinding> bindingTypeDropDown;
