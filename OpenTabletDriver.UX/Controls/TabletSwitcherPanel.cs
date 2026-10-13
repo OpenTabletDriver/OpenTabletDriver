@@ -51,10 +51,26 @@ namespace OpenTabletDriver.UX.Controls
             controlPanel.ProfileBinding.Bind(tabletSwitcher.SelectedValueBinding.Cast<Profile?>());
 
             tabletSwitcher.ProfilesBinding.BindDataContext<App>(a => a.Settings.Profiles);
+        }
 
+        protected override void OnLoadComplete(EventArgs e)
+        {
+            base.OnLoadComplete(e);
             App.Driver.TabletsChanged += HandleTabletsChanged;
             // ReSharper disable once AsyncVoidMethod
-            Application.Instance.AsyncInvoke(async void () => HandleTabletsChanged(this, await App.Driver.Instance!.GetTablets()));
+            Application.Instance.AsyncInvoke(async void () =>
+            {
+                if (IsDisposed || !Loaded)
+                    return;
+
+                HandleTabletsChanged(this, await App.Driver.Instance!.GetTablets());
+            });
+        }
+
+        protected override void OnUnLoad(EventArgs e)
+        {
+            App.Driver.TabletsChanged -= HandleTabletsChanged;
+            base.OnUnLoad(e);
         }
 
         private StackLayout layout;
@@ -70,6 +86,9 @@ namespace OpenTabletDriver.UX.Controls
 
         private void HandleTabletsChanged(object? sender, IEnumerable<TabletReference> tablets)
         {
+            if (IsDisposed || !Loaded)
+                return;
+
             tabletSwitcher.HandleTabletsChanged(sender, [.. tablets]);
         }
 
@@ -84,8 +103,8 @@ namespace OpenTabletDriver.UX.Controls
 
             private readonly ObservableCollection<Profile> visibleProfiles = [];
 
-            private ProfileCollection profiles = [];
-            public ProfileCollection Profiles
+            private ProfileCollection? profiles = [];
+            public ProfileCollection? Profiles
             {
                 set
                 {
@@ -101,15 +120,21 @@ namespace OpenTabletDriver.UX.Controls
             protected virtual async Task OnProfilesChanged()
             {
                 ProfilesChanged?.Invoke(this, EventArgs.Empty);
+                if (IsDisposed || !Loaded)
+                    return;
+
                 var tablets = await App.Driver.Instance!.GetTablets();
+                if (IsDisposed || !Loaded)
+                    return;
+
                 HandleTabletsChanged(this, [.. tablets]);
             }
 
-            public BindableBinding<TabletSwitcher, ProfileCollection> ProfilesBinding
+            public BindableBinding<TabletSwitcher, ProfileCollection?> ProfilesBinding
             {
                 get
                 {
-                    return new BindableBinding<TabletSwitcher, ProfileCollection>(
+                    return new BindableBinding<TabletSwitcher, ProfileCollection?>(
                         this,
                         c => c.Profiles,
                         (c, v) => c.Profiles = v,
@@ -123,17 +148,18 @@ namespace OpenTabletDriver.UX.Controls
             {
                 visibleProfiles.Clear();
 
-                if (tablets.Any())
+                var currentProfiles = Profiles;
+                if (currentProfiles != null && tablets.Any())
                 {
                     var tabletsWithoutProfile = from tablet in tablets
-                                                where !profiles.Any(p => p.Tablet == tablet.Properties.Name)
+                                                where !currentProfiles.Any(p => p.Tablet == tablet.Properties.Name)
                                                 select tablet;
 
                     foreach (var tablet in tabletsWithoutProfile)
-                        profiles.Generate(tablet);
+                        currentProfiles.Generate(tablet);
 
                     foreach (var tablet in tablets)
-                        visibleProfiles.Add(Profiles.First(p => p.Tablet == tablet.Properties.Name));
+                        visibleProfiles.Add(currentProfiles.First(p => p.Tablet == tablet.Properties.Name));
 
                     if (this.SelectedIndex < 0)
                     {
