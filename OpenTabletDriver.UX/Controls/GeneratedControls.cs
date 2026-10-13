@@ -64,6 +64,8 @@ namespace OpenTabletDriver.UX.Controls
                 {
                     var textBox = new TextBox();
                     textBox.TextBinding.Bind(binding.Convert<string>(property));
+                    if (property.GetCustomAttribute<PropertyUnvalidatedStringPlaceholderAttribute>() is { } placeholderAttribute)
+                        textBox.PlaceholderText = placeholderAttribute.Placeholder;
                     rv = textBox;
                 }
             }
