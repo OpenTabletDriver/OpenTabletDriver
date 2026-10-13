@@ -44,9 +44,7 @@ namespace OpenTabletDriver.UX.Controls
             advancedButton.Click += async (sender, e) =>
             {
                 var dialog = new AdvancedBindingEditorDialog(Store);
-                var result = await dialog.ShowModalAsync(this);
-                if (result.AdvancedBindingEditorDialogAction != AdvancedBindingEditorDialogAction.Close)
-                    this.Store = result.PluginSettingStore;
+                this.Store = await dialog.ShowModalAsync(this);
             };
         }
 
