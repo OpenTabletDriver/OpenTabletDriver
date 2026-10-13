@@ -7,6 +7,7 @@ using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Plugin.Tablet;
+using StreamJsonRpc;
 
 namespace OpenTabletDriver.UX.Controls
 {
@@ -54,7 +55,28 @@ namespace OpenTabletDriver.UX.Controls
 
             App.Driver.TabletsChanged += HandleTabletsChanged;
             // ReSharper disable once AsyncVoidMethod
-            Application.Instance.AsyncInvoke(async void () => HandleTabletsChanged(this, await App.Driver.Instance!.GetTablets()));
+            Application.Instance.AsyncInvoke(async void () =>
+            {
+                if (IsDisposed || !App.Driver.IsConnected)
+                    return;
+
+                var daemon = App.Driver.Instance;
+                IEnumerable<TabletReference> tablets;
+                try
+                {
+                    tablets = await daemon.GetTablets();
+                }
+                catch (Exception ex) when (ex is ConnectionLostException or ObjectDisposedException)
+                {
+                    Console.Error.WriteLine(ex);
+                    return;
+                }
+
+                if (IsDisposed || !App.Driver.IsConnected || !ReferenceEquals(daemon, App.Driver.Instance))
+                    return;
+
+                HandleTabletsChanged(this, tablets);
+            });
         }
 
         private StackLayout layout;
@@ -101,7 +123,24 @@ namespace OpenTabletDriver.UX.Controls
             protected virtual async Task OnProfilesChanged()
             {
                 ProfilesChanged?.Invoke(this, EventArgs.Empty);
-                var tablets = await App.Driver.Instance!.GetTablets();
+                if (IsDisposed || !App.Driver.IsConnected)
+                    return;
+
+                var daemon = App.Driver.Instance;
+                IEnumerable<TabletReference> tablets;
+                try
+                {
+                    tablets = await daemon.GetTablets();
+                }
+                catch (Exception ex) when (ex is ConnectionLostException or ObjectDisposedException)
+                {
+                    Console.Error.WriteLine(ex);
+                    return;
+                }
+
+                if (IsDisposed || !App.Driver.IsConnected || !ReferenceEquals(daemon, App.Driver.Instance))
+                    return;
+
                 HandleTabletsChanged(this, [.. tablets]);
             }
 

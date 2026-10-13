@@ -8,6 +8,7 @@ using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls.Bindings;
 using OpenTabletDriver.UX.Controls.Output;
+using StreamJsonRpc;
 
 namespace OpenTabletDriver.UX.Controls
 {
@@ -121,7 +122,31 @@ namespace OpenTabletDriver.UX.Controls
         {
             ProfileChanged?.Invoke(this, EventArgs.Empty);
 
-            var tablet = Profile != null ? await Profile.GetTabletReference() : null;
+            if (IsDisposed)
+                return;
+
+            var currentProfile = Profile;
+            TabletReference? tablet = null;
+            if (currentProfile != null)
+            {
+                if (!App.Driver.IsConnected)
+                    return;
+
+                var daemon = App.Driver.Instance;
+                try
+                {
+                    tablet = await currentProfile.GetTabletReference();
+                }
+                catch (Exception ex) when (ex is ConnectionLostException or ObjectDisposedException)
+                {
+                    Console.Error.WriteLine(ex);
+                    return;
+                }
+
+                if (IsDisposed || !App.Driver.IsConnected || !ReferenceEquals(daemon, App.Driver.Instance)
+                    || !ReferenceEquals(currentProfile, Profile))
+                    return;
+            }
 
             OnTabletChanged(tablet);
 
