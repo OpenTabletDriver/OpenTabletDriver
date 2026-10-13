@@ -86,7 +86,10 @@ namespace OpenTabletDriver.UX.Controls
                 var type = store.GetTypeInfo<TSource>();
 
                 if (type != null)
-                    return GetControlsForType(store, type, this.Parent.Size.Width / 2);
+                {
+                    var width = int.Max(240, this.Parent.Size.Width / 2);
+                    return GetControlsForType(store, type, width);
+                }
                 else
                 {
                     var isStorePathNull = store.Path == null ? "(store path is null)" : "";
