@@ -86,29 +86,33 @@ namespace OpenTabletDriver.UX.Windows.Bindings
             settingsScrollableContent.SizeChanged += (_, _) => settingStoreEditor.ResizeLayoutItems();
 
             // store starting value to be able to potentially recover it later
-            initialStore = currentBinding;
-            initialStoreTypeInfo = initialStore?.GetTypeInfo(); // caching this saves a little bit of time on recoveries
+            initialStoreTypeInfo = Result?.GetTypeInfo(); // caching this saves a little bit of time on recoveries
 
             settingStoreEditor.StoreChanged += OnSettingStoreEditorOnStoreChanged;
         }
 
-        private readonly PluginSettingStore? initialStore;
         private readonly TypeInfo? initialStoreTypeInfo;
 
         private readonly TypeDropDown<IBinding> bindingTypeDropDown;
         private readonly PluginSettingStoreEditor<IBinding> settingStoreEditor = new();
         private readonly StackLayout settingsScrollableContent;
 
+        private bool _recoveringStore = false;
+
         private void OnSettingStoreEditorOnStoreChanged(object? sender, EventArgs args)
         {
             // restore binding settings when user goes back to the initial type
-            if (settingStoreEditor.Store != initialStore // avoid recursion
-                && initialStore != null && initialStoreTypeInfo != null) // avoid restoring null
+            if (!_recoveringStore // avoid recursion
+                && Result != null && initialStoreTypeInfo != null) // avoid restoring null
             {
                 var storeTypeInfo = settingStoreEditor.Store?.GetTypeInfo();
 
                 if (storeTypeInfo == initialStoreTypeInfo)
-                    settingStoreEditor.Store = initialStore;
+                {
+                    _recoveringStore = true;
+                    settingStoreEditor.Store = Result.Clone();
+                    _recoveringStore = false;
+                }
             }
         }
 
