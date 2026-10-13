@@ -8,12 +8,12 @@ using IBinding = OpenTabletDriver.Plugin.IBinding;
 
 namespace OpenTabletDriver.UX.Windows.Bindings
 {
-    public class AdvancedBindingEditorDialog : Dialog<AdvancedBindingEditorDialogResult>
+    public class AdvancedBindingEditorDialog : Dialog<PluginSettingStore?>
     {
         public AdvancedBindingEditorDialog(PluginSettingStore? currentBinding = null)
         {
             Title = "Advanced Binding Editor";
-            Result = new AdvancedBindingEditorDialogResult(currentBinding, AdvancedBindingEditorDialogAction.Close);
+            Result = currentBinding?.Clone();
             Padding = 5;
             Size = new Eto.Drawing.Size(500, 450);
             Resizable = true;
@@ -91,30 +91,18 @@ namespace OpenTabletDriver.UX.Windows.Bindings
 
         private void ClearBinding(object? sender, EventArgs e)
         {
-            Close(new AdvancedBindingEditorDialogResult(null, AdvancedBindingEditorDialogAction.Clear));
+            Close(null);
         }
 
         private void ApplyBinding(object? sender, EventArgs e)
         {
             if (bindingTypeDropDown.SelectedItem == null)
             {
-                Close(new AdvancedBindingEditorDialogResult(null, AdvancedBindingEditorDialogAction.Apply));
+                Close(null);
                 return;
             }
 
-            Close(new AdvancedBindingEditorDialogResult(settingStoreEditor.Store, AdvancedBindingEditorDialogAction.Apply));
+            Close(settingStoreEditor.Store);
         }
-    }
-
-    public record struct AdvancedBindingEditorDialogResult(
-        PluginSettingStore? PluginSettingStore,
-        AdvancedBindingEditorDialogAction AdvancedBindingEditorDialogAction
-    );
-
-    public enum AdvancedBindingEditorDialogAction
-    {
-        Close,
-        Apply,
-        Clear,
     }
 }
