@@ -430,51 +430,17 @@ namespace OpenTabletDriver.UX
                 if (daemon == null || !IsCurrentConnection())
                     return;
 
-                // A previous connection's cleanup may still be waiting for the UI thread.
-                base.Content = placeholder;
-                base.Menu = null;
-                SetTitle();
-
-                if (!IsCurrentConnection())
-                    return;
-
                 // Hook events after the instance is (re)instantiated
                 Log.Output += LogToDriver;
                 App.Driver.TabletsChanged += (sender, tablet) => SetTitle(tablet);
 
-                // Keep RPC results local until this connection is ready to initialize the UI.
+                // Load full menu
+                this.Menu = fullMenu;
+
                 AppInfo appInfo;
                 try
                 {
                     appInfo = await daemon.GetApplicationInfo();
-                }
-                catch (Exception ex) when (ex is ConnectionLostException or ObjectDisposedException)
-                {
-                    Console.Error.WriteLine(ex);
-                    return;
-                }
-
-                if (!IsCurrentConnection())
-                    return;
-
-                Settings settings;
-                try
-                {
-                    settings = await daemon.GetSettings();
-                }
-                catch (Exception ex) when (ex is ConnectionLostException or ObjectDisposedException)
-                {
-                    Console.Error.WriteLine(ex);
-                    return;
-                }
-
-                if (!IsCurrentConnection())
-                    return;
-
-                IEnumerable<TabletReference> tablets;
-                try
-                {
-                    tablets = await daemon.GetTablets();
                 }
                 catch (Exception ex) when (ex is ConnectionLostException or ObjectDisposedException)
                 {
@@ -495,6 +461,17 @@ namespace OpenTabletDriver.UX
                 // Show the startup greeter
                 if (!File.Exists(AppInfo.Current.SettingsFile) && this.WindowState != WindowState.Minimized)
                     App.Current.StartupGreeterWindow.Show();
+
+                Settings settings;
+                try
+                {
+                    settings = await daemon.GetSettings();
+                }
+                catch (Exception ex) when (ex is ConnectionLostException or ObjectDisposedException)
+                {
+                    Console.Error.WriteLine(ex);
+                    return;
+                }
 
                 if (!IsCurrentConnection())
                     return;
@@ -520,19 +497,22 @@ namespace OpenTabletDriver.UX
                 if (!IsCurrentConnection())
                     return;
 
-                // Show the full UI once the initialization RPCs have completed.
-                this.Menu = fullMenu;
-
-                if (!IsCurrentConnection())
-                    return;
-
                 base.Content = content;
-
-                if (!IsCurrentConnection())
-                    return;
 
                 // Update preset options in File menu and tray icon
                 await RefreshPresets();
+
+                // Update title to new instance
+                IEnumerable<TabletReference> tablets;
+                try
+                {
+                    tablets = await daemon.GetTablets();
+                }
+                catch (Exception ex) when (ex is ConnectionLostException or ObjectDisposedException)
+                {
+                    Console.Error.WriteLine(ex);
+                    return;
+                }
 
                 if (!IsCurrentConnection())
                     return;
@@ -563,7 +543,7 @@ namespace OpenTabletDriver.UX
         private void HandleDaemonDisconnected(object? sender, EventArgs e)
         {
             // Invalidate pending initialization even while the UI cleanup is queued.
-            var version = Interlocked.Increment(ref connectionVersion);
+            Interlocked.Increment(ref connectionVersion);
             Log.Output -= LogToDriver;
             if (SilenceDaemonShutdown)
                 return;
@@ -571,9 +551,6 @@ namespace OpenTabletDriver.UX
             // Hide all controls until reconnected
             Application.Instance.Invoke(() =>
             {
-                if (version != Volatile.Read(ref connectionVersion))
-                    return;
-
                 base.Content = placeholder;
                 base.Menu = null;
                 SetTitle(); // reset title to avoid last connected tablets from showing up
