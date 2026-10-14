@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.UX.Controls;
@@ -15,7 +16,7 @@ namespace OpenTabletDriver.UX.Windows.Bindings
             Title = "Advanced Binding Editor";
             Result = currentBinding?.Clone();
             Padding = 5;
-            Size = new Eto.Drawing.Size(500, 450);
+            base.Size = new Eto.Drawing.Size(500, 450);
             Resizable = true;
 
             this.Content = new StackLayout
@@ -82,12 +83,38 @@ namespace OpenTabletDriver.UX.Windows.Bindings
             bindingTypeDropDown.SelectedItem = currentBinding?.GetTypeInfo();
             settingStoreEditor.Store = currentBinding;
 
-            settingsScrollableContent.SizeChanged += (sender, e) => settingStoreEditor.ResizeLayoutItems();
+            settingsScrollableContent.SizeChanged += (_, _) => settingStoreEditor.ResizeLayoutItems();
+
+            // store starting value to be able to potentially recover it later
+            initialStoreTypeInfo = Result?.GetTypeInfo(); // caching this saves a little bit of time on recoveries
+
+            settingStoreEditor.StoreChanged += OnSettingStoreEditorOnStoreChanged;
         }
 
-        private TypeDropDown<IBinding> bindingTypeDropDown;
-        private PluginSettingStoreEditor<IBinding> settingStoreEditor = new PluginSettingStoreEditor<IBinding>();
-        private StackLayout settingsScrollableContent = new();
+        private readonly TypeInfo? initialStoreTypeInfo;
+
+        private readonly TypeDropDown<IBinding> bindingTypeDropDown;
+        private readonly PluginSettingStoreEditor<IBinding> settingStoreEditor = new();
+        private readonly StackLayout settingsScrollableContent;
+
+        private bool _recoveringStore = false;
+
+        private void OnSettingStoreEditorOnStoreChanged(object? sender, EventArgs args)
+        {
+            // restore binding settings when user goes back to the initial type
+            if (!_recoveringStore // avoid recursion
+                && Result != null && initialStoreTypeInfo != null) // avoid restoring null
+            {
+                var storeTypeInfo = settingStoreEditor.Store?.GetTypeInfo();
+
+                if (storeTypeInfo == initialStoreTypeInfo)
+                {
+                    _recoveringStore = true;
+                    settingStoreEditor.Store = Result.Clone();
+                    _recoveringStore = false;
+                }
+            }
+        }
 
         private void ClearBinding(object? sender, EventArgs e)
         {
