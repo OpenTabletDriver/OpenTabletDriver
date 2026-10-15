@@ -1,0 +1,45 @@
+{
+  "Name": "Wacom Cintiq 24HD (DTK-2400)",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 522.4,
+      "Height": 328,
+      "MaxX": 104480,
+      "MaxY": 65600
+    },
+    "Pen": {
+      "MaxPressure": 2047,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 19
+    },
+    "Wheels": [
+      {
+        "AbsoluteWheelMax": 71,
+        "AngleOfZeroReading": 170.0,
+        "ButtonCount": 0
+      },
+      {
+        "AbsoluteWheelMax": 71,
+        "AngleOfZeroReading": 170.0,
+        "ButtonCount": 0
+      }
+    ]
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 244,
+      "InputReportLength": 10,
+      "OutputReportLength": 0,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Cintiq24HD.Cintiq24HDReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
