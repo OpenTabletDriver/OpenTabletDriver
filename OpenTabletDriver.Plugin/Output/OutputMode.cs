@@ -41,6 +41,8 @@ namespace OpenTabletDriver.Plugin.Output
             get => this.passthrough;
         }
 
+        protected IList<IPositionedPipelineElement<IDeviceReport>> InternalElements { private set; get; } =
+            Array.Empty<IPositionedPipelineElement<IDeviceReport>>();
         protected IList<IPositionedPipelineElement<IDeviceReport>> PreTransformElements { private set; get; } =
             Array.Empty<IPositionedPipelineElement<IDeviceReport>>();
 
@@ -66,6 +68,7 @@ namespace OpenTabletDriver.Plugin.Output
 
                 if (elements.Count > 0)
                 {
+                    InternalElements = GroupElements(Elements, PipelinePosition.Internal);
                     PreTransformElements = GroupElements(Elements, PipelinePosition.PreTransform);
                     PostTransformElements = GroupElements(Elements, PipelinePosition.PostTransform);
 
@@ -80,6 +83,7 @@ namespace OpenTabletDriver.Plugin.Output
                 else
                 {
                     Passthrough = true;
+                    InternalElements = Array.Empty<IPositionedPipelineElement<IDeviceReport>>();
                     PreTransformElements = Array.Empty<IPositionedPipelineElement<IDeviceReport>>();
                     PostTransformElements = Array.Empty<IPositionedPipelineElement<IDeviceReport>>();
                 }
@@ -93,6 +97,7 @@ namespace OpenTabletDriver.Plugin.Output
             {
                 var links = new List<IPipelineElement<IDeviceReport>>();
 
+                links.AddRange(InternalElements);
                 links.AddRange(PreTransformElements);
                 links.Add(this);
                 links.AddRange(PostTransformElements);

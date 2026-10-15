@@ -44,10 +44,12 @@ namespace OpenTabletDriver.Desktop
 
             string rv = FileUtilities.InjectEnvironmentVariables(found ? pathFromEnvVar! : pathRecord.FallbackPath);
 
+#if DEBUG
             Log.Debug(nameof(UnixXdgPath),
                 found
                     ? $"{pathRecord.EnvVar} found: '{rv}'"
                     : $"{pathRecord.EnvVar} not found, falling back to '{rv}'");
+#endif
 
             if (!Directory.Exists(rv))
                 Log.Write(nameof(UnixXdgPath), $"Returning non-existent directory '{rv}'");

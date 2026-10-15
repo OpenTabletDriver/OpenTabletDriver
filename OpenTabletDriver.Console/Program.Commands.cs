@@ -94,8 +94,7 @@ namespace OpenTabletDriver.Console
         {
             var presetDir = new DirectoryInfo(AppInfo.Current.PresetDirectory);
 
-            if (!presetDir.Exists)
-                presetDir.Create();
+            Debug.Assert(presetDir.Exists, "presetDir was expected to be created before we received the value");
 
             AppInfo.PresetManager.Refresh();
 

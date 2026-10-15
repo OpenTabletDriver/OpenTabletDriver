@@ -23,11 +23,19 @@ namespace OpenTabletDriver.Daemon
 
     partial class Program
     {
+        private static bool s_writeLineFailed;
+
         static async Task Main(string[] args)
         {
             Log.Output += (sender, message) =>
             {
-                Console.WriteLine(Log.GetStringFormat(message));
+                var formattedMessage = Log.GetStringFormat(message);
+
+                if (s_writeLineFailed)
+                    return;
+
+                try { Console.WriteLine(formattedMessage); }
+                catch { s_writeLineFailed = true; }
             };
 
             var cmdLineOptions = ParseCmdLineOptions(args);
