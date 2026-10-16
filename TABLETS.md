@@ -191,7 +191,6 @@
 | XP-Pen Artist Pro 16 (Gen2)        |     Supported     |
 | XP-Pen Artist Pro 22 (Gen2)        |     Supported     |
 | XP-Pen Artist Pro 24 (Gen2)        |     Supported     |
-| XP-Pen Artist Ultra 16             |     Supported     |
 | XP-Pen Deco 01                     |     Supported     |
 | XP-Pen Deco 01 V2                  |     Supported     |
 | XP-Pen Deco 01 V2 (Variant 2)      |     Supported     |
@@ -267,6 +266,8 @@
 | Wacom PTH-860                      |    Has Quirks     | Wheel reports in reverse direction.
 | Wacom PTU-600U                     |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
 | XOPPOX D161                        |    Has Quirks     | Aux buttons are not in order.
+| XP-Pen Artist Ultra 14             |    Has Quirks     | Touch is handled through external OS drivers.
+| XP-Pen Artist Ultra 16             |    Has Quirks     | Touch is handled through external OS drivers.
 | XP-Pen Artist 10S                  |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | XP-Pen Artist 16                   |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | XP-Pen Artist 22HD                 |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
