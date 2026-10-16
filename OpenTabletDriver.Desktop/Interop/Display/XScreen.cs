@@ -12,9 +12,9 @@ namespace OpenTabletDriver.Desktop.Interop.Display
 
     public class XScreen : IVirtualScreen, IDisposable
     {
-        public unsafe XScreen()
+        public XScreen(string? xDisplay = null)
         {
-            Display = XOpenDisplay(null);
+            Display = XOpenDisplay(xDisplay);
             RootWindow = XDefaultRootWindow(Display);
 
             var monitors = GetXRandrDisplays().ToList();

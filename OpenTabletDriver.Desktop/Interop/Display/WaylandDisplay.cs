@@ -12,10 +12,10 @@ namespace OpenTabletDriver.Desktop.Interop.Display
     {
         private List<WaylandOutput> _outputs;
 
-        public WaylandDisplay()
+        public WaylandDisplay(string? display = null)
         {
             _outputs = new List<WaylandOutput>();
-            using (var connection = new WaylandClientConnection())
+            using (var connection = new WaylandClientConnection(display))
             {
                 ZxdgOutputManagerV1? outputManager = null;
                 var registry = connection.Display.GetRegistry();
