@@ -35,11 +35,11 @@ namespace OpenTabletDriver.Desktop.Interop.Display
             displays.Add(this);
             foreach (var monitor in monitors)
             {
-                var display = new Display(
-                    monitor.Width,
-                    monitor.Height,
-                    new Vector2(monitor.Left, monitor.Top),
-                    monitors.IndexOf(monitor) + 1);
+                var display = new SerializedDisplay(
+                    Width: monitor.Width,
+                    Height: monitor.Height,
+                    Position: new Vector2(monitor.Left, monitor.Top),
+                    Index: monitors.IndexOf(monitor) + 1);
                 displays.Add(display);
             }
 

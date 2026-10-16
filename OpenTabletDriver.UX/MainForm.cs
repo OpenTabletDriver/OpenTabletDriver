@@ -510,6 +510,7 @@ namespace OpenTabletDriver.UX
         {
             Debug.Assert(App.Driver.IsConnected);
             App.Current.Settings = await App.Driver.Instance.GetSettings();
+            App.Current.Displays = (await App.Driver.Instance.GetDisplays()).ToList().AsReadOnly();
         }
 
         private async Task LoadSettingsDialog()

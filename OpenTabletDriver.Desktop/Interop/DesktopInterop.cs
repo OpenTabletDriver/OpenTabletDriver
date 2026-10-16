@@ -74,7 +74,7 @@ namespace OpenTabletDriver.Desktop.Interop
             _ => null
         };
 
-        public static ITimer Timer => CurrentPlatform switch
+        internal static ITimer Timer => CurrentPlatform switch
         {
             PluginPlatform.Windows => new WindowsTimer(),
             PluginPlatform.Linux => new LinuxTimer(),
@@ -82,7 +82,7 @@ namespace OpenTabletDriver.Desktop.Interop
             _ => new FallbackTimer()
         };
 
-        public static IAbsolutePointer? AbsolutePointer => CurrentPlatform switch
+        internal static IAbsolutePointer? AbsolutePointer => CurrentPlatform switch
         {
             PluginPlatform.Windows => new WindowsAbsolutePointer(),
             PluginPlatform.Linux => absolutePointer ??= new EvdevAbsolutePointer(),
@@ -90,7 +90,7 @@ namespace OpenTabletDriver.Desktop.Interop
             _ => null
         };
 
-        public static IRelativePointer? RelativePointer => CurrentPlatform switch
+        internal static IRelativePointer? RelativePointer => CurrentPlatform switch
         {
             PluginPlatform.Windows => new WindowsRelativePointer(),
             PluginPlatform.Linux => relativePointer ??= new EvdevRelativePointer(),
@@ -98,13 +98,13 @@ namespace OpenTabletDriver.Desktop.Interop
             _ => null
         };
 
-        public static IPressureHandler? VirtualTablet => CurrentPlatform switch
+        internal static IPressureHandler? VirtualTablet => CurrentPlatform switch
         {
             PluginPlatform.Linux => virtualTablet ??= new EvdevVirtualTablet(),
             _ => null
         };
 
-        public static IVirtualKeyboard? VirtualKeyboard => CurrentPlatform switch
+        internal static IVirtualKeyboard? VirtualKeyboard => CurrentPlatform switch
         {
             PluginPlatform.Windows => new WindowsVirtualKeyboard(),
             PluginPlatform.Linux => virtualKeyboard ??= new EvdevVirtualKeyboard(),
@@ -112,13 +112,13 @@ namespace OpenTabletDriver.Desktop.Interop
             _ => null
         };
 
-        public static IVirtualPad? VirtualPad => CurrentPlatform switch
+        internal static IVirtualPad? VirtualPad => CurrentPlatform switch
         {
             PluginPlatform.Linux => virtualPad ??= new EvdevVirtualPad(),
             _ => null
         };
 
-        public static IVirtualScreen? VirtualScreen => virtualScreen ??= CurrentPlatform switch
+        internal static IVirtualScreen? VirtualScreen => virtualScreen ??= CurrentPlatform switch
         {
             PluginPlatform.Windows => new WindowsDisplay(),
             PluginPlatform.Linux => ConstructLinuxDisplay(),
@@ -128,10 +128,11 @@ namespace OpenTabletDriver.Desktop.Interop
 
         private static IVirtualScreen ConstructLinuxDisplay()
         {
-            if (Environment.GetEnvironmentVariable("WAYLAND_DISPLAY") != null)
-                return new WaylandDisplay();
-            else if (Environment.GetEnvironmentVariable("DISPLAY") != null)
-                return new XScreen();
+            if (Environment.GetEnvironmentVariable("WAYLAND_DISPLAY") is { } waylandDisplay && !string.IsNullOrEmpty(waylandDisplay))
+                return new WaylandDisplay(waylandDisplay);
+
+            if (Environment.GetEnvironmentVariable("DISPLAY") is { } xDisplay && !string.IsNullOrEmpty(xDisplay))
+                return new XScreen(xDisplay);
 
             Log.Write("Display", "Neither Wayland nor X11 were detected, defaulting to X11.", LogLevel.Warning);
             return new XScreen();
