@@ -8,12 +8,18 @@
       "MaxY": 31750
     },
     "Pen": {
-      "MaxPressure": 8191,
+      "MaxPressure": 16383,
       "ButtonCount": 2
     },
     "AuxiliaryButtons": {
       "ButtonCount": 13
-    }
+    },
+    "Wheels": [
+      {
+        "AbsoluteWheelMax": 11,
+        "ButtonCount": 0
+      }
+    ]
   },
   "DigitizerIdentifiers": [
     {
