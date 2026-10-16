@@ -10,6 +10,7 @@ using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls.Generic.Reflection;
+using StreamJsonRpc;
 
 namespace OpenTabletDriver.UX.Controls.Output
 {
@@ -46,7 +47,29 @@ namespace OpenTabletDriver.UX.Controls.Output
         // ReSharper disable once AsyncVoidMethod
         private void UpdateTablet(IEnumerable<TabletReference>? tablets = null) => Application.Instance.AsyncInvoke(async void () =>
         {
-            tablets ??= await App.Driver.Instance!.GetTablets();
+            if (IsDisposed)
+                return;
+
+            if (tablets == null)
+            {
+                if (!App.Driver.IsConnected)
+                    return;
+
+                var daemon = App.Driver.Instance;
+                try
+                {
+                    tablets = await daemon.GetTablets();
+                }
+                catch (Exception ex) when (ex is ConnectionLostException or ObjectDisposedException)
+                {
+                    Console.Error.WriteLine(ex);
+                    return;
+                }
+
+                if (IsDisposed || !App.Driver.IsConnected || !ReferenceEquals(daemon, App.Driver.Instance))
+                    return;
+            }
+
             var selectedTablet = tablets.FirstOrDefault(t => t.Properties.Name == Profile?.Tablet);
             if (selectedTablet != null)
                 SetTabletSize(selectedTablet);
