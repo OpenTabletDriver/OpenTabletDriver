@@ -120,6 +120,7 @@
 | Wacom CTH-670                      |     Supported     |
 | Wacom CTH-680                      |     Supported     |
 | Wacom CTH-690                      |     Supported     |
+| Wacom CTK-4120                     |     Supported     |
 | Wacom CTL-4100                     |     Supported     |
 | Wacom CTL-460                      |     Supported     |
 | Wacom CTL-470                      |     Supported     |
