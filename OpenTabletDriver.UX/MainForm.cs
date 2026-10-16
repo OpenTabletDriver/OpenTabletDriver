@@ -18,6 +18,7 @@ using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls;
+using StreamJsonRpc;
 
 namespace OpenTabletDriver.UX
 {
@@ -412,72 +413,137 @@ namespace OpenTabletDriver.UX
                 : prefix;
         }
 
+        private int connectionVersion;
+
         // ReSharper disable once AsyncVoidMethod
-        private void HandleDaemonConnected(object? sender, EventArgs e) => Application.Instance.AsyncInvoke(async void () =>
+        private void HandleDaemonConnected(object? sender, EventArgs e)
         {
-            Debug.Assert(App.Driver.IsConnected);
-            // Hook events after the instance is (re)instantiated
-            Log.Output += LogToDriver;
-            App.Driver.TabletsChanged += (sender, tablet) => SetTitle(tablet);
+            var version = Interlocked.Increment(ref connectionVersion);
+            var daemon = App.Driver.Instance;
 
-            // Load full menu
-            this.Menu = fullMenu;
+            // Capture the connection before queueing initialization on the UI thread.
+            bool IsCurrentConnection() => version == Volatile.Read(ref connectionVersion)
+                && ReferenceEquals(daemon, App.Driver.Instance) && App.Driver.IsConnected;
 
-            // Load the application information from the daemon
-            AppInfo.Current = await App.Driver.Instance.GetApplicationInfo();
-
-            AppInfo.PluginManager = new DesktopPluginManager();
-            AppInfo.PresetManager = new PresetManager();
-
-            // Load any new plugins
-            AppInfo.PluginManager.Load();
-
-            // Show the startup greeter
-            if (!File.Exists(AppInfo.Current.SettingsFile) && this.WindowState != WindowState.Minimized)
-                App.Current.StartupGreeterWindow.Show();
-
-            // Synchronize settings
-            await SyncSettings();
-            App.Driver.Resynchronize += async (sender, e) => await SyncSettings();
-
-            // Set window content
-            base.Content = new TabletSwitcherPanel
+            Application.Instance.AsyncInvoke(async void () =>
             {
-                CommandsControl = new StackLayout
+                if (daemon == null || !IsCurrentConnection())
+                    return;
+
+                // Hook events after the instance is (re)instantiated
+                Log.Output += LogToDriver;
+                App.Driver.TabletsChanged += (sender, tablet) => SetTitle(tablet);
+
+                // Load full menu
+                this.Menu = fullMenu;
+
+                AppInfo appInfo;
+                try
                 {
-                    Orientation = Orientation.Horizontal,
-                    HorizontalContentAlignment = HorizontalAlignment.Right,
-                    Spacing = 5,
-                    Items =
-                    {
-                        saveButton,
-                        applyButton,
-                    }
+                    appInfo = await daemon.GetApplicationInfo();
                 }
-            };
+                catch (Exception ex) when (ex is ConnectionLostException or ObjectDisposedException)
+                {
+                    Console.Error.WriteLine(ex);
+                    return;
+                }
 
-            // Update preset options in File menu and tray icon
-            await RefreshPresets();
+                if (!IsCurrentConnection())
+                    return;
 
-            // Update title to new instance
-            if (await App.Driver.Instance.GetTablets() is IEnumerable<TabletReference> tablets)
+                AppInfo.Current = appInfo;
+                AppInfo.PluginManager = new DesktopPluginManager();
+                AppInfo.PresetManager = new PresetManager();
+
+                // Load any new plugins
+                AppInfo.PluginManager.Load();
+
+                // Show the startup greeter
+                if (!File.Exists(AppInfo.Current.SettingsFile) && this.WindowState != WindowState.Minimized)
+                    App.Current.StartupGreeterWindow.Show();
+
+                Settings settings;
+                try
+                {
+                    settings = await daemon.GetSettings();
+                }
+                catch (Exception ex) when (ex is ConnectionLostException or ObjectDisposedException)
+                {
+                    Console.Error.WriteLine(ex);
+                    return;
+                }
+
+                if (!IsCurrentConnection())
+                    return;
+
+                App.Current.Settings = settings;
+                App.Driver.Resynchronize += async (sender, e) => await SyncSettings();
+
+                var content = new TabletSwitcherPanel
+                {
+                    CommandsControl = new StackLayout
+                    {
+                        Orientation = Orientation.Horizontal,
+                        HorizontalContentAlignment = HorizontalAlignment.Right,
+                        Spacing = 5,
+                        Items =
+                        {
+                            saveButton,
+                            applyButton,
+                        }
+                    }
+                };
+
+                if (!IsCurrentConnection())
+                    return;
+
+                base.Content = content;
+
+                // Update preset options in File menu and tray icon
+                await RefreshPresets();
+
+                // Update title to new instance
+                IEnumerable<TabletReference> tablets;
+                try
+                {
+                    tablets = await daemon.GetTablets();
+                }
+                catch (Exception ex) when (ex is ConnectionLostException or ObjectDisposedException)
+                {
+                    Console.Error.WriteLine(ex);
+                    return;
+                }
+
+                if (!IsCurrentConnection())
+                    return;
+
                 SetTitle(tablets);
 
-            // Having a mismatch between the version of the daemon and the application will cause issues
-            MatchDaemonVersion();
-        });
+                // Having a mismatch between the version of the daemon and the application will cause issues
+                MatchDaemonVersion();
+            });
+        }
 
         private Button saveButton;
         private Button applyButton;
 
         private static async void LogToDriver(object? sender, LogMessage message)
         {
-            if (App.Driver.IsConnected)
-                await App.Driver.Instance.WriteMessage(message);
+            try
+            {
+                if (App.Driver.IsConnected)
+                    await App.Driver.Instance.WriteMessage(message);
+            }
+            catch (Exception ex) when (ex is ConnectionLostException or ObjectDisposedException)
+            {
+                Console.Error.WriteLine(ex);
+            }
         }
 
         private void HandleDaemonDisconnected(object? sender, EventArgs e)
         {
+            // Invalidate pending initialization even while the UI cleanup is queued.
+            Interlocked.Increment(ref connectionVersion);
             Log.Output -= LogToDriver;
             if (SilenceDaemonShutdown)
                 return;
