@@ -204,6 +204,23 @@ namespace OpenTabletDriver.Daemon
             return await GetTablets();
         }
 
+        public Task SaveSettings(Settings? settings = null, string? filePath = null)
+        {
+            var settingsToSave = settings ?? Settings;
+
+            if (settingsToSave == null)
+                throw new ArgumentException($"Settings cannot be null if no settings have been set via {nameof(SetSettings)}", nameof(settings));
+
+            var fileToSaveTo = new FileInfo(filePath ?? AppInfo.Current.SettingsFile);
+
+            settingsToSave.Serialize(fileToSaveTo);
+
+            Log.Debug(nameof(SaveSettings),
+                $"Saved {(settings != null ? "foreign " : string.Empty)}settings to {fileToSaveTo.FullName}");
+
+            return Task.CompletedTask;
+        }
+
         public Task SetSettings(Settings? settings)
         {
             try
