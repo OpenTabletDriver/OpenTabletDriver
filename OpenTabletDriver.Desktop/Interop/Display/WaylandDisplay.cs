@@ -15,6 +15,7 @@ namespace OpenTabletDriver.Desktop.Interop.Display
         public WaylandDisplay(string? display = null)
         {
             _outputs = new List<WaylandOutput>();
+            _displayId = display ?? "<null>";
             using (var connection = new WaylandClientConnection(display))
             {
                 ZxdgOutputManagerV1? outputManager = null;
@@ -84,6 +85,10 @@ namespace OpenTabletDriver.Desktop.Interop.Display
                 connection.Roundtrip();
             }
         }
+
+        private readonly string _displayId;
+
+        string IDisplay.Name => $"{_displayId}"; // e.g. "wayland-1"
 
         public IEnumerable<IDisplay> Displays => new IDisplay[] { this }.Concat(_outputs);
 

@@ -15,6 +15,7 @@ namespace OpenTabletDriver.Desktop.Interop.Display
         public XScreen(string? xDisplay = null)
         {
             Display = XOpenDisplay(xDisplay);
+            _displayId = xDisplay ?? "0";
             RootWindow = XDefaultRootWindow(Display);
 
             var monitors = GetXRandrDisplays().ToList();
@@ -36,6 +37,7 @@ namespace OpenTabletDriver.Desktop.Interop.Display
             Position = new Vector2(primary.X, primary.Y);
         }
 
+        private readonly string _displayId;
         private IntPtr Display;
         private IntPtr RootWindow;
 
@@ -65,6 +67,8 @@ namespace OpenTabletDriver.Desktop.Interop.Display
         public IEnumerable<IDisplay> Displays { private set; get; }
 
         public int Index => 0;
+
+        string IDisplay.Name => $"X Screen {_displayId}";
 
         public override string ToString()
         {

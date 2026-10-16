@@ -18,6 +18,7 @@ namespace OpenTabletDriver.Plugin.Platform.Display
                 Width: display.Width,
                 Height: display.Height,
                 Position: display.Position,
+                Name: display.Name,
                 IsVirtualScreen: display is IVirtualScreen,
                 Index: display.Index
                 )
