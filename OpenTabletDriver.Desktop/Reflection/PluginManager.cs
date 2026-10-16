@@ -99,7 +99,7 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public virtual string? GetFriendlyName(string path)
         {
-            if (AppInfo.PluginManager.PluginTypes.FirstOrDefault(t => t.FullName == path) is TypeInfo plugin)
+            if (PluginTypes.FirstOrDefault(t => t.FullName == path) is TypeInfo plugin)
             {
                 var attrs = plugin.GetCustomAttributes(true);
                 var nameattr = attrs.FirstOrDefault(t => t.GetType() == typeof(PluginNameAttribute));
