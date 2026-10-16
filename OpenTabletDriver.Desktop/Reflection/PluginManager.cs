@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using OpenTabletDriver.Plugin;
@@ -20,25 +21,22 @@ namespace OpenTabletDriver.Desktop.Reflection
                 Assembly.Load("OpenTabletDriver.Plugin")
             };
 
-#pragma warning disable CS0618 // Type or member is obsolete
-            libTypes = OpenTabletDriver.Desktop.Extensions.GetLibTypes().ToArray();
-#pragma warning restore CS0618 // Type or member is obsolete
-
-            var internalTypes = from asm in assemblies
+            _internalTypes = [.. from asm in assemblies
                                 from type in asm.DefinedTypes
                                 where type.IsPublic && !(type.IsInterface || type.IsAbstract)
                                 where IsPluginType(type)
                                 where IsPlatformSupported(type)
-                                select type;
+                                select type];
 
-            pluginTypes = new ConcurrentBag<TypeInfo>(internalTypes);
+            ResetPluginTypes();
         }
 
         public IReadOnlyCollection<TypeInfo> PluginTypes => pluginTypes;
         protected ConcurrentBag<TypeInfo> pluginTypes;
+        private readonly IReadOnlyCollection<TypeInfo> _internalTypes;
 
-        [Obsolete($"Use {nameof(OpenTabletDriver.Desktop.Extensions.GetLibTypes)} from OpenTabletDriver.Desktop.Extensions")]
-        protected readonly Type[] libTypes;
+        [MemberNotNull(nameof(pluginTypes))]
+        private void ResetPluginTypes() => pluginTypes = [.. _internalTypes];
 
         public virtual T? ConstructObject<T>(string name, object[]? args = null) where T : class
         {
@@ -141,6 +139,12 @@ namespace OpenTabletDriver.Desktop.Reflection
                 if (service != null)
                     field.SetValue(obj, service);
             }
+        }
+
+        public override void ResetServices()
+        {
+            ResetPluginTypes();
+            base.ResetServices();
         }
 
         protected virtual bool IsValidParameterFor(object[] args, ParameterInfo[] parameters)
