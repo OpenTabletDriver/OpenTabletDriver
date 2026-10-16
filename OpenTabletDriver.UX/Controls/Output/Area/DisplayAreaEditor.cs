@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Eto.Drawing;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.UX.Controls.Output.Area;
@@ -15,6 +16,15 @@ namespace OpenTabletDriver.UX.Controls.Output
         {
             this.ToolTip = "You can right click the area editor to set the area to a display, adjust alignment, or resize the area.";
             this.triggerAspectRatioLock = triggerAspectRatioLock;
+            SetDisplaySize();
+        }
+
+        private void SetDisplaySize()
+        {
+            var bgs = from disp in DesktopInterop.VirtualScreen?.Displays
+                      where disp is not IVirtualScreen
+                      select new RectangleF(disp.Position.X, disp.Position.Y, disp.Width, disp.Height);
+            AreaBounds = bgs;
         }
 
         protected override void CreateMenu()
