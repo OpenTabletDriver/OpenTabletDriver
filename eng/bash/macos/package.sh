@@ -10,7 +10,7 @@ PKG_FILE="${OTD_NAME}-${OTD_VERSION}_${NET_RUNTIME}.tar.gz"
 
 pkg_root="${OUTPUT}/${OTD_NAME}.app"
 
-move_to_nested "${OUTPUT}" "${pkg_root}/Contents/MacOS"
+mv "${OUTPUT}/OpenTabletDriver.UX.MacOS.app" "${pkg_root}"
 
 echo "Copying MacOS assets..."
 mkdir -p "${pkg_root}/Contents/Resources"
