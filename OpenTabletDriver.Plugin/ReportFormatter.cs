@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using OpenTabletDriver.Plugin.Tablet;
@@ -10,11 +11,11 @@ namespace OpenTabletDriver.Plugin
 {
     public static class ReportFormatter
     {
-        public static string GetStringRaw(IDeviceReport report)
-        {
-            return BitConverter.ToString(report.Raw).Replace('-', ' ');
-        }
+        [Pure]
+        public static string GetStringRaw(IDeviceReport report) =>
+            report.Raw.PrintHex(spaced: true);
 
+        [Pure]
         public static string GetStringRawAsBinary(IDeviceReport report)
         {
             return string.Join(" ", report.Raw.Select(ByteToBinary));
@@ -22,6 +23,7 @@ namespace OpenTabletDriver.Plugin
             static string ByteToBinary(byte val) => Convert.ToString(val, 2).PadLeft(8, '0');
         }
 
+        [Pure]
         public static string GetStringFormat(IDeviceReport report)
         {
             var sb = new StringBuilder();
@@ -58,6 +60,7 @@ namespace OpenTabletDriver.Plugin
             return sb.ToString();
         }
 
+        [Pure]
         public static string GetStringFormatOneLine(TabletConfiguration tabletProperties, IDeviceReport report, TimeSpan delta, string reportType)
         {
             var sb = new StringBuilder();

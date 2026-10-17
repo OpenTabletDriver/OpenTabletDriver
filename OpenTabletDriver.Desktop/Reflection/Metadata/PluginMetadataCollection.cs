@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 using ICSharpCode.SharpZipLib.GZip;
 using ICSharpCode.SharpZipLib.Tar;
@@ -64,33 +63,23 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
             using (var gzipStream = new GZipInputStream(memStream))
             using (var archive = TarArchive.CreateInputTarArchive(gzipStream, null))
             {
-                string hash = CalculateSHA256(memStream);
+                memStream.Position = 0; // must reset position or SHA256 calculations fail
+
+                string hash = memStream.GetSHA256().PrintHex();
+                Debug.Assert(hash != "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"); // empty sha256
+
                 string cacheDir = Path.Join(AppInfo.Current.CacheDirectory, $"{hash}-OpenTabletDriver-PluginMetadata");
 
                 if (Directory.Exists(cacheDir))
                     Directory.Delete(cacheDir, true);
+
+                Debug.Assert(memStream.Position == 0); // archive extraction fails if we're not rewound at this point (!)
                 archive.ExtractContents(cacheDir);
 
                 var collection = EnumeratePluginMetadata(cacheDir);
                 var metadataCollection = new PluginMetadataCollection(collection);
 
                 return metadataCollection;
-            }
-        }
-
-        protected static string CalculateSHA256(Stream stream)
-        {
-            using (var sha256 = SHA256.Create())
-            {
-                var hashData = sha256.ComputeHash(stream);
-                stream.Position = 0;
-                var sb = new StringBuilder();
-                foreach (var val in hashData)
-                {
-                    var hex = val.ToString("x2");
-                    sb.Append(hex);
-                }
-                return sb.ToString();
             }
         }
 

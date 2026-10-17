@@ -147,7 +147,9 @@ namespace OpenTabletDriver.Devices
             {
                 Log.Exception(ex);
 
-                string formattedTabletData = data != null ? Extensions.PrettyPrintHex(data) : "<null>";
+                string formattedTabletData = data != null
+                    ? data.PrintHex(upperCase: true, wrap: true, spaced: true)
+                    : "<null>";
                 Log.Write("Device", $"Last report read from tablet: {formattedTabletData}");
             }
             finally
