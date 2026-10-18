@@ -311,6 +311,7 @@ build() {
     -p:DebugType=embedded
     -p:SuppressNETCoreSdkPreviewMessage=true
     -p:VersionSuffix=${VERSION_SUFFIX}
+    -p:MacBuildBundle=false
   )
 
   if [ "${DOG_FOOD}" != "true" ]; then
