@@ -89,12 +89,11 @@ namespace OpenTabletDriver.Daemon
 
                 foreach (var signal in trappedSignals)
                     s_signalRegistrations.Add(PosixSignalRegistration.Create(signal,
-                        [SuppressMessage("ReSharper", "AccessToModifiedClosure")] (context) =>
+                        (context) =>
                         {
-                            // Cancelling the default action (terminating the process) lets the daemon stop gracefully;
-                            // a signal after shutdown has started keeps it, so a daemon that fails to stop can still be terminated
+                            // If we don't cancel the default handling of the signal, the final exit code will be non-zero
                             context.Cancel = !tokenCancelled;
-                            Log.Debug("signal", Enum.GetName(signal) ?? "<unknown signal>");
+                            Log.Debug("signal", Enum.GetName(context.Signal) ?? "<unknown signal>");
                             CloseDaemon();
                         }));
             }
