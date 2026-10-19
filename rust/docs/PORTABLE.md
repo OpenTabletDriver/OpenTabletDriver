@@ -6,7 +6,7 @@
 
 For physical use, close the existing tablet driver normally first, launch `otd-rust-ui.exe`, check the mapping, and press Start. Stop or closing the panel releases buttons and closes the device. This prototype does not install itself or change the original driver settings.
 
-Only VEIKK S640 and S640 V2 on Windows are currently supported. Absolute mouse output is implemented; artist pressure injection, original .NET plugins, relative mode, other tablets, and platform parity remain pending. Live read-only S640 input has been verified. Independent initialization and physical pointer/button injection have not yet been exercised.
+This Windows pre-release has been tested only with the VEIKK S640. Although the source includes an S640 V2 definition, that model is not validated for this build. Absolute mouse output is implemented; artist pressure injection, original .NET plugins, relative mode, other tablets, and platform parity remain pending. Live read-only S640 input has been verified. Independent initialization and physical pointer/button injection have not yet been exercised.
 
 `otd-rust.exe` is the console diagnostics executable; run it with `--help`. `PERFORMANCE.md` documents measured memory and timing scope. Memory measurements apply to this prototype's current feature set, not future parity.
 

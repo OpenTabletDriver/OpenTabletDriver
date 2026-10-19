@@ -1,12 +1,12 @@
 # UI contract / version 1
 
-The native panel and engine live in one process. `Command` and `Snapshot` in `crates/otd-app/src/engine.rs` are separate from Windows controls. The HTML design reference is not loaded into the app; its behaviors are implemented directly by native controls to avoid adding a browser process.
+The native Windows panel and engine live in one process. `Command` and `Snapshot` in `crates/otd-app/src/engine.rs` are separate from the controls. The interface uses native controls and drawing, without a browser process.
 
-The native UI and its HTML design reference should cover:
+The native UI should cover:
 
 - Connected tablet / disconnected / stopped / running / failed states.
 - Detect, Start, and Stop with clear output status.
-- A tablet-area editor: width, height, center, rotation, clipping, limiting, aspect ratio.
+- A tablet-area editor: dimensions, center, rotation, display-ratio scale, clipping, limiting, and aspect fitting.
 - Monitor mapping with negative monitor origins and physical pixels.
 - Tip threshold and tip/pen mouse bindings.
 - Apply separately from Apply and save, with failure feedback and unsaved-change state.
@@ -28,4 +28,4 @@ The settings objects above are abbreviated: all fields in `otd-core/settings.rs`
 
 Snapshots contain protocol version, running/connected/simulation state, tablet and last message, report/malformed counts, report rate, core processing times, pressure/position, accepted settings, and a settings revision counter. Snapshots publish at most 4 Hz during active input; raw input packets never pass through the UI command channel. Memory is read from the whole process by the current panel.
 
-The static HTML design reference lives in `rust/ui-preview/`. It uses only local HTML, CSS, and JavaScript; its sample telemetry is illustrative and it does not connect to the driver. The Rust app stays native and low-overhead; UI commands use the in-process engine and telemetry remains bounded to 4 Hz.
+The panel stays native and low-overhead; UI commands use the in-process engine and telemetry remains bounded to 4 Hz.

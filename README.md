@@ -6,6 +6,24 @@ English | [한국어](docs/README_KO.md) | [Español](docs/README_ES.md) | [Ру
 
 OpenTabletDriver is an open source, cross platform, user mode tablet driver. The goal of OpenTabletDriver is to be as cross platform as possible with the highest compatibility in an easily configurable graphical user interface.
 
+## Rust S640 pre-release
+
+> **Experimental pre-release · Windows x64 · VEIKK S640 only**
+>
+> This branch includes an early Rust app focused on low memory use and responsive tablet mapping. It has only been validated with the VEIKK S640; other tablet models are not supported by this pre-release. It is separate from the established cross-platform OpenTabletDriver builds below.
+
+![OpenTabletDriver Rust S640 alpha app showing the 50% tablet scale control](rust/docs/images/veikk-s640-rust-alpha.png)
+
+To build and preview it on Windows, install Rust 1.88 or newer, then run:
+
+```powershell
+cd rust
+cargo build --release --locked
+.\target\release\otd-rust-ui.exe --simulate
+```
+
+Simulation does not connect to the tablet or move the pointer. For hardware use, close other tablet drivers first; the Rust app starts with the driver stopped. See the [Rust pre-release notes](rust/README.md) for setup, memory measurements, and current limitations.
+
 <p align="middle">
   <img src="https://i.imgur.com/XDYf62e.png" width="410" align="middle"/>
   <img src="https://i.imgur.com/jBW8NpU.png" width="410" align="middle"/>
