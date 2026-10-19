@@ -31,9 +31,9 @@
             <section class="panel mapping-panel" id="tablet">
               <div class="section-heading"><div><p class="eyebrow">MAPPING</p><h2>Tablet area</h2></div><button class="more-button" aria-label="More mapping options">···</button></div>
               <div class="mapping-canvas">
-                <div class="canvas-label"><span>TABLET</span><span>152.4 × 101.6 mm</span></div>
-                <div class="tablet-visual"><div class="tablet-inner"><span class="tablet-brand">VEIKK</span><div class="active-area"><span class="area-handle top-left"></span><span class="area-handle top-right"></span><span class="area-handle bottom-left"></span><span class="area-handle bottom-right"></span><div class="area-crosshair"></div><span class="area-dimensions">152.4 × 101.6</span></div><div class="tablet-button-dot"></div><div class="tablet-button-dot second"></div></div><div class="pen-pointer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 3 14 11-7 .8-3.5 6.2L5 3Z"/></svg></div><div class="mapping-tooltip"><span class="tooltip-dot"></span> Active area <strong>100%</strong></div></div>
-                <div class="canvas-footer"><span><i class="legend-square"></i> Active area</span><span>Drag corners to resize</span></div>
+                <div class="canvas-label"><span>AREA SHAPE</span><div class="orientation-switch" role="group" aria-label="Tablet area shape"><button class="orientation-choice selected" type="button" data-orientation="landscape" aria-pressed="true">Landscape</button><button class="orientation-choice" type="button" data-orientation="portrait" aria-pressed="false">Portrait</button></div></div>
+                <div class="tablet-visual"><div class="tablet-inner" id="tablet-shape" role="img" aria-label="Landscape tablet area preview"></div></div>
+                <div class="canvas-footer"><span><i class="legend-square"></i> Mapping preview</span><span id="shape-dimensions">152.4 × 101.6 mm</span></div>
               </div>
               <div class="area-fields" aria-label="Tablet area dimensions">
                 <label><span>Width</span><div class="input-wrap"><input value="152.4" inputmode="decimal" aria-label="Tablet area width"><em>mm</em></div></label>

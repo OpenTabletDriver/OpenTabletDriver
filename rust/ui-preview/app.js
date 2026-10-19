@@ -29,6 +29,46 @@
   const changed = () => {
     $('#saved-state').innerHTML = '<span class="saved-check">●</span> Unsaved changes';
   };
+  const areaInputs = [...document.querySelectorAll('.area-fields input')];
+  const areaShape = $('#tablet-shape');
+  const areaStage = $('.tablet-visual');
+  const updateAreaShape = (orientation, setPreset = false) => {
+    if (setPreset) {
+      areaInputs[0].value = orientation === 'portrait' ? '76.2' : '152.4';
+      areaInputs[1].value = '101.6';
+    }
+    const width = Number(areaInputs[0].value);
+    const height = Number(areaInputs[1].value);
+    if (!(width > 0 && height > 0)) return;
+    const ratio = width / height;
+    const selected = orientation || (ratio < 1 ? 'portrait' : 'landscape');
+    const maxWidth = areaStage.clientWidth * 0.78;
+    const maxHeight = areaStage.clientHeight * 0.84;
+    let previewWidth = maxWidth;
+    let previewHeight = previewWidth / ratio;
+    if (previewHeight > maxHeight) {
+      previewHeight = maxHeight;
+      previewWidth = previewHeight * ratio;
+    }
+    areaShape.style.width = `${previewWidth}px`;
+    areaShape.style.height = `${previewHeight}px`;
+    areaShape.setAttribute('aria-label', `${selected} tablet area preview`);
+    $('#shape-dimensions').textContent = `${areaInputs[0].value} × ${areaInputs[1].value} mm`;
+    document.querySelectorAll('.orientation-choice').forEach((button) => {
+      const active = button.dataset.orientation === selected;
+      button.classList.toggle('selected', active);
+      button.setAttribute('aria-pressed', String(active));
+    });
+  };
+  document.querySelectorAll('.orientation-choice').forEach((button) => {
+    button.addEventListener('click', () => {
+      updateAreaShape(button.dataset.orientation, true);
+      changed();
+    });
+  });
+  areaInputs.slice(0, 2).forEach((input) => input.addEventListener('input', () => updateAreaShape()));
+  updateAreaShape('landscape');
+  new ResizeObserver(() => updateAreaShape()).observe(areaStage);
   document.querySelectorAll('.area-fields input, .display-fields input, .binding-row select, .switch').forEach((control) => {
     control.addEventListener('input', changed);
     control.addEventListener('change', changed);
@@ -43,7 +83,8 @@
   });
   $('#reset-button').addEventListener('click', () => {
     document.querySelectorAll('.display-fields input').forEach((input, i) => input.value = i === 0 ? '1920' : '1080');
-    document.querySelectorAll('.area-fields input').forEach((input, i) => input.value = ['152.4', '101.6', '76.2', '50.8', '0', '0'][i]);
+    areaInputs.forEach((input, i) => input.value = ['152.4', '101.6', '76.2', '50.8', '0', '0'][i]);
+    updateAreaShape('landscape');
     $('#saved-state').innerHTML = '<span class="saved-check">●</span> Unsaved changes';
     showToast('Display mapping reset');
   });
