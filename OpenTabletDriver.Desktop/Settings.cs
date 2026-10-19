@@ -105,14 +105,24 @@ namespace OpenTabletDriver.Desktop
 
         public void Serialize(FileInfo file)
         {
+            // Stage beside the destination so a failed write preserves the existing settings.
+            var directory = file.DirectoryName ?? throw new ArgumentException("Settings file must have a parent directory.", nameof(file));
+            var temporaryPath = Path.Combine(directory, $".{file.Name}.{Guid.NewGuid():N}.tmp");
             try
             {
-                if (file.Exists)
-                    file.Delete();
+                try
+                {
+                    using (var stream = new FileStream(temporaryPath, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+                    using (var sw = new StreamWriter(stream))
+                    using (var jw = new JsonTextWriter(sw))
+                        serializer.Serialize(jw, this);
 
-                using (var sw = file.CreateText())
-                using (var jw = new JsonTextWriter(sw))
-                    serializer.Serialize(jw, this);
+                    File.Move(temporaryPath, file.FullName, overwrite: true);
+                }
+                finally
+                {
+                    File.Delete(temporaryPath);
+                }
             }
             catch (UnauthorizedAccessException)
             {
