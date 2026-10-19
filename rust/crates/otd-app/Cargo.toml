@@ -1,0 +1,23 @@
+[package]
+name = "otd-app"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[[bin]]
+name = "otd-rust"
+path = "src/main.rs"
+
+[[bin]]
+name = "otd-rust-ui"
+path = "src/gui.rs"
+
+[dependencies]
+otd-core = { path = "../otd-core" }
+otd-platform = { path = "../otd-platform" }
+serde.workspace = true
+serde_json.workspace = true
+
+[target.'cfg(windows)'.dependencies]
+windows-sys.workspace = true

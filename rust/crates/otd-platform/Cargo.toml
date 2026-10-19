@@ -1,0 +1,12 @@
+[package]
+name = "otd-platform"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+otd-core = { path = "../otd-core" }
+
+[target.'cfg(windows)'.dependencies]
+windows-sys.workspace = true

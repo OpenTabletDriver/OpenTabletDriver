@@ -1,0 +1,24 @@
+name: Rust S640 migration
+on:
+  push:
+    paths: ['rust/**', '.github/workflows/rust.yml', 'OpenTabletDriver.Configurations/Configurations/VEIKK/S640*.json']
+  pull_request:
+    paths: ['rust/**', '.github/workflows/rust.yml', 'OpenTabletDriver.Configurations/Configurations/VEIKK/S640*.json']
+jobs:
+  windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: rust
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install Rust
+        run: rustup toolchain install stable --profile minimal --component rustfmt --component clippy
+      - name: Format
+        run: cargo +stable fmt --all --check
+      - name: Lint
+        run: cargo +stable clippy --workspace --all-targets --locked -- -D warnings
+      - name: Test
+        run: cargo +stable test --workspace --locked
+      - name: Release build
+        run: cargo +stable build --release --locked
