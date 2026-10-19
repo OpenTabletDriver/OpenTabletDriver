@@ -126,8 +126,8 @@ impl Ui {
         let percent = (width / max_width).min(height / max_height) * 100.0;
         let (expected_width, expected_height) = self.scale_dimensions(percent);
         if percent.is_finite()
-            && (width - expected_width).abs() < 0.2
-            && (height - expected_height).abs() < 0.2
+            && (width - expected_width).abs() < 0.3
+            && (height - expected_height).abs() < 0.3
         {
             let rounded = percent.round().clamp(1.0, 100.0) as u32;
             text(self.scale_readout, &format!("{rounded}%"));
