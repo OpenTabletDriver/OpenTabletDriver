@@ -171,6 +171,7 @@
 | XenceLabs Pen Tablet Medium        |     Supported     |
 | XenceLabs Pen Tablet Small         |     Supported     |
 | XENX P1-640                        |     Supported     |
+| XENX P1-640 (4k)                   |     Supported     | 4096 pressure variant
 | XENX P3-1060                       |     Supported     |
 | XENX X1-640                        |     Supported     |
 | XP-Pen Artist 10 (2nd Gen)         |     Supported     |
