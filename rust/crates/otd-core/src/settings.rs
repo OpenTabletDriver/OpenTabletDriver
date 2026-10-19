@@ -50,6 +50,8 @@ pub struct Settings {
     pub tip_threshold_percent: f32,
     pub tip_binding: MouseBinding,
     pub pen_bindings: [MouseBinding; 3],
+    #[serde(default)]
+    pub close_to_tray: bool,
 }
 
 impl Default for Settings {
@@ -78,6 +80,7 @@ impl Default for Settings {
                 MouseBinding::Middle,
                 MouseBinding::Disabled,
             ],
+            close_to_tray: false,
         }
     }
 }
@@ -121,5 +124,22 @@ impl Settings {
             return Err("Invalid display dimensions");
         }
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::Settings;
+
+    #[test]
+    fn close_to_tray_defaults_off_and_old_settings_still_load() {
+        let current = serde_json::to_string(&Settings::default()).unwrap();
+        let parsed: Settings = serde_json::from_str(&current).unwrap();
+        assert!(!parsed.close_to_tray);
+
+        let mut old = serde_json::to_value(Settings::default()).unwrap();
+        old.as_object_mut().unwrap().remove("close_to_tray");
+        let parsed: Settings = serde_json::from_value(old).unwrap();
+        assert!(!parsed.close_to_tray);
     }
 }

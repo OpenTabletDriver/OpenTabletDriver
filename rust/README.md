@@ -1,8 +1,8 @@
-# OpenTabletDriver Rust / VEIKK S640 prototype
+# OpenTabletDriver Rust / VEIKK S640 alpha
 
 This is a runnable Windows Rust migration milestone inside the existing repository. It targets the VEIKK S640 and S640 V2, with a total-process memory budget of **less than 50,000,000 bytes** for working set and private committed memory. It is not yet a replacement for every OpenTabletDriver feature or tablet.
 
-The existing C# projects are retained. The two upstream S640 JSON definitions are embedded directly; parser implementations are ports of their corresponding upstream C# source. No .NET runtime, WebView, browser renderer, or external HID library is required by the Rust executables.
+The existing C# projects are retained. The two upstream S640 JSON definitions are embedded directly; parser implementations are ports of their corresponding upstream C# source. No .NET runtime, WebView, browser renderer, or external HID library is required by the Rust executables. The Rust application is an alpha build.
 
 ## Run
 
@@ -19,7 +19,7 @@ Open the native control panel with synthetic input:
 ./target/release/otd-rust-ui.exe --simulate
 ```
 
-Simulation never opens/initializes the tablet or injects pointer events. The panel includes area dimensions/center/rotation, display mapping, aspect fitting, clipping/limiting, tip threshold, mouse bindings, Apply, Save, Start/Stop, status, rate, core processing time, and process memory. The native panel remains a functional shell. A static HTML design preview is in [`ui-preview`](ui-preview/README.md); it does not connect to the driver or add a runtime dependency.
+Simulation never opens/initializes the tablet or injects pointer events. The panel includes area dimensions/center/rotation, display mapping, aspect fitting, clipping/limiting, tip threshold, mouse bindings, Apply, Save, Start/Stop, status, rate, core processing time, and process memory. The Settings button opens native preferences, including a persisted “Close to system tray” option with tray Open and Exit commands. A static HTML design preview is in [`ui-preview`](ui-preview/README.md); it does not connect to the driver or add a runtime dependency.
 
 For physical tablet use, close other tablet drivers normally first to avoid competing cursor output, then launch:
 
@@ -27,7 +27,7 @@ For physical tablet use, close other tablet drivers normally first to avoid comp
 ./target/release/otd-rust-ui.exe
 ```
 
-The physical driver starts **stopped**. Detect only queries matching HID collections. Start sends the S640 initialization report and enables absolute mouse output; Stop releases held buttons and closes the device. Closing the panel stops the engine. This milestone does not install startup services or change the existing driver installation.
+The physical driver starts **stopped**. Detect only queries matching HID collections. Start sends the S640 initialization report and enables absolute mouse output; Stop releases held buttons and closes the device. Closing the panel stops the engine unless “Close to system tray” is enabled; use the tray icon’s Exit command to stop the driver in that mode. This milestone does not install startup services or change the existing driver installation.
 
 Console diagnostics:
 
@@ -69,7 +69,7 @@ See [measurement notes](docs/PERFORMANCE.md), [migration scope](docs/MIGRATION.m
 
 ## Current limits
 
-Windows x64, S640/S640 V2, absolute mouse output only. The pen pressure value is decoded and shown, but pressure/tilt injection into drawing applications is not implemented. Auxiliary packets are decoded but auxiliary bindings are not implemented. Relative mode, plugin loading, other tablet parsers, Linux/macOS, tray/background-service behavior, upstream settings import, installer/updater, and a polished accessible UI remain pending.
+Windows x64, S640/S640 V2, absolute mouse output only. The pen pressure value is decoded and shown, but pressure/tilt injection into drawing applications is not implemented. Auxiliary packets are decoded but auxiliary bindings are not implemented. Relative mode, plugin loading, other tablet parsers, Linux/macOS, upstream settings import, installer/updater, and a polished accessible UI remain pending.
 
 Live read-only S640 input was verified alongside the existing driver. Physical initialization and cursor/button injection are implemented but were not exercised in this session, to avoid competing with the user's active driver. Do not interpret the small prototype memory footprint as a guarantee for future feature parity or a WebView UI.
 

@@ -15,7 +15,7 @@ use windows_sys::Win32::{
     Graphics::Gdi::*,
     System::LibraryLoader::*,
     UI::{
-        Controls::EM_LIMITTEXT, HiDpi::*, Input::KeyboardAndMouse::EnableWindow,
+        Controls::EM_LIMITTEXT, HiDpi::*, Input::KeyboardAndMouse::EnableWindow, Shell::*,
         WindowsAndMessaging::*,
     },
 };
@@ -29,11 +29,19 @@ const PRIMARY: usize = 105;
 const DESKTOP: usize = 106;
 const ASPECT: usize = 107;
 const DEFAULTS: usize = 108;
+const SETTINGS: usize = 109;
+const CLOSE_TO_TRAY: usize = 302;
+const SETTINGS_DONE: usize = 303;
+const TRAY_OPEN: usize = 304;
+const TRAY_EXIT: usize = 305;
 const CLIP: usize = 300;
 const LIMIT: usize = 301;
+const TRAY_CALLBACK: u32 = WM_APP + 1;
+const TRAY_ICON_ID: u32 = 1;
 
 struct Ui {
     engine: Engine,
+    main_window: HWND,
     status: HWND,
     telemetry: HWND,
     footer: HWND,
@@ -45,6 +53,9 @@ struct Ui {
     stop: HWND,
     scale: f32,
     settings: Settings,
+    settings_window: HWND,
+    close_to_tray: HWND,
+    tray_added: bool,
     close_at: Option<Instant>,
     self_test: Option<u8>,
     test_error: Option<String>,
@@ -68,6 +79,107 @@ fn read_text(hwnd: HWND) -> String {
 }
 
 impl Ui {
+    fn install_tray_icon(&mut self, parent: HWND, install: bool) -> Result<(), String> {
+        // SAFETY: NOTIFYICONDATAW is zero-initialized and all borrowed strings and
+        // handles remain valid for the duration of Shell_NotifyIconW.
+        unsafe {
+            let mut data: NOTIFYICONDATAW = zeroed();
+            data.cbSize = std::mem::size_of::<NOTIFYICONDATAW>() as u32;
+            data.hWnd = parent;
+            data.uID = TRAY_ICON_ID;
+            if install {
+                data.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
+                data.uCallbackMessage = TRAY_CALLBACK;
+                data.hIcon = LoadIconW(null_mut(), IDI_APPLICATION);
+                let tip: Vec<u16> = w("OpenTabletDriver Rust — VEIKK S640")
+                    .into_iter()
+                    .take(data.szTip.len() - 1)
+                    .collect();
+                data.szTip[..tip.len()].copy_from_slice(&tip);
+                if Shell_NotifyIconW(NIM_ADD, &data) == 0 {
+                    return Err(io::Error::last_os_error().to_string());
+                }
+                self.tray_added = true;
+            } else if self.tray_added {
+                Shell_NotifyIconW(NIM_DELETE, &data);
+                self.tray_added = false;
+            }
+        }
+        Ok(())
+    }
+
+    fn open_settings(&mut self, parent: HWND) -> Result<(), String> {
+        // Reuse an already open preferences window instead of creating duplicates.
+        unsafe {
+            if !self.settings_window.is_null() && IsWindow(self.settings_window) != 0 {
+                ShowWindow(self.settings_window, SW_SHOWNORMAL);
+                SetForegroundWindow(self.settings_window);
+                return Ok(());
+            }
+            let class = w("OpenTabletDriverRustPanel");
+            let window = CreateWindowExW(
+                WS_EX_TOOLWINDOW,
+                class.as_ptr(),
+                w("Settings").as_ptr(),
+                WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU,
+                CW_USEDEFAULT,
+                CW_USEDEFAULT,
+                (340.0 * self.scale) as i32,
+                (170.0 * self.scale) as i32,
+                parent,
+                null_mut(),
+                GetModuleHandleW(null()),
+                null(),
+            );
+            if window.is_null() {
+                return Err(io::Error::last_os_error().to_string());
+            }
+            self.settings_window = window;
+            SetWindowLongPtrW(window, GWLP_USERDATA, self as *mut Ui as isize);
+            self.control(
+                window,
+                "STATIC",
+                "Application behavior",
+                0,
+                0,
+                [18, 16, 280, 22],
+            );
+            self.close_to_tray = self.control(
+                window,
+                "BUTTON",
+                "Close to system tray",
+                WS_TABSTOP | BS_AUTOCHECKBOX as u32,
+                CLOSE_TO_TRAY,
+                [18, 48, 280, 25],
+            );
+            self.control(
+                window,
+                "STATIC",
+                "Keep the driver running when this window closes.",
+                0,
+                0,
+                [38, 75, 275, 22],
+            );
+            self.control(
+                window,
+                "BUTTON",
+                "Done",
+                WS_TABSTOP,
+                SETTINGS_DONE,
+                [220, 105, 90, 28],
+            );
+            SendMessageW(
+                self.close_to_tray,
+                BM_SETCHECK,
+                usize::from(self.settings.close_to_tray),
+                0,
+            );
+            ShowWindow(window, SW_SHOW);
+            SetForegroundWindow(window);
+        }
+        Ok(())
+    }
+
     fn test_step(&mut self, hwnd: HWND) -> Result<(), String> {
         let Some(step) = self.self_test else {
             return Ok(());
@@ -168,6 +280,14 @@ impl Ui {
             0,
             0,
             [24, 47, 670, 22],
+        );
+        self.control(
+            hwnd,
+            "BUTTON",
+            "Settings",
+            WS_TABSTOP,
+            SETTINGS,
+            [600, 16, 96, 28],
         );
         self.status = self.control(hwnd, "STATIC", "Ready", 0, 0, [24, 80, 680, 50]);
         self.control(
@@ -427,6 +547,36 @@ impl Ui {
 
     fn action(&mut self, id: usize) -> Result<(), String> {
         match id {
+            SETTINGS => self.open_settings(self.main_window)?,
+            CLOSE_TO_TRAY => {
+                // The preference is saved immediately so the next launch behaves the same.
+                let enabled = unsafe { SendMessageW(self.close_to_tray, BM_GETCHECK, 0, 0) != 0 };
+                let previous = self.settings.close_to_tray;
+                let mut candidate = self.settings.clone();
+                candidate.close_to_tray = enabled;
+                self.install_tray_icon(self.main_window, enabled)?;
+                if let Err(error) = self.engine.command(Command::Save(candidate.clone())) {
+                    let _ = self.install_tray_icon(self.main_window, previous);
+                    unsafe {
+                        SendMessageW(self.close_to_tray, BM_SETCHECK, usize::from(previous), 0);
+                    }
+                    return Err(error);
+                }
+                self.settings = candidate;
+                text(
+                    self.status,
+                    if enabled {
+                        "Close to system tray is enabled. This preference was saved."
+                    } else {
+                        "Close to system tray is disabled. This preference was saved."
+                    },
+                );
+            }
+            SETTINGS_DONE => unsafe {
+                if !self.settings_window.is_null() {
+                    DestroyWindow(self.settings_window);
+                }
+            },
             DETECT => self.engine.command(Command::Detect)?,
             START => self.engine.command(Command::Start)?,
             STOP => self.engine.command(Command::Stop)?,
@@ -523,6 +673,44 @@ impl Ui {
     }
 }
 
+unsafe fn show_tray_menu(hwnd: HWND) {
+    // SAFETY: this short-lived native menu owns no borrowed strings after AppendMenuW
+    // copies them and is destroyed immediately after TrackPopupMenu returns.
+    unsafe {
+        let menu = CreatePopupMenu();
+        if menu.is_null() {
+            return;
+        }
+        AppendMenuW(
+            menu,
+            MF_STRING,
+            TRAY_OPEN,
+            w("Open OpenTabletDriver Rust").as_ptr(),
+        );
+        AppendMenuW(menu, MF_SEPARATOR, 0, null());
+        AppendMenuW(menu, MF_STRING, TRAY_EXIT, w("Exit").as_ptr());
+        let mut point: POINT = zeroed();
+        GetCursorPos(&mut point);
+        SetForegroundWindow(hwnd);
+        let selected = TrackPopupMenu(
+            menu,
+            TPM_RETURNCMD | TPM_NONOTIFY,
+            point.x,
+            point.y,
+            0,
+            hwnd,
+            null(),
+        );
+        DestroyMenu(menu);
+        if selected == TRAY_OPEN as i32 {
+            PostMessageW(hwnd, TRAY_CALLBACK + 1, 0, 0);
+        } else if selected == TRAY_EXIT as i32 {
+            PostMessageW(hwnd, TRAY_CALLBACK + 2, 0, 0);
+        }
+        PostMessageW(hwnd, WM_NULL, 0, 0);
+    }
+}
+
 unsafe extern "system" fn window_proc(
     hwnd: HWND,
     message: u32,
@@ -533,9 +721,32 @@ unsafe extern "system" fn window_proc(
     unsafe {
         let pointer = GetWindowLongPtrW(hwnd, GWLP_USERDATA) as *mut Ui;
         if !pointer.is_null() {
+            let ui = &mut *pointer;
+            if hwnd == ui.main_window && message == TRAY_CALLBACK {
+                match lparam as u32 {
+                    WM_LBUTTONUP | WM_LBUTTONDBLCLK => {
+                        PostMessageW(hwnd, TRAY_CALLBACK + 1, 0, 0);
+                    }
+                    WM_RBUTTONUP | WM_CONTEXTMENU => show_tray_menu(hwnd),
+                    _ => {}
+                }
+                return 0;
+            }
+            if hwnd == ui.main_window && message == TRAY_CALLBACK + 1 {
+                ShowWindow(hwnd, SW_RESTORE);
+                SetForegroundWindow(hwnd);
+                return 0;
+            }
+            if hwnd == ui.main_window && message == TRAY_CALLBACK + 2 {
+                if !ui.settings_window.is_null() && IsWindow(ui.settings_window) != 0 {
+                    DestroyWindow(ui.settings_window);
+                }
+                let _ = ui.install_tray_icon(hwnd, false);
+                DestroyWindow(hwnd);
+                return 0;
+            }
             match message {
                 WM_COMMAND if wparam >> 16 == 0 => {
-                    let ui = &mut *pointer;
                     if let Err(e) = ui.action(wparam & 0xffff) {
                         MessageBoxW(
                             hwnd,
@@ -547,7 +758,6 @@ unsafe extern "system" fn window_proc(
                     return 0;
                 }
                 WM_TIMER => {
-                    let ui = &mut *pointer;
                     ui.refresh();
                     if let Err(error) = ui.test_step(hwnd) {
                         ui.test_error = Some(error);
@@ -568,13 +778,35 @@ unsafe extern "system" fn window_proc(
                     }
                     return 0;
                 }
+                WM_CLOSE if hwnd != ui.main_window => {
+                    DestroyWindow(hwnd);
+                    return 0;
+                }
                 WM_CLOSE => {
+                    if ui.settings.close_to_tray && ui.close_at.is_none() && ui.self_test.is_none()
+                    {
+                        ShowWindow(hwnd, SW_HIDE);
+                        return 0;
+                    }
+                    let _ = ui.install_tray_icon(hwnd, false);
+                    if !ui.settings_window.is_null() && IsWindow(ui.settings_window) != 0 {
+                        DestroyWindow(ui.settings_window);
+                    }
                     DestroyWindow(hwnd);
                     return 0;
                 }
                 WM_DESTROY => {
-                    KillTimer(hwnd, 1);
-                    PostQuitMessage(0);
+                    if hwnd == ui.main_window {
+                        let _ = ui.install_tray_icon(hwnd, false);
+                        if !ui.settings_window.is_null() && IsWindow(ui.settings_window) != 0 {
+                            DestroyWindow(ui.settings_window);
+                        }
+                        KillTimer(hwnd, 1);
+                        PostQuitMessage(0);
+                    } else if hwnd == ui.settings_window {
+                        ui.settings_window = null_mut();
+                        ui.close_to_tray = null_mut();
+                    }
                     return 0;
                 }
                 _ => {}
@@ -612,7 +844,7 @@ pub fn run(
         let hwnd = CreateWindowExW(
             0,
             class.as_ptr(),
-            w("OpenTabletDriver Rust — S640 migration").as_ptr(),
+            w("OpenTabletDriver Rust — S640 alpha").as_ptr(),
             WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
             CW_USEDEFAULT,
             CW_USEDEFAULT,
@@ -628,6 +860,7 @@ pub fn run(
         }
         let mut ui = Box::new(Ui {
             engine,
+            main_window: hwnd,
             status: null_mut(),
             telemetry: null_mut(),
             footer: null_mut(),
@@ -639,6 +872,9 @@ pub fn run(
             stop: null_mut(),
             scale,
             settings,
+            settings_window: null_mut(),
+            close_to_tray: null_mut(),
+            tray_added: false,
             close_at: close_after.map(|d| Instant::now() + d),
             self_test: self_test.then_some(0),
             test_error: None,
@@ -649,6 +885,13 @@ pub fn run(
             SetWindowLongPtrW(hwnd, GWLP_USERDATA, 0);
             DestroyWindow(hwnd);
             return Err(e);
+        }
+        if ui.settings.close_to_tray
+            && let Err(e) = ui.install_tray_icon(hwnd, true)
+        {
+            SetWindowLongPtrW(hwnd, GWLP_USERDATA, 0);
+            DestroyWindow(hwnd);
+            return Err(format!("Could not create system tray icon: {e}"));
         }
         if SetTimer(hwnd, 1, 250, None) == 0 {
             SetWindowLongPtrW(hwnd, GWLP_USERDATA, 0);
