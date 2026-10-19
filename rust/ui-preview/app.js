@@ -30,18 +30,33 @@
     $('#saved-state').innerHTML = '<span class="saved-check">●</span> Unsaved changes';
   };
   const areaInputs = [...document.querySelectorAll('.area-fields input')];
+  const areaPercentInputs = [$('#width-percent'), $('#height-percent')];
   const areaShape = $('#tablet-shape');
   const areaStage = $('.tablet-visual');
-  const updateAreaShape = (orientation, setPreset = false) => {
-    if (setPreset) {
-      areaInputs[0].value = orientation === 'portrait' ? '76.2' : '152.4';
-      areaInputs[1].value = '101.6';
+  let areaOrientation = 'landscape';
+  const baseArea = { landscape: [152.4, 101.6], portrait: [76.2, 101.6] };
+  const updateAreaShape = (orientation, applyCoverage = false, syncCoverage = false) => {
+    if (orientation) areaOrientation = orientation;
+    if (applyCoverage) {
+      const [baseWidth, baseHeight] = baseArea[areaOrientation];
+      areaInputs[0].value = (baseWidth * Number(areaPercentInputs[0].value) / 100).toFixed(1);
+      areaInputs[1].value = (baseHeight * Number(areaPercentInputs[1].value) / 100).toFixed(1);
     }
     const width = Number(areaInputs[0].value);
     const height = Number(areaInputs[1].value);
     if (!(width > 0 && height > 0)) return;
     const ratio = width / height;
     const selected = orientation || (ratio < 1 ? 'portrait' : 'landscape');
+    areaOrientation = selected;
+    if (syncCoverage) {
+      const [baseWidth, baseHeight] = baseArea[areaOrientation];
+      areaPercentInputs[0].value = String(Math.max(1, Math.min(100, Math.round(width / baseWidth * 100))));
+      areaPercentInputs[1].value = String(Math.max(1, Math.min(100, Math.round(height / baseHeight * 100))));
+    }
+    $('#width-percent-value').value = `${areaPercentInputs[0].value}%`;
+    $('#width-percent-value').textContent = `${areaPercentInputs[0].value}%`;
+    $('#height-percent-value').value = `${areaPercentInputs[1].value}%`;
+    $('#height-percent-value').textContent = `${areaPercentInputs[1].value}%`;
     const maxWidth = areaStage.clientWidth * 0.78;
     const maxHeight = areaStage.clientHeight * 0.84;
     let previewWidth = maxWidth;
@@ -66,10 +81,11 @@
       changed();
     });
   });
-  areaInputs.slice(0, 2).forEach((input) => input.addEventListener('input', () => updateAreaShape()));
-  updateAreaShape('landscape');
+  areaPercentInputs.forEach((input) => input.addEventListener('input', () => updateAreaShape(areaOrientation, true)));
+  areaInputs.slice(0, 2).forEach((input) => input.addEventListener('input', () => updateAreaShape(undefined, false, true)));
+  updateAreaShape('landscape', true);
   new ResizeObserver(() => updateAreaShape()).observe(areaStage);
-  document.querySelectorAll('.area-fields input, .display-fields input, .binding-row select, .switch').forEach((control) => {
+  document.querySelectorAll('.area-fields input, .percentage-control input, .display-fields input, .binding-row select, .switch').forEach((control) => {
     control.addEventListener('input', changed);
     control.addEventListener('change', changed);
   });
@@ -83,8 +99,9 @@
   });
   $('#reset-button').addEventListener('click', () => {
     document.querySelectorAll('.display-fields input').forEach((input, i) => input.value = i === 0 ? '1920' : '1080');
-    areaInputs.forEach((input, i) => input.value = ['152.4', '101.6', '76.2', '50.8', '0', '0'][i]);
-    updateAreaShape('landscape');
+    areaInputs.forEach((input, i) => input.value = ['76.2', '50.8', '76.2', '50.8', '0', '0'][i]);
+    areaPercentInputs.forEach((input) => input.value = '50');
+    updateAreaShape('landscape', true);
     $('#saved-state').innerHTML = '<span class="saved-check">●</span> Unsaved changes';
     showToast('Display mapping reset');
   });

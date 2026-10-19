@@ -88,6 +88,11 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .tablet-inner { border: 1px solid #fff; border-radius: 1px; background: transparent; }
 .canvas-footer { padding-top: 4px; color: #697581; font-size: 9px; }.canvas-footer > span:first-child { color: #a7b1ba; }
 .legend-square { display: inline-block; width: 6px; height: 6px; margin-right: 4px; border: 1px solid var(--accent); }
+.percentage-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 13px 1px 4px; }
+.percentage-label { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; color: #a0a0a0; font-size: 9px; }
+.percentage-label output { color: #fff; font: 10px var(--mono); }
+.percentage-control input[type="range"] { display: block; width: 100%; height: 14px; margin: 0; accent-color: #fff; cursor: pointer; }
+.percentage-control input[type="range"]:focus-visible { outline-offset: 3px; }
 .area-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px 10px; margin-top: 11px; }
 .area-fields label > span, .display-fields label > span { display: block; margin-bottom: 4px; color: #84909c; font-size: 8px; }
 .area-fields .input-wrap { height: 28px; }
@@ -158,7 +163,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .profile-button { position: absolute; top: 74px; right: 13px; transform: scale(.9); transform-origin: right top; }
   .device-banner { flex-wrap: wrap; gap: 10px; padding: 12px; }.device-icon { width: 39px; height: 39px; }.device-copy { min-width: calc(100% - 60px); }.device-title-row { gap: 8px; }.device-actions { width: 100%; justify-content: flex-end; }.device-actions button { flex: 1; }
   .side-column { grid-template-columns: 1fr; }.dashboard-grid, .bottom-grid { gap: 12px; }.mapping-panel, .display-panel, .bindings-panel, .pressure-panel, .performance-panel { padding-right: 13px; padding-left: 13px; }
-  .tablet-visual { height: 190px; }.area-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tablet-visual { height: 190px; }.area-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }.percentage-controls { gap: 12px; }
   .panel-footer { align-items: flex-start; flex-direction: column; }.footer-buttons { width: 100%; }.footer-buttons button { flex: 1; }
   .metrics { gap: 8px; }.metric-reading strong { font-size: 18px; }.metric-reading > span { font-size: 8px; }.app-footer { align-items: flex-start; flex-direction: column; gap: 8px; }
   .pressure-gauge { width: 67px; height: 67px; }.pen-test-body { gap: 12px; }

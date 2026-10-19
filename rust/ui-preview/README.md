@@ -6,4 +6,4 @@ The preview uses inline vector drawings and local CSS/JavaScript without network
 
 The current visual theme uses a black background, white primary controls and foreground accents, and neutral gray borders and secondary labels.
 
-The tablet area preview has Landscape and Portrait presets. The preview is a single unfilled rectangle; changing the preset updates its aspect ratio and the width and height fields.
+The tablet area preview has Landscape and Portrait presets plus independent width and height coverage sliders. Both percentages default to 50%; changing them updates the preview rectangle and millimeter values.
