@@ -16,7 +16,9 @@ use windows_sys::Win32::{
     System::LibraryLoader::*,
     UI::{
         Controls::{
-            DRAWITEMSTRUCT, EM_LIMITTEXT, ODS_DISABLED, ODS_FOCUS, ODS_SELECTED, ODT_BUTTON,
+            DRAWITEMSTRUCT, EM_LIMITTEXT, ICC_BAR_CLASSES, INITCOMMONCONTROLSEX,
+            InitCommonControlsEx, ODS_DISABLED, ODS_FOCUS, ODS_SELECTED, ODT_BUTTON, TBM_SETPOS,
+            TBM_SETRANGE, TBS_HORZ, TBS_NOTICKS,
         },
         HiDpi::*,
         Input::KeyboardAndMouse::EnableWindow,
@@ -36,6 +38,7 @@ const ASPECT: usize = 107;
 const DEFAULTS: usize = 108;
 const SETTINGS: usize = 109;
 const FULL_AREA: usize = 110;
+const AREA_SCALE: usize = 111;
 const CLOSE_TO_TRAY: usize = 302;
 const SETTINGS_DONE: usize = 303;
 const TRAY_OPEN: usize = 304;
@@ -44,6 +47,7 @@ const CLIP: usize = 300;
 const LIMIT: usize = 301;
 const TRAY_CALLBACK: u32 = WM_APP + 1;
 const TRAY_ICON_ID: u32 = 1;
+const TBM_GETPOS: u32 = WM_USER;
 
 struct Ui {
     engine: Engine,
@@ -52,6 +56,9 @@ struct Ui {
     telemetry: HWND,
     footer: HWND,
     edits: Vec<HWND>,
+    scale_slider: HWND,
+    scale_readout: HWND,
+    updating_scale: bool,
     bindings: Vec<HWND>,
     clip: HWND,
     limit: HWND,
@@ -87,6 +94,65 @@ fn read_text(hwnd: HWND) -> String {
 }
 
 impl Ui {
+    fn scale_dimensions(&self, percent: f32) -> (f32, f32) {
+        let width = read_text(self.edits[8]).parse::<f32>().unwrap_or(1920.0);
+        let height = read_text(self.edits[9]).parse::<f32>().unwrap_or(1080.0);
+        let ratio = if width > 0.0 && height > 0.0 {
+            width / height
+        } else {
+            16.0 / 9.0
+        };
+        let mut max_width = 152.4;
+        let mut max_height = max_width / ratio;
+        if max_height > 101.6 {
+            max_height = 101.6;
+            max_width = max_height * ratio;
+        }
+        let scale = percent.clamp(1.0, 100.0) / 100.0;
+        (max_width * scale, max_height * scale)
+    }
+
+    fn update_scale_control(&self) {
+        if self.scale_slider.is_null() || self.edits.len() < 10 {
+            return;
+        }
+        let width = read_text(self.edits[0]).parse::<f32>().ok();
+        let height = read_text(self.edits[1]).parse::<f32>().ok();
+        let Some((width, height)) = width.zip(height) else {
+            text(self.scale_readout, "Custom");
+            return;
+        };
+        let (max_width, max_height) = self.scale_dimensions(100.0);
+        let percent = (width / max_width).min(height / max_height) * 100.0;
+        let (expected_width, expected_height) = self.scale_dimensions(percent);
+        if percent.is_finite()
+            && (width - expected_width).abs() < 0.2
+            && (height - expected_height).abs() < 0.2
+        {
+            let rounded = percent.round().clamp(1.0, 100.0) as u32;
+            text(self.scale_readout, &format!("{rounded}%"));
+            unsafe { SendMessageW(self.scale_slider, TBM_SETPOS, 1, rounded as isize) };
+        } else {
+            text(self.scale_readout, "Custom");
+        }
+    }
+
+    fn apply_area_scale(&mut self, percent: u32) {
+        let percent = percent.clamp(1, 100);
+        let (width, height) = self.scale_dimensions(percent as f32);
+        self.updating_scale = true;
+        text(self.edits[0], &format!("{width:.1}"));
+        text(self.edits[1], &format!("{height:.1}"));
+        text(self.edits[2], "76.2");
+        text(self.edits[3], "50.8");
+        text(self.scale_readout, &format!("{percent}%"));
+        unsafe {
+            SendMessageW(self.scale_slider, TBM_SETPOS, 1, percent as isize);
+            InvalidateRect(self.main_window, null(), 0);
+        }
+        self.updating_scale = false;
+    }
+
     fn install_tray_icon(&mut self, parent: HWND, install: bool) -> Result<(), String> {
         // SAFETY: NOTIFYICONDATAW is zero-initialized and all borrowed strings and
         // handles remain valid for the duration of Shell_NotifyIconW.
@@ -231,6 +297,19 @@ impl Ui {
             4 => {
                 if status.settings_revision < 2 || !status.message.contains("saved successfully") {
                     return Ok(());
+                }
+                unsafe {
+                    SendMessageW(self.scale_slider, TBM_SETPOS, 1, 50);
+                    PostMessageW(hwnd, WM_HSCROLL, 0, self.scale_slider as LPARAM);
+                }
+            }
+            5 => {
+                let width = read_text(self.edits[0]).parse::<f32>().unwrap_or_default();
+                let height = read_text(self.edits[1]).parse::<f32>().unwrap_or_default();
+                if (width - 76.2).abs() > 0.1 || (height - 42.9).abs() > 0.1 {
+                    return Err(format!(
+                        "50% scale produced an unexpected area: {width:.1} by {height:.1} mm"
+                    ));
                 }
                 self.close_at = Some(Instant::now() + Duration::from_millis(500));
             }
@@ -382,6 +461,26 @@ impl Ui {
             ASPECT,
             [510, 389, 190, 29],
         );
+        self.control(hwnd, "STATIC", "Tablet scale", 0, 0, [374, 427, 110, 20]);
+        self.scale_readout = self.control(hwnd, "STATIC", "50%", 0, 0, [634, 427, 62, 20]);
+        self.scale_slider = self.control(
+            hwnd,
+            "msctls_trackbar32",
+            "",
+            WS_TABSTOP | TBS_HORZ | TBS_NOTICKS,
+            AREA_SCALE,
+            [374, 446, 326, 28],
+        );
+        // Trackbar range is 1–100%, with the half-area default selected.
+        unsafe {
+            SendMessageW(
+                self.scale_slider,
+                TBM_SETRANGE,
+                1,
+                ((100u32 << 16) | 1) as isize,
+            );
+            SendMessageW(self.scale_slider, TBM_SETPOS, 1, 50);
+        }
         self.clip = self.control(
             hwnd,
             "BUTTON",
@@ -469,6 +568,8 @@ impl Ui {
             .any(|h| h.is_null())
             || self.status.is_null()
             || self.telemetry.is_null()
+            || self.scale_slider.is_null()
+            || self.scale_readout.is_null()
         {
             return Err("Could not create Windows controls".into());
         }
@@ -494,6 +595,7 @@ impl Ui {
         for (h, value) in self.edits.iter().zip(values) {
             text(*h, &value);
         }
+        self.update_scale_control();
         // SAFETY: control-specific messages with integer arguments only.
         unsafe {
             SendMessageW(self.clip, BM_SETCHECK, usize::from(s.clip_to_area), 0);
@@ -641,6 +743,7 @@ impl Ui {
                     self.settings.area.height_mm = height;
                     self.settings.area.center_x_mm = 76.2;
                     self.settings.area.center_y_mm = 50.8;
+                    self.apply_area_scale(100);
                 }
                 self.fill();
                 text(
@@ -966,7 +1069,19 @@ unsafe extern "system" fn window_proc(
                     return 0;
                 }
                 WM_COMMAND => {
+                    if !ui.updating_scale {
+                        ui.update_scale_control();
+                    }
                     InvalidateRect(hwnd, null(), 0);
+                }
+                WM_HSCROLL if lparam as HWND == ui.scale_slider => {
+                    let percent = SendMessageW(ui.scale_slider, TBM_GETPOS, 0, 0) as u32;
+                    ui.apply_area_scale(percent);
+                    text(
+                        ui.status,
+                        "Tablet scale updated. Press Apply or Apply and save to use it.",
+                    );
+                    return 0;
                 }
                 WM_ERASEBKGND => {
                     let mut client: RECT = zeroed();
@@ -1002,7 +1117,7 @@ unsafe extern "system" fn window_proc(
                         ui.test_error = Some(error);
                         PostMessageW(hwnd, WM_CLOSE, 0, 0);
                     }
-                    if (ui.self_test.is_none() || ui.self_test == Some(5))
+                    if (ui.self_test.is_none() || ui.self_test == Some(6))
                         && let Some(path) = ui.screenshot.take()
                         && let Err(error) = crate::capture::window(hwnd, &path)
                     {
@@ -1068,6 +1183,13 @@ pub fn run(
     // SAFETY: class callback remains valid for the process lifetime; the boxed state
     // stays alive through the entire message loop. Windows owns child controls.
     unsafe {
+        let common_controls = INITCOMMONCONTROLSEX {
+            dwSize: std::mem::size_of::<INITCOMMONCONTROLSEX>() as u32,
+            dwICC: ICC_BAR_CLASSES,
+        };
+        if InitCommonControlsEx(&common_controls) == 0 {
+            return Err(io::Error::last_os_error().to_string());
+        }
         let scale = GetDpiForSystem() as f32 / 96.0;
         let instance = GetModuleHandleW(null());
         let class = w("OpenTabletDriverRustPanel");
@@ -1106,6 +1228,9 @@ pub fn run(
             telemetry: null_mut(),
             footer: null_mut(),
             edits: Vec::with_capacity(10),
+            scale_slider: null_mut(),
+            scale_readout: null_mut(),
+            updating_scale: false,
             bindings: Vec::with_capacity(3),
             clip: null_mut(),
             limit: null_mut(),
@@ -1173,7 +1298,7 @@ pub fn run(
         // WM_DESTROY has already destroyed hwnd; the pointer is no longer reachable.
         let result = if let Some(error) = ui.test_error.take() {
             Err(error)
-        } else if self_test && ui.self_test != Some(5) {
+        } else if self_test && ui.self_test != Some(6) {
             Err("UI self-test timed out".into())
         } else {
             Ok(())

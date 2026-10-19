@@ -19,7 +19,7 @@ Open the native control panel with synthetic input:
 ./target/release/otd-rust-ui.exe --simulate
 ```
 
-Simulation never opens/initializes the tablet or injects pointer events. The native panel includes a live tablet-area diagram, area dimensions/center/rotation, display mapping, aspect fitting, clipping/limiting, tip threshold, mouse bindings, Apply, Save, Start/Stop, status, rate, core processing time, and process memory. The Settings button opens native preferences, including a persisted “Close to system tray” option with tray Open and Exit commands. The HTML design reference is in [`ui-preview`](ui-preview/README.md); it does not connect to the driver or add a runtime dependency.
+Simulation never opens/initializes the tablet or injects pointer events. The native panel includes a live tablet-area diagram, area dimensions/center/rotation, display mapping, a 1–100% tablet-scale slider, aspect fitting, clipping/limiting, tip threshold, mouse bindings, Apply, Save, Start/Stop, status, rate, core processing time, and process memory. Tablet scale matches the largest area to the configured display aspect ratio, keeps it centered, and starts at 50%. At 1920×1080 on the S640, 50% is approximately 76.2×42.9 mm. The Settings button opens native preferences, including a persisted “Close to system tray” option with tray Open and Exit commands. The HTML design reference is in [`ui-preview`](ui-preview/README.md); it does not connect to the driver or add a runtime dependency.
 
 For physical tablet use, close other tablet drivers normally first to avoid competing cursor output, then launch:
 
@@ -61,7 +61,7 @@ cargo test --workspace --locked
 ./tools/Measure-Performance.ps1 -Seconds 15
 ```
 
-The measurement script runs release binaries with native UI controls rendered offscreen, samples peak working set/private memory, and fails above 50 MB. It also verifies zero allocations in the core benchmark and exercises actual native UI Apply/Stop/Start/Save notifications and invalid-area validation. It does not trim the working set. Synthetic input does not test USB or `SendInput` latency.
+The measurement script runs release binaries with native UI controls rendered offscreen, samples peak working set/private memory, and fails above 50 MB. It also verifies zero allocations in the core benchmark and exercises actual native UI Apply/Stop/Start/Save notifications, invalid-area validation, and the 50% scale calculation. It does not trim the working set. Synthetic input does not test USB or `SendInput` latency.
 
 `tools/Generate-UpstreamFixtures.ps1` compiles the actual upstream C# parser source with interface-only stubs to generate 2,048 deterministic fixtures. The Rust test compares complete decoded reports against those results. Run that generator in a fresh PowerShell process. These are generated test packets, not an exhaustive hardware corpus.
 
