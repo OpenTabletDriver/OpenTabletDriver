@@ -31,6 +31,7 @@
   };
   const areaInputs = [...document.querySelectorAll('.area-fields input')];
   const areaPercentInputs = [$('#width-percent'), $('#height-percent')];
+  const uniformPercentInput = $('#uniform-percent');
   const areaShape = $('#tablet-shape');
   const areaStage = $('.tablet-visual');
   let areaOrientation = 'landscape';
@@ -57,6 +58,10 @@
     $('#width-percent-value').textContent = `${areaPercentInputs[0].value}%`;
     $('#height-percent-value').value = `${areaPercentInputs[1].value}%`;
     $('#height-percent-value').textContent = `${areaPercentInputs[1].value}%`;
+    const widthPercent = Number(areaPercentInputs[0].value);
+    const heightPercent = Number(areaPercentInputs[1].value);
+    uniformPercentInput.value = String(Math.round((widthPercent + heightPercent) / 2));
+    $('#uniform-percent-value').textContent = widthPercent === heightPercent ? `${widthPercent}%` : 'Custom';
     const maxWidth = areaStage.clientWidth * 0.78;
     const maxHeight = areaStage.clientHeight * 0.84;
     let previewWidth = maxWidth;
@@ -82,10 +87,14 @@
     });
   });
   areaPercentInputs.forEach((input) => input.addEventListener('input', () => updateAreaShape(areaOrientation, true)));
+  uniformPercentInput.addEventListener('input', () => {
+    areaPercentInputs.forEach((input) => input.value = uniformPercentInput.value);
+    updateAreaShape(areaOrientation, true);
+  });
   areaInputs.slice(0, 2).forEach((input) => input.addEventListener('input', () => updateAreaShape(undefined, false, true)));
   updateAreaShape('landscape', true);
   new ResizeObserver(() => updateAreaShape()).observe(areaStage);
-  document.querySelectorAll('.area-fields input, .percentage-control input, .display-fields input, .binding-row select, .switch').forEach((control) => {
+  document.querySelectorAll('.area-fields input, .percentage-controls input, .display-fields input, .binding-row select, .switch').forEach((control) => {
     control.addEventListener('input', changed);
     control.addEventListener('change', changed);
   });
@@ -101,6 +110,7 @@
     document.querySelectorAll('.display-fields input').forEach((input, i) => input.value = i === 0 ? '1920' : '1080');
     areaInputs.forEach((input, i) => input.value = ['76.2', '50.8', '76.2', '50.8', '0', '0'][i]);
     areaPercentInputs.forEach((input) => input.value = '50');
+    uniformPercentInput.value = '50';
     updateAreaShape('landscape', true);
     $('#saved-state').innerHTML = '<span class="saved-check">●</span> Unsaved changes';
     showToast('Display mapping reset');

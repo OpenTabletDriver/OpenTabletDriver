@@ -89,10 +89,11 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .canvas-footer { padding-top: 4px; color: #697581; font-size: 9px; }.canvas-footer > span:first-child { color: #a7b1ba; }
 .legend-square { display: inline-block; width: 6px; height: 6px; margin-right: 4px; border: 1px solid var(--accent); }
 .percentage-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 13px 1px 4px; }
+.uniform-control { grid-column: 1 / -1; padding-bottom: 10px; border-bottom: 1px solid #292929; }
 .percentage-label { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; color: #a0a0a0; font-size: 9px; }
 .percentage-label output { color: #fff; font: 10px var(--mono); }
-.percentage-control input[type="range"] { display: block; width: 100%; height: 14px; margin: 0; accent-color: #fff; cursor: pointer; }
-.percentage-control input[type="range"]:focus-visible { outline-offset: 3px; }
+.percentage-controls input[type="range"] { display: block; width: 100%; height: 14px; margin: 0; accent-color: #fff; cursor: pointer; }
+.percentage-controls input[type="range"]:focus-visible { outline-offset: 3px; }
 .area-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px 10px; margin-top: 11px; }
 .area-fields label > span, .display-fields label > span { display: block; margin-bottom: 4px; color: #84909c; font-size: 8px; }
 .area-fields .input-wrap { height: 28px; }
