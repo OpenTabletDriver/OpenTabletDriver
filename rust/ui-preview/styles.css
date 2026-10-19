@@ -21,18 +21,12 @@ button { color: inherit; cursor: pointer; }
 button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
 
 .app-shell { min-height: 100vh; }
-.rail { position: fixed; z-index: 2; inset: 0 auto 0 0; display: flex; width: 68px; flex-direction: column; align-items: center; border-right: 1px solid #222832; background: #0d1116; }
-.brand-mark { display: grid; width: 38px; height: 38px; margin: 20px 0 42px; place-items: center; border-radius: 12px; background: var(--green); }
-.brand-mark svg { width: 24px; fill: #1b2411; }
-.rail-nav { display: grid; gap: 11px; }
-.rail-link { display: grid; width: 40px; height: 40px; place-items: center; border: 0; border-radius: 11px; background: transparent; color: #77818d; text-decoration: none; transition: .18s; }
-.rail-link svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-.rail-link:hover, .rail-link.active { background: #202832; color: var(--green); }
-.rail-bottom { display: grid; gap: 18px; justify-items: center; margin-top: auto; padding-bottom: 18px; }
-.avatar { display: grid; width: 29px; height: 29px; place-items: center; border-radius: 50%; background: #28323c; color: #bac5d0; font-size: 10px; font-weight: 700; }
-
-.main { min-height: 100vh; margin-left: 68px; }
+.main { min-height: 100vh; }
 .topbar { display: flex; height: 64px; align-items: center; justify-content: space-between; padding: 0 36px; border-bottom: 1px solid #222832; }
+.topbar-leading { display: flex; align-items: center; gap: 14px; }
+.settings-button { display: grid; width: 34px; height: 34px; place-items: center; border: 1px solid transparent; border-radius: 9px; background: transparent; color: #929da8; transition: .18s; }
+.settings-button:hover { border-color: #343e48; background: #202832; color: var(--green); }
+.settings-button svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .crumb { display: flex; align-items: center; gap: 11px; color: #c0c7ce; font-size: 12px; }
 .crumb-muted, .crumb-slash { color: #626d79; }
 .top-actions { display: flex; align-items: center; gap: 18px; }
@@ -171,7 +165,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .bottom-grid { grid-template-columns: 1fr; }.content { max-width: 700px; }.tablet-visual { height: 230px; }
 }
 @media (max-width: 590px) {
-  .rail { width: 53px; }.main { margin-left: 53px; }.topbar { height: 55px; padding: 0 15px; }.content { padding: 23px 13px 16px; }
+  .topbar { height: 55px; padding: 0 15px; }.content { padding: 23px 13px 16px; }
   .top-actions { gap: 10px; }.quiet-button { font-size: 10px; }.preview-chip { display: none; }.page-heading { align-items: flex-start; flex-direction: column; gap: 12px; margin-bottom: 16px; }.page-heading h1 { font-size: 23px; }
   .profile-button { position: absolute; top: 74px; right: 13px; transform: scale(.9); transform-origin: right top; }
   .device-banner { flex-wrap: wrap; gap: 10px; padding: 12px; }.device-icon { width: 39px; height: 39px; }.device-copy { min-width: calc(100% - 60px); }.device-title-row { gap: 8px; }.device-actions { width: 100%; justify-content: flex-end; }.device-actions button { flex: 1; }

@@ -48,12 +48,7 @@
     showToast('Display mapping reset');
   });
   $('#profile-button').addEventListener('click', () => showToast('VEIKK S640 profile selected'));
-  document.querySelectorAll('.rail-link[href^="#"]').forEach((link) => {
-    link.addEventListener('click', () => {
-      document.querySelectorAll('.rail-link[href^="#"]').forEach((item) => item.classList.remove('active'));
-      link.classList.add('active');
-    });
-  });
+  $('#settings-button').addEventListener('click', () => showToast('Settings will open here'));
 
   // A deterministic preview signal keeps the mockup useful without a hardware bridge.
   let tick = 0;
