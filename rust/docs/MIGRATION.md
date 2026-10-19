@@ -1,6 +1,6 @@
 # Migration scope and next gates
 
-This milestone prioritizes the user's VEIKK S640 and the 50 MB process budget. It does not claim to have converted the entire upstream repository.
+The current pre-release prioritizes the user's VEIKK S640 and the 50 MB process budget. It does not claim to have converted the entire upstream repository. The configuration tree contains 360 tablet definitions but uses 50 report-parser families, so broad model support requires a profile-driven device registry and explicit parser ports. See the [roadmap to broad tablet support](UNIVERSAL-ROADMAP.md).
 
 | Upstream responsibility | Rust implementation | Status |
 | --- | --- | --- |

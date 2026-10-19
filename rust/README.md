@@ -70,7 +70,7 @@ The measurement script runs release binaries with native UI controls rendered of
 
 `tools/Generate-UpstreamFixtures.ps1` compiles the actual upstream C# parser source with interface-only stubs to generate 2,048 deterministic fixtures. The Rust test compares complete decoded reports against those results. Run that generator in a fresh PowerShell process. These are generated test packets, not an exhaustive hardware corpus.
 
-See [measurement notes](docs/PERFORMANCE.md), [migration scope](docs/MIGRATION.md), and [UI contract](docs/UI-CONTRACT.md).
+See [measurement notes](docs/PERFORMANCE.md), [migration scope](docs/MIGRATION.md), the [roadmap to broad tablet support](docs/UNIVERSAL-ROADMAP.md), and [UI contract](docs/UI-CONTRACT.md).
 
 ## Current limits
 
