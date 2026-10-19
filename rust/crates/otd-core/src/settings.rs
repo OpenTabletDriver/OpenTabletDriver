@@ -59,8 +59,8 @@ impl Default for Settings {
         Self {
             schema_version: 1,
             area: Area {
-                width_mm: 152.4,
-                height_mm: 101.6,
+                width_mm: 76.0,
+                height_mm: 43.0,
                 center_x_mm: 76.2,
                 center_y_mm: 50.8,
                 rotation_deg: 0.0,
@@ -136,6 +136,8 @@ mod tests {
         let current = serde_json::to_string(&Settings::default()).unwrap();
         let parsed: Settings = serde_json::from_str(&current).unwrap();
         assert!(!parsed.close_to_tray);
+        assert_eq!(parsed.area.width_mm, 76.0);
+        assert_eq!(parsed.area.height_mm, 43.0);
 
         let mut old = serde_json::to_value(Settings::default()).unwrap();
         old.as_object_mut().unwrap().remove("close_to_tray");

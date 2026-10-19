@@ -15,7 +15,12 @@ use windows_sys::Win32::{
     Graphics::Gdi::*,
     System::LibraryLoader::*,
     UI::{
-        Controls::EM_LIMITTEXT, HiDpi::*, Input::KeyboardAndMouse::EnableWindow, Shell::*,
+        Controls::{
+            DRAWITEMSTRUCT, EM_LIMITTEXT, ODS_DISABLED, ODS_FOCUS, ODS_SELECTED, ODT_BUTTON,
+        },
+        HiDpi::*,
+        Input::KeyboardAndMouse::EnableWindow,
+        Shell::*,
         WindowsAndMessaging::*,
     },
 };
@@ -30,6 +35,7 @@ const DESKTOP: usize = 106;
 const ASPECT: usize = 107;
 const DEFAULTS: usize = 108;
 const SETTINGS: usize = 109;
+const FULL_AREA: usize = 110;
 const CLOSE_TO_TRAY: usize = 302;
 const SETTINGS_DONE: usize = 303;
 const TRAY_OPEN: usize = 304;
@@ -56,6 +62,8 @@ struct Ui {
     settings_window: HWND,
     close_to_tray: HWND,
     tray_added: bool,
+    background_brush: HBRUSH,
+    input_brush: HBRUSH,
     close_at: Option<Instant>,
     self_test: Option<u8>,
     test_error: Option<String>,
@@ -245,11 +253,16 @@ impl Ui {
         // SAFETY: controls are parent-owned, classes are registered system controls;
         // fixed-size text buffers remain live through CreateWindowExW/SendMessageW.
         unsafe {
+            let button_style = if class == "BUTTON" && style & BS_AUTOCHECKBOX as u32 == 0 {
+                style | BS_OWNERDRAW as u32
+            } else {
+                style
+            };
             let h = CreateWindowExW(
                 0,
                 w(class).as_ptr(),
                 w(title).as_ptr(),
-                WS_CHILD | WS_VISIBLE | style,
+                WS_CHILD | WS_VISIBLE | button_style,
                 x,
                 y,
                 width,
@@ -268,7 +281,7 @@ impl Ui {
         self.control(
             hwnd,
             "STATIC",
-            "OpenTabletDriver / Rust",
+            "OpenTabletDriver  ·  ALPHA BUILD",
             0,
             0,
             [24, 18, 670, 24],
@@ -276,7 +289,7 @@ impl Ui {
         self.control(
             hwnd,
             "STATIC",
-            "VEIKK S640 + S640 V2  |  Lightweight native control shell",
+            "VEIKK S640  |  Absolute tablet mapping",
             0,
             0,
             [24, 47, 670, 22],
@@ -319,25 +332,25 @@ impl Ui {
         self.control(
             hwnd,
             "STATIC",
-            "TABLET AREA / millimeters",
+            "TABLET AREA  ·  millimeters",
             0,
             0,
-            [24, 255, 670, 22],
+            [24, 250, 670, 22],
         );
         let fields = [
-            ("Width", 24, 284),
-            ("Height", 245, 284),
-            ("Center X", 466, 284),
-            ("Center Y", 24, 323),
-            ("Rotation (deg)", 245, 323),
-            ("Tip threshold %", 466, 323),
-            ("Screen X", 24, 417),
-            ("Screen Y", 195, 417),
-            ("Width px", 366, 417),
-            ("Height px", 537, 417),
+            ("Width", 374, 270),
+            ("Height", 535, 270),
+            ("X Offset", 374, 307),
+            ("Y Offset", 535, 307),
+            ("Rotation °", 374, 344),
+            ("Tip click %", 535, 344),
+            ("Screen X", 24, 489),
+            ("Screen Y", 195, 489),
+            ("Width px", 366, 489),
+            ("Height px", 537, 489),
         ];
         for (i, (label, x, y)) in fields.into_iter().enumerate() {
-            let label_width = if i < 6 { 106 } else { 72 };
+            let label_width = if i < 6 { 76 } else { 72 };
             self.control(hwnd, "STATIC", label, 0, 0, [x, y + 4, label_width, 24]);
             let h = self.control(
                 hwnd,
@@ -345,7 +358,7 @@ impl Ui {
                 "",
                 WS_TABSTOP | WS_BORDER | ES_AUTOHSCROLL as u32,
                 200 + i,
-                [x + label_width, y, 90, 25],
+                [x + label_width, y, if i < 6 { 78 } else { 90 }, 25],
             );
             // SAFETY: EM_LIMITTEXT uses only an integer count.
             unsafe {
@@ -353,13 +366,29 @@ impl Ui {
             }
             self.edits.push(h);
         }
+        self.control(
+            hwnd,
+            "BUTTON",
+            "Reset to full area",
+            WS_TABSTOP,
+            FULL_AREA,
+            [374, 389, 128, 29],
+        );
+        self.control(
+            hwnd,
+            "BUTTON",
+            "Conform to display ratio",
+            WS_TABSTOP,
+            ASPECT,
+            [510, 389, 190, 29],
+        );
         self.clip = self.control(
             hwnd,
             "BUTTON",
             "Clip to mapped area",
             WS_TABSTOP | BS_AUTOCHECKBOX as u32,
             CLIP,
-            [24, 367, 210, 24],
+            [24, 526, 210, 24],
         );
         self.limit = self.control(
             hwnd,
@@ -367,7 +396,7 @@ impl Ui {
             "Ignore outside area",
             WS_TABSTOP | BS_AUTOCHECKBOX as u32,
             LIMIT,
-            [255, 367, 210, 24],
+            [255, 526, 210, 24],
         );
         self.control(
             hwnd,
@@ -375,7 +404,7 @@ impl Ui {
             "Primary display",
             WS_TABSTOP,
             PRIMARY,
-            [24, 458, 145, 29],
+            [24, 556, 145, 29],
         );
         self.control(
             hwnd,
@@ -383,15 +412,7 @@ impl Ui {
             "All displays",
             WS_TABSTOP,
             DESKTOP,
-            [180, 458, 135, 29],
-        );
-        self.control(
-            hwnd,
-            "BUTTON",
-            "Match aspect ratio",
-            WS_TABSTOP,
-            ASPECT,
-            [326, 458, 168, 29],
+            [180, 556, 135, 29],
         );
         self.control(
             hwnd,
@@ -399,7 +420,7 @@ impl Ui {
             "Defaults",
             WS_TABSTOP,
             DEFAULTS,
-            [505, 458, 120, 29],
+            [326, 556, 120, 29],
         );
 
         for (i, label) in ["Tip", "Pen button 1", "Pen button 2"]
@@ -407,14 +428,14 @@ impl Ui {
             .enumerate()
         {
             let x = 24 + i as i32 * 224;
-            self.control(hwnd, "STATIC", label, 0, 0, [x, 510, 108, 24]);
+            self.control(hwnd, "STATIC", label, 0, 0, [x, 610, 108, 24]);
             let combo = self.control(
                 hwnd,
                 "COMBOBOX",
                 "",
                 WS_TABSTOP | CBS_DROPDOWNLIST as u32 | WS_VSCROLL,
                 400 + i,
-                [x + 105, 505, 108, 140],
+                [x + 105, 605, 108, 140],
             );
             for option in ["Disabled", "Left", "Right", "Middle"] {
                 // SAFETY: CB_ADDSTRING copies the terminated string before returning.
@@ -430,7 +451,7 @@ impl Ui {
             "Apply",
             WS_TABSTOP,
             APPLY,
-            [24, 554, 115, 32],
+            [24, 660, 115, 32],
         );
         self.control(
             hwnd,
@@ -438,9 +459,9 @@ impl Ui {
             "Apply and save",
             WS_TABSTOP,
             SAVE,
-            [150, 554, 150, 32],
+            [150, 660, 150, 32],
         );
-        self.footer = self.control(hwnd, "STATIC", "", 0, 0, [24, 602, 680, 45]);
+        self.footer = self.control(hwnd, "STATIC", "", 0, 0, [320, 653, 385, 52]);
         if self
             .edits
             .iter()
@@ -577,6 +598,16 @@ impl Ui {
                     DestroyWindow(self.settings_window);
                 }
             },
+            FULL_AREA => {
+                self.settings = self.collect()?;
+                self.settings.area.width_mm = 152.4;
+                self.settings.area.height_mm = 101.6;
+                self.settings.area.center_x_mm = 76.2;
+                self.settings.area.center_y_mm = 50.8;
+                self.settings.area.rotation_deg = 0.0;
+                self.fill();
+                text(self.status, "Tablet area reset to the full S640 surface.");
+            }
             DETECT => self.engine.command(Command::Detect)?,
             START => self.engine.command(Command::Start)?,
             STOP => self.engine.command(Command::Stop)?,
@@ -600,13 +631,16 @@ impl Ui {
                 if id == ASPECT {
                     let ratio =
                         self.settings.display.width as f32 / self.settings.display.height as f32;
-                    let width = self
-                        .settings
-                        .area
-                        .width_mm
-                        .min(self.settings.area.height_mm * ratio);
+                    let mut width = 152.4;
+                    let mut height = width / ratio;
+                    if height > 101.6 {
+                        height = 101.6;
+                        width = height * ratio;
+                    }
                     self.settings.area.width_mm = width;
-                    self.settings.area.height_mm = width / ratio;
+                    self.settings.area.height_mm = height;
+                    self.settings.area.center_x_mm = 76.2;
+                    self.settings.area.center_y_mm = 50.8;
                 }
                 self.fill();
                 text(
@@ -670,6 +704,164 @@ impl Ui {
             EnableWindow(self.start, i32::from(!s.running));
             EnableWindow(self.stop, i32::from(s.running));
         }
+    }
+}
+
+unsafe fn draw_tablet_preview(hwnd: HWND, ui: &Ui) {
+    // SAFETY: BeginPaint provides a live DC that is paired with EndPaint.
+    unsafe {
+        let mut paint: PAINTSTRUCT = zeroed();
+        let dc = BeginPaint(hwnd, &mut paint);
+        draw_tablet_geometry(dc, ui, POINT { x: 0, y: 0 });
+        EndPaint(hwnd, &paint);
+    }
+}
+
+unsafe fn draw_tablet_geometry(dc: HDC, ui: &Ui, offset: POINT) {
+    // SAFETY: the caller provides a live paint/print DC; all GDI objects are restored
+    // and released before returning.
+    unsafe {
+        let scaled = |value: i32| (value as f32 * ui.scale).round() as i32;
+        let tablet = RECT {
+            left: scaled(42) + offset.x,
+            top: scaled(286) + offset.y,
+            right: scaled(333) + offset.x,
+            bottom: scaled(480) + offset.y,
+        };
+        let surface = CreateSolidBrush(0x001b1b1b);
+        let border = CreateSolidBrush(0x00424242);
+        FillRect(dc, &tablet, surface);
+        SetBkMode(dc, TRANSPARENT as i32);
+        SetTextColor(dc, 0x00eeeeee);
+        let label = w("VEIKK S640");
+        let mut label_box = RECT {
+            left: scaled(51) + offset.x,
+            top: scaled(266) + offset.y,
+            right: scaled(180) + offset.x,
+            bottom: scaled(284) + offset.y,
+        };
+        DrawTextW(
+            dc,
+            label.as_ptr(),
+            -1,
+            &mut label_box,
+            DT_LEFT | DT_SINGLELINE,
+        );
+
+        let values: Vec<f32> = ui
+            .edits
+            .iter()
+            .take(5)
+            .map(|h| read_text(*h).parse().unwrap_or(0.0))
+            .collect();
+        if values.len() == 5 && values[0] > 0.0 && values[1] > 0.0 {
+            let sx = (tablet.right - tablet.left) as f32 / 152.4;
+            let sy = (tablet.bottom - tablet.top) as f32 / 101.6;
+            let cx = tablet.left as f32 + values[2] * sx;
+            let cy = tablet.top as f32 + values[3] * sy;
+            let half_w = values[0].min(152.4) * sx * 0.5;
+            let half_h = values[1].min(101.6) * sy * 0.5;
+            let angle = values[4].to_radians();
+            let (sin, cos) = angle.sin_cos();
+            let corners = [
+                (-half_w, -half_h),
+                (half_w, -half_h),
+                (half_w, half_h),
+                (-half_w, half_h),
+            ];
+            let mut points: [POINT; 4] = corners.map(|(x, y)| POINT {
+                x: (cx + x * cos - y * sin).round() as i32,
+                y: (cy + x * sin + y * cos).round() as i32,
+            });
+            let active = CreateSolidBrush(0x00ffffff);
+            let pen = CreatePen(PS_SOLID, scaled(1), 0x00ffffff);
+            let old_brush = SelectObject(dc, active);
+            let old_pen = SelectObject(dc, pen);
+            Polygon(dc, points.as_mut_ptr(), points.len() as i32);
+            SelectObject(dc, old_brush);
+            SelectObject(dc, old_pen);
+            DeleteObject(active);
+            DeleteObject(pen);
+
+            let ratio_text = format!("{:.2}", values[0] / values[1]);
+            let ratio = w(&ratio_text);
+            let mut ratio_box = RECT {
+                left: (cx - half_w).round() as i32,
+                top: (cy - half_h).round() as i32,
+                right: (cx + half_w).round() as i32,
+                bottom: (cy + half_h).round() as i32,
+            };
+            SetTextColor(dc, 0x00000000);
+            DrawTextW(
+                dc,
+                ratio.as_ptr(),
+                -1,
+                &mut ratio_box,
+                DT_CENTER | DT_VCENTER | DT_SINGLELINE,
+            );
+        }
+        FrameRect(dc, &tablet, border);
+        DeleteObject(surface);
+        DeleteObject(border);
+    }
+}
+
+unsafe fn draw_button(item: &DRAWITEMSTRUCT, scale: f32) {
+    // SAFETY: DRAWITEMSTRUCT is supplied by Windows for WM_DRAWITEM; all GDI objects
+    // are restored and deleted before returning.
+    unsafe {
+        let dc = item.hDC;
+        let rect = item.rcItem;
+        let primary = item.CtlID == START as u32 || item.CtlID == SAVE as u32;
+        let disabled = item.itemState & ODS_DISABLED != 0;
+        let pressed = item.itemState & ODS_SELECTED != 0;
+        let filled = (primary || pressed) && !disabled;
+        let background = if filled { 0x00ffffff } else { 0x00101010 };
+        let foreground = if filled {
+            0x00000000
+        } else if disabled {
+            0x00777777
+        } else {
+            0x00ffffff
+        };
+        let outline = if disabled { 0x00525252 } else { 0x00ffffff };
+        let brush = CreateSolidBrush(background);
+        let pen = CreatePen(PS_SOLID, scale.max(1.0).round() as i32, outline);
+        let old_brush = SelectObject(dc, brush);
+        let old_pen = SelectObject(dc, pen);
+        RoundRect(
+            dc,
+            rect.left,
+            rect.top,
+            rect.right,
+            rect.bottom,
+            (8.0 * scale) as i32,
+            (8.0 * scale) as i32,
+        );
+        SelectObject(dc, old_brush);
+        SelectObject(dc, old_pen);
+        SetBkMode(dc, TRANSPARENT as i32);
+        SetTextColor(dc, foreground);
+        let mut buffer = [0u16; 128];
+        let length = GetWindowTextW(item.hwndItem, buffer.as_mut_ptr(), buffer.len() as i32);
+        let mut text_rect = rect;
+        let inset = (6.0 * scale) as i32;
+        text_rect.left += inset;
+        text_rect.right -= inset;
+        DrawTextW(
+            dc,
+            buffer.as_ptr(),
+            length,
+            &mut text_rect,
+            DT_CENTER | DT_VCENTER | DT_SINGLELINE,
+        );
+        if item.itemState & ODS_FOCUS != 0 {
+            let mut focus = rect;
+            InflateRect(&mut focus, -(3.0 * scale) as i32, -(3.0 * scale) as i32);
+            DrawFocusRect(dc, &focus);
+        }
+        DeleteObject(brush);
+        DeleteObject(pen);
     }
 }
 
@@ -745,6 +937,22 @@ unsafe extern "system" fn window_proc(
                 DestroyWindow(hwnd);
                 return 0;
             }
+            if hwnd == ui.main_window && message == WM_PRINT {
+                let result = DefWindowProcW(hwnd, message, wparam, lparam);
+                let mut client_origin = POINT { x: 0, y: 0 };
+                let mut window_rect: RECT = zeroed();
+                ClientToScreen(hwnd, &mut client_origin);
+                GetWindowRect(hwnd, &mut window_rect);
+                draw_tablet_geometry(
+                    wparam as HDC,
+                    ui,
+                    POINT {
+                        x: client_origin.x - window_rect.left,
+                        y: client_origin.y - window_rect.top,
+                    },
+                );
+                return result;
+            }
             match message {
                 WM_COMMAND if wparam >> 16 == 0 => {
                     if let Err(e) = ui.action(wparam & 0xffff) {
@@ -755,6 +963,37 @@ unsafe extern "system" fn window_proc(
                             MB_OK | MB_ICONERROR,
                         );
                     }
+                    return 0;
+                }
+                WM_COMMAND => {
+                    InvalidateRect(hwnd, null(), 0);
+                }
+                WM_ERASEBKGND => {
+                    let mut client: RECT = zeroed();
+                    GetClientRect(hwnd, &mut client);
+                    FillRect(wparam as HDC, &client, ui.background_brush);
+                    return 1;
+                }
+                WM_CTLCOLORSTATIC | WM_CTLCOLOREDIT | WM_CTLCOLORLISTBOX | WM_CTLCOLORBTN => {
+                    let dc = wparam as HDC;
+                    SetTextColor(dc, 0x00eeeeee);
+                    let edit = message == WM_CTLCOLOREDIT || message == WM_CTLCOLORLISTBOX;
+                    SetBkColor(dc, if edit { 0x00141414 } else { 0x00000000 });
+                    return if edit {
+                        ui.input_brush as isize
+                    } else {
+                        ui.background_brush as isize
+                    };
+                }
+                WM_DRAWITEM => {
+                    let item = &mut *(lparam as *mut DRAWITEMSTRUCT);
+                    if !item.hwndItem.is_null() && item.CtlType == ODT_BUTTON {
+                        draw_button(item, ui.scale);
+                        return 1;
+                    }
+                }
+                WM_PAINT if hwnd == ui.main_window => {
+                    draw_tablet_preview(hwnd, ui);
                     return 0;
                 }
                 WM_TIMER => {
@@ -802,6 +1041,8 @@ unsafe extern "system" fn window_proc(
                             DestroyWindow(ui.settings_window);
                         }
                         KillTimer(hwnd, 1);
+                        DeleteObject(ui.background_brush);
+                        DeleteObject(ui.input_brush);
                         PostQuitMessage(0);
                     } else if hwnd == ui.settings_window {
                         ui.settings_window = null_mut();
@@ -849,7 +1090,7 @@ pub fn run(
             CW_USEDEFAULT,
             CW_USEDEFAULT,
             (740.0 * scale) as i32,
-            (700.0 * scale) as i32,
+            (760.0 * scale) as i32,
             null_mut(),
             null_mut(),
             instance,
@@ -875,6 +1116,8 @@ pub fn run(
             settings_window: null_mut(),
             close_to_tray: null_mut(),
             tray_added: false,
+            background_brush: CreateSolidBrush(0x00000000),
+            input_brush: CreateSolidBrush(0x00141414),
             close_at: close_after.map(|d| Instant::now() + d),
             self_test: self_test.then_some(0),
             test_error: None,

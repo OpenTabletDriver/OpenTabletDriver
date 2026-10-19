@@ -1,8 +1,8 @@
 # UI contract / version 1
 
-The current native panel and engine live in one process. `Command` and `Snapshot` in `crates/otd-app/src/engine.rs` are separate from Windows controls. There is **no HTTP server, IPC endpoint, or HTML interface** in this milestone.
+The native panel and engine live in one process. `Command` and `Snapshot` in `crates/otd-app/src/engine.rs` are separate from Windows controls. The HTML design reference is not loaded into the app; its behaviors are implemented directly by native controls to avoid adding a browser process.
 
-The future HTML mockup should cover:
+The native UI and its HTML design reference should cover:
 
 - Connected tablet / disconnected / stopped / running / failed states.
 - Detect, Start, and Stop with clear output status.
@@ -28,4 +28,4 @@ The settings objects above are abbreviated: all fields in `otd-core/settings.rs`
 
 Snapshots contain protocol version, running/connected/simulation state, tablet and last message, report/malformed counts, report rate, core processing times, pressure/position, accepted settings, and a settings revision counter. Snapshots publish at most 4 Hz during active input; raw input packets never pass through the UI command channel. Memory is read from the whole process by the current panel.
 
-The static HTML design preview lives in `rust/ui-preview/`. It uses only local HTML, CSS, and JavaScript; its sample telemetry is illustrative and it does not connect to the driver. Keep it as a design reference until a native or lightweight embedded UI is chosen. A browser-based runtime would count toward the 50 MB process budget, so measure the full application before selecting one for production. The existing native panel is a functional test shell.
+The static HTML design reference lives in `rust/ui-preview/`. It uses only local HTML, CSS, and JavaScript; its sample telemetry is illustrative and it does not connect to the driver. The Rust app stays native and low-overhead; UI commands use the in-process engine and telemetry remains bounded to 4 Hz.

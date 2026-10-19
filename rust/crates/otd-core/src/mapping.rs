@@ -130,7 +130,10 @@ mod tests {
     }
     #[test]
     fn full_area_maps_corners_and_center() {
-        let m = mapper(Settings::default());
+        let mut settings = Settings::default();
+        settings.area.width_mm = 152.4;
+        settings.area.height_mm = 101.6;
+        let m = mapper(settings);
         for (p, x, y) in [
             (pen(0, 0, 0), 0.0, 0.0),
             (pen(30480, 20320, 8191), 1920.0, 1080.0),

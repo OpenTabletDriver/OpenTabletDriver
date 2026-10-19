@@ -19,7 +19,7 @@ Open the native control panel with synthetic input:
 ./target/release/otd-rust-ui.exe --simulate
 ```
 
-Simulation never opens/initializes the tablet or injects pointer events. The panel includes area dimensions/center/rotation, display mapping, aspect fitting, clipping/limiting, tip threshold, mouse bindings, Apply, Save, Start/Stop, status, rate, core processing time, and process memory. The Settings button opens native preferences, including a persisted “Close to system tray” option with tray Open and Exit commands. A static HTML design preview is in [`ui-preview`](ui-preview/README.md); it does not connect to the driver or add a runtime dependency.
+Simulation never opens/initializes the tablet or injects pointer events. The native panel includes a live tablet-area diagram, area dimensions/center/rotation, display mapping, aspect fitting, clipping/limiting, tip threshold, mouse bindings, Apply, Save, Start/Stop, status, rate, core processing time, and process memory. The Settings button opens native preferences, including a persisted “Close to system tray” option with tray Open and Exit commands. The HTML design reference is in [`ui-preview`](ui-preview/README.md); it does not connect to the driver or add a runtime dependency.
 
 For physical tablet use, close other tablet drivers normally first to avoid competing cursor output, then launch:
 
