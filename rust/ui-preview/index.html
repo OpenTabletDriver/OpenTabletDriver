@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#11151b" />
+    <title>OpenTabletDriver — UI preview</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="rail" aria-label="Main navigation">
+        <a class="brand-mark" href="#overview" aria-label="OpenTabletDriver home">
+          <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M8 8h24v5H21v19h-5V13H8z"/><circle cx="29" cy="29" r="4"/></svg>
+        </a>
+        <nav class="rail-nav">
+          <a class="rail-link active" href="#overview" aria-label="Overview" title="Overview"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg></a>
+          <a class="rail-link" href="#tablet" aria-label="Tablet settings" title="Tablet settings"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.75" width="12" height="18.5" rx="2.5"/><path d="M10 18.25h4"/></svg></a>
+          <a class="rail-link" href="#bindings" aria-label="Pen bindings" title="Pen bindings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 16 11-11a2.1 2.1 0 0 1 3 3L7 19H4z"/><path d="m13.5 6.5 4 4"/></svg></a>
+          <a class="rail-link" href="#diagnostics" aria-label="Diagnostics" title="Diagnostics"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2.3-6 4.2 12 2.3-6H21"/></svg></a>
+        </nav>
+        <div class="rail-bottom"><button class="rail-link icon-button" aria-label="Settings" title="Settings"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1a1.7 1.7 0 0 1-2.4 2.4l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.2a1.7 1.7 0 0 1-3.4 0v-.2A1.7 1.7 0 0 0 7.8 17l-.1.1a1.7 1.7 0 0 1-2.4-2.4l.1-.1a1.7 1.7 0 0 0-1.2-2.9H4a1.7 1.7 0 0 1 0-3.4h.2A1.7 1.7 0 0 0 5.4 6l-.1-.1a1.7 1.7 0 0 1 2.4-2.4l.1.1a1.7 1.7 0 0 0 2.9-1.2v-.2a1.7 1.7 0 0 1 3.4 0v.2A1.7 1.7 0 0 0 17 3.6l.1-.1a1.7 1.7 0 0 1 2.4 2.4l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.2a1.7 1.7 0 0 1 0 3.4h-.2a1.7 1.7 0 0 0-1.3 2.7Z"/></svg></button><div class="avatar" aria-label="OpenTabletDriver">OT</div></div>
+      </aside>
+
+      <main class="main" id="overview">
+        <header class="topbar">
+          <div class="crumb"><span class="crumb-muted">Workspace</span><span class="crumb-slash">/</span><span>Overview</span></div>
+          <div class="top-actions"><span class="preview-chip">STATIC PREVIEW · SAMPLE DATA</span><button class="quiet-button" id="detect-button"><span class="refresh-icon">↻</span> Detect devices</button><button class="help-button" aria-label="Help">?</button></div>
+        </header>
+
+        <div class="content">
+          <section class="page-heading">
+            <div><p class="eyebrow">DEVICE CONTROL</p><h1>Good afternoon<span class="heading-dot">.</span></h1><p class="subheading">Static UI preview · controls are illustrative and telemetry uses sample values.</p></div>
+            <button class="profile-button" id="profile-button"><span class="profile-symbol">S</span><span><small>ACTIVE PROFILE</small><strong>VEIKK S640</strong></span><span class="chevron">⌄</span></button>
+          </section>
+
+          <section class="device-banner panel" aria-label="Connected tablet status">
+            <div class="device-icon"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="6" y="5" width="28" height="30" rx="4"/><path d="M11 10h18v20H11z"/><path d="M14 26c4-1 7-5 9-11"/></svg></div>
+            <div class="device-copy"><div class="device-title-row"><h2>VEIKK S640</h2><span class="connected"><i></i> Device preview</span><span class="running-tag stopped" id="running-tag"><i></i> Driver stopped</span></div><p>HID profile <span class="mono">VID 2FEB · PID 0001</span><span class="metadata-divider">·</span> Sample device state</p></div>
+            <div class="device-actions"><button class="button-secondary" id="stop-button">Stop</button><button class="button-primary" id="start-button"><span class="play-icon">▶</span> Start driver</button></div>
+          </section>
+
+          <div class="dashboard-grid">
+            <section class="panel mapping-panel" id="tablet">
+              <div class="section-heading"><div><p class="eyebrow">MAPPING</p><h2>Tablet area</h2></div><button class="more-button" aria-label="More mapping options">···</button></div>
+              <div class="mapping-canvas">
+                <div class="canvas-label"><span>TABLET</span><span>152.4 × 101.6 mm</span></div>
+                <div class="tablet-visual"><div class="tablet-inner"><span class="tablet-brand">VEIKK</span><div class="active-area"><span class="area-handle top-left"></span><span class="area-handle top-right"></span><span class="area-handle bottom-left"></span><span class="area-handle bottom-right"></span><div class="area-crosshair"></div><span class="area-dimensions">152.4 × 101.6</span></div><div class="tablet-button-dot"></div><div class="tablet-button-dot second"></div></div><div class="pen-pointer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 3 14 11-7 .8-3.5 6.2L5 3Z"/></svg></div><div class="mapping-tooltip"><span class="tooltip-dot"></span> Active area <strong>100%</strong></div></div>
+                <div class="canvas-footer"><span><i class="legend-square"></i> Active area</span><span>Drag corners to resize</span></div>
+              </div>
+              <div class="area-fields" aria-label="Tablet area dimensions">
+                <label><span>Width</span><div class="input-wrap"><input value="152.4" inputmode="decimal" aria-label="Tablet area width"><em>mm</em></div></label>
+                <label><span>Height</span><div class="input-wrap"><input value="101.6" inputmode="decimal" aria-label="Tablet area height"><em>mm</em></div></label>
+                <label><span>Center X</span><div class="input-wrap"><input value="76.2" inputmode="decimal" aria-label="Tablet area center X"><em>mm</em></div></label>
+                <label><span>Center Y</span><div class="input-wrap"><input value="50.8" inputmode="decimal" aria-label="Tablet area center Y"><em>mm</em></div></label>
+                <label><span>Rotation</span><div class="input-wrap"><input value="0" inputmode="decimal" aria-label="Tablet area rotation"><em>°</em></div></label>
+                <label><span>Tip threshold</span><div class="input-wrap"><input value="0" inputmode="numeric" aria-label="Tip threshold"><em>%</em></div></label>
+              </div>
+              <div class="mapping-options"><label class="switch-row"><span><strong>Clip to tablet area</strong><small>Keep cursor inside mapped region</small></span><input class="switch" type="checkbox" checked aria-label="Clip to tablet area" /></label><div class="row-divider"></div><label class="switch-row"><span><strong>Keep aspect ratio</strong><small>Match tablet and display proportions</small></span><input class="switch" type="checkbox" aria-label="Keep aspect ratio" /></label></div>
+              <div class="panel-footer"><span class="saved-state" id="saved-state"><span class="saved-check">✓</span> All changes saved</span><div class="footer-buttons"><button class="button-secondary" id="reset-button">Reset</button><button class="button-secondary" id="apply-button">Apply</button><button class="button-primary" id="save-button">Apply &amp; save</button></div></div>
+            </section>
+
+            <div class="side-column">
+              <section class="panel display-panel">
+                <div class="section-heading"><div><p class="eyebrow">OUTPUT</p><h2>Display mapping</h2></div><button class="tiny-select" aria-label="Choose display">Display 1 <span>⌄</span></button></div>
+                <div class="display-preview"><div class="monitor"><div class="monitor-screen"><span class="monitor-chip">1</span><div class="desktop-glow"></div><div class="window-lines"><i></i><i></i><i></i></div><div class="mapped-zone"></div><span class="screen-resolution">1920 × 1080</span></div><div class="monitor-neck"></div><div class="monitor-base"></div></div><div class="display-foot"><div><strong>Primary display</strong><small>Position 0, 0</small></div><button class="text-button">Choose display <span>↗</span></button></div></div>
+                <div class="display-fields"><label><span>Width</span><div class="input-wrap"><input aria-label="Display width" value="1920" inputmode="numeric"><em>px</em></div></label><label><span>Height</span><div class="input-wrap"><input aria-label="Display height" value="1080" inputmode="numeric"><em>px</em></div></label></div>
+              </section>
+
+              <section class="panel bindings-panel" id="bindings">
+                <div class="section-heading"><div><p class="eyebrow">CONTROLS</p><h2>Pen bindings</h2></div><button class="text-button">Edit <span>↗</span></button></div>
+                <div class="binding-list"><label class="binding-row"><span class="binding-key tip-key">●</span><span class="binding-name"><strong>Tip</strong><small>Pen contact</small></span><select aria-label="Tip binding"><option>Left click</option><option>Right click</option><option>Middle click</option><option>Disabled</option></select></label><label class="binding-row"><span class="binding-key">1</span><span class="binding-name"><strong>Pen button 1</strong><small>Lower side button</small></span><select aria-label="Pen button one binding"><option>Right click</option><option>Left click</option><option>Middle click</option><option>Disabled</option></select></label><label class="binding-row"><span class="binding-key">2</span><span class="binding-name"><strong>Pen button 2</strong><small>Upper side button</small></span><select aria-label="Pen button two binding"><option>Middle click</option><option>Left click</option><option>Right click</option><option>Disabled</option></select></label></div>
+              </section>
+            </div>
+          </div>
+
+          <div class="bottom-grid">
+            <section class="panel pressure-panel">
+              <div class="section-heading"><div><p class="eyebrow">INPUT PREVIEW</p><h2>Pen test</h2></div><span class="live-label">SAMPLE</span></div>
+              <div class="pen-test-body"><div class="pressure-gauge"><div class="gauge-inner"><span class="gauge-value" id="pressure-value">0</span><span class="gauge-unit">PRESSURE</span></div><div class="gauge-needle" id="gauge-needle"></div></div><div class="pen-test-info"><div class="position-row"><span>POSITION</span><strong id="pen-position">— <small>mm</small> &nbsp; — <small>mm</small></strong></div><div class="pressure-track"><span></span></div><p>Pressure is visible here for testing.<br><span>Pressure output to drawing apps is not available yet.</span></p></div></div>
+            </section>
+            <section class="panel performance-panel" id="diagnostics">
+              <div class="section-heading"><div><p class="eyebrow">PERFORMANCE</p><h2>Within your target</h2></div><span class="target-pill">UNDER 50 MB</span></div>
+              <div class="metrics"><div class="metric memory-metric"><div class="metric-top"><span>MEMORY</span><span class="metric-live">SAMPLE</span></div><div class="metric-reading"><strong id="memory-reading">14.8</strong><span>MB <small>/ 50 MB</small></span></div><div class="memory-bar"><span></span><i></i></div><small class="metric-note">Measured prototype peak <b>15.4 MB</b></small></div><div class="metric-divider"></div><div class="metric"><div class="metric-top"><span>REPORT RATE</span><span class="metric-live">SAMPLE</span></div><div class="metric-reading"><strong id="rate-reading">842</strong><span>Hz</span></div><div class="sparkline" aria-label="Sample report rate"><svg viewBox="0 0 180 34" preserveAspectRatio="none" aria-hidden="true"><path d="M0 26 10 23 19 25 28 12 38 19 47 15 57 22 66 13 76 16 85 8 95 17 104 11 114 19 123 14 133 20 142 7 152 13 161 5 171 12 180 8"/></svg></div></div><div class="metric-divider"></div><div class="metric"><div class="metric-top"><span>CORE TIME</span><span class="metric-live">SAMPLE</span></div><div class="metric-reading"><strong id="core-reading">0.2</strong><span>µs <small>/ report</small></span></div><div class="core-visual"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div></div></div>
+            </section>
+          </div>
+
+          <footer class="app-footer"><span><span class="footer-brand-dot">●</span> OpenTabletDriver <span class="footer-version">Rust preview · 0.1</span></span><span>VEIKK S640 <span class="footer-separator">·</span> Windows <span class="footer-separator">·</span> <a href="#diagnostics">View diagnostics</a></span></footer>
+        </div>
+      </main>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="./app.js"></script>
+  </body>
+</html>

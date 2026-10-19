@@ -28,4 +28,4 @@ The settings objects above are abbreviated: all fields in `otd-core/settings.rs`
 
 Snapshots contain protocol version, running/connected/simulation state, tablet and last message, report/malformed counts, report rate, core processing times, pressure/position, accepted settings, and a settings revision counter. Snapshots publish at most 4 Hz during active input; raw input packets never pass through the UI command channel. Memory is read from the whole process by the current panel.
 
-HTML can be used to prototype the layout without committing to a browser-based runtime. The existing native panel is a functional test shell, not the final visual design.
+The static HTML design preview lives in `rust/ui-preview/`. It uses only local HTML, CSS, and JavaScript; its sample telemetry is illustrative and it does not connect to the driver. Keep it as a design reference until a native or lightweight embedded UI is chosen. A browser-based runtime would count toward the 50 MB process budget, so measure the full application before selecting one for production. The existing native panel is a functional test shell.
