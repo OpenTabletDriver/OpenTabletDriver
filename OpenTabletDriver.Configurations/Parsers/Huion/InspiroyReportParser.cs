@@ -16,6 +16,9 @@ namespace OpenTabletDriver.Configurations.Parsers.Huion
                 case 0xe3:
                     // Group buttons, no way to use them properly for now
                     return new UCLogicAuxReport(data);
+                case 0xf0:
+                    // Huion touch bar scroll
+                    return new HuionWheelReport(data);
                 case 0xf1:
                     return new InspiroyRelWheelReport(data);
                 case 0x00:
