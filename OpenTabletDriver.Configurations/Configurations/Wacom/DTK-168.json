@@ -1,0 +1,26 @@
+{
+  "Name": "Wacom Cintiq 16 (DTK-168)",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 348.68,
+      "Height": 219.42,
+      "MaxX": 69736,
+      "MaxY": 43884
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "ButtonCount": 3
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 998,
+      "InputReportLength": 192,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV3.IntuosV3ReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ]
+    }
+  ]
+}
