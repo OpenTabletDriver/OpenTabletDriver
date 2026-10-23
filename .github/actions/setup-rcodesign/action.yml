@@ -1,5 +1,9 @@
 name: 'Setup rcodesign'
 description: 'Downloads or use cached rcodesign binaries for macOS builds'
+inputs:
+  runtime:
+    description: '.NET runtime target (e.g. win-x64 linux-arm64)'
+    required: true
 runs:
   using: "composite"
   steps:

@@ -39,6 +39,8 @@ runs:
     - name: "Setup rcodesign (arm64 macOS builds)"
       if: runner.os != 'macOS' && inputs.runtime == 'osx-arm64' && inputs.signed == 'true'
       uses: ./.github/actions/setup-rcodesign
+      with:
+        runtime: ${{ inputs.runtime }}
 
     - name: "BASH Build Artifact"
       uses: ./.github/actions/build-bash
