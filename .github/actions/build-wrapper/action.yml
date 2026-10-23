@@ -31,8 +31,7 @@ runs:
 
     - name: "Setup bash (arm64 macOS builds)"
       if: runner.os == 'macOS' && inputs.runtime == 'osx-arm64' && inputs.signed == 'true'
-      shell: bash
-      run: ./.github/actions/setup-bash
+      uses: ./.github/actions/setup-bash
 
     - name: "Setup rcodesign (arm64 macOS builds)"
       if: runner.os != 'macOS' && inputs.runtime == 'osx-arm64' && inputs.signed == 'true'
