@@ -9,6 +9,9 @@ inputs:
     required: true
   container:
     description: 'Set to anything to apply container workarounds'
+  single-file:
+    description: 'Whether to pack the assemblies into larger binaries'
+    default: true
   signed:
     description: 'Whether the package should be signed'
     required: true
@@ -42,4 +45,5 @@ runs:
       with:
         runtime: ${{ inputs.runtime }}
         package-name: ${{ inputs.package-name }}
+        single-file: ${{ inputs.single-file }}
         signed: ${{ inputs.signed }}
