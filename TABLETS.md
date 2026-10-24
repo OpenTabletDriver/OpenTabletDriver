@@ -39,6 +39,7 @@
 | Huion H641P                        |     Supported     |
 | Huion H642                         |     Supported     |
 | Huion H950P                        |     Supported     |
+| Huion H950P (16K)                  |     Supported     |
 | Huion H951P                        |     Supported     | Group keys act like auxiliary buttons
 | Huion HS64                         |     Supported     |
 | Huion HS95                         |     Supported     |
