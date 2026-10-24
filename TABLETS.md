@@ -272,7 +272,7 @@
 | XP-Pen Artist 16                   |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | XP-Pen Artist 22HD                 |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | XP-Pen Star G430                   |    Has Quirks     | Windows: Might need Zadig's WinUSB to be installed on interface 1
-| Wacom Cintiq 21UX (DTK-2100)       |    Incomplete     | Aux functionality has not been verified, Please contact us if you have this tablet. (Data Capture needed)
+| Wacom Cintiq 21UX (DTK-2100)       |   Questionable    | Aux functionality has not been verified, see https://github.com/OpenTabletDriver/OpenTabletDriver/issues/5206
 | Artisul A1201                      |  Missing Features | Touch bar is not yet supported.
 | Artisul AP604 (Pencil Small)       |  Missing Features | Aux buttons and eraser detection are not yet supported. Windows: Requires Zadig's WinUSB to be installed on interface 1.
 | Artisul D16 Pro                    |  Missing Features | Wheel is not yet supported.
@@ -333,7 +333,7 @@
 | Wacom CTL-6100WL                   |  Missing Features | Wireless is not yet supported, center button reports as 5th aux button.
 | Wacom DTH-1320                     |  Missing Features | Touch is not yet supported.
 | Wacom Movink 13 (DTH-135)          |  Missing Features | Touch is not yet supported.
-| Wacom Cintiq 22HD Touch (DTH-2200) |  Missing Features | Touch is not yet supported / Aux functionality has not been verified, Please contact us if you have this tablet. (Data Capture needed)
+| Wacom Cintiq 22HD Touch (DTH-2200) |  Missing Features | Touch is not yet supported / Aux functionality has not been verified, see https://github.com/OpenTabletDriver/OpenTabletDriver/issues/5206
 | Wacom Cintiq Pro 22 (DTH-227)      |  Missing Features | Touch is not yet supported.
 | Wacom Cintiq 27QHD (DTH-2700)      |  Missing Features | Touch is not yet supported.
 | Wacom Cintiq Pro 27 (DTH-271)      |  Missing Features | Aux buttons are not yet supported.
@@ -341,7 +341,7 @@
 | Wacom Cintiq 13HD Touch (DTH-1300) |  Missing Features | Center button is not yet supported.
 | Wacom Cintiq 13HD (DTK-1300)       |  Missing Features | Center button is not yet supported.
 | Wacom Cintiq 21UX (DTZ-2100)       |  Missing Features | Touch bars are not yet supported.
-| Wacom Cintiq 22HD (DTK-2200)       |  Missing Features | Touch Strips are not yet supported / Aux functionality has not been verified, Please contact us if you have this tablet. (Data Capture needed)
+| Wacom Cintiq 22HD (DTK-2200)       |  Missing Features | Touch Strips are not yet supported / Aux functionality has not been verified, see https://github.com/OpenTabletDriver/OpenTabletDriver/issues/5206
 | Wacom Cintiq 12WX (DTZ-1200W)      |  Missing Features | Touch bars and top side buttons are not yet supported.
 | Wacom PTZ-1230                     |  Missing Features | Touch bars are not yet supported.
 | Wacom PTZ-1231W                    |  Missing Features | Touch bars are not yet supported.
