@@ -136,7 +136,6 @@
 | Wacom DTC-133                      |     Supported     |
 | Wacom Cintiq 16 (DTK-1660)         |     Supported     |
 | Wacom Cintiq 21UX (DTK-2100)       |     Supported     |
-| Wacom Cintiq 24HD (DTK-2400)       |     Supported     |
 | Wacom ET-0405-U                    |     Supported     |
 | Wacom ET-0405A-U                   |     Supported     |
 | Wacom FT-0405-U                    |     Supported     |
@@ -341,6 +340,7 @@
 | Wacom Cintiq 13HD (DTK-1300)       |  Missing Features | Center button is not yet supported.
 | Wacom Cintiq 21UX (DTZ-2100)       |  Missing Features | Touch bars are not yet supported.
 | Wacom Cintiq 22HD (DTK-2200)       |  Missing Features | Touch Strips are not yet supported.
+| Wacom Cintiq 24HD (DTK-2400)       |  Missing Features | Status LEDs are not yet supported.
 | Wacom Cintiq 12WX (DTZ-1200W)      |  Missing Features | Touch bars and top side buttons are not yet supported.
 | Wacom PTZ-1230                     |  Missing Features | Touch bars are not yet supported.
 | Wacom PTZ-1231W                    |  Missing Features | Touch bars are not yet supported.
