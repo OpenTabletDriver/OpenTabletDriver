@@ -22,7 +22,13 @@
         "AngleOfZeroReading": 90.0,
         "ButtonCount": 1
       }
-    ]
+    ],
+    "Touch": {
+      "Width": 224,
+      "Height": 148,
+      "MaxX": 8959,
+      "MaxY": 5919
+    }
   },
   "DigitizerIdentifiers": [
     {
