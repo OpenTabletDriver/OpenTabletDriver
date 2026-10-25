@@ -242,6 +242,7 @@
 | Huion H690                         |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | Huion H1061P                       |    Has Quirks     | Group keys act like auxiliary buttons.
 | Huion Kamvas 13 (Gen 3)            |    Has Quirks     | Function-switch buttons act as regular auxiliary keys.
+| Huion Kamvas Pro 16 V2             |    Has Quirks     | Touch bar is interpreted as an absolute wheel.
 | Huion New 1060 Plus (2048)         |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 1
 | Huion osu! Tablet                  |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0. Uses the same configuration as the Huion 420.
 | Huion Q630M                        |    Has Quirks     | Aux buttons are not in order.
@@ -300,7 +301,6 @@
 | Huion Kamvas Pro 12                |  Missing Features | Touch bar is not yet supported.
 | Huion Kamvas Pro 13                |  Missing Features | Touch bar is not yet supported.
 | Huion Kamvas Pro 16                |  Missing Features | Touch bar is not yet supported.
-| Huion Kamvas Pro 16 V2             |  Missing Features | Touch bar is not yet supported.
 | Huion Kamvas Pro 20                |  Missing Features | Touch bar is not yet supported.
 | Huion Kamvas Pro 22 (2019)         |  Missing Features | Touch bar is not yet supported.
 | Huion Kamvas Pro 24                |  Missing Features | Touch bar is not yet supported.
