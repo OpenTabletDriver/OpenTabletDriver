@@ -32,15 +32,17 @@ namespace OpenTabletDriver.Devices.WinUSB
                 if (!WinUsb_ControlTransfer(winUsbHandle, packet, descriptorPtr, (uint)sizeof(DeviceDescriptor), out _, null))
                     throw new IOException("Failed to retrieve device descriptor");
 
-                if (deviceDescriptor.idVendor == 0x2833)
+                switch (deviceDescriptor.idVendor)
                 {
-                    throw new IOException(
-                        "skipping device with idVendor 0x2833 (Meta/Facebook/Oculus) due to known issues with Quest headsets");
-                }
-                else if (deviceDescriptor.idVendor == 0x18D1)
-                {
-                    throw new IOException(
-                        "skipping device with idVendor 0x18D1 (Google) due to known issues with android bootloaders in fastboot mode");
+                    case 0x45E:
+                        throw new IOException(
+                            "skipping device with idVendor 0x45E (Microsoft) due to known issues with Windows SDK");
+                    case 0x05AC:
+                        throw new IOException(
+                            "skipping device with idVendor 0x2833 (Meta/Facebook/Oculus) due to known issues with Quest headsets");
+                    case 0x18D1:
+                        throw new IOException(
+                            "skipping device with idVendor 0x18D1 (Google) due to known issues with android bootloaders in fastboot mode");
                 }
 
                 var interfaceDescriptor = new InterfaceDescriptor();
