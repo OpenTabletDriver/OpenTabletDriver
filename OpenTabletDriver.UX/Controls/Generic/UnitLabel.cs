@@ -17,6 +17,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
                 Spacer = " ";
 
             this.Width = (int)font.Measure(GetFormattedText(exampleValue)).Width;
+            this.Wrap = WrapMode.None;
         }
 
         public required string Unit { get; set; }
