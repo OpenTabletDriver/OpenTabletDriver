@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
@@ -12,6 +14,15 @@ namespace OpenTabletDriver.Desktop
 
     public class AppInfo
     {
+        /// <summary>
+        ///   The version of the currently executing assembly
+        /// </summary>
+        /// <remarks>
+        ///   This value is set at compile time, it will differ depending on whether the Daemon, the UX or some other code is using this field.
+        ///   You should rely on <see cref="Version"/> instead.
+        /// </remarks>
+        private readonly static Version assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version!;
+
         private string? configurationDirectory,
             settingsFile,
             pluginDirectory,
@@ -43,7 +54,7 @@ namespace OpenTabletDriver.Desktop
             {
                 PluginPlatform.Windows => new AppInfo
                 {
-                    AppDataDirectory = GetExistingPathOrLast(Path.Join(ProgramDirectory, "userdata"), "$LOCALAPPDATA\\OpenTabletDriver")
+                    AppDataDirectory = GetExistingPathOrLast(Path.Join(ProgramDirectory, "userdata"), "$LOCALAPPDATA\\OpenTabletDriver"),
                 },
                 PluginPlatform.Linux => new AppInfo
                 {
@@ -65,6 +76,8 @@ namespace OpenTabletDriver.Desktop
 
         public static PresetManager PresetManager { set; get; } = new PresetManager();
 
+        public Version Version { set; get; } = assemblyVersion;
+
         public string? CommandLineAppDataDirectory
         {
             set
@@ -75,6 +88,7 @@ namespace OpenTabletDriver.Desktop
             }
             get;
         }
+
         public string? CommandLineConfigurationDirectory
         {
             set
@@ -86,76 +100,76 @@ namespace OpenTabletDriver.Desktop
             get;
         }
 
-        public required string AppDataDirectory { set; get; }
+        public required string AppDataDirectory { set; get; } // Is handled by the daemon
 
         [AllowNull]
         public string ConfigurationDirectory
         {
-            set => this.configurationDirectory = value;
-            get => this.configurationDirectory ?? GetDefaultConfigurationDirectory();
+            set => this.configurationDirectory = value; // Optional, and would get confusing when debugging user reported issues
+            get => this.configurationDirectory ??= GetDefaultConfigurationDirectory();
         }
 
         [AllowNull]
         public string SettingsFile
         {
-            set => this.settingsFile = value;
-            get => this.settingsFile ?? GetDefaultSettingsFile();
+            set => this.settingsFile = value; // Generated on save
+            get => this.settingsFile ??= GetDefaultSettingsFile();
         }
 
         [AllowNull]
         public string PluginDirectory
         {
-            set => this.pluginDirectory = value;
-            get => this.pluginDirectory ?? GetDefaultPluginDirectory();
+            set => EnsureDirectoryExists(this.pluginDirectory = value);
+            get => this.pluginDirectory ??= EnsureDirectoryExists(GetDefaultPluginDirectory());
         }
 
         [AllowNull]
         public string PresetDirectory
         {
-            set => this.presetDirectory = value;
-            get => this.presetDirectory ?? GetDefaultPresetDirectory();
+            set => EnsureDirectoryExists(this.presetDirectory = value);
+            get => this.presetDirectory ??= EnsureDirectoryExists(GetDefaultPresetDirectory());
         }
 
         [AllowNull]
         public string LogDirectory
         {
-            set => this.logDirectory = value;
-            get => this.logDirectory ?? GetDefaultLogDirectory();
+            set => EnsureDirectoryExists(this.logDirectory = value);
+            get => this.logDirectory ??= EnsureDirectoryExists(GetDefaultLogDirectory());
         }
 
         [AllowNull]
         public string TemporaryDirectory
         {
-            set => this.temporaryDirectory = value;
-            get => this.temporaryDirectory ?? GetDefaultTemporaryDirectory();
+            set => this.temporaryDirectory = value; // Existence is optional as it gets deleted in LoadUserSettings()
+            get => this.temporaryDirectory ??= GetDefaultTemporaryDirectory();
         }
 
         [AllowNull]
         public string CacheDirectory
         {
-            set => this.cacheDirectory = value;
-            get => this.cacheDirectory ?? GetDefaultCacheDirectory();
+            set => this.cacheDirectory = value; // Gets created when fetching metadata
+            get => this.cacheDirectory ??= GetDefaultCacheDirectory();
         }
 
         [AllowNull]
         public string BackupDirectory
         {
-            set => this.backupDirectory = value;
-            get => this.backupDirectory ?? GetDefaultBackupDirectory();
+            set => this.backupDirectory = value; // Gets created by the unused updater
+            get => this.backupDirectory ??= GetDefaultBackupDirectory();
         }
 
         [AllowNull]
         public string TrashDirectory
         {
-            set => this.trashDirectory = value;
-            get => this.trashDirectory ?? GetDefaultTrashDirectory();
+            set => this.trashDirectory = value; // Existence is optional as it gets deleted in LoadUserSettings()
+            get => this.trashDirectory ??= GetDefaultTrashDirectory();
         }
 
         [AllowNull]
         public string RecordingDirectory
         {
-            set => this.recordingDirectory = value;
-            get => this.recordingDirectory ?? GetDefaultRecordingDirectory();
+            set => this.recordingDirectory = value; // This directory will be created by the UX
+            get => this.recordingDirectory ??= GetDefaultRecordingDirectory();
         }
 
         public static string ProgramDirectory => AppContext.BaseDirectory;
@@ -187,5 +201,24 @@ namespace OpenTabletDriver.Desktop
 
         private static bool IsEnvVarUnset(string envVar) =>
             string.IsNullOrEmpty(Environment.GetEnvironmentVariable(envVar));
+
+        [return: NotNullIfNotNull("path")]
+        private static string? EnsureDirectoryExists(string? path, [CallerMemberName] string memberName = "")
+        {
+            if (path != null)
+            {
+                var appDirectory = new DirectoryInfo(path);
+
+                if (!appDirectory.Exists)
+                {
+                    appDirectory.Create();
+                    Log.Write("Settings", $"The directory '{appDirectory.FullName}' has been created ({memberName})");
+                }
+
+                return path;
+            }
+
+            return null;
+        }
     }
 }

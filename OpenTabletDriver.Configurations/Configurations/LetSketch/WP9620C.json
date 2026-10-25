@@ -2,13 +2,13 @@
   "Name": "LetSketch WP9620C",
   "Specifications": {
     "Digitizer": {
-      "Width": 269.445,
-      "Height": 167.955,
-      "MaxX": 53889,
-      "MaxY": 33591
+      "Width": 254,
+      "Height": 158.75,
+      "MaxX": 50800,
+      "MaxY": 31750
     },
     "Pen": {
-      "MaxPressure": 8191,
+      "MaxPressure": 8192,
       "ButtonCount": 2
     },
     "AuxiliaryButtons": {
@@ -22,9 +22,12 @@
       "InputReportLength": 12,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
       "DeviceStrings": {
+        "2": "LetSketch",
+        "32": "LetSketch",
         "201": "Vision_V201_\\d{6}"
       },
       "InitializationStrings": [
+        250,
         200
       ]
     }

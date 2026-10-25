@@ -1,0 +1,33 @@
+{
+  "Name": "XP-Pen Artist Ultra 14",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 301.82,
+      "Height": 188.64,
+      "MaxX": 60364,
+      "MaxY": 37728
+    },
+    "Pen": {
+      "MaxPressure": 16383,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 2
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 10429,
+      "ProductID": 2442,
+      "InputReportLength": 14,
+      "OutputReportLength": 33,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenGen2ReportParser",
+      "OutputInitReport": [
+        "ArAE"
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

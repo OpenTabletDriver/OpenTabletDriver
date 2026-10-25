@@ -7,5 +7,6 @@ public class Platform : Eto.Mac.Platform
     public Platform() : base()
     {
         Add<Form.IHandler>(() => new FormHandler());
+        Add<GroupBox.IHandler>(() => new GroupBoxHandler());
     }
 }

@@ -1,0 +1,37 @@
+{
+  "Name": "LetSketch WP9622C",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 269.445,
+      "Height": 167.955,
+      "MaxX": 53889,
+      "MaxY": 33591
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 5
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 24929,
+      "ProductID": 19733,
+      "InputReportLength": 12,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
+      "DeviceStrings": {
+        "2": "LetSketch Technology",
+        "32": "LetSketch Technology Co\\. , LTD\\.",
+        "201": "Vision_V201_\\d{6}"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

@@ -104,9 +104,6 @@ namespace OpenTabletDriver.Desktop.Binding
                     CounterClockwiseRotation?.Invoke(tablet, report, counts * _stepsPerTick);
                     ClockwiseRotation?.Reset();
                     break;
-                case 0:
-                    Reset();
-                    break;
             }
         }
 

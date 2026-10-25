@@ -14,7 +14,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos3
             return data[0] switch
             {
                 0x02 => GetToolReport(data),
-                0x10 => new IntuosV1TabletReport(data, ref _prevPressure, ref _prevTilt, ref _prevPenButtons),
+                0x10 => new IntuosV1TabletReport(data, ref _prevPressure, ref _prevTilt, ref _prevRotation, ref _prevPenButtons),
                 0x03 => new IntuosV1AuxReport(data),
                 0x0C => new Intuos3ExtraAuxReport(data),
                 _ => new DeviceReport(data)
@@ -24,9 +24,9 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos3
         private IDeviceReport GetToolReport(byte[] data)
         {
             if (data[1] == 0xEA || data[1] == 0xAA)
-                return new IntuosV1RotationReport(data, ref _prevPressure, ref _prevTilt, ref _prevPenButtons);
+                return new IntuosV1RotationReport(data, ref _prevPressure, ref _prevTilt, ref _prevRotation, ref _prevPenButtons);
             if ((data[1] & 0xF0) == 0xE0 || (data[1] & 0xF0) == 0xA0)
-                return new IntuosV1TabletReport(data, ref _prevPressure, ref _prevTilt, ref _prevPenButtons);
+                return new IntuosV1TabletReport(data, ref _prevPressure, ref _prevTilt, ref _prevRotation, ref _prevPenButtons);
             if ((data[1] & 0xF0) == 0xF0 || (data[1] & 0xF0) == 0xB0)
                 return new Intuos3MouseReport(data);
             if (data[1] == 0xC2)
@@ -37,6 +37,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos3
 
         private uint _prevPressure;
         private Vector2 _prevTilt;
+        private int _prevRotation;
         private bool[] _prevPenButtons = Array.Empty<bool>();
     }
 }

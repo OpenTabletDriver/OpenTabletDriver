@@ -10,7 +10,8 @@ namespace OpenTabletDriver.UX.Windows.Plugins
     {
         public PluginDropPanel()
         {
-            AllowDrop = true;
+            // TODO on Eto dependency bump: Check if Linux works
+            AllowDrop = !OperatingSystem.IsLinux();
 
             DropContent = new StackLayout
             {
@@ -65,9 +66,9 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                 {
                     // Skip if running on bugged platform
                     // https://github.com/picoe/Eto/issues/1812
-                    if (args.Data.Uris != null && args.Data.Uris?.Length > 0)
+                    var uriList = args.Data.Uris;
+                    if (uriList != null && uriList.Length > 0)
                     {
-                        var uriList = args.Data.Uris;
                         var supportedType = uriList.All(uri =>
                         {
                             if (uri.IsFile && File.Exists(uri.LocalPath))

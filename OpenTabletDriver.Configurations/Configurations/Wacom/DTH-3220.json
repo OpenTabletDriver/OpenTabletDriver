@@ -1,0 +1,26 @@
+{
+  "Name": "Wacom Cintiq Pro 32 (DTH-3220)",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 701.92,
+      "Height": 396.58,
+      "MaxX": 140384,
+      "MaxY": 79316
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "ButtonCount": 2
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 850,
+      "InputReportLength": 192,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2.IntuosV2ReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ]
+    }
+  ]
+}

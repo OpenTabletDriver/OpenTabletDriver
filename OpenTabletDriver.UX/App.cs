@@ -141,6 +141,7 @@ namespace OpenTabletDriver.UX
 
         public const string WikiUrl = "https://opentabletdriver.net/Wiki";
         public static readonly string Version = Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
+        public static readonly Version AssemblyVersion = Assembly.GetExecutingAssembly().GetName().Version!;
 
         public static DaemonRpcClient Driver { get; } = new DaemonRpcClient("OpenTabletDriver.Daemon");
         public static Bitmap Logo { get; } = new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.Assets.otd.png")!);
@@ -164,6 +165,7 @@ namespace OpenTabletDriver.UX
         public WindowSingleton<PluginManagerWindow> PluginManagerWindow { get; } = new WindowSingleton<PluginManagerWindow>();
         public WindowSingleton<TabletDebugger> DebuggerWindow { get; } = new WindowSingleton<TabletDebugger>();
         public WindowSingleton<DeviceStringReader> StringReaderWindow { get; } = new WindowSingleton<DeviceStringReader>();
+        public WindowSingleton<DeviceInitSender> InitSenderWindow { get; } = new WindowSingleton<DeviceInitSender>();
         public WindowSingleton<UpdaterWindow> UpdaterWindow { get; } = new WindowSingleton<UpdaterWindow>();
 
         public WindowSingleton<AboutWindow> AboutWindow { get; } = new WindowSingleton<AboutWindow>();
@@ -174,6 +176,7 @@ namespace OpenTabletDriver.UX
             PluginManagerWindow.Close();
             DebuggerWindow.Close();
             StringReaderWindow.Close();
+            InitSenderWindow.Close();
             UpdaterWindow.Close();
             AboutWindow.Close();
         }

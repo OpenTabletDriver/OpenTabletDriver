@@ -33,7 +33,7 @@ namespace OpenTabletDriver.UX.Controls
                     Border = BorderType.None,
                     Content = sourceSelector = new TypeListBox<TSource>()
                 },
-                Panel2 = new Scrollable
+                Panel2 = settingStoreEditorScrollable = new Scrollable
                 {
                     Content = settingStoreEditor = new ToggleablePluginSettingStoreEditor()
                     {
@@ -46,6 +46,8 @@ namespace OpenTabletDriver.UX.Controls
                 sourceSelector.SelectedItemBinding.Convert(t => t != null ? StoreCollection?.FromType(t) : null)
             );
 
+            settingStoreEditorScrollable.SizeChanged += (sender, e) => settingStoreEditor.ResizeLayoutItems();
+
             if (!Platform.IsMac) // Don't do this on macOS, causes poor UI performance.
                 settingStoreEditor.BackgroundColor = SystemColors.WindowBackground;
 
@@ -56,6 +58,7 @@ namespace OpenTabletDriver.UX.Controls
         private Splitter mainContent;
         private TypeListBox<TSource> sourceSelector;
         private ToggleablePluginSettingStoreEditor settingStoreEditor;
+        private Scrollable settingStoreEditorScrollable;
 
         private PluginSettingStoreCollection? storeCollection;
         public PluginSettingStoreCollection? StoreCollection

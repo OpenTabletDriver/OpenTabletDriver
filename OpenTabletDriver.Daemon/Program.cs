@@ -1,10 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.CommandLine;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Runtime.Loader;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,11 +22,22 @@ namespace OpenTabletDriver.Daemon
 
     partial class Program
     {
+        private static bool s_writeLineFailed;
+
+        // A garbage-collected registration unregisters its handler, so keep them for the process lifetime
+        private static readonly List<PosixSignalRegistration> s_signalRegistrations = [];
+
         static async Task Main(string[] args)
         {
             Log.Output += (sender, message) =>
             {
-                Console.WriteLine(Log.GetStringFormat(message));
+                var formattedMessage = Log.GetStringFormat(message);
+
+                if (s_writeLineFailed)
+                    return;
+
+                try { Console.WriteLine(formattedMessage); }
+                catch { s_writeLineFailed = true; }
             };
 
             var cmdLineOptions = ParseCmdLineOptions(args);
@@ -70,26 +80,22 @@ namespace OpenTabletDriver.Daemon
                 CloseDaemon();
             };
 
-            // Handle SIGHUP
+            // Handle SIGHUP and SIGTERM
+            // Not on Windows: SIGTERM can't be cancelled there, and named pipes leave no file behind
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                PosixSignal[] trappedSignals = [PosixSignal.SIGHUP];
+                PosixSignal[] trappedSignals = [PosixSignal.SIGHUP, PosixSignal.SIGTERM];
 
                 foreach (var signal in trappedSignals)
-                    PosixSignalRegistration.Create(signal,
-                        [SuppressMessage("ReSharper", "AccessToModifiedClosure")] (_) =>
+                    s_signalRegistrations.Add(PosixSignalRegistration.Create(signal,
+                        (context) =>
                         {
-                            Log.Debug("signal", Enum.GetName(signal) ?? "<unknown signal>");
+                            // If we don't cancel the default handling of the signal, the final exit code will be non-zero
+                            context.Cancel = !tokenCancelled;
+                            Log.Debug("signal", Enum.GetName(context.Signal) ?? "<unknown signal>");
                             CloseDaemon();
-                        });
+                        }));
             }
-
-            // Handle other termination operations (SIGTERM, etc.)
-            AssemblyLoadContext.Default.Unloading += _ =>
-            {
-                Log.Write("AssemblyLoadContext.Unloading", "Terminating daemon..");
-                CloseDaemon();
-            };
 
             try
             {
