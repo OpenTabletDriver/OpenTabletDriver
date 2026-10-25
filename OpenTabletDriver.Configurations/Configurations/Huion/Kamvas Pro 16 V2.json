@@ -16,7 +16,7 @@
     },
     "Wheels": [
       {
-        "AbsoluteWheelMax": 7,
+        "AbsoluteWheelMax": 6,
         "ButtonCount": 0
       }
     ]
