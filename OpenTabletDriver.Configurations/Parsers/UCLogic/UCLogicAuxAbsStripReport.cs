@@ -23,10 +23,13 @@ namespace OpenTabletDriver.Configurations.Parsers.UCLogic
                 report[4].IsBitSet(7),
             ];
 
+            var firstStripData = report[5];
+            var secondStripData = report[6];
+
             AnalogPositions =
             [
-                report[5],
-                report[6],
+                firstStripData != 0 ? firstStripData - 1u : null,
+                secondStripData != 0 ? secondStripData - 1u : null,
             ];
         }
 
