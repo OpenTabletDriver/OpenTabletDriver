@@ -30,6 +30,8 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1
             var penButtons = deviceReport.PenButtons.Span;
             penButtons[0] = penByte.IsBitSet(1);
             penButtons[1] = penByte.IsBitSet(2);
+            if (prevPenButtons.Length < penButtons.Length)
+                Array.Resize(ref prevPenButtons, penButtons.Length);
             penButtons.CopyTo(prevPenButtons);
 
             deviceReport.NearProximity = penByte.IsBitSet(6);

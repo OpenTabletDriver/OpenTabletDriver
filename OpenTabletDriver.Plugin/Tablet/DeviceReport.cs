@@ -12,14 +12,15 @@ namespace OpenTabletDriver.Plugin.Tablet
     public ref struct DeviceReport(ReadOnlySpan<byte> raw)
     {
         public readonly ReadOnlySpan<byte> Raw = raw;
-        public Type Parser;
+        // TODO: is this adequate for determining original?
+        public Type? Parser;
 
         /// <summary>
         /// Can be set to false while parsing to prevent report from entering pipeline.
         /// May be checked multiple times throughout the pipeline to stop it from propagating further
         /// TODO: Determine exact behavior - should it block pipeline, or should Parse(data, ref report) return value be used for this instead?
         /// </summary>
-        public bool Continue = true;
+        public bool Continue;
 
         /// <summary>
         /// The pen has left detection range, and pipeline should clear relevant states (buttons released, etc).

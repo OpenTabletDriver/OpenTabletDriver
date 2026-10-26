@@ -9,7 +9,7 @@ namespace OpenTabletDriver.Plugin.Tablet
         public virtual bool Parse(scoped in ReadOnlySpan<byte> report, scoped ref DeviceReport deviceReport)
         {
             deviceReport.Parser = typeof(TabletReportParser);
-            return TabletReport.Parse(in report, ref deviceReport);
+            return deviceReport.Continue = TabletReport.Parse(in report, ref deviceReport);
         }
     }
 }

@@ -8,7 +8,7 @@ namespace OpenTabletDriver.Plugin.Tablet
     {
         public bool Parse(scoped in ReadOnlySpan<byte> raw, scoped ref DeviceReport deviceReport)
         {
-            return TiltTabletReport.Parse(raw, ref deviceReport);
+            return deviceReport.Continue = TiltTabletReport.Parse(raw, ref deviceReport);
         }
     }
 }

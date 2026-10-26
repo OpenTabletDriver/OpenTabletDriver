@@ -8,7 +8,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1
     {
         public virtual bool Parse(scoped in ReadOnlySpan<byte> report, scoped ref DeviceReport deviceReport)
         {
-            return report[0] switch
+            return deviceReport.Continue = report[0] switch
             {
                 0x02 or 0x10 => GetToolReport(in report, ref deviceReport),
                 0x03 => IntuosV1AuxReport.Parse(in report, ref deviceReport),

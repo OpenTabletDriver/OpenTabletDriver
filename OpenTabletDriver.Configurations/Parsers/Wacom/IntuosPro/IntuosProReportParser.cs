@@ -10,6 +10,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosPro
     {
         public override bool Parse(scoped in ReadOnlySpan<byte> report, scoped ref DeviceReport deviceReport)
         {
+            deviceReport.Parser = typeof(IntuosProReportParser);
             return report[0] switch
             {
                 0x03 => IntuosProAuxReport.Parse(report, ref deviceReport),
