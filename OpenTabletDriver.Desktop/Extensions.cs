@@ -74,9 +74,9 @@ namespace OpenTabletDriver.Desktop
         private static ReadOnlyCollection<Type>? libTypes;
 
         /// <summary>
-        /// Get all abstract types and interface types implemented by IDriver
+        /// Get all abstract types and interface types implemented in <c>OpenTabletDriver.Plugin</c>
         /// </summary>
-        /// <returns>An array of abstract and interface types implemented by IDriver</returns>
+        /// <returns>An array of abstract and interface types implemented by the assembly of <see cref="IDriver"/></returns>
         public static ReadOnlyCollection<Type> GetLibTypes()
         {
             return libTypes ??=
