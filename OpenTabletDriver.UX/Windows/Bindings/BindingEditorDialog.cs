@@ -13,7 +13,7 @@ namespace OpenTabletDriver.UX.Windows.Bindings
         public BindingEditorDialog(PluginSettingStore? currentBinding = null)
         {
             Title = "Binding Editor";
-            Result = currentBinding;
+            Result = currentBinding?.Clone();
 
             this.Content = new StackLayout
             {

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-[ "${BUILD}" != "true" ] && exit_with_error "Must build to package MacOS"
+[ "${BUILD}" != "true" ] && exit_with_error "Must build to package Windows"
 
 pkg_script_root="$(readlink -f $(dirname "${BASH_SOURCE[0]}"))"
 

@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.UX.Controls;
@@ -13,8 +14,10 @@ namespace OpenTabletDriver.UX.Windows.Bindings
         public AdvancedBindingEditorDialog(PluginSettingStore? currentBinding = null)
         {
             Title = "Advanced Binding Editor";
-            Result = currentBinding;
+            Result = currentBinding?.Clone();
             Padding = 5;
+            base.Size = new Eto.Drawing.Size(500, 450);
+            Resizable = true;
 
             this.Content = new StackLayout
             {
@@ -26,18 +29,21 @@ namespace OpenTabletDriver.UX.Windows.Bindings
                         Text = "Type",
                         Content = bindingTypeDropDown = new TypeDropDown<IBinding>()
                     },
-                    new Scrollable
+                    new StackLayoutItem
                     {
-                        Padding = 5,
-                        Border = BorderType.None,
-                        Size = new Eto.Drawing.Size(500, 350),
-                        Content = new StackLayout
+                        Expand = true,
+                        Control = new Scrollable
                         {
-                            HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                            Width = 1, // forces HorizontalAlignment.Stretch to start at 1 instead of the default size which eliminates the Scrollable's horizontal scrollbar
-                            Items =
+                            Padding = 5,
+                            Border = BorderType.None,
+                            Content = settingsScrollableContent = new StackLayout
                             {
-                                settingStoreEditor,
+                                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                                Width = 1, // forces HorizontalAlignment.Stretch to start at 1 instead of the default size which eliminates the Scrollable's horizontal scrollbar
+                                Items =
+                                {
+                                    settingStoreEditor,
+                                }
                             }
                         }
                     },
@@ -47,6 +53,7 @@ namespace OpenTabletDriver.UX.Windows.Bindings
                         {
                             Padding = 5,
                             Orientation = Orientation.Horizontal,
+                            VerticalContentAlignment = VerticalAlignment.Bottom,
                             Spacing = 5,
                             Items =
                             {
@@ -75,10 +82,39 @@ namespace OpenTabletDriver.UX.Windows.Bindings
             bindingTypeDropDown.SelectedItemBinding.Convert(t => new PluginSettingStore(t)).Bind(settingStoreEditor.StoreBinding!);
             bindingTypeDropDown.SelectedItem = currentBinding?.GetTypeInfo();
             settingStoreEditor.Store = currentBinding;
+
+            settingsScrollableContent.SizeChanged += (_, _) => settingStoreEditor.ResizeLayoutItems();
+
+            // store starting value to be able to potentially recover it later
+            initialStoreTypeInfo = Result?.GetTypeInfo(); // caching this saves a little bit of time on recoveries
+
+            settingStoreEditor.StoreChanged += OnSettingStoreEditorOnStoreChanged;
         }
 
-        private TypeDropDown<IBinding> bindingTypeDropDown;
-        private PluginSettingStoreEditor<IBinding> settingStoreEditor = new PluginSettingStoreEditor<IBinding>();
+        private readonly TypeInfo? initialStoreTypeInfo;
+
+        private readonly TypeDropDown<IBinding> bindingTypeDropDown;
+        private readonly PluginSettingStoreEditor<IBinding> settingStoreEditor = new();
+        private readonly StackLayout settingsScrollableContent;
+
+        private bool _recoveringStore = false;
+
+        private void OnSettingStoreEditorOnStoreChanged(object? sender, EventArgs args)
+        {
+            // restore binding settings when user goes back to the initial type
+            if (!_recoveringStore // avoid recursion
+                && Result != null && initialStoreTypeInfo != null) // avoid restoring null
+            {
+                var storeTypeInfo = settingStoreEditor.Store?.GetTypeInfo();
+
+                if (storeTypeInfo == initialStoreTypeInfo)
+                {
+                    _recoveringStore = true;
+                    settingStoreEditor.Store = Result.Clone();
+                    _recoveringStore = false;
+                }
+            }
+        }
 
         private void ClearBinding(object? sender, EventArgs e)
         {

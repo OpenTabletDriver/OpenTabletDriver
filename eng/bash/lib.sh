@@ -75,7 +75,10 @@ if [ -z "$VERSION_SUFFIX" ]; then
     sub_version="$(sed -E s/"${GIT_TAG_REGEX}"/\\4/ <<< "$GIT_DESCRIBE")"
 
     if [ "$sub_version" != "" ]; then
-      VERSION_SUFFIX="-${sub_version}${VERSION_SUFFIX}"
+      VERSION_SUFFIX="${sub_version}${VERSION_SUFFIX}"
+      if ! [[ "$VERSION_SUFFIX" =~ ^-.*$ ]]; then
+        VERSION_SUFFIX="-${VERSION_SUFFIX}"
+      fi
     fi
 
     describe_suffix="$(sed -E s/"${GIT_TAG_REGEX}"/\\7/ <<< "$GIT_DESCRIBE")"
@@ -308,6 +311,7 @@ build() {
     -p:DebugType=embedded
     -p:SuppressNETCoreSdkPreviewMessage=true
     -p:VersionSuffix=${VERSION_SUFFIX}
+    -p:MacBuildBundle=false
   )
 
   if [ "${DOG_FOOD}" != "true" ]; then
@@ -317,7 +321,7 @@ build() {
     options+=( -p:PublishSingleFile=true )
   fi
   if [ "${SIGNED}" == "false" ] && [[ "${NET_RUNTIME}" =~ ^osx-.*$ ]]; then
-    options+=( /p:_EnableMacOSCodeSign=false )
+    options+=( -p:_EnableMacOSCodeSign=false )
   fi
   if [ "${SELF_CONTAINED}" == "true" ]; then
     options+=( --self-contained "${SELF_CONTAINED}" )
