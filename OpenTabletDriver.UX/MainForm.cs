@@ -472,8 +472,15 @@ namespace OpenTabletDriver.UX
 
         private static async void LogToDriver(object? sender, LogMessage message)
         {
-            if (App.Driver.IsConnected)
-                await App.Driver.Instance.WriteMessage(message);
+            try
+            {
+                if (App.Driver.IsConnected)
+                    await App.Driver.Instance.WriteMessage(message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"ERR: Unable to log message to driver: {message}");
+            }
         }
 
         private void HandleDaemonDisconnected(object? sender, EventArgs e)
