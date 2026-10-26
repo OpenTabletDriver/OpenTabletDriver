@@ -1,41 +1,38 @@
+using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using CommunityToolkit.HighPerformance.Buffers;
 
 namespace OpenTabletDriver.Plugin.Tablet
 {
-    public struct TiltTabletReport : ITabletReport, ITiltReport
+    public class TiltTabletReport
     {
-        public TiltTabletReport(byte[] report, bool invertTiltX, bool invertTiltY)
-        {
-            Raw = report;
+        public static bool Parse(scoped ReadOnlySpan<byte> raw, ref DeviceReport deviceReport)
+            => Parse(raw, ref deviceReport, false, false);
 
-            Position = new Vector2
+        public static bool Parse(scoped ReadOnlySpan<byte> report, ref DeviceReport deviceReport, bool invertTiltX, bool invertTiltY)
+        {
+            deviceReport.PenPosition = new Vector2
             {
-                X = Unsafe.ReadUnaligned<ushort>(ref report[2]),
-                Y = Unsafe.ReadUnaligned<ushort>(ref report[4])
+                X = Unsafe.ReadUnaligned<ushort>(in report[2]),
+                Y = Unsafe.ReadUnaligned<ushort>(in report[4])
             };
-            Tilt = new Vector2
+            deviceReport.Tilt = new Vector2
             {
                 X = (sbyte)(invertTiltX ? -1 : 1) * (sbyte)report[10],
                 Y = (sbyte)(invertTiltY ? -1 : 1) * (sbyte)report[11]
             };
-            Pressure = Unsafe.ReadUnaligned<ushort>(ref report[6]);
+            deviceReport.PenPressure = Unsafe.ReadUnaligned<ushort>(in report[6]);
+
+            deviceReport.PenButtons = MemoryOwner<bool>.Allocate(3);
+            var penButtonSpan = deviceReport.PenButtons.Span;
 
             var penByte = report[1];
-            PenButtons =
-            [
-                penByte.IsBitSet(1),
-                penByte.IsBitSet(2),
-                penByte.IsBitSet(3),
-            ];
+            penButtonSpan[0] = penByte.IsBitSet(1);
+            penButtonSpan[1] = penByte.IsBitSet(2);
+            penButtonSpan[2] = penByte.IsBitSet(3);
+
+            return true;
         }
-
-        public TiltTabletReport(byte[] report) : this(report, false, false) { }
-
-        public byte[] Raw { set; get; }
-        public Vector2 Position { set; get; }
-        public Vector2 Tilt { set; get; }
-        public uint Pressure { set; get; }
-        public bool[] PenButtons { set; get; }
     }
 }

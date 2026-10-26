@@ -9,7 +9,7 @@ namespace OpenTabletDriver.Plugin.Output
     /// An absolutely positioned output mode.
     /// </summary>
     [PluginIgnore]
-    public abstract class AbsoluteOutputMode : OutputMode
+    public abstract class AbsoluteOutputMode : OutputMode<IAbsolutePointer>
     {
         private Vector2 min, max;
         private Area? outputArea, inputArea;
@@ -39,11 +39,6 @@ namespace OpenTabletDriver.Plugin.Output
             }
             get => this.outputArea;
         }
-
-        /// <summary>
-        /// The class in which the final absolute positioned output is handled.
-        /// </summary>
-        public abstract IAbsolutePointer? Pointer { set; get; }
 
         /// <summary>
         /// Whether to clip all tablet inputs to the assigned areas.
@@ -116,54 +111,31 @@ namespace OpenTabletDriver.Plugin.Output
         /// <summary>
         /// Transposes, transforms, and performs all absolute positioning calculations to a <see cref="IAbsolutePositionReport"/>.
         /// </summary>
-        /// <param name="report">The <see cref="IAbsolutePositionReport"/> in which to transform.</param>
-        protected override IAbsolutePositionReport? Transform(IAbsolutePositionReport report)
+        /// <param name="report">The <see cref="DeviceReport"/> in which to transform.</param>
+        protected override bool Transform(scoped ref DeviceReport report)
         {
+            if (!report.PenPosition.HasValue) return false;
+
             // Apply transformation
-            var pos = Vector2.Transform(report.Position, this.TransformationMatrix);
+            var pos = Vector2.Transform(report.PenPosition.Value, this.TransformationMatrix);
 
             // Clipping to display bounds
             var clippedPoint = Vector2.Clamp(pos, this.min, this.max);
             if (AreaLimiting && clippedPoint != pos)
-                return null;
+                return false;
 
             if (AreaClipping)
                 pos = clippedPoint;
 
-            report.Position = pos;
+            report.PenPosition = pos;
 
-            return report;
+            return true;
         }
 
-        protected override void OnOutput(IDeviceReport report)
+        protected override void OnOutputPreSync(scoped ref DeviceReport report)
         {
-            // this should be ordered from least to most chance of having a
-            // dependency to another pointer property.
-            if (report is IProximityReport proximityReport && Pointer is IHoverDistanceHandler hoverDistanceHandler)
-                hoverDistanceHandler.SetHoverDistance(proximityReport.HoverDistance);
-            if (report is IEraserReport eraserReport && Pointer is IEraserHandler eraserHandler)
-                eraserHandler.SetEraser(eraserReport.Eraser);
-            if (report is ITiltReport tiltReport && Pointer is ITiltHandler tiltHandler && !DisableTilt)
-                tiltHandler.SetTilt(tiltReport.Tilt);
-            if (report is IRotationReport rotationReport && Pointer is IRotationHandler rotationHandler &&
-                !DisableRotation && Tablet?.Properties.Specifications.Pen.MaxRotation != null && Tablet?.Properties.Specifications.Pen.MinRotation != null)
-            {
-                var rotationRange = (float)Tablet.Properties.Specifications.Pen.MaxRotation! - (float)Tablet.Properties.Specifications.Pen.MinRotation!;
-                rotationHandler.SetRotation((rotationReport.Rotation - (float)Tablet.Properties.Specifications.Pen.MinRotation!) / rotationRange);
-            }
-            if (report is ITabletReport tabletReport && Pointer is IPressureHandler pressureHandler &&
-                !DisablePressure && Tablet?.Properties.Specifications.Pen != null)
-                pressureHandler.SetPressure(tabletReport.Pressure / (float)Tablet.Properties.Specifications.Pen.MaxPressure);
-
-            // make sure to set the position last
-            if (Pointer != null && report is IAbsolutePositionReport absReport)
-                Pointer.SetPosition(absReport.Position);
-            if (Pointer is ISynchronousPointer synchronousPointer)
-            {
-                if (report is OutOfRangeReport)
-                    synchronousPointer.Reset();
-                synchronousPointer.Flush();
-            }
+            if (Pointer != null && report.PenPosition.HasValue)
+                Pointer.SetPosition(report.PenPosition.Value);
         }
     }
 }

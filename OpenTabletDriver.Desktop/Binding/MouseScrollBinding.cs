@@ -98,13 +98,13 @@ namespace OpenTabletDriver.Desktop.Binding
             }
         }
 
-        public void Press(TabletReference tablet, IDeviceReport report)
+        public void Press(TabletReference tablet, scoped in DeviceReport report)
         {
             Scroll();
             Timer?.Start();
         }
 
-        public void Release(TabletReference tablet, IDeviceReport report) => Timer?.Stop();
+        public void Release(TabletReference tablet, scoped in DeviceReport report) => Timer?.Stop();
 
         public void Scroll()
         {

@@ -1,38 +1,38 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1
 {
-    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
-    public class IntuosV1ReportParser : IReportParser<IDeviceReport>
+    public class IntuosV1ReportParser : IReportParser
     {
-        public virtual IDeviceReport Parse(byte[] report)
+        public virtual bool Parse(scoped in ReadOnlySpan<byte> report, scoped ref DeviceReport deviceReport)
         {
             return report[0] switch
             {
-                0x02 => GetToolReport(report),
-                0x10 => GetToolReport(report),
-                0x03 => new IntuosV1AuxReport(report),
-                _ => new DeviceReport(report)
+                0x02 or 0x10 => GetToolReport(in report, ref deviceReport),
+                0x03 => IntuosV1AuxReport.Parse(in report, ref deviceReport),
+                _ => false,
             };
         }
 
-        protected IDeviceReport GetToolReport(byte[] report)
+        protected bool GetToolReport(scoped in ReadOnlySpan<byte> report, ref DeviceReport deviceReport)
         {
             if (report[0] == 0x10 && report[1] == 0x20)
-                return new DeviceReport(report);
+                return false;
             if (report[1] == 0x80)
-                return new OutOfRangeReport(report);
+            {
+                deviceReport.OutOfRange = true;
+                return true;
+            }
             if (report[1].IsBitSet(1) && report[1].IsBitSet(3))
-                return new IntuosV1RotationReport(report, ref _prevPressure, ref _prevTilt, ref _prevRotation, ref _prevPenButtons);
+                return IntuosV1RotationReport.Parse(in report, ref deviceReport, ref _prevPressure, ref _prevTilt, ref _prevRotation, ref _prevPenButtons);
             if (report[1].IsBitSet(5))
-                return new IntuosV1TabletReport(report, ref _prevPressure, ref _prevTilt, ref _prevRotation, ref _prevPenButtons);
-            else if (report[1] == 0xC2)
-                return new IntuosV1ToolReport(report);
+                return IntuosV1TabletReport.Parse(in report, ref deviceReport, ref _prevPressure, ref _prevTilt, ref _prevRotation, ref _prevPenButtons);
+            if (report[1] == 0xC2)
+                return IntuosV1ToolReport.Parse(in report, ref deviceReport);
 
-            return new DeviceReport(report);
+            return false;
         }
 
         private uint _prevPressure;

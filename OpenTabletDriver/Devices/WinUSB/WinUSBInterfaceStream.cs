@@ -14,8 +14,6 @@ namespace OpenTabletDriver.Devices.WinUSB
         private readonly int interfaceNum;
         private readonly byte readPipe;
         private readonly byte writePipe;
-        private readonly byte[]? readBuffer;
-        private readonly byte* readPtr;
         private readonly byte[]? writeBuffer;
         private readonly byte* writePtr;
 
@@ -36,8 +34,6 @@ namespace OpenTabletDriver.Devices.WinUSB
             if (usbInterface.InputPipe is byte readPipe)
             {
                 this.readPipe = readPipe;
-                readBuffer = GC.AllocateArray<byte>(usbInterface.InputReportLength, true);
-                readPtr = (byte*)Unsafe.AsPointer(ref readBuffer[0]);
             }
 
             if (usbInterface.OutputPipe is byte writePipe)
@@ -48,13 +44,14 @@ namespace OpenTabletDriver.Devices.WinUSB
             }
         }
 
-        public byte[] Read()
+        public int Read(Span<byte> buffer)
         {
-            Debug.Assert(readBuffer != null, "Tried to read without an initialized read buffer");
-            WinUsb_ReadPipe(winUsbHandle, readPipe, readPtr, (uint)readBuffer.Length, out var bytesRead, null);
-            return bytesRead < readBuffer.Length
-                ? readBuffer.AsSpan(0, (int)bytesRead).ToArray()
-                : readBuffer;
+            uint bytesRead;
+
+            fixed (void* bufferPtr = &buffer[0])
+                WinUsb_ReadPipe(winUsbHandle, readPipe, bufferPtr, (uint)buffer.Length, out bytesRead, null);
+
+            return (int)bytesRead;
         }
 
         public void Write(byte[] buffer)

@@ -4,6 +4,6 @@ namespace OpenTabletDriver.Plugin.Components
 {
     public interface IReportParserProvider
     {
-        IReportParser<IDeviceReport> GetReportParser(string reportParserName);
+        IReportParser GetReportParser(string reportParserName);
     }
 }

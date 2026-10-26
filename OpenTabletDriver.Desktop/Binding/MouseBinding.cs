@@ -29,13 +29,13 @@ namespace OpenTabletDriver.Desktop.Binding
         [Property("Button"), PropertyValidated(nameof(ValidButtons))]
         public string? Button { set; get; }
 
-        public void Press(TabletReference tablet, IDeviceReport report)
+        public void Press(TabletReference tablet, scoped in DeviceReport report)
         {
             if (Enum.TryParse<MouseButton>(Button, true, out var mouseButton))
                 Pointer?.MouseDown(mouseButton);
         }
 
-        public void Release(TabletReference tablet, IDeviceReport report)
+        public void Release(TabletReference tablet, scoped in DeviceReport report)
         {
             if (Enum.TryParse<MouseButton>(Button, true, out var mouseButton))
                 Pointer?.MouseUp(mouseButton);

@@ -22,13 +22,15 @@ namespace OpenTabletDriver.Benchmarks.Parser
         [Benchmark]
         public void ReportParser()
         {
-            parser.Parse(data!);
+            var report = new DeviceReport();
+            parser.Parse(data!, ref report);
         }
 
         [Benchmark]
         public void SkipByteReportParser()
         {
-            skipParser.Parse(data!);
+            var report = new DeviceReport();
+            skipParser.Parse(data!, ref report);
         }
     }
 }

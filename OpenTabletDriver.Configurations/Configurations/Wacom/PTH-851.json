@@ -49,13 +49,5 @@
         "AgI="
       ]
     }
-  ],
-  "AuxiliaryDeviceIdentifiers": [
-    {
-      "VendorID": 1386,
-      "ProductID": 791,
-      "InputReportLength": 64,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Wacom64bAuxReportParser"
-    }
   ]
 }

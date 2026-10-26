@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,6 +37,8 @@ namespace OpenTabletDriver.Daemon
         {
             Driver = driver;
             _logFile = new LogFile(AppInfo.Current.LogDirectory);
+
+            GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
 
             Log.Output += (sender, message) =>
             {
@@ -196,7 +199,7 @@ namespace OpenTabletDriver.Daemon
             {
                 foreach (var dev in tablet.InputDevices)
                 {
-                    dev.RawReport += (_, report) => PostDebugReport(tablet, report);
+                    dev.RawReport += (_, report) => PostDebugReport(tablet, in report);
                     dev.RawClone = debugging;
                 }
             }
@@ -429,7 +432,7 @@ namespace OpenTabletDriver.Daemon
 
             var elements = (from store in profile.Filters
                             where store is { Enable: true }
-                            let filter = store!.Construct<IPositionedPipelineElement<IDeviceReport>>(outputMode.Tablet)
+                            let filter = store!.Construct<IPositionedPipelineElement>(outputMode.Tablet)
                             where filter != null
                             select filter!).ToArray();
 
@@ -722,9 +725,9 @@ namespace OpenTabletDriver.Daemon
             return new DiagnosticInfo(log, await GetDevices());
         }
 
-        private void PostDebugReport(TabletReference tablet, IDeviceReport report)
+        private void PostDebugReport(TabletReference tablet, scoped in DeviceReport report)
         {
-            DeviceReport?.Invoke(this, new DebugReportData(tablet, report));
+            DeviceReport?.Invoke(this, new DebugReportData(tablet, in report));
         }
 
         public async Task<SerializedUpdateInfo?> CheckForUpdates()

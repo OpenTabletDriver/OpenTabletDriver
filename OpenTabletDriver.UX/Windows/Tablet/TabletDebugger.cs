@@ -620,49 +620,51 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             private void DrawPosition(Graphics graphics, float scale)
             {
                 Debug.Assert(ReportData != null); // ReportData should already be checked by callers
-                object? report = ReportData!.ToObject();
+                // FIXME: TODO FIXME
+                //var report = ReportData!.ToObject();
                 var specifications = ReportData.Tablet.Properties.Specifications;
                 string tabletName = ReportData.Tablet.Properties.Name;
                 var touchDigitizerSpecification = specifications.Touch;
                 var absDigitizerSpecification = specifications.Digitizer;
 
-                if (report is IAbsolutePositionReport absReport)
-                {
-                    var tabletScale = CalculateTabletScale(absDigitizerSpecification, scale);
-                    var position = new PointF(absReport.Position.X, absReport.Position.Y) * tabletScale;
 
-                    var drawRect = RectangleF.FromCenter(position, new SizeF(_SPACING, _SPACING));
-                    graphics.FillEllipse(s_AccentColor, drawRect);
-                }
+                //if (report is IAbsolutePositionReport absReport)
+                //{
+                //    var tabletScale = CalculateTabletScale(absDigitizerSpecification, scale);
+                //    var position = new PointF(absReport.Position.X, absReport.Position.Y) * tabletScale;
+
+                //    var drawRect = RectangleF.FromCenter(position, new SizeF(_SPACING, _SPACING));
+                //    graphics.FillEllipse(s_AccentColor, drawRect);
+                //}
 
                 // touch reports
-                if (report is ITouchReport touchReport)
-                {
-                    if (touchDigitizerSpecification != null)
-                    {
-                        var tabletScale = CalculateTabletScale(touchDigitizerSpecification, scale);
+                //if (report is ITouchReport touchReport)
+                //{
+                //    if (touchDigitizerSpecification != null)
+                //    {
+                //        var tabletScale = CalculateTabletScale(touchDigitizerSpecification, scale);
 
-                        foreach (var touchPoint in touchReport.Touches.Where(t => t != null).Cast<TouchPoint>())
-                        {
-                            var position = new PointF(touchPoint.Position.X, touchPoint.Position.Y) * tabletScale;
-                            var drawPen = new Pen(s_AccentColor, _SPACING / 2);
-                            var drawRect = RectangleF.FromCenter(position, new SizeF(_SPACING * 2, _SPACING * 2));
-                            graphics.DrawEllipse(drawPen, drawRect);
-                        }
-                    }
-                    else
-                    {
-                        string touchHashName = tabletName + "touch";
-                        int touchHash = touchHashName.GetHashCode();
-                        if (!_warnedDigitizers.Contains(touchHash))
-                        {
-                            _warnedDigitizers.Add(touchHash);
-                            Log.Write("TabletDebugger",
-                                "Touch undefined in tablet configuration - unable to draw touch points",
-                                LogLevel.Warning);
-                        }
-                    }
-                }
+                //        foreach (var touchPoint in touchReport.Touches.Where(t => t != null).Cast<TouchPoint>())
+                //        {
+                //            var position = new PointF(touchPoint.Position.X, touchPoint.Position.Y) * tabletScale;
+                //            var drawPen = new Pen(s_AccentColor, _SPACING / 2);
+                //            var drawRect = RectangleF.FromCenter(position, new SizeF(_SPACING * 2, _SPACING * 2));
+                //            graphics.DrawEllipse(drawPen, drawRect);
+                //        }
+                //    }
+                //    else
+                //    {
+                //        string touchHashName = tabletName + "touch";
+                //        int touchHash = touchHashName.GetHashCode();
+                //        if (!_warnedDigitizers.Contains(touchHash))
+                //        {
+                //            _warnedDigitizers.Add(touchHash);
+                //            Log.Write("TabletDebugger",
+                //                "Touch undefined in tablet configuration - unable to draw touch points",
+                //                LogLevel.Warning);
+                //        }
+                //    }
+                //}
             }
 
             private static SizeF CalculateTabletScale(DigitizerSpecifications digitizer, float scale)

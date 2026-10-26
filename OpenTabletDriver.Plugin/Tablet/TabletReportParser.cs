@@ -1,13 +1,15 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace OpenTabletDriver.Plugin.Tablet
 {
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
-    public class TabletReportParser : IReportParser<ITabletReport>
+    public class TabletReportParser : IReportParser
     {
-        public virtual ITabletReport Parse(byte[] data)
+        public virtual bool Parse(scoped in ReadOnlySpan<byte> report, scoped ref DeviceReport deviceReport)
         {
-            return new TabletReport(data);
+            deviceReport.Parser = typeof(TabletReportParser);
+            return TabletReport.Parse(in report, ref deviceReport);
         }
     }
 }

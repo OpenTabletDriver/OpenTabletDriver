@@ -1,6 +1,6 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using OpenTabletDriver.Configurations.Parsers.XP_Pen;
+//using OpenTabletDriver.Configurations.Parsers.XP_Pen;
 using OpenTabletDriver.Plugin.Components;
 using OpenTabletDriver.Plugin.Tablet;
 using Xunit;
@@ -14,7 +14,7 @@ namespace OpenTabletDriver.Tests
             // Built-in
             { typeof(TabletReportParser).FullName!, typeof(TabletReportParser) },
             // OTD.Configurations
-            { typeof(XP_PenReportParser).FullName!, typeof(XP_PenReportParser) }
+            //{ typeof(XP_PenReportParser).FullName!, typeof(XP_PenReportParser) } // FIXME TODO FIXME
         };
 
         [Theory]

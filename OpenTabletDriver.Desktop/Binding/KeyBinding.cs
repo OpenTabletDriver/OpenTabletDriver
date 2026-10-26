@@ -28,13 +28,13 @@ namespace OpenTabletDriver.Desktop.Binding
                     $"{nameof(IVirtualKeyboard)} unavailable. {PLUGIN_NAME} will not work", LogLevel.Error);
         }
 
-        public void Press(TabletReference tablet, IDeviceReport report)
+        public void Press(TabletReference tablet, scoped in DeviceReport report)
         {
             if (!string.IsNullOrWhiteSpace(Key))
                 Keyboard?.Press(Key);
         }
 
-        public void Release(TabletReference tablet, IDeviceReport report)
+        public void Release(TabletReference tablet, scoped in DeviceReport report)
         {
             if (!string.IsNullOrWhiteSpace(Key))
                 Keyboard?.Release(Key);

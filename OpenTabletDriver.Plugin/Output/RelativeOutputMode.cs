@@ -11,7 +11,7 @@ namespace OpenTabletDriver.Plugin.Output
     /// A relatively positioned output mode.
     /// </summary>
     [PluginIgnore]
-    public abstract class RelativeOutputMode : OutputMode
+    public abstract class RelativeOutputMode : OutputMode<IRelativePointer>
     {
         private HPETDeltaStopwatch stopwatch = new HPETDeltaStopwatch();
         private Vector2? lastTransformedPos;
@@ -21,11 +21,6 @@ namespace OpenTabletDriver.Plugin.Output
         // for handling detection of low resetTimes
         private uint _resets;
         private bool _warnedBadResets;
-
-        /// <summary>
-        /// The class in which the final relative positioned output is handled.
-        /// </summary>
-        public abstract IRelativePointer? Pointer { set; get; }
 
         private Vector2 sensitivity;
 
@@ -86,10 +81,14 @@ namespace OpenTabletDriver.Plugin.Output
                 sensitivity.Y * ((digitizer?.Height / digitizer?.MaxY) ?? 0.01f));
         }
 
-        public override void Read(IDeviceReport deviceReport)
+        public override void Read(scoped ref DeviceReport deviceReport)
         {
+            if (deviceReport.OutOfRange)
+            {
+                outOfRange = true;
+            }
             // intercept positional reports
-            if (deviceReport is IAbsolutePositionReport report)
+            else if (deviceReport.PenPosition.HasValue)
             {
                 var deltaTime = stopwatch.Restart();
 
@@ -111,60 +110,33 @@ namespace OpenTabletDriver.Plugin.Output
 
                 // skip duplicate reports sent by tablets right after going into
                 // range from an out of range state.
-                if (outOfRange && report.Position == lastReadPos)
+                if (outOfRange && deviceReport.PenPosition.Value == lastReadPos)
                     return;
 
                 outOfRange = false;
-                lastReadPos = report.Position;
-            }
-            else if (deviceReport is OutOfRangeReport)
-            {
-                outOfRange = true;
+                lastReadPos = deviceReport.PenPosition.Value;
             }
 
-            base.Read(deviceReport);
+            base.Read(ref deviceReport);
         }
 
-        protected override IAbsolutePositionReport Transform(IAbsolutePositionReport report)
+        protected override bool Transform(scoped ref DeviceReport report)
         {
-            var pos = Vector2.Transform(report.Position, TransformationMatrix);
+            if (!report.PenPosition.HasValue) return false;
+
+            var pos = Vector2.Transform(report.PenPosition.Value, TransformationMatrix);
             var delta = pos - lastTransformedPos;
 
             lastTransformedPos = pos;
-            report.Position = delta.GetValueOrDefault();
+            report.PenPosition = delta.GetValueOrDefault();
 
-            return report;
+            return true;
         }
 
-        protected override void OnOutput(IDeviceReport report)
+        protected override void OnOutputPreSync(scoped ref DeviceReport report)
         {
-            // this should be ordered from least to most chance of having a
-            // dependency to another pointer property.
-            if (report is IProximityReport proximityReport && Pointer is IHoverDistanceHandler hoverDistanceHandler)
-                hoverDistanceHandler.SetHoverDistance(proximityReport.HoverDistance);
-            if (report is IEraserReport eraserReport && Pointer is IEraserHandler eraserHandler)
-                eraserHandler.SetEraser(eraserReport.Eraser);
-            if (report is ITiltReport tiltReport && Pointer is ITiltHandler tiltHandler && !DisableTilt)
-                tiltHandler.SetTilt(tiltReport.Tilt);
-            if (report is IRotationReport rotationReport && Pointer is IRotationHandler rotationHandler &&
-                !DisableRotation && Tablet?.Properties.Specifications.Pen.MaxRotation != null && Tablet?.Properties.Specifications.Pen.MinRotation != null)
-            {
-                var rotationRange = (float)Tablet.Properties.Specifications.Pen.MaxRotation! - (float)Tablet.Properties.Specifications.Pen.MinRotation!;
-                rotationHandler.SetRotation((rotationReport.Rotation - (float)Tablet.Properties.Specifications.Pen.MinRotation!) / rotationRange);
-            }
-            if (report is ITabletReport tabletReport && Pointer is IPressureHandler pressureHandler &&
-                !DisablePressure && Tablet?.Properties.Specifications.Pen != null)
-                pressureHandler.SetPressure(tabletReport.Pressure / (float)Tablet.Properties.Specifications.Pen.MaxPressure);
-
-            // make sure to set the position last
-            if (Pointer != null && report is IAbsolutePositionReport absReport)
-                Pointer.SetPosition(absReport.Position);
-            if (Pointer is ISynchronousPointer synchronousPointer)
-            {
-                if (report is OutOfRangeReport)
-                    synchronousPointer.Reset();
-                synchronousPointer.Flush();
-            }
+            if (Pointer != null && report.PenPosition.HasValue)
+                Pointer.SetPosition(report.PenPosition.Value);
         }
     }
 }
