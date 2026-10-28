@@ -41,7 +41,6 @@ namespace OpenTabletDriver.Plugin.Output
                             UpdateState();
                         }
                     };
-                    this.scheduler.Interval = 1000 / Frequency;
                     this.scheduler.Start();
                 }
             }
