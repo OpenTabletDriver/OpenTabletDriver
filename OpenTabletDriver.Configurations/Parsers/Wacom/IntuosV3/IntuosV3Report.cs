@@ -18,8 +18,8 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV3
 
             Tilt = new Vector2
             {
-                X = report[9].IsBitSet(7) ? report[9] - 0xFF : report[9],
-                Y = report[11].IsBitSet(7) ? report[11] - 0xFF : report[11]
+                X = (sbyte)report[9],
+                Y = (sbyte)report[11]
             };
 
             Pressure = Unsafe.ReadUnaligned<ushort>(ref report[7]);
