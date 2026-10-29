@@ -1,0 +1,35 @@
+{
+  "Name": "Huion H950P (16K)",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 221,
+      "Height": 138,
+      "MaxX": 44200,
+      "MaxY": 27600
+    },
+    "Pen": {
+      "MaxPressure": 16383,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 8
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 9580,
+      "ProductID": 111,
+      "InputReportLength": 12,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
+      "DeviceStrings": {
+        "201": "HUION_T264_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
