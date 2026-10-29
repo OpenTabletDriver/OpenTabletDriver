@@ -1,0 +1,32 @@
+{
+  "Name": "Turing Basic T410",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 108.5,
+      "Height": 67,
+      "MaxX": 21700,
+      "MaxY": 13400
+    },
+    "Pen": {
+      "MaxPressure": 16384,
+      "ButtonCount": 2
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 14438,
+      "ProductID": 61702,
+      "InputReportLength": 12,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
+      "DeviceStrings": {
+        "181": "Turing_T256_\\d{6}$"
+      },
+      "InitializationStrings": [
+        180
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

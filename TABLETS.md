@@ -83,6 +83,7 @@
 | Parblo Ninos N4                    |     Supported     |
 | Parblo Ninos N7                    |     Supported     |
 | RobotPen T9A                       |     Supported     |
+| Turing Basic T410                  |     Supported     |
 | UC-Logic PF1209                    |     Supported     |
 | UGEE EX08                          |     Supported     | Uses the same configuration as the XP-Pen Deco 01 V2.
 | UGEE M708 V2                       |     Supported     |
