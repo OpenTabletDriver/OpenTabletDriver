@@ -30,6 +30,8 @@ namespace OpenTabletDriver.Plugin.Output
         {
             set
             {
+                if (this.scheduler != null) throw new NotSupportedException("Changing a timer after it has already been set is not supported yet");
+
                 this.scheduler = value;
 
                 if (this.scheduler != null)
@@ -163,7 +165,7 @@ namespace OpenTabletDriver.Plugin.Output
             if (disposing)
             {
                 Scheduler?.Dispose();
-                Scheduler = null;
+                scheduler = null; // set backing field directly to dodge the fake-readonly setter
             }
 
             _isDisposed = true;
