@@ -1,6 +1,8 @@
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Devices;
@@ -8,9 +10,9 @@ using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Devices
 {
-    public class DeviceReader<T> : IDisposable where T : class, IDeviceReport
+    public class DeviceReader : IDisposable
     {
-        public DeviceReader(IDeviceEndpoint endpoint, IReportParser<T> reportParser)
+        public DeviceReader(IDeviceEndpoint endpoint, IReportParser reportParser)
         {
             Endpoint = endpoint;
             Parser = reportParser ?? throw new ArgumentNullException(nameof(reportParser));
@@ -18,7 +20,7 @@ namespace OpenTabletDriver.Devices
             {
                 Name = "OpenTabletDriver Device Reader",
                 IsBackground = true,
-                Priority = ThreadPriority.AboveNormal
+                Priority = ThreadPriority.AboveNormal,
             };
         }
 
@@ -36,9 +38,9 @@ namespace OpenTabletDriver.Devices
         public IDeviceEndpointStream? ReportStream { protected set; get; }
 
         /// <summary>
-        /// The <see cref="IReportParser{T}"/> in which the device reports will be parsed with.
+        /// The <see cref="IReportParser"/> in which the device reports will be parsed with.
         /// </summary>
-        public IReportParser<T> Parser { private set; get; }
+        public IReportParser Parser { private set; get; }
 
         /// <summary>
         /// Whether to make an extra cloned report with data left unmodified.
@@ -48,7 +50,7 @@ namespace OpenTabletDriver.Devices
         /// <summary>
         /// Invoked when a new report comes in from the device.
         /// </summary>
-        public event EventHandler<T>? Report;
+        public event RefEventHandler<DeviceReport>? Report;
 
         /// <summary>
         /// Invoked when a new report comes in from the device.
@@ -57,7 +59,8 @@ namespace OpenTabletDriver.Devices
         /// This will only be invoked when <see cref="RawClone"/> is set to true.
         /// This report is not meant in any way to be modified, as it is supposed to represent the original data.
         /// </remarks>
-        public event EventHandler<T>? RawReport;
+        // TODO: check if not using RefEventHandler is enough to have it duplicate?
+        public event EventHandler<DeviceReport>? RawReport;
 
         /// <summary>
         /// Whether the device is actively emitting reports and being parsed.
@@ -101,34 +104,50 @@ namespace OpenTabletDriver.Devices
                 workerThread.Start();
         }
 
+        private long _allocatedBytes;
+
+        [Conditional("DEBUG")]
+        private static void spewMemoryUse(string context, ref long allocatedBytes)
+        {
+            var newAllocatedBytes = GC.GetAllocatedBytesForCurrentThread();
+            var allocateDiff = newAllocatedBytes - allocatedBytes;
+            Log.Write("mem", $"{allocateDiff}: {context}", LogLevel.Debug);
+
+            allocatedBytes = GC.GetAllocatedBytesForCurrentThread(); // don't reuse newAllocatedBytes as logging might have changed this
+        }
+
         protected void Main()
         {
-            byte[]? data = null;
+            Span<byte> data = stackalloc byte[Endpoint.InputReportLength];
             try
             {
                 Connected = true;
                 while (Connected)
                 {
-                    data = ReportStream!.Read();
+                    _allocatedBytes = GC.GetAllocatedBytesForCurrentThread();
+                    ReportStream!.Read(data);
+                    var report = new DeviceReport(data);
+                    spewMemoryUse("data-read", ref _allocatedBytes);
 
-                    T? parsed;
+                    bool parsed = Parser.Parse(data, ref report);
+                    spewMemoryUse("parse", ref _allocatedBytes);
+                    Debug.Assert(parsed == report.Continue);
+                    Debug.Assert(report.Parser != null, $"Parser must set {nameof(DeviceReport.Parser)} in device report, as it is used for serialization");
+                    Debug.Assert(report.Parser.IsAssignableTo(typeof(IReportParser)), $"Parser must set {nameof(DeviceReport.Parser)} to a valid {nameof(IReportParser)}");
 
-                    try
+                    if (parsed)
                     {
-                        parsed = Parser.Parse(data);
-                    }
-                    catch (IndexOutOfRangeException e)
-                    {
-                        Log.Write("Device", $"Unable to parse tablet data {Extensions.PrettyPrintHex(data)}", LogLevel.Warning);
-                        Log.Exception(e);
-                        parsed = new DeviceReport(data) as T;
+                        if (RawClone)
+                            OnRawReport(report, Parser);
+                        OnReport(ref report);
+
+                        spewMemoryUse("post-report", ref _allocatedBytes);
                     }
 
-                    if (parsed is not { } report) continue;
+                    if (report.OutOfRange)
+                        GC.Collect(2, GCCollectionMode.Forced);
 
-                    if (RawClone)
-                        OnRawReport(report);
-                    OnReport(report);
+                    report.Dispose();
                 }
             }
             catch (ObjectDisposedException dex)
@@ -146,9 +165,7 @@ namespace OpenTabletDriver.Devices
             catch (Exception ex)
             {
                 Log.Exception(ex);
-
-                string formattedTabletData = data != null ? Extensions.PrettyPrintHex(data) : "<null>";
-                Log.Write("Device", $"Last report read from tablet: {formattedTabletData}");
+                Log.Write("Device", $"Last report read from tablet: {data.PrettyPrintHex()}");
             }
             finally
             {
@@ -156,8 +173,8 @@ namespace OpenTabletDriver.Devices
             }
         }
 
-        protected virtual void OnReport(T report) => Report?.Invoke(this, report);
-        protected virtual void OnRawReport(T report) => RawReport?.Invoke(this, report);
+        protected virtual void OnReport(scoped ref DeviceReport report) => Report?.Invoke(this, ref report);
+        protected virtual void OnRawReport(scoped in DeviceReport report, IReportParser parser) => RawReport?.Invoke(this, report);
 
         public void Dispose()
         {

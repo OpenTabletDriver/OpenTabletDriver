@@ -36,7 +36,7 @@ namespace OpenTabletDriver
 
         private Dictionary<IDeviceEndpoint, Dictionary<byte, string?>> DeviceStringCache = [];
 
-        public IReportParser<IDeviceReport> GetReportParser(DeviceIdentifier identifier)
+        public IReportParser GetReportParser(DeviceIdentifier identifier)
         {
             return _reportParserProvider.GetReportParser(identifier.ReportParser);
         }

@@ -1,15 +1,21 @@
+using System;
 using System.Numerics;
+using CommunityToolkit.HighPerformance.Buffers;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Tablet.Touch;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom
 {
-    public struct WacomTouchReport : ITouchReport, IAuxReport
+    public struct WacomTouchReport
     {
-        public WacomTouchReport(byte[] report, ref TouchPoint?[]? prevTouches)
+        public const int MAX_POINTS = 16;
+
+        public static bool Parse(ReadOnlySpan<byte> report, scoped ref DeviceReport deviceReport, ref TouchPoint?[]? prevTouches)
         {
-            Raw = report;
-            AuxButtons = [];
+            // TODO
+
+            deviceReport.Raw = report;
+            deviceReport.AuxButtons = [];
             Touches = prevTouches ?? new TouchPoint[MAX_POINTS];
             if (report[2] == 0x81)
             {
@@ -68,7 +74,6 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom
                 mask >>= 1;
             }
         }
-        public const int MAX_POINTS = 16;
         public byte[] Raw { set; get; }
         public bool[] AuxButtons { set; get; }
         public TouchPoint?[] Touches { set; get; }

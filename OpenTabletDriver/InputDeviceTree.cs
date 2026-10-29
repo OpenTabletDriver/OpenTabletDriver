@@ -42,7 +42,7 @@ namespace OpenTabletDriver
             {
                 this.inputDevices = value;
                 foreach (var dev in InputDevices)
-                    dev.Report += HandleReport;
+                    dev.Report += handleReport;
             }
             get => this.inputDevices;
         }
@@ -54,11 +54,11 @@ namespace OpenTabletDriver
 
         public TabletReference CreateReference() => new TabletReference(Properties, InputDevices.Select(c => c.Identifier));
 
-        private void HandleReport(object? sender, IDeviceReport report)
+        private void handleReport(object? sender, scoped ref DeviceReport report)
         {
             lock (sync)
             {
-                OutputMode?.Read(report);
+                OutputMode?.Read(ref report);
             }
         }
 

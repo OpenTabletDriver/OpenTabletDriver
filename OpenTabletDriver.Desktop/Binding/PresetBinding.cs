@@ -24,7 +24,7 @@ namespace OpenTabletDriver.Desktop.Binding
         [Resolved]
         public IDriverDaemon? Daemon { set; get; }
 
-        public void Press(TabletReference tablet, IDeviceReport report)
+        public void Press(TabletReference tablet, scoped in DeviceReport report)
         {
             if (Preset != null && _stopwatch.Elapsed.Milliseconds > TIMEOUT)
             {
@@ -46,6 +46,6 @@ namespace OpenTabletDriver.Desktop.Binding
             _stopwatch.Restart();
         }
 
-        public void Release(TabletReference tablet, IDeviceReport report) { }
+        public void Release(TabletReference tablet, scoped in DeviceReport report) { }
     }
 }

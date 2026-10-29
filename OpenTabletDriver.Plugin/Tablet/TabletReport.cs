@@ -1,32 +1,29 @@
+using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using CommunityToolkit.HighPerformance.Buffers;
 
 namespace OpenTabletDriver.Plugin.Tablet
 {
-    public struct TabletReport : ITabletReport
+    public class TabletReport
     {
-        public TabletReport(byte[] report)
+        public static bool Parse(scoped in ReadOnlySpan<byte> report, scoped ref DeviceReport deviceReport)
         {
-            Raw = report;
-
-            Position = new Vector2
+            deviceReport.PenPosition = new Vector2
             {
-                X = Unsafe.ReadUnaligned<ushort>(ref report[2]),
-                Y = Unsafe.ReadUnaligned<ushort>(ref report[4])
+                X = Unsafe.ReadUnaligned<ushort>(in report[2]),
+                Y = Unsafe.ReadUnaligned<ushort>(in report[4]),
             };
-            Pressure = Unsafe.ReadUnaligned<ushort>(ref report[6]);
 
-            PenButtons =
-            [
-                report[1].IsBitSet(1),
-                report[1].IsBitSet(2),
-                report[1].IsBitSet(3),
-            ];
+            deviceReport.PenPressure = Unsafe.ReadUnaligned<ushort>(in report[6]);
+
+            //deviceReport.PenButtons = MemoryOwner<bool>.Allocate(3);
+            //var penButtonSpan = deviceReport.PenButtons.Span;
+            //penButtonSpan[0] = report[1].IsBitSet(1);
+            //penButtonSpan[1] = report[1].IsBitSet(2);
+            //penButtonSpan[2] = report[1].IsBitSet(3);
+
+            return true;
         }
-
-        public byte[] Raw { set; get; }
-        public Vector2 Position { set; get; }
-        public uint Pressure { set; get; }
-        public bool[] PenButtons { set; get; }
     }
 }

@@ -10,7 +10,7 @@ namespace OpenTabletDriver.Configurations
 {
     public class ReportParserProvider : IReportParserProvider
     {
-        private readonly Dictionary<string, Func<IReportParser<IDeviceReport>>> _reportParsers;
+        private readonly Dictionary<string, Func<IReportParser>> _reportParsers;
 
         public ReportParserProvider()
         {
@@ -23,21 +23,21 @@ namespace OpenTabletDriver.Configurations
             _reportParsers = CreateParsersFromAssembly(assemblies);
         }
 
-        public IReportParser<IDeviceReport> GetReportParser(string reportParserName)
+        public IReportParser GetReportParser(string reportParserName)
         {
             return _reportParsers[reportParserName].Invoke();
         }
 
-        private static Func<IReportParser<IDeviceReport>> GetConstructor(Type reportParserType)
+        private static Func<IReportParser> GetConstructor(Type reportParserType)
         {
-            return () => (IReportParser<IDeviceReport>)(Activator.CreateInstance(reportParserType)
+            return () => (IReportParser)(Activator.CreateInstance(reportParserType)
                                                         ?? throw new InvalidOperationException($"Unable to create instance of {reportParserType}"));
         }
 
-        private static Dictionary<string, Func<IReportParser<IDeviceReport>>> CreateParsersFromAssembly(params Assembly[] assemblies)
+        private static Dictionary<string, Func<IReportParser>> CreateParsersFromAssembly(params Assembly[] assemblies)
         {
             return assemblies.SelectMany(asm => asm.ExportedTypes)
-                .Where(t => t.IsAssignableTo(typeof(IReportParser<IDeviceReport>)))
+                .Where(t => t.IsAssignableTo(typeof(IReportParser)))
                 .ToDictionary(
                     t => t.FullName!,
                     GetConstructor

@@ -99,7 +99,7 @@ namespace OpenTabletDriver.UX.Controls
         private OutputModeEditor outputModeEditor;
         private BindingEditor penBindingEditor, auxBindingEditor, mouseBindingEditor;
         private List<BindingEditor> wheelBindingEditors = [];
-        private PluginSettingStoreCollectionEditor<IPositionedPipelineElement<IDeviceReport>> filterEditor;
+        private PluginSettingStoreCollectionEditor<IPositionedPipelineElement> filterEditor;
         private PluginSettingStoreCollectionEditor<ITool> toolEditor;
 
         private Profile? profile;

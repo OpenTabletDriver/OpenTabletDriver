@@ -9,8 +9,6 @@ using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Desktop.ViewModels.Utility;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Plugin.Tablet.Touch;
-using OpenTabletDriver.Plugin.Tablet.Wheel;
 using OpenTabletDriver.Plugin.Timing;
 
 namespace OpenTabletDriver.Desktop.ViewModels;
@@ -24,6 +22,8 @@ public sealed class TabletDebuggerViewModel : ViewModel, IDisposable
 
     private FileStream? _tabletRecordingFileStream;
     private StreamWriter? _tabletRecordingStreamWriter;
+
+    private byte[]? _lastBytes;
 
     public NotifyCollectionChangedEventHandler? StatisticsCollectionChanged;
 
@@ -57,7 +57,14 @@ public sealed class TabletDebuggerViewModel : ViewModel, IDisposable
             AdditionalStatistics["Report Rate"].SaveMinMax(timeDelta.TotalMilliseconds, "ms");
             HandleReportInterval(timeDelta);
 
-            var dataObject = value.ToObject();
+            var report = new DeviceReport();
+
+            if (!value.Reinit(ref report))
+            {
+                Log.Write(nameof(TabletDebuggerViewModel), $"Could not parse report. Skipping statistics for bytes '{report.Raw.PrettyPrintHex()}' on parser path {value.Path}", LogLevel.Error);
+                AdditionalStatistics["Failed Reports"].SaveCountAdd1(value.Path);
+                return;
+            }
 
             AdditionalStatistics["Tablets Parsed"].SaveCountAdd1(value.Tablet.Properties.Name)
                 .HideAllChildren(); // probably nonsensical to keep in UI
@@ -65,94 +72,89 @@ public sealed class TabletDebuggerViewModel : ViewModel, IDisposable
             AdditionalStatistics["Report Parser"].SaveCountAdd1(value.Path)
                 .HideAllChildren(); // goes too crazy in UI for now
 
-            if (dataObject is IAbsolutePositionReport absolutePositionReport)
-                AdditionalStatistics["Tablet Position"].SaveMinMax(absolutePositionReport.Position);
+            if (report.PenPosition.HasValue)
+                AdditionalStatistics["Tablet Position"].SaveMinMax(report.PenPosition.GetValueOrDefault());
 
-            if (dataObject is ITouchReport touchReport)
-                AdditionalStatistics["Touch Position"].SaveMinMax(touchReport.Touches);
+            if (report.Touches != null)
+                AdditionalStatistics["Touch Position"].SaveMinMax(report.Touches.Span);
 
-            if (dataObject is IEraserReport eraserReport)
-                AdditionalStatistics["Eraser"].SaveButtons([eraserReport.Eraser], 1);
+            if (report.Eraser.HasValue)
+                AdditionalStatistics["Eraser"].SaveButtons([report.Eraser.GetValueOrDefault()]);
 
-            if (dataObject is ITabletReport tabletReport)
-            {
-                AdditionalStatistics["Pressure"].SaveMinMax(tabletReport.Pressure);
-                AdditionalStatistics["Pen Buttons"].SaveButtons(tabletReport.PenButtons, (int)value.Tablet.Properties.Specifications.Pen.ButtonCount);
-            }
+            if (report.PenPressure.HasValue)
+                AdditionalStatistics["Pressure"].SaveMinMax(report.PenPressure.GetValueOrDefault());
 
-            if (dataObject is IMouseReport mouseReport)
-            {
+            // TODO: what happens if button count is higher than parser expects?
+            if (report.PenButtons != null)
+                AdditionalStatistics["Pen Buttons"].SaveButtons(report.PenButtons.Span[..(int)value.Tablet.Properties.Specifications.Pen.ButtonCount]);
+
+            if (report.MousePosition.HasValue)
                 AdditionalStatistics["Mouse Position"]
-                    .SaveMinMax(mouseReport.Position);
+                    .SaveMinMax(report.MousePosition.GetValueOrDefault());
 
+            if (report.MouseScroll.HasValue)
                 AdditionalStatistics["Mouse Scroll"]
-                    .SaveMinMax(mouseReport.Scroll);
+                    .SaveMinMax(report.MouseScroll.GetValueOrDefault());
 
+            // TODO: what happens if button count is higher than parser expects?
+            if (report.MouseButtons != null)
                 AdditionalStatistics["Mouse Buttons"]
-                    .SaveButtons(mouseReport.MouseButtons, (int)(value.Tablet.Properties.Specifications.MouseButtons?.ButtonCount ?? 0));
-            }
+                    .SaveButtons(report.MouseButtons.Span[..(int)(value.Tablet.Properties.Specifications.MouseButtons?.ButtonCount ?? 0)]);
 
-            if (dataObject is IProximityReport proximityReport)
-            {
+            if (report.HoverDistance.HasValue)
                 AdditionalStatistics["Hover Distance"]
-                    .SaveMinMax(proximityReport.HoverDistance)
+                    .SaveMinMax(report.HoverDistance.GetValueOrDefault())
                     .HideAllChildren();
 
+            if (report.NearProximity.HasValue)
                 AdditionalStatistics["Proximity"]
-                    .SaveButtons([proximityReport.NearProximity], 1)
+                    .SaveButtons([report.NearProximity.GetValueOrDefault()])
                     .HideAllChildren();
-            }
 
-            if (dataObject is IToolReport toolReport)
-            {
+            if (report.ToolType.HasValue)
                 AdditionalStatistics["Tool ID"]
-                    .SaveCountAdd1(toolReport.RawToolID.ToString())
+                    .SaveCountAdd1(report.ToolType.GetValueOrDefault().ToString())
                     .HideAllChildren();
 
+            if (report.ToolSerial.HasValue)
                 AdditionalStatistics["Tool Serial"]
-                    .SaveCountAdd1(toolReport.Serial.ToString())
+                    .SaveCountAdd1(report.ToolSerial.GetValueOrDefault().ToString())
                     .HideAllChildren();
 
+            if (report.ToolType.HasValue)
                 AdditionalStatistics["Tool Type"]
-                    .SaveCountAdd1(toolReport.Tool.ToString())
+                    .SaveCountAdd1(report.ToolType.GetValueOrDefault().ToString())
                     .HideAllChildren();
-            }
 
-            if (dataObject is IAuxReport auxReport)
-                if (auxReport.AuxButtons.Length > 0)
-                    AdditionalStatistics["Aux Buttons"]
-                        .SaveButtons(auxReport.AuxButtons,
-                            (int)(value.Tablet.Properties.Specifications.AuxiliaryButtons?.ButtonCount ?? 0));
+            if (report.AuxButtons is { Length: > 0 })
+                AdditionalStatistics["Aux Buttons"]
+                    .SaveButtons(report.AuxButtons.Span[..(int)(value.Tablet.Properties.Specifications.AuxiliaryButtons?.ButtonCount ?? 0)]);
 
-            if (dataObject is ITiltReport tiltReport)
+            if (report.Tilt.HasValue)
                 AdditionalStatistics["Tilt Axes"]
-                    .SaveMinMax(tiltReport.Tilt);
+                    .SaveMinMax(report.Tilt.GetValueOrDefault());
 
-            if (dataObject is IAbsoluteWheelReport absoluteWheelReport)
-                for (int i = 0; i < absoluteWheelReport.AnalogPositions.Length; i++)
-                    if (absoluteWheelReport.AnalogPositions[i].HasValue)
+            if (report.WheelPositions is { Span: var absWheelPosSpan })
+                for (int i = 0; i < absWheelPosSpan.Length; i++)
+                    if (absWheelPosSpan[i].HasValue)
                         AdditionalStatistics[$"Abs. Wheel {i} Position"]
-                            .SaveMinMax(absoluteWheelReport.AnalogPositions[i]!.Value);
+                            .SaveMinMax(absWheelPosSpan[i]!.GetValueOrDefault());
 
-            if (dataObject is IRelativeWheelReport relativeWheelReport)
-                for (int i = 0; i < relativeWheelReport.AnalogDeltas.Length; i++)
-                    if (relativeWheelReport.AnalogDeltas[i] != 0)
-                        AdditionalStatistics[$"Rel. Wheel {i} Position"].
-                            SaveMinMax(relativeWheelReport.AnalogDeltas[i]);
+            if (report.WheelDeltas is { Span: var relWheelPosSpan })
+                for (int i = 0; i < relWheelPosSpan.Length; i++)
+                    if (relWheelPosSpan[i] != 0)
+                        AdditionalStatistics[$"Rel. Wheel {i} Delta"].
+                            SaveMinMax(relWheelPosSpan[i]);
 
-            if (dataObject is IWheelButtonReport wheelButtonReport)
-                for (int i = 0; i < wheelButtonReport.WheelButtons.Length; i++)
-                    AdditionalStatistics["Wheel Buttons"].
-                        SaveButtons(wheelButtonReport.WheelButtons[i],
-                            (int)(value.Tablet.Properties.Specifications.Wheels?[i].ButtonCount ?? 0));
+            if (report.WheelButtons is { Span: var wheelButtonSpan })
+                for (int i = 0; i < wheelButtonSpan.Length; i++)
+                    AdditionalStatistics[$"Wheel {i} Buttons"].
+                        SaveButtons(wheelButtonSpan[i].Span[..(int)(value.Tablet.Properties.Specifications.Wheels?[i].ButtonCount ?? 0)]);
 
-            if (dataObject is IDeviceReport deviceReport)
-            {
-                _deviceReport = deviceReport;
-                RaiseChanged(nameof(RawTabletData));
-                DecodedTabletData = ReportFormatter.GetStringFormat(deviceReport);
-                HandleDataRecording(value, deviceReport, timeDelta);
-            }
+            _lastBytes = [.. report.Raw];
+            RaiseChanged(nameof(RawTabletData));
+            DecodedTabletData = ReportFormatter.GetStringFormat(in report);
+            HandleDataRecording(value, in report, timeDelta);
         }
     }
 
@@ -179,18 +181,16 @@ public sealed class TabletDebuggerViewModel : ViewModel, IDisposable
     private double ReportRateAverage => 1000 / (_reportRates.Count > 0 ? _reportRates.Average() : 0);
     public string ReportRateString => $"{ReportRateAverage:0.00}";
 
-    private IDeviceReport? _deviceReport;
-
     public string RawTabletData
     {
         get
         {
-            if (_deviceReport == null) return string.Empty;
+            if (_lastBytes == null) return string.Empty;
 
             return DecodingMode switch
             {
-                DecodingMode.Hex => ReportFormatter.GetStringRaw(_deviceReport),
-                DecodingMode.Binary => ReportFormatter.GetStringRawAsBinary(_deviceReport),
+                DecodingMode.Hex => ReportFormatter.GetStringRawAsHex(_lastBytes),
+                DecodingMode.Binary => ReportFormatter.GetStringRawAsBinary(_lastBytes),
                 _ => throw new ArgumentOutOfRangeException(nameof(DecodingMode)),
             };
         }
@@ -281,13 +281,13 @@ public sealed class TabletDebuggerViewModel : ViewModel, IDisposable
 
     #region Class Functions
 
-    private void HandleDataRecording(DebugReportData reportData, IDeviceReport report, TimeSpan timeDelta)
+    private void HandleDataRecording(DebugReportData reportData, scoped in DeviceReport report, TimeSpan timeDelta)
     {
         if (!DataRecordingEnabled || _tabletRecordingStreamWriter == null)
             return;
 
-        string? output = ReportFormatter.GetStringFormatOneLine(reportData.Tablet.Properties,
-            report,
+        string output = ReportFormatter.GetStringFormatOneLine(reportData.Tablet.Properties,
+            in report,
             timeDelta,
             reportData.Path);
 

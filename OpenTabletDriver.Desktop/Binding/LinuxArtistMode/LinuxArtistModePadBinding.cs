@@ -59,12 +59,12 @@ namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
         private string? _button;
         private TabletPadEvent? _buttonPadEvent;
 
-        public void Press(TabletReference tablet, IDeviceReport report)
+        public void Press(TabletReference tablet, scoped in DeviceReport report)
         {
             SetState(true);
         }
 
-        public void Release(TabletReference tablet, IDeviceReport report)
+        public void Release(TabletReference tablet, scoped in DeviceReport report)
         {
             SetState(false);
         }

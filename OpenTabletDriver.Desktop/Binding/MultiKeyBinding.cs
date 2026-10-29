@@ -40,13 +40,13 @@ namespace OpenTabletDriver.Desktop.Binding
             get => this.keysString;
         }
 
-        public void Press(TabletReference tablet, IDeviceReport report)
+        public void Press(TabletReference tablet, scoped in DeviceReport report)
         {
             if (keys?.Length > 0)
                 Keyboard?.Press(this.keys);
         }
 
-        public void Release(TabletReference tablet, IDeviceReport report)
+        public void Release(TabletReference tablet, scoped in DeviceReport report)
         {
             if (keys?.Length > 0)
                 Keyboard?.Release(this.keys);

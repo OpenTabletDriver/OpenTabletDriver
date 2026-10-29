@@ -6,7 +6,7 @@ using OpenTabletDriver.Plugin.Tablet;
 namespace OpenTabletDriver.Desktop.Binding
 {
     [PluginIgnore]
-    public class PressureRewriteFilter : IPositionedPipelineElement<IDeviceReport>
+    public class PressureRewriteFilter : IPositionedPipelineElement
     {
         public required float TipPressureThreshold
         {
@@ -22,27 +22,27 @@ namespace OpenTabletDriver.Desktop.Binding
 
         public required uint MaxPenPressure { get; init; }
 
-        public void Consume(IDeviceReport? report)
+        public void Consume(scoped ref DeviceReport report)
         {
-            if (report is ITabletReport tabletReport && tabletReport.Pressure != MaxPenPressure)
+            if (report.PenPressure.HasValue && report.PenPressure.Value != MaxPenPressure)
             {
-                float activationThreshold = report is IEraserReport eraserReport && eraserReport.Eraser ? EraserPressureThreshold : TipPressureThreshold;
+                float activationThreshold = report.Eraser.HasValue && report.Eraser.Value ? EraserPressureThreshold : TipPressureThreshold;
 
-                float pressurePercent = tabletReport.Pressure / (float)MaxPenPressure;
+                float pressurePercent = report.PenPressure.Value / (float)MaxPenPressure;
 
                 if (pressurePercent > activationThreshold)
                 {
-                    tabletReport.Pressure =
+                    report.PenPressure =
                         (uint)(MaxPenPressure * ((pressurePercent - activationThreshold) / (1f - activationThreshold)));
                 }
                 else
-                    tabletReport.Pressure = 0;
+                    report.PenPressure = 0;
             }
 
-            Emit?.Invoke(report);
+            Emit?.Invoke(ref report);
         }
 
-        public event Action<IDeviceReport?>? Emit;
+        public event RefAction<DeviceReport>? Emit;
         public PipelinePosition Position => PipelinePosition.PreTransform;
     }
 }

@@ -6,9 +6,9 @@ namespace OpenTabletDriver.Desktop
 {
     public class DesktopReportParserProvider : IReportParserProvider
     {
-        public IReportParser<IDeviceReport> GetReportParser(string reportParserName)
+        public IReportParser GetReportParser(string reportParserName)
         {
-            var rv = AppInfo.PluginManager.ConstructObject<IReportParser<IDeviceReport>>(reportParserName);
+            var rv = AppInfo.PluginManager.ConstructObject<IReportParser>(reportParserName);
 
             return rv ?? throw new ArgumentException("Invalid report parser name: " + reportParserName, nameof(reportParserName));
         }

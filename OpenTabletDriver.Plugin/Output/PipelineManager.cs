@@ -1,52 +1,53 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Plugin.Output
 {
-    public class PipelineManager<T>
+    public class PipelineManager
     {
-        protected void Link<T2>(IPipelineElement<T> source, T2? destination)
+        protected static void Link<T>(IPipelineElement source, T destination)
         {
             if (destination != null)
             {
                 switch (destination)
                 {
-                    case IPipelineElement<T> nextElement:
+                    case IPipelineElement nextElement:
                         source.Emit += nextElement.Consume;
                         break;
-                    case IEnumerable<IPipelineElement<T>> nextGroup:
+                    case IEnumerable<IPipelineElement> nextGroup:
                         source.Emit += nextGroup.First().Consume;
                         break;
-                    case Action<T?> nextAction:
+                    case RefAction<DeviceReport> nextAction:
                         source.Emit += nextAction;
                         break;
                 }
             }
         }
 
-        protected void Unlink<T2>(IPipelineElement<T> source, T2 destination)
+        protected static void Unlink<T>(IPipelineElement source, T destination)
         {
             if (destination != null)
             {
                 switch (destination)
                 {
-                    case IPipelineElement<T> nextElement:
+                    case IPipelineElement nextElement:
                         source.Emit -= nextElement.Consume;
                         break;
-                    case IEnumerable<IPipelineElement<T>> nextGroup:
+                    case IEnumerable<IPipelineElement> nextGroup:
                         source.Emit -= nextGroup.First().Consume;
                         break;
-                    case Action<T?> nextAction:
+                    case RefAction<DeviceReport> nextAction:
                         source.Emit -= nextAction;
                         break;
                 }
             }
         }
 
-        protected void LinkElements(IEnumerable<IPipelineElement<T>> elements)
+        protected static void LinkElements(IEnumerable<IPipelineElement> elements)
         {
-            IPipelineElement<T>? prevElement = null;
+            IPipelineElement? prevElement = null;
             foreach (var element in elements)
             {
                 if (prevElement != null)
@@ -56,9 +57,9 @@ namespace OpenTabletDriver.Plugin.Output
             }
         }
 
-        protected void UnlinkElements(IEnumerable<IPipelineElement<T>> elements)
+        protected static void UnlinkElements(IEnumerable<IPipelineElement> elements)
         {
-            IPipelineElement<T>? prevElement = null;
+            IPipelineElement? prevElement = null;
             foreach (var element in elements)
             {
                 if (prevElement != null)
@@ -68,41 +69,42 @@ namespace OpenTabletDriver.Plugin.Output
             }
         }
 
-        protected void LinkAll(params object[] elements)
+        protected static void LinkAll(params object[] elements)
         {
             foreach ((var prev, var next) in elements.Zip(elements.Skip(1)))
             {
-                if (prev is IPipelineElement<T> prevElement)
+                if (prev is IPipelineElement prevElement)
                 {
                     Link(prevElement, next);
                 }
-                else if (prev is IEnumerable<IPipelineElement<T>> prevGroup)
+                else if (prev is IEnumerable<IPipelineElement> prevGroup)
                 {
-                    LinkElements(prevGroup);
-                    Link(prevGroup.Last(), next);
+                    var pipelineElements = prevGroup as IPipelineElement[] ?? [.. prevGroup];
+                    LinkElements(pipelineElements);
+                    Link(pipelineElements.Last(), next);
                 }
             }
         }
 
-        protected void UnlinkAll(params object[] elements)
+        protected static void UnlinkAll(params object[] elements)
         {
             foreach ((var prev, var next) in elements.Zip(elements.Skip(1)))
             {
-                if (prev is IPipelineElement<T> prevElement)
+                if (prev is IPipelineElement prevElement)
                 {
                     Unlink(prevElement, next);
                 }
-                else if (prev is IEnumerable<IPipelineElement<T>> prevGroup)
+                else if (prev is IEnumerable<IPipelineElement> prevGroup)
                 {
-                    UnlinkElements(prevGroup);
-                    Unlink(prevGroup.Last(), next);
+                    var pipelineElements = prevGroup as IPipelineElement[] ?? [.. prevGroup];
+                    UnlinkElements(pipelineElements);
+                    Unlink(pipelineElements.Last(), next);
                 }
             }
         }
 
-        protected IList<IPositionedPipelineElement<T>> GroupElements(IList<IPositionedPipelineElement<T>> elements, PipelinePosition position)
-        {
-            return elements.Where(e => e.Position == position)?.ToArray() ?? Array.Empty<IPositionedPipelineElement<T>>();
-        }
+        protected static IList<IPositionedPipelineElement> GroupElements(IList<IPositionedPipelineElement> elements,
+            PipelinePosition position) =>
+            [.. elements.Where(e => e.Position == position)];
     }
 }

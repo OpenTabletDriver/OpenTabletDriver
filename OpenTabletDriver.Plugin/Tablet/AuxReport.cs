@@ -1,22 +1,22 @@
+using System;
+using CommunityToolkit.HighPerformance.Buffers;
+
 namespace OpenTabletDriver.Plugin.Tablet
 {
-    public struct AuxReport : IAuxReport
+    public struct AuxReport
     {
-        public AuxReport(byte[] report)
+        public static bool Parse(scoped ReadOnlySpan<byte> report, ref DeviceReport deviceReport)
         {
-            Raw = report;
-
             var auxByte = report[3];
-            AuxButtons =
-            [
-                auxByte.IsBitSet(0),
-                auxByte.IsBitSet(1),
-                auxByte.IsBitSet(2),
-                auxByte.IsBitSet(3),
-            ];
-        }
+            deviceReport.AuxButtons = MemoryOwner<bool>.Allocate(4);
 
-        public byte[] Raw { set; get; }
-        public bool[] AuxButtons { set; get; }
+            var auxButtons = deviceReport.AuxButtons.Span;
+            auxButtons[0] = auxByte.IsBitSet(0);
+            auxButtons[1] = auxByte.IsBitSet(1);
+            auxButtons[2] = auxByte.IsBitSet(2);
+            auxButtons[3] = auxByte.IsBitSet(3);
+
+            return true;
+        }
     }
 }
