@@ -24,7 +24,12 @@
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
       "OutputInitReport": [
         "ArAE"
-      ]
+      ],
+      "DeviceStrings": {
+        "5": "^(?!2023-09-21_release001).*$"
+      },
+      "InitializationStrings": [],
+      "Attributes": {}
     }
   ],
   "Attributes": {
