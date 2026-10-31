@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop;
@@ -126,7 +125,7 @@ namespace OpenTabletDriver.Console
 
             var displays = DesktopInterop.VirtualScreen.Displays.ToArray();
 
-            ArgumentOutOfRangeException.ThrowIfGreaterThan(index, (uint)displays.Length);
+            ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(index, (uint)displays.Length);
 
             var display = displays[index];
 
@@ -503,14 +502,15 @@ namespace OpenTabletDriver.Console
                 var settings = await GetSettings();
                 var tempDir = Environment.GetEnvironmentVariable("TEMP") ?? AppInfo.Current.TemporaryDirectory;
                 var tempFile = $"OpenTabletDriver-{Guid.NewGuid()}.json";
-                var sha256 = SHA256.Create();
-
                 var path = Path.Join(tempDir, tempFile);
-                var cmd = $"{editor} {path}";
-                var tokens = cmd.Split(' ');
 
-                var executable = tokens[0];
-                var args = string.Join(' ', tokens[1..tokens.Length]);
+                // the editor may contain arguments (e.g. 'code --wait'), but the path is
+                // passed as a single argument so that paths containing spaces work
+                var tokens = editor.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                var startInfo = new ProcessStartInfo(tokens[0]);
+                foreach (var arg in tokens[1..])
+                    startInfo.ArgumentList.Add(arg);
+                startInfo.ArgumentList.Add(path);
 
                 if (!Directory.Exists(tempDir))
                     Directory.CreateDirectory(tempDir);
@@ -520,14 +520,11 @@ namespace OpenTabletDriver.Console
 
                 var oldHash = GetSHA256(path);
 
-                using (var proc = Process.Start(executable, args))
+                using (var proc = Process.Start(startInfo)
+                    ?? throw new InvalidOperationException($"Failed to start editor '{editor}'"))
                     await proc.WaitForExitAsync();
 
                 var newHash = GetSHA256(path);
-
-                await using (var fs = File.OpenRead(path))
-                    settings = Serialization.Deserialize<Settings>(fs)
-                        ?? throw new InvalidOperationException($"Unable to deserialize settings: {path}");
 
                 if (oldHash.Equals(newHash))
                 {
@@ -535,6 +532,11 @@ namespace OpenTabletDriver.Console
                 }
                 else
                 {
+                    // the file is intentionally left behind on failure so that edits are not lost
+                    await using (var fs = File.OpenRead(path))
+                        settings = Serialization.Deserialize<Settings>(fs)
+                            ?? throw new InvalidOperationException($"Unable to deserialize settings: {path}");
+
                     await ApplySettings(settings);
                     await Out.WriteLineAsync("Settings were successfully applied.");
                 }
