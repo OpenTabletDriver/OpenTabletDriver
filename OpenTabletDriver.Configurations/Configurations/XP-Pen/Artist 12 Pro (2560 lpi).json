@@ -1,5 +1,5 @@
 {
-  "Name": "XP-Pen Artist 12 Pro",
+  "Name": "XP-Pen Artist 12 Pro (2560 lpi)",
   "Specifications": {
     "Digitizer": {
       "Width": 256.34,
@@ -30,7 +30,10 @@
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
       "OutputInitReport": [
         "ArAE"
-      ]
+      ],
+      "DeviceStrings": {
+        "100": "\\u6422\\u384F\\u0108\\u1FFF\\u0100"
+      }
     }
   ],
   "Attributes": {

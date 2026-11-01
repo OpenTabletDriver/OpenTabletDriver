@@ -1,0 +1,42 @@
+{
+  "Name": "XP-Pen Artist 12 Pro (5080 lpi)",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 256.34,
+      "Height": 144.15,
+      "MaxX": 52593,
+      "MaxY": 29614
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 8
+    },
+    "Wheels": [
+      {
+        "RelativeWheelSteps": 24,
+        "ButtonCount": 0
+      }
+    ]
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 10429,
+      "ProductID": 2335,
+      "InputReportLength": 12,
+      "OutputReportLength": 12,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "OutputInitReport": [
+        "ArAE"
+      ],
+      "DeviceStrings": {
+        "100": "\\uCD71\\u73AE\\u0108\\u1FFF\\u13D8"
+      }
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
