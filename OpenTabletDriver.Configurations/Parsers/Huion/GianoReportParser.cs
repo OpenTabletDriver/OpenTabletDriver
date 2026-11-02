@@ -11,8 +11,10 @@ namespace OpenTabletDriver.Configurations.Parsers.Huion
         {
             if (data[1] == 0xF1)
                 return new KamvasRelWheelReport(data);
-            if (data[1] == 0xF0)
+            if (data[1] == 0xF0 && data[2] == 0x00 && data[3] == 0x00)
                 return new UCLogicAuxRelWheelReport(data);
+            if (data[1] == 0xF0 && data[2] == 0x01 && data[3] == 0x01)
+                return new UCLogicAuxAbsStripReport(data);
             if (data[1].IsBitSet(5) && data[1].IsBitSet(6))
                 return new UCLogicAuxReport(data);
             else
