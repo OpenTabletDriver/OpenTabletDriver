@@ -182,16 +182,17 @@ namespace OpenTabletDriver.Desktop.Profiles
             for (int i = 0; i < wheelCount; i++)
             {
                 var wheelBinding = WheelBindings[i];
-                wheelBinding.StepSize = GetDegreesPerStep(tabletSpecifications, i);
+                double stepSize = GetDegreesPerStep(tabletSpecifications, i);
+                wheelBinding.StepSize = stepSize;
 
                 int buttonCountForWheel = (int)tabletSpecifications.Wheels![i].ButtonCount;
                 wheelBinding.WheelButtons.SetExpectedCount(buttonCountForWheel);
 
                 wheelBinding.ClockwiseActivationThreshold =
-                    VerifyWheelActivationThreshold(wheelBinding.ClockwiseActivationThreshold);
+                    VerifyWheelActivationThreshold(wheelBinding.ClockwiseActivationThreshold, stepSize);
 
                 wheelBinding.CounterClockwiseActivationThreshold =
-                    VerifyWheelActivationThreshold(wheelBinding.CounterClockwiseActivationThreshold);
+                    VerifyWheelActivationThreshold(wheelBinding.CounterClockwiseActivationThreshold, stepSize);
             }
 
             if (trimmed > 0)
@@ -247,12 +248,16 @@ namespace OpenTabletDriver.Desktop.Profiles
             throw new InvalidOperationException("Provided TabletSpecifications does not define wheel step count for this wheel");
         }
 
-        private static float VerifyWheelActivationThreshold(float threshold)
+        /// <summary>
+        /// Returns <paramref name="threshold"/> if it is valid, otherwise one wheel step.
+        /// Wheels added to an existing profile start out with a threshold of 0.
+        /// </summary>
+        private static float VerifyWheelActivationThreshold(float threshold, double stepSize)
         {
             if (threshold > 0) return threshold;
 
-            Log.Write(nameof(BindingSettings), $"Forcing invalid wheel threshold value '{threshold}' to 1");
-            return 1;
+            Log.Write(nameof(BindingSettings), $"Forcing invalid wheel threshold value '{threshold}' to one wheel step ({stepSize:0.##}°)");
+            return (float)stepSize;
         }
     }
 }
