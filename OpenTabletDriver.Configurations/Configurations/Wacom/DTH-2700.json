@@ -15,6 +15,15 @@
   "DigitizerIdentifiers": [
     {
       "VendorID": 1386,
+      "ProductID": 810,
+      "InputReportLength": 192,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.CintiqV1.CintiqV1ReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ]
+    },
+    {
+      "VendorID": 1386,
       "ProductID": 811,
       "InputReportLength": 192,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.CintiqV1.CintiqV1ReportParser",
