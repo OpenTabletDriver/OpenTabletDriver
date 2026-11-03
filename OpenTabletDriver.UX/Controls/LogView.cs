@@ -9,6 +9,7 @@ using Eto.Forms;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.UX.Tools;
+using StreamJsonRpc;
 
 namespace OpenTabletDriver.UX.Controls
 {
@@ -73,8 +74,24 @@ namespace OpenTabletDriver.UX.Controls
 
         private async Task InitializeAsync()
         {
-            Debug.Assert(App.Driver.IsConnected, "Tried to initialize log view without an active daemon");
-            var currentMessages = await App.Driver.Instance.GetCurrentLog();
+            if (IsDisposed || !App.Driver.IsConnected)
+                return;
+
+            var daemon = App.Driver.Instance;
+            IEnumerable<LogMessage> currentMessages;
+            try
+            {
+                currentMessages = await daemon.GetCurrentLog();
+            }
+            catch (Exception ex) when (ex is ConnectionLostException or ObjectDisposedException)
+            {
+                Console.Error.WriteLine(ex);
+                return;
+            }
+
+            if (IsDisposed || !App.Driver.IsConnected || !ReferenceEquals(daemon, App.Driver.Instance))
+                return;
+
             messageList.DataStore = messageStore = new LogDataStore(currentMessages);
 
             this.messageStore.CollectionChanged += (sender, e) =>
