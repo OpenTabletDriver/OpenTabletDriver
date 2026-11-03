@@ -10,6 +10,7 @@
 | Gaomon 1060 Pro                    |     Supported     |
 | Gaomon GM116HD                     |     Supported     |
 | Gaomon GM156HD                     |     Supported     |
+| Gaomon GM156HD (16K)               |     Supported     |
 | Gaomon M5                          |     Supported     |
 | Gaomon M5 V2                       |     Supported     |
 | Gaomon M7                          |     Supported     |
