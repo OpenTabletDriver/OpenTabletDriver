@@ -516,7 +516,7 @@ namespace OpenTabletDriver.UX
         {
             var fileDialog = Extensions.OpenFileDialog(
                 "Load OpenTabletDriver settings...",
-                Eto.EtoEnvironment.GetFolderPath(Eto.EtoSpecialFolder.Documents),
+                Path.GetDirectoryName(AppInfo.Current.SettingsFile),
                 [new FileFilter("OpenTabletDriver Settings (*.json)", ".json")]
             );
 
