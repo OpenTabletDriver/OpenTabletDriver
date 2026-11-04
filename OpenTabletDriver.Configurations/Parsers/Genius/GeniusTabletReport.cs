@@ -12,15 +12,15 @@ namespace OpenTabletDriver.Configurations.Parsers.Genius
 
             Position = new Vector2
             {
-                X = Unsafe.ReadUnaligned<ushort>(ref report[1]),
-                Y = Unsafe.ReadUnaligned<ushort>(ref report[3])
+                X = Unsafe.ReadUnaligned<ushort>(ref report[2]),
+                Y = Unsafe.ReadUnaligned<ushort>(ref report[4])
             };
-            Pressure = report[5].IsBitSet(2) ? Unsafe.ReadUnaligned<ushort>(ref report[6]) : 0u;
+            Pressure = report[1].IsBitSet(0) ? Unsafe.ReadUnaligned<ushort>(ref report[6]) : 0u;
 
             PenButtons =
             [
-                report[5].IsBitSet(3),
-                report[5].IsBitSet(4),
+                report[1].IsBitSet(3),
+                report[1].IsBitSet(4),
             ];
         }
 
