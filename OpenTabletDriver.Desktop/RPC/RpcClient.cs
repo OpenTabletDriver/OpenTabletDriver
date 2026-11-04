@@ -2,11 +2,12 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO.Pipes;
 using System.Threading.Tasks;
+using PolyType;
 using StreamJsonRpc;
 
 namespace OpenTabletDriver.Desktop.RPC
 {
-    public class RpcClient<T> where T : class
+    public class RpcClient<T> where T : class, IShapeable<T>
     {
         private readonly string pipeName;
         private NamedPipeClientStream? stream;
@@ -30,7 +31,7 @@ namespace OpenTabletDriver.Desktop.RPC
             this.stream = GetStream();
             await this.stream.ConnectAsync();
 
-            rpc = new JsonRpc(this.stream);
+            rpc = new JsonRpc(Rpc.GetRpcHandler(stream));
             rpc.Disconnected += (_, _) =>
             {
                 this.stream.Dispose();
