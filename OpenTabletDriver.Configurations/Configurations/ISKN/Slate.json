@@ -1,0 +1,30 @@
+{
+  "Name": "iskn Slate",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 219.5,
+      "Height": 177.5,
+      "MaxX": 21950,
+      "MaxY": 17750
+    },
+    "Pen": {
+      "MaxPressure": 1,
+      "ButtonCount": 0
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 5
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 11399,
+      "ProductID": 1,
+      "InputReportLength": 64,
+      "OutputReportLength": 64,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.ISKN.SlateReportParser",
+      "OutputInitReport": [
+        "BLOl4T3LCAAAAAAAAFNO"
+      ]
+    }
+  ]
+}
