@@ -27,6 +27,7 @@ jobs:
           name: udev Rules
           path: 70-opentabletdriver.rules
           if-no-files-found: error
+          archive: false # no zip
 
   linter:
     name: Lint Code

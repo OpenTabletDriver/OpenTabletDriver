@@ -12,27 +12,16 @@ inputs:
 runs:
   using: "composite"
   steps:
-    # Does not use tag (artifact upload)
-
-    - name: Artifact upload
-      if: ${{ ! startsWith(github.ref, 'refs/tags/') }}
-      uses: actions/upload-artifact@v7
-      with:
-        name: ${{ inputs.file-display-name }}
-        path: ${{ inputs.files }}
-        if-no-files-found: error
-
-    # Uses tag (release)
-
-    - name: Ensure Release has single file only
-      if: ${{ startsWith(github.ref, 'refs/tags/') && endsWith(inputs.files, '*') }}
+    - name: Ensure wildcard files are zipped
+      # Windows build action is currently the only one returning a wildcard file list
+      if: ${{ endsWith(inputs.files, '*') }}
       shell: bash
       env:
         FILENAME: ${{ inputs.file-display-name }}
         FILELIST: ${{ inputs.files }}
-        # script below doesn't work with multiline file lists
+        # script below doesn't work with multiline file lists, only wildcards are supported
       run: |
-        echo "Zipping up files to avoid many random files being released"
+        echo "Zipping up files"
         cd $(dirname "$FILELIST")
         mkdir subfolder
         mv * subfolder 2>/dev/null || true
@@ -49,6 +38,19 @@ runs:
         rm -rf subfolder
         cd ..
         echo "zipfile ready: ${FILENAME}.zip"
+
+    # Does not use tag (artifact upload)
+
+    - name: Artifact upload
+      if: ${{ ! startsWith(github.ref, 'refs/tags/') }}
+      uses: actions/upload-artifact@v7
+      with:
+        name: ${{ inputs.file-display-name }}
+        path: ${{ inputs.files }}
+        if-no-files-found: error
+        archive: false # do not zip
+
+    # Uses tag (release)
 
     - name: Release
       uses: softprops/action-gh-release@v3
