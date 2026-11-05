@@ -8,7 +8,7 @@ namespace OpenTabletDriver.Native.OSX
 {
     public static class LibSystem
     {
-        private const string SysLib = "/usr/lib/libSystem.dylib";
+        internal const string SysLib = "/usr/lib/libSystem.dylib";
 
         [DllImport(SysLib, CharSet = CharSet.Ansi)]
         public static extern IntPtr dlopen(string path, int mode);
