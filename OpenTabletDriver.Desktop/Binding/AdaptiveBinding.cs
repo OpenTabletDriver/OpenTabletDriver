@@ -55,7 +55,7 @@ namespace OpenTabletDriver.Desktop.Binding
             }
         }
 
-        public void Press(TabletReference tablet, IDeviceReport report)
+        public void Press(TabletReference tablet, scoped in DeviceReport report)
         {
             if (PenActionHandler != null)
                 PenActionHandler.Activate(_action);
@@ -67,7 +67,7 @@ namespace OpenTabletDriver.Desktop.Binding
             }
         }
 
-        public void Release(TabletReference tablet, IDeviceReport report)
+        public void Release(TabletReference tablet, scoped in DeviceReport report)
         {
             if (PenActionHandler != null)
                 PenActionHandler.Deactivate(_action);

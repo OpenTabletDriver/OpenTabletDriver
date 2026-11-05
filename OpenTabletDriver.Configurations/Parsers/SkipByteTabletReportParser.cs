@@ -1,12 +1,13 @@
+using System;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers
 {
     public class SkipByteTabletReportParser : TabletReportParser
     {
-        public override ITabletReport Parse(byte[] data)
+        public override bool Parse(scoped in ReadOnlySpan<byte> report, scoped ref DeviceReport deviceReport)
         {
-            return base.Parse(data[1..^0]);
+            return base.Parse(report[1..], ref deviceReport);
         }
     }
 }

@@ -7,10 +7,15 @@ using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Benchmarks.Output
 {
+    [MemoryDiagnoser]
+    [BenchmarkDotNet.Attributes.EvaluateOverhead]
+    [BenchmarkDotNet.Attributes.OperationsPerSecond]
+    [BenchmarkDotNet.Attributes.GcForce()]
     public class OutputBenchmark
     {
+        // TODO: FIXME
         public AbsoluteOutputMode OutputMode { get; set; } = new NoopAbsoluteMode();
-        public IDeviceReport? Report { get; set; }
+        //public DeviceReport Report { get; set; }
 
         public void SetProfile(Profile profile)
         {
@@ -43,7 +48,7 @@ namespace OpenTabletDriver.Benchmarks.Output
 
             var parser = new TabletReportParser();
 
-            Report = parser.Parse(data);
+            //Report = parser.Parse(data);
         }
 
         [GlobalSetup]
@@ -67,7 +72,7 @@ namespace OpenTabletDriver.Benchmarks.Output
                     }
                 },
                 Tablet = "Spoofed Tablet",
-                OutputMode = new PluginSettingStore("", false) // TODO: test
+                OutputMode = new PluginSettingStore("", false),
             };
 
             SetProfile(profile);
@@ -76,7 +81,8 @@ namespace OpenTabletDriver.Benchmarks.Output
         [Benchmark]
         public void Output()
         {
-            OutputMode.Read(Report!);
+            throw new NotImplementedException();
+            //OutputMode.Read(Report!);
         }
     }
 }

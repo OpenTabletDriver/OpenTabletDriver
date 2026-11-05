@@ -47,9 +47,9 @@ namespace OpenTabletDriver.Desktop.Binding
         /// or manually invoke <see cref="Reset"/>
         /// </summary>
         /// <param name="tabletReference">The <see cref="TabletReference"/> to pass to the binding</param>
-        /// <param name="report">The <see cref="IDeviceReport"/> to pass to the binding</param>
+        /// <param name="report">The <see cref="DeviceReport"/> to pass to the binding</param>
         /// <param name="position">The current position of the wheel, or <c>null</c> to reset deltas</param>
-        public void HandleAbsoluteWheel(TabletReference tabletReference, IDeviceReport report, uint? position)
+        public void HandleAbsoluteWheel(TabletReference tabletReference, scoped in DeviceReport report, uint? position)
         {
             if (position == null)
             {
@@ -77,10 +77,10 @@ namespace OpenTabletDriver.Desktop.Binding
         /// or manually invoke <see cref="Reset"/>
         /// </summary>
         /// <param name="tabletReference">The <see cref="TabletReference"/> to pass to the binding</param>
-        /// <param name="report">The <see cref="IDeviceReport"/> to pass to the binding</param>
+        /// <param name="report">The <see cref="DeviceReport"/> to pass to the binding</param>
         /// <param name="wheelSteps">The amount of wheel steps to send to the binding, or <c>0</c> to reset deltas</param>
-        public void HandleRelativeWheel(TabletReference tabletReference, IDeviceReport report, int wheelSteps) =>
-            HandleWheelDelta(tabletReference, report, wheelSteps);
+        public void HandleRelativeWheel(TabletReference tabletReference, scoped in DeviceReport report, int wheelSteps) =>
+            HandleWheelDelta(tabletReference, in report, wheelSteps);
 
         /// <summary>
         /// Clear the last absolute position and any accumulated deltas in bindings
@@ -92,16 +92,16 @@ namespace OpenTabletDriver.Desktop.Binding
             CounterClockwiseRotation?.Reset();
         }
 
-        private void HandleWheelDelta(TabletReference tablet, IDeviceReport report, int counts)
+        private void HandleWheelDelta(TabletReference tablet, scoped in DeviceReport report, int counts)
         {
             switch (counts)
             {
                 case > 0:
-                    ClockwiseRotation?.Invoke(tablet, report, counts * _stepsPerTick);
+                    ClockwiseRotation?.Invoke(tablet, in report, counts * _stepsPerTick);
                     CounterClockwiseRotation?.Reset();
                     break;
                 case < 0:
-                    CounterClockwiseRotation?.Invoke(tablet, report, counts * _stepsPerTick);
+                    CounterClockwiseRotation?.Invoke(tablet, in report, counts * _stepsPerTick);
                     ClockwiseRotation?.Reset();
                     break;
             }

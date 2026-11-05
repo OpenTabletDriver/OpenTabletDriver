@@ -148,14 +148,14 @@ namespace OpenTabletDriver.Desktop.ViewModels.Utility
         public Statistic SaveMinMax(double source, string? unit = null, int precision = 2) => SaveMinMax(source, Math.Min, Math.Max, unit, precision);
         public Statistic SaveMinMax(uint source, string? unit = null) => SaveMinMax(source, Math.Min, Math.Max, unit, null);
         public Statistic SaveMinMax(Vector2 source, string? unit = null, int precision = 0) => SaveMinMax(source, Vector2.Min, Vector2.Max, unit, precision);
-        public Statistic SaveMinMax(TouchPoint?[] touchPoints)
+        public Statistic SaveMinMax(ReadOnlySpan<TouchPoint?> touchPoints)
         {
-            var validTouchPoints = touchPoints.Where(x => x != null).Select(x => x!.Position).ToArray();
-            if (validTouchPoints.Length == 0) return this;
-
             // Vector2 doesn't implement IComparable, do naive method:
-            foreach (var touchPoint in validTouchPoints)
-                SaveMinMax(touchPoint);
+            foreach (var touchPoint in touchPoints)
+            {
+                if (touchPoint == null) continue;
+                SaveMinMax(touchPoint.Position);
+            }
 
             return this;
         }
@@ -186,22 +186,20 @@ namespace OpenTabletDriver.Desktop.ViewModels.Utility
         }
 
         /// <summary>
-        /// Save up to <paramref name="expectedButtons"/> values from <paramref name="buttons"/> into this group.
+        /// Values from <paramref name="buttons"/> into this group.
         /// This function also tracks the complete state range of the button,
         ///   to ensure a full <c>false</c> -> <c>true</c> -> <c>false</c> transition has happened
         /// </summary>
         /// <param name="buttons">The buttons to save</param>
-        /// <param name="expectedButtons">The maximum number of buttons to save</param>
-        /// <returns></returns>
-        public Statistic SaveButtons(bool[] buttons, int expectedButtons)
+        public Statistic SaveButtons(ReadOnlySpan<bool> buttons)
         {
             // no buttons expected, don't log anything
-            if (expectedButtons == 0) return this;
+            if (buttons.Length == 0) return this;
 
             // skip if more than 1 button pressed
-            if (buttons.Take(expectedButtons).Count(x => x) > 1) return this;
+            if (buttons.Count(true) > 1) return this;
 
-            for (int i = 0; i < expectedButtons; i++)
+            for (int i = 0; i < buttons.Length; i++)
             {
                 var buttonStatistic = this[$"{i}"];
                 buttonStatistic.Hidden = true;
@@ -211,7 +209,7 @@ namespace OpenTabletDriver.Desktop.ViewModels.Utility
                 if (!_seenButtons.TryGetValue(i, out bool? seenButton))
                 {
                     // don't add true-first buttons (click another button first, unless there's no other button to click)
-                    if (buttonState && expectedButtons > 1) continue;
+                    if (buttonState && buttons.Length > 1) continue;
 
                     _seenButtons.Add(i, buttonState);
                     buttonStatistic.Value = "Press Down";

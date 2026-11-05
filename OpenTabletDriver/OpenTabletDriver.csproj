@@ -19,7 +19,6 @@
   </PropertyGroup>
 
   <ItemGroup Label="NuGet Packages">
-    <PackageReference Include="HidSharpCore" Version="1.3.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
@@ -28,6 +27,7 @@
     <ProjectReference Include="..\OpenTabletDriver.Plugin\OpenTabletDriver.Plugin.csproj" />
     <ProjectReference Include="..\OpenTabletDriver.Native\OpenTabletDriver.Native.csproj" />
     <ProjectReference Include="..\OpenTabletDriver.Configurations\OpenTabletDriver.Configurations.csproj" />
+    <ProjectReference Include="..\..\HIDSharpCore\HidSharp\HidSharp.csproj" />
   </ItemGroup>
 
   <ItemGroup Label="Configurations">

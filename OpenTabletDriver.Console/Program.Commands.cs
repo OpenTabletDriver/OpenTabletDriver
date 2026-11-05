@@ -270,7 +270,7 @@ namespace OpenTabletDriver.Console
         private static async Task EnableTabletFilters(string tablet, params string[] filters)
         {
             await ModifyProfile(tablet,
-                s => AppendPluginStoreSettingsCollectionByPaths<IPositionedPipelineElement<IDeviceReport>>(s.Filters, filters));
+                s => AppendPluginStoreSettingsCollectionByPaths<IPositionedPipelineElement>(s.Filters, filters));
         }
 
         private static async Task EnableTools(params string[] tools)
@@ -300,7 +300,7 @@ namespace OpenTabletDriver.Console
             {
                 foreach (var filterToReset in filtersToReset)
                     s.Filters = new PluginSettingStoreCollection(s.Filters.Where(filter => filter?.Path != filterToReset)!);
-                AppendPluginStoreSettingsCollectionByPaths<IPositionedPipelineElement<IDeviceReport>>(s.Filters, filtersToReset);
+                AppendPluginStoreSettingsCollectionByPaths<IPositionedPipelineElement>(s.Filters, filtersToReset);
             });
         }
 
@@ -447,7 +447,7 @@ namespace OpenTabletDriver.Console
         private static async Task ListFilters()
         {
             // Using the predicate stops output mode types from being listed.
-            await ListTypes<IPipelineElement<IDeviceReport>>(t => !t.IsAssignableTo(typeof(IOutputMode)));
+            await ListTypes<IPipelineElement>(t => !t.IsAssignableTo(typeof(IOutputMode)));
         }
 
         private static async Task ListTools()

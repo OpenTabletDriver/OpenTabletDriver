@@ -14,7 +14,7 @@ namespace OpenTabletDriver.Desktop.Binding
 
         private double _accumulatedDelta;
 
-        public void Invoke(TabletReference tablet, IDeviceReport report, double delta)
+        public void Invoke(TabletReference tablet, scoped in DeviceReport report, double delta)
         {
             _accumulatedDelta += delta;
 

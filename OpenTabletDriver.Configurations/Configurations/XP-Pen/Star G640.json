@@ -9,7 +9,7 @@
     },
     "Pen": {
       "MaxPressure": 8191,
-      "ButtonCount": 2
+      "ButtonCount": 0
     }
   },
   "DigitizerIdentifiers": [
@@ -18,7 +18,7 @@
       "ProductID": 148,
       "InputReportLength": 8,
       "OutputReportLength": 8,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "ReportParser": "OpenTabletDriver.Plugin.Tablet.TabletReportParser",
       "OutputInitReport": [
         "ArAC"
       ],
@@ -32,7 +32,7 @@
       "ProductID": 2324,
       "InputReportLength": 14,
       "OutputReportLength": 14,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "ReportParser": "OpenTabletDriver.Plugin.Tablet.TabletReportParser",
       "OutputInitReport": [
         "ArAE"
       ]

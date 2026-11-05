@@ -8,7 +8,7 @@ using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver
 {
-    public class InputDevice : DeviceReader<IDeviceReport>
+    public class InputDevice : DeviceReader
     {
         private readonly uint _featureInitDelayMs;
         private const string DELAY_ATTRIBUTE_KEY_NAME = "FeatureInitDelayMs";

@@ -1,10 +1,14 @@
+using System;
+
 namespace OpenTabletDriver.Plugin.Tablet
 {
-    public class PassthroughReportParser : IReportParser<IDeviceReport>
+    public class PassthroughReportParser : IReportParser
     {
-        public virtual IDeviceReport Parse(byte[] data)
+        private static bool fakeParse(scoped ref DeviceReport deviceReport) => deviceReport.Continue = true;
+
+        public bool Parse(scoped in ReadOnlySpan<byte> report, scoped ref DeviceReport deviceReport)
         {
-            return new DeviceReport(data);
+            return fakeParse(ref deviceReport);
         }
     }
 }

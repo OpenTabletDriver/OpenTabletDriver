@@ -4,7 +4,7 @@ namespace OpenTabletDriver.Plugin.Devices
 {
     public interface IDeviceEndpointStream : IDisposable
     {
-        byte[] Read();
+        int Read(Span<byte> buffer);
         void Write(byte[] buffer);
 
         void GetFeature(byte[] buffer);

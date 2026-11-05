@@ -1,13 +1,14 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace OpenTabletDriver.Plugin.Tablet
 {
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
-    public class TiltTabletReportParser : IReportParser<IDeviceReport>
+    public class TiltTabletReportParser : IReportParser
     {
-        public virtual IDeviceReport Parse(byte[] data)
+        public bool Parse(scoped in ReadOnlySpan<byte> raw, scoped ref DeviceReport deviceReport)
         {
-            return new TiltTabletReport(data);
+            return deviceReport.Continue = TiltTabletReport.Parse(raw, ref deviceReport);
         }
     }
 }

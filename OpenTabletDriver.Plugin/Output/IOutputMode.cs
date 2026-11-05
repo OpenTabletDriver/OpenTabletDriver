@@ -5,18 +5,18 @@ using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Plugin.Output
 {
-    public interface IOutputMode : IPipelineElement<IDeviceReport>, IDisposable
+    public interface IOutputMode : IPipelineElement, IDisposable
     {
         /// <summary>
         /// Consume the <see cref="IDeviceReport"/> emitted by the device endpoints to be transformed by the pipeline, including <see cref="TransformationMatrix"/>.
         /// </summary>
         /// <param name="report">The <see cref="IDeviceReport"/> to be transformed</param>
-        void Read(IDeviceReport report);
+        void Read(scoped ref DeviceReport report);
 
         /// <summary>
         /// The list of pipeline elements in which the report is modified.
         /// </summary>
-        IList<IPositionedPipelineElement<IDeviceReport>> Elements { set; get; }
+        IList<IPositionedPipelineElement> Elements { set; get; }
 
         /// <summary>
         /// The transformation matrix in which the

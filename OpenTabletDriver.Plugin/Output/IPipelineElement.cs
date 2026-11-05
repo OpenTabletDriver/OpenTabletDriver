@@ -1,17 +1,20 @@
-using System;
+
+using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Plugin.Output
 {
-    public interface IPipelineElement<T>
+    public delegate void RefAction<T>(ref T item) where T : struct, allows ref struct;
+
+    public interface IPipelineElement
     {
         /// <summary>
-        /// Handles an object to be processed by the <see cref="IPipelineElement{T}"/>.
+        /// Handles an object to be processed by the <see cref="IPipelineElement"/>.
         /// </summary>
-        void Consume(T? obj);
+        void Consume(scoped ref DeviceReport obj);
 
         /// <summary>
-        /// Invoked when an object of <see cref="T"/> is to be pushed to the next link in the pipeline.
+        /// Invoked when a DeviceReport is to be pushed to the next link in the pipeline.
         /// </summary>
-        event Action<T?>? Emit;
+        event RefAction<DeviceReport>? Emit;
     }
 }

@@ -1,39 +1,33 @@
+using System;
 using System.Numerics;
+using CommunityToolkit.HighPerformance.Buffers;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1
 {
-    public struct IntuosV1RotationReport : ITabletReport, IProximityReport, ITiltReport, IRotationReport
+    public class IntuosV1RotationReport
     {
-        public IntuosV1RotationReport(byte[] report, ref uint _prevPressure, ref Vector2 _prevTilt, ref int _prevRotation, ref bool[] _prevPenButtons)
+        public static bool Parse(scoped in ReadOnlySpan<byte> report, ref DeviceReport deviceReport, ref uint prevPressure, ref Vector2 prevTilt, ref int prevRotation, ref bool[] prevPenButtons)
         {
-            Raw = report;
-
-            Position = new Vector2
+            deviceReport.PenPosition = new Vector2
             {
                 X = (report[3] | report[2] << 8) << 1 | ((report[9] >> 1) & 1),
-                Y = (report[5] | report[4] << 8) << 1 | (report[9] & 1)
+                Y = (report[5] | report[4] << 8) << 1 | (report[9] & 1),
             };
-            Tilt = _prevTilt;
-            Pressure = _prevPressure;
+            deviceReport.Tilt = prevTilt;
+            deviceReport.PenPressure = prevPressure;
 
-            PenButtons = _prevPenButtons;
-            NearProximity = report[1].IsBitSet(6);
-            HoverDistance = (uint)report[9];
+            deviceReport.PenButtons = MemoryOwner<bool>.Allocate(prevPenButtons.Length);
+            prevPenButtons.CopyTo(deviceReport.PenButtons.Span);
 
-            Rotation = (report[6] << 2) | ((report[7] & 0xC0) >> 6);
-            if (!report[7].IsBitSet(5)) Rotation *= -1;
+            deviceReport.NearProximity = report[1].IsBitSet(6);
+            deviceReport.HoverDistance = report[9];
 
-            _prevRotation = Rotation;
+            deviceReport.Rotation = (report[6] << 2) | ((report[7] & 0xC0) >> 6);
+            if (!report[7].IsBitSet(5)) deviceReport.Rotation *= -1;
+
+            prevRotation = deviceReport.Rotation!.Value;
+            return true;
         }
-
-        public byte[] Raw { set; get; }
-        public Vector2 Position { set; get; }
-        public Vector2 Tilt { set; get; }
-        public uint Pressure { set; get; }
-        public bool[] PenButtons { set; get; }
-        public bool NearProximity { set; get; }
-        public uint HoverDistance { set; get; }
-        public int Rotation { set; get; }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using HidSharp;
 using OpenTabletDriver.Plugin.Devices;
 
@@ -13,7 +14,8 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
 
         private HidStream stream;
 
-        public byte[] Read() => stream.Read();
+        // TODO: implement Span<byte> handling directly in HIDSharp to avoid a copy
+        public int Read(Span<byte> buffer) => stream.Read(buffer);
         public void Write(byte[] buffer) => stream.Write(buffer);
 
         public void GetFeature(byte[] buffer) => stream.GetFeature(buffer);
