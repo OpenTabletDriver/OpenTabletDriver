@@ -122,13 +122,15 @@ namespace OpenTabletDriver.Plugin.Output
             // Apply transformation
             var pos = Vector2.Transform(report.Position, this.TransformationMatrix);
 
-            // Clipping to display bounds
-            var clippedPoint = Vector2.Clamp(pos, this.min, this.max);
-            if (AreaLimiting && clippedPoint != pos)
-                return null;
+            if (AreaLimiting || AreaClipping)
+            {
+                var clippedPoint = Vector2.Clamp(pos, this.min, this.max);
 
-            if (AreaClipping)
+                if (clippedPoint != pos && AreaLimiting)
+                    return null;
+
                 pos = clippedPoint;
+            }
 
             report.Position = pos;
 
