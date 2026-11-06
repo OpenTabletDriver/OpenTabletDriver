@@ -20,8 +20,8 @@ namespace OpenTabletDriver.Desktop.Binding
                 Wheels.Add(wheelIndex++, new WheelBindings(wheel));
         }
 
-        public ThresholdBindingState? Tip { set; get; }
-        public ThresholdBindingState? Eraser { set; get; }
+        public BindingState? Tip { set; get; }
+        public BindingState? Eraser { set; get; }
         private bool _isEraser;
 
         public Dictionary<int, BindingState?> PenButtons { set; get; } = new Dictionary<int, BindingState?>();
@@ -138,9 +138,9 @@ namespace OpenTabletDriver.Desktop.Binding
         {
             float pressurePercent = (float)report.Pressure / (float)pen.MaxPressure * 100f;
             if (_isEraser)
-                Eraser?.Invoke(tablet, report, pressurePercent);
+                Eraser?.Invoke(tablet, report, pressurePercent > 0);
             else
-                Tip?.Invoke(tablet, report, pressurePercent);
+                Tip?.Invoke(tablet, report, pressurePercent > 0);
 
             HandleBindingCollection(tablet, report, PenButtons, report.PenButtons);
         }
