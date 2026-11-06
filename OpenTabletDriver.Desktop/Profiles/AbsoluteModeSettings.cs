@@ -7,7 +7,7 @@ namespace OpenTabletDriver.Desktop.Profiles
 {
     public class AbsoluteModeSettings : ViewModel
     {
-        private bool _lockar, _clipping, _areaLimiting;
+        private bool _lockar, _areaLimiting;
 
         [JsonProperty(nameof(Display))]
         public required AreaSettings Display
@@ -26,9 +26,9 @@ namespace OpenTabletDriver.Desktop.Profiles
         [JsonProperty(nameof(EnableClipping))]
         public bool EnableClipping
         {
-            set => RaiseAndSetIfChanged(ref _clipping, value);
-            get => _clipping;
-        }
+            get;
+            set => RaiseAndSetIfChanged(ref field, value);
+        } = true;
 
         [JsonProperty(nameof(EnableAreaLimiting))]
         public bool EnableAreaLimiting
@@ -52,7 +52,6 @@ namespace OpenTabletDriver.Desktop.Profiles
             {
                 Display = AreaSettings.GetDefaults(display),
                 Tablet = AreaSettings.GetDefaults(digitizer),
-                EnableClipping = true
             };
         }
     }
