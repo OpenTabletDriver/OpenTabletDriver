@@ -8,5 +8,9 @@ namespace OpenTabletDriver.Plugin.Attributes
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface)]
     public class PluginIgnoreAttribute : Attribute
     {
+        /// <summary>
+        /// Reason for ignoring this plugin
+        /// </summary>
+        public string Reason { get; init; } = string.Empty;
     }
 }
