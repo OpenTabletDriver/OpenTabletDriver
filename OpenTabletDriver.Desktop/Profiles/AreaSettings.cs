@@ -59,26 +59,19 @@ namespace OpenTabletDriver.Desktop.Profiles
             get => new(this.Width, this.Height, new Vector2(this.X, this.Y), this.Rotation);
         }
 
-        public static AreaSettings GetDefaults(DigitizerSpecifications digitizer)
-        {
-            return new AreaSettings
-            {
-                Width = digitizer.Width,
-                Height = digitizer.Height,
-                X = digitizer.Width / 2,
-                Y = digitizer.Height / 2
-            };
-        }
+        public static AreaSettings GetDefaults(DigitizerSpecifications digitizer) =>
+            getDefaults(digitizer.Width, digitizer.Height);
 
-        public static AreaSettings GetDefaults(IDisplay display)
-        {
-            return new AreaSettings
+        public static AreaSettings GetDefaults(IDisplay display) =>
+            getDefaults(display.Width, display.Height);
+
+        private static AreaSettings getDefaults(float width, float height) =>
+            new()
             {
-                Width = display.Width,
-                Height = display.Height,
-                X = display.Width / 2,
-                Y = display.Height / 2
+                Width = width,
+                Height = height,
+                X = width / 2,
+                Y = height / 2,
             };
-        }
     }
 }
