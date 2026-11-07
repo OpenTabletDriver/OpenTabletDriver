@@ -5,7 +5,7 @@ using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Desktop.Binding
 {
-    [PluginIgnore]
+    [PluginIgnore(Reason = "Manually instanced during pipeline setup. It makes no sense to have multiple of these.")]
     public class PressureRewriteFilter : IPositionedPipelineElement<IDeviceReport>
     {
         public required float TipPressureThreshold

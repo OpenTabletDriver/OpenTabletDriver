@@ -8,7 +8,7 @@ using OpenTabletDriver.Plugin.Tablet.Wheel;
 
 namespace OpenTabletDriver.Desktop.Binding
 {
-    [PluginIgnore]
+    [PluginIgnore(Reason = "Initialized manually")]
     public class BindingHandler : IPositionedPipelineElement<IDeviceReport>
     {
         public BindingHandler(TabletReference tablet)
