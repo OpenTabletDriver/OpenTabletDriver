@@ -7,6 +7,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="OpenTabletDriver.Tests" />
+  </ItemGroup>
+
   <ItemGroup Label="NuGet Packages">
     <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
     <PackageReference Include="Octokit" Version="14.0.0" />

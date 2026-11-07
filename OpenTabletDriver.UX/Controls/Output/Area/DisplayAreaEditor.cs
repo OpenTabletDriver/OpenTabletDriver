@@ -1,11 +1,11 @@
 using System;
+using System.ComponentModel;
 using System.Linq;
-using OpenTabletDriver.Desktop.Interop;
-using OpenTabletDriver.Plugin.Platform.Display;
-using OpenTabletDriver.UX.Controls.Output.Area;
+using Eto.Drawing;
+using Eto.Forms;
 using OpenTabletDriver.UX.Controls.Utilities;
 
-namespace OpenTabletDriver.UX.Controls.Output
+namespace OpenTabletDriver.UX.Controls.Output.Area
 {
     public class DisplayAreaEditor : AreaEditor
     {
@@ -13,8 +13,27 @@ namespace OpenTabletDriver.UX.Controls.Output
         private Action triggerAspectRatioLock;
         public DisplayAreaEditor(Action triggerAspectRatioLock)
         {
-            this.ToolTip = "You can right click the area editor to set the area to a display, adjust alignment, or resize the area.";
+            base.ToolTip = "You can right click the area editor to set the area to a display, adjust alignment, or resize the area.";
             this.triggerAspectRatioLock = triggerAspectRatioLock;
+            SetDisplaySize();
+            App.Current.PropertyChanged += OnGlobalViewmodelOnPropertyChanged;
+        }
+
+        private void OnGlobalViewmodelOnPropertyChanged(object? o, PropertyChangedEventArgs propertyChangedEventArgs)
+        {
+            if (propertyChangedEventArgs.PropertyName == nameof(App.Current.Displays))
+            {
+                Application.Instance.AsyncInvoke(SetDisplaySize);
+                Application.Instance.AsyncInvoke(CreateMenu);
+            }
+        }
+
+        private void SetDisplaySize()
+        {
+            var bgs = from disp in App.Current.Displays
+                      where !disp.IsVirtualScreen
+                      select new RectangleF(disp.Position.X, disp.Position.Y, disp.Width, disp.Height);
+            AreaBounds = bgs;
         }
 
         protected override void CreateMenu()
@@ -60,17 +79,15 @@ namespace OpenTabletDriver.UX.Controls.Output
 
             var subMenu = base.ContextMenu.Items.GetSubmenu("Set to display");
 
-            var displays = DesktopInterop.VirtualScreen?.Displays.ToArray()
-                ?? throw new InvalidOperationException("Could not get VirtualScreen");
-
             // account for monitor layouts with negative offsets (e.g. Wayland supports this)
             // skip IVirtualScreen's as these tend to be normalized to 0,0, which may confuse these methods
-            float xOffset = displays.Where(d => d is not IVirtualScreen).MinBy(d => d.Position.X)?.Position.X
+            var displaysWithoutVirtualScreens = App.Current.Displays.Where(d => !d.IsVirtualScreen).ToArray();
+            float xOffset = displaysWithoutVirtualScreens.MinBy(d => d.Position.X)?.Position.X
                 ?? throw new InvalidOperationException("Unable to look up X offset");
-            float yOffset = displays.Where(d => d is not IVirtualScreen).MinBy(d => d.Position.Y)?.Position.Y
+            float yOffset = displaysWithoutVirtualScreens.MinBy(d => d.Position.Y)?.Position.Y
                 ?? throw new InvalidOperationException("Unable to look up Y offset");
 
-            foreach (var display in displays)
+            foreach (var display in App.Current.Displays)
             {
                 subMenu.Items.Add(
                     new ActionCommand
@@ -85,14 +102,13 @@ namespace OpenTabletDriver.UX.Controls.Output
 
                             this.Area.Width = display.Width;
                             this.Area.Height = display.Height;
-                            if (display is IVirtualScreen virtualScreen)
+                            if (display.IsVirtualScreen)
                             {
-                                this.Area.X = virtualScreen.Width / 2;
-                                this.Area.Y = virtualScreen.Height / 2;
+                                this.Area.X = display.Width / 2;
+                                this.Area.Y = display.Height / 2;
                             }
                             else
                             {
-                                virtualScreen = DesktopInterop.VirtualScreen;
                                 this.Area.X = display.Position.X - xOffset + (display.Width / 2);
                                 this.Area.Y = display.Position.Y - yOffset + (display.Height / 2);
                             }
@@ -103,6 +119,12 @@ namespace OpenTabletDriver.UX.Controls.Output
                     }
                 );
             }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            App.Current.PropertyChanged -= OnGlobalViewmodelOnPropertyChanged;
+            base.Dispose(disposing);
         }
     }
 }
