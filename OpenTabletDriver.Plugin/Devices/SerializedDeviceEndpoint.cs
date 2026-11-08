@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
@@ -56,5 +57,20 @@ namespace OpenTabletDriver.Plugin.Devices
 
         [JsonProperty(nameof(DevicePath))]
         public required string DevicePath { get; set; }
+
+        /// <returns>A 2-line string consisting of important device distinctions</returns>
+        public override string ToString()
+        {
+            // don't include manufacturer if it's already in the product name (e.g. Razer)
+            string name = ProductName ?? FriendlyName ?? "null";
+            string manufacturer = Manufacturer ?? "null";
+            string title = name.Contains(manufacturer) ? name : $"{manufacturer} {name}";
+
+            if (title.Length >= 32) // truncate if too long, used in GUI
+                title = title[..29] + "...";
+
+            // hex value preferable (but not consistent.. yet?)
+            return $"[0x{VendorID:x4} 0x{ProductID:x4}]{Environment.NewLine}{title}";
+        }
     }
 }
