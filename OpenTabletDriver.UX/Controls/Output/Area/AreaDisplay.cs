@@ -6,7 +6,6 @@ using System.Linq;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Profiles;
-using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.UX.Controls.Output.Area
 {

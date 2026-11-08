@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
-using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Desktop
 {

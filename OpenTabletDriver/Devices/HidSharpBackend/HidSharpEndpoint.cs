@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using HidSharp;
 using HidSharp.Reports;
-using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Devices;
 
 namespace OpenTabletDriver.Devices.HidSharpBackend

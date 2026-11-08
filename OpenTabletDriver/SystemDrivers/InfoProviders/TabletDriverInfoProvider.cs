@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.SystemDrivers.InfoProviders
 {

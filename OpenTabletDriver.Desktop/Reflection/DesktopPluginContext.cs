@@ -85,8 +85,8 @@ namespace OpenTabletDriver.Desktop.Reflection
             return true switch
             {
                 _ when OperatingSystem.IsWindows() => $"{dllName}.dll",
-                _ when OperatingSystem.IsLinux()   => $"lib{dllName}.so",
-                _ when OperatingSystem.IsMacOS()   => $"lib{dllName}.dylib",
+                _ when OperatingSystem.IsLinux() => $"lib{dllName}.so",
+                _ when OperatingSystem.IsMacOS() => $"lib{dllName}.dylib",
                 _ => throw new PlatformNotSupportedException()
             };
         }
