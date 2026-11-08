@@ -1,3 +1,5 @@
+using System.Runtime.Versioning;
+
 namespace OpenTabletDriver.SystemDrivers.InfoProviders
 {
     internal class WacomDriverInfoProvider : ProcessModuleQueryableDriverInfoProvider
@@ -15,6 +17,7 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
             "Wacom",
         ];
 
+        [SupportedOSPlatform("windows")]
         protected override DriverInfo? GetWinDriverInfo()
         {
             var info = base.GetWinDriverInfo();
@@ -32,6 +35,7 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
             return info;
         }
 
+        [SupportedOSPlatform("linux")]
         protected override DriverInfo? GetLinuxDriverInfo()
         {
             var info = base.GetLinuxDriverInfo();

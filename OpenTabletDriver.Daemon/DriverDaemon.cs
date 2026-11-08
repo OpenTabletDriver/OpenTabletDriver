@@ -187,7 +187,10 @@ namespace OpenTabletDriver.Daemon
         public async Task<IEnumerable<TabletReference>> DetectTablets()
         {
             Driver.Detect();
-            await Task.Run(CheckForProblematicProcesses).ConfigureAwait(false);
+            if (OperatingSystem.IsWindows())
+            {
+                await Task.Run(CheckForProblematicProcesses).ConfigureAwait(false);
+            }
 
             foreach (var tablet in Driver.InputDevices)
             {
