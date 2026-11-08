@@ -65,7 +65,7 @@ namespace OpenTabletDriver.Desktop.Interop
             }
         }
 
-        public static IGitHubClient GitHubClient => new GitHubClient(new ProductHeaderValue("OpenTabletDriver"));
+        private static IGitHubClient GitHubClient => new GitHubClient(new ProductHeaderValue("OpenTabletDriver"));
 
         public static IUpdater? Updater => CurrentPlatform switch
         {
