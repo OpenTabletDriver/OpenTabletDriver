@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Versioning;
 using OpenTabletDriver.Desktop.Interop.Input.Absolute;
 using OpenTabletDriver.Native.Linux.Evdev;
 using OpenTabletDriver.Plugin;
@@ -11,7 +12,7 @@ using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
 {
-    [PluginName(_PLUGIN_NAME), SupportedPlatform(PluginPlatform.Linux)]
+    [PluginName(_PLUGIN_NAME), SupportedOSPlatform("linux")]
     public class LinuxArtistModeButtonBinding : IStateBinding
     {
         private const string _PLUGIN_NAME = "Linux Artist Mode Button Binding";

@@ -6,8 +6,6 @@ using System.Linq;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Profiles;
-using OpenTabletDriver.Interop;
-using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.UX.Controls.Output.Area
 {
@@ -232,9 +230,9 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
 
         private readonly Color AccentColor = new Color(SystemColors.Highlight, 0.5f);
         private readonly Color AreaBoundsFillColor = SystemColors.ControlBackground;
-        private readonly Color AreaBoundsBorderColor = SystemInterop.CurrentPlatform switch
+        private readonly Color AreaBoundsBorderColor = true switch
         {
-            PluginPlatform.Windows => new Color(64, 64, 64),
+            _ when OperatingSystem.IsWindows() => new Color(64, 64, 64),
             _ => SystemColors.Control
         };
 

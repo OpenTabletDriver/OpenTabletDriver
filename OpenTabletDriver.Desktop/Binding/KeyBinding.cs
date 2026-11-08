@@ -1,6 +1,6 @@
+using System;
 using System.Collections.Generic;
 using OpenTabletDriver.Desktop.Interop.Input.Keyboard;
-using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.DependencyInjection;
@@ -43,11 +43,11 @@ namespace OpenTabletDriver.Desktop.Binding
         private static IEnumerable<string>? validKeys;
         public static IEnumerable<string>? ValidKeys
         {
-            get => validKeys ??= SystemInterop.CurrentPlatform switch
+            get => validKeys ??= true switch
             {
-                PluginPlatform.Windows => WindowsVirtualKeyboard.EtoKeysymToVK.Keys,
-                PluginPlatform.Linux => EvdevVirtualKeyboard.EtoKeysymToEventCode.Keys,
-                PluginPlatform.MacOS => MacOSVirtualKeyboard.EtoKeysymToVK.Keys,
+                _ when OperatingSystem.IsWindows() => WindowsVirtualKeyboard.EtoKeysymToVK.Keys,
+                _ when OperatingSystem.IsLinux() => EvdevVirtualKeyboard.EtoKeysymToEventCode.Keys,
+                _ when OperatingSystem.IsMacOS() => MacOSVirtualKeyboard.EtoKeysymToVK.Keys,
                 _ => null
             };
         }

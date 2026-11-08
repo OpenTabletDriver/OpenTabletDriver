@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
-using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Desktop.Reflection
@@ -83,12 +82,12 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         private static string ToDllName(string dllName)
         {
-            return SystemInterop.CurrentPlatform switch
+            return true switch
             {
-                PluginPlatform.Windows => $"{dllName}.dll",
-                PluginPlatform.Linux => $"lib{dllName}.so",
-                PluginPlatform.MacOS => $"lib{dllName}.dylib",
-                _ => throw new InvalidOperationException($"Unsupported plugin platform '{SystemInterop.CurrentPlatform}'"),
+                _ when OperatingSystem.IsWindows() => $"{dllName}.dll",
+                _ when OperatingSystem.IsLinux() => $"lib{dllName}.so",
+                _ when OperatingSystem.IsMacOS() => $"lib{dllName}.dylib",
+                _ => throw new PlatformNotSupportedException()
             };
         }
     }

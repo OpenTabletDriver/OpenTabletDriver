@@ -1,6 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
-using OpenTabletDriver.Plugin;
+using System.Runtime.Versioning;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.DependencyInjection;
 using OpenTabletDriver.Plugin.Output;
@@ -8,7 +8,7 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Output
 {
-    [PluginName("Artist Mode"), SupportedPlatform(PluginPlatform.Linux)]
+    [PluginName("Artist Mode"), SupportedOSPlatform("linux")]
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
     public class LinuxArtistMode : AbsoluteOutputMode
     {

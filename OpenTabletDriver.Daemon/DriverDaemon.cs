@@ -17,7 +17,6 @@ using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
 using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Desktop.Updater;
-using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Devices;
 using OpenTabletDriver.Plugin.Logging;
@@ -63,13 +62,10 @@ namespace OpenTabletDriver.Daemon
 
             foreach (var driverInfo in DriverInfo.GetDriverInfos())
             {
-                var os = SystemInterop.CurrentPlatform switch
-                {
-                    PluginPlatform.Windows => "Windows",
-                    PluginPlatform.Linux => "Linux",
-                    PluginPlatform.MacOS => "MacOS",
-                    _ => null
-                };
+                var os = OperatingSystem.IsWindows() ? "Windows" :
+                    OperatingSystem.IsLinux() ? "Linux" :
+                    OperatingSystem.IsMacOS() ? "MacOS" :
+                    null;
                 var wikiUrl = $"https://opentabletdriver.net/Wiki/FAQ/{os}";
 
                 var message = new StringBuilder();
@@ -481,7 +477,7 @@ namespace OpenTabletDriver.Daemon
         /// </summary>
         private void CheckForProblematicProcesses()
         {
-            if (SystemInterop.CurrentPlatform == PluginPlatform.Windows)
+            if (OperatingSystem.IsWindows())
             {
                 if (Process.GetProcessesByName("vgc").Any())
                     Log.Write("Detect", "Valorant's anti-cheat program Vanguard is detected. Tablet function may be impaired.", LogLevel.Warning);
@@ -760,29 +756,29 @@ namespace OpenTabletDriver.Daemon
 
         private static void InitializePlatform()
         {
-            switch (SystemInterop.CurrentPlatform)
+            if (OperatingSystem.IsWindows())
             {
-                case PluginPlatform.Windows:
-                    Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
+                Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
 
-                    if (Environment.OSVersion.Version.Build >= 22000) // Windows 11
+                if (Environment.OSVersion.Version.Build >= 22000) // Windows 11
+                {
+                    unsafe
                     {
-                        unsafe
-                        {
-                            var state = Native.Windows.Windows.PowerThrottlingState.Create();
-                            state.ControlMask = (int)Native.Windows.Windows.PowerThrottlingStateMask.IgnoreTimerResolution;
+                        var state = Native.Windows.Windows.PowerThrottlingState.Create();
+                        state.ControlMask = (int)Native.Windows.Windows.PowerThrottlingStateMask.IgnoreTimerResolution;
 
-                            if (!Native.Windows.Windows.SetProcessInformation(
+                        if (!Native.Windows.Windows.SetProcessInformation(
                                 Process.GetCurrentProcess().Handle,
                                 Native.Windows.Windows.ProcessInformationClass.ProcessPowerThrottling,
                                 (IntPtr)Unsafe.AsPointer(ref state),
                                 Unsafe.SizeOf<Native.Windows.Windows.PowerThrottlingState>()))
-                            {
-                                Log.Write("Platform", "Failed to allow management of timer resolution, asynchronous filters may have lower timing resolution when OTD is minimized.", LogLevel.Error);
-                            }
+                        {
+                            Log.Write("Platform",
+                                "Failed to allow management of timer resolution, asynchronous filters may have lower timing resolution when OTD is minimized.",
+                                LogLevel.Error);
                         }
                     }
-                    break;
+                }
             }
         }
     }

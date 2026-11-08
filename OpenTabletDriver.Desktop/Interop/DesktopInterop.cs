@@ -8,7 +8,6 @@ using OpenTabletDriver.Desktop.Interop.Input.Keyboard;
 using OpenTabletDriver.Desktop.Interop.Input.Relative;
 using OpenTabletDriver.Desktop.Interop.Timer;
 using OpenTabletDriver.Desktop.Updater;
-using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Platform.Keyboard;
@@ -17,7 +16,7 @@ using OpenTabletDriver.Plugin.Timers;
 
 namespace OpenTabletDriver.Desktop.Interop
 {
-    public class DesktopInterop : SystemInterop
+    public class DesktopInterop
     {
         protected DesktopInterop()
         {
@@ -33,96 +32,94 @@ namespace OpenTabletDriver.Desktop.Interop
 
         public static void Open(string path)
         {
-            switch (CurrentPlatform)
+            if (OperatingSystem.IsWindows())
             {
-                case PluginPlatform.Windows:
-                    var startInfo = new ProcessStartInfo("cmd", $"/c start explorer \"{path.Replace("&", "^&")}\"")
-                    {
-                        CreateNoWindow = true
-                    };
-                    Process.Start(startInfo);
-                    break;
-                case PluginPlatform.Linux:
-                    Process.Start("xdg-open", $"\"{path}\"");
-                    break;
-                case PluginPlatform.MacOS:
-                case PluginPlatform.FreeBSD:
-                    Process.Start("open", $"\"{path}\"");
-                    break;
+                var startInfo = new ProcessStartInfo("cmd", $"/c start explorer \"{path.Replace("&", "^&")}\"")
+                {
+                    CreateNoWindow = true
+                };
+                Process.Start(startInfo);
+            }
+            else if (OperatingSystem.IsLinux())
+            {
+                Process.Start("xdg-open", $"\"{path}\"");
+            }
+            else if (OperatingSystem.IsMacOS() || OperatingSystem.IsFreeBSD())
+            {
+                Process.Start("open", $"\"{path}\"");
             }
         }
 
         public static void OpenFolder(string path)
         {
-            switch (CurrentPlatform)
+            if (OperatingSystem.IsWindows())
             {
-                case PluginPlatform.Windows:
-                    Process.Start("explorer", $"\"{path.Replace("&", "^&")}\"");
-                    break;
-                default:
-                    Open(path);
-                    break;
+                Process.Start("explorer", $"\"{path.Replace("&", "^&")}\"");
+            }
+            else
+            {
+                Open(path);
             }
         }
 
         public static IGitHubClient GitHubClient => new GitHubClient(new ProductHeaderValue("OpenTabletDriver"));
 
-        public static IUpdater? Updater => CurrentPlatform switch
+        public static IUpdater? Updater => true switch
         {
-            PluginPlatform.Windows => updater ??= new WindowsUpdater(AppInfo.Current, GitHubClient),
-            PluginPlatform.MacOS => updater ??= new MacOSUpdater(AppInfo.Current, GitHubClient),
+            _ when OperatingSystem.IsWindows() => new WindowsUpdater(AppInfo.Current, GitHubClient),
+            _ when OperatingSystem.IsMacOS() => new MacOSUpdater(AppInfo.Current, GitHubClient),
             _ => null
         };
 
-        public static ITimer Timer => CurrentPlatform switch
+        public static ITimer Timer => true switch
         {
-            PluginPlatform.Windows => new WindowsTimer(),
-            PluginPlatform.Linux => new LinuxTimer(),
-            PluginPlatform.MacOS => new MacOSTimer(),
+            _ when OperatingSystem.IsWindows() => new WindowsTimer(),
+            _ when OperatingSystem.IsLinux() => new LinuxTimer(),
+            _ when OperatingSystem.IsMacOS() => new MacOSTimer(),
             _ => new FallbackTimer()
         };
 
-        public static IAbsolutePointer? AbsolutePointer => CurrentPlatform switch
+        public static IAbsolutePointer? AbsolutePointer => true switch
         {
-            PluginPlatform.Windows => new WindowsAbsolutePointer(),
-            PluginPlatform.Linux => absolutePointer ??= new EvdevAbsolutePointer(),
-            PluginPlatform.MacOS => new MacOSAbsolutePointer(),
+            _ when OperatingSystem.IsWindows() => new WindowsAbsolutePointer(),
+            _ when OperatingSystem.IsLinux() => absolutePointer ??= new EvdevAbsolutePointer(),
+            _ when OperatingSystem.IsMacOS() => new MacOSAbsolutePointer(),
             _ => null
         };
 
-        public static IRelativePointer? RelativePointer => CurrentPlatform switch
+        public static IRelativePointer? RelativePointer => true switch
         {
-            PluginPlatform.Windows => new WindowsRelativePointer(),
-            PluginPlatform.Linux => relativePointer ??= new EvdevRelativePointer(),
-            PluginPlatform.MacOS => new MacOSRelativePointer(),
+            _ when OperatingSystem.IsWindows() => new WindowsRelativePointer(),
+            _ when OperatingSystem.IsLinux() => relativePointer ??= new EvdevRelativePointer(),
+            _ when OperatingSystem.IsMacOS() => new MacOSRelativePointer(),
             _ => null
         };
 
-        public static IPressureHandler? VirtualTablet => CurrentPlatform switch
+        public static IPressureHandler? VirtualTablet => true switch
         {
-            PluginPlatform.Linux => virtualTablet ??= new EvdevVirtualTablet(),
+            _ when OperatingSystem.IsLinux() => virtualTablet ??= new EvdevVirtualTablet(),
             _ => null
         };
 
-        public static IVirtualKeyboard? VirtualKeyboard => CurrentPlatform switch
+        public static IVirtualKeyboard? VirtualKeyboard => true switch
         {
-            PluginPlatform.Windows => new WindowsVirtualKeyboard(),
-            PluginPlatform.Linux => virtualKeyboard ??= new EvdevVirtualKeyboard(),
-            PluginPlatform.MacOS => virtualKeyboard ??= new MacOSVirtualKeyboard(),
+            _ when OperatingSystem.IsWindows() => new WindowsVirtualKeyboard(),
+            _ when OperatingSystem.IsLinux() => virtualKeyboard ??= new EvdevVirtualKeyboard(),
+            _ when OperatingSystem.IsMacOS() => virtualKeyboard ??= new MacOSVirtualKeyboard(),
             _ => null
         };
 
-        public static IVirtualPad? VirtualPad => CurrentPlatform switch
+        public static IVirtualPad? VirtualPad => true switch
         {
-            PluginPlatform.Linux => virtualPad ??= new EvdevVirtualPad(),
+            _ when OperatingSystem.IsLinux() => virtualPad ??= new EvdevVirtualPad(),
             _ => null
         };
 
-        public static IVirtualScreen? VirtualScreen => virtualScreen ??= CurrentPlatform switch
+        public static IVirtualScreen? VirtualScreen => virtualScreen ??= true switch
         {
-            PluginPlatform.Windows => new WindowsDisplay(),
-            PluginPlatform.Linux => ConstructLinuxDisplay(),
-            PluginPlatform.MacOS => new MacOSDisplay(),
+            _ when OperatingSystem.IsWindows() => new WindowsDisplay(),
+            _ when OperatingSystem.IsLinux() => ConstructLinuxDisplay(),
+            _ when OperatingSystem.IsMacOS() => new MacOSDisplay(),
             _ => null
         };
 

@@ -1,8 +1,6 @@
 using System;
 using Eto.Drawing;
 using Eto.Forms;
-using OpenTabletDriver.Interop;
-using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.UX.Controls.Generic
 {
@@ -23,7 +21,8 @@ namespace OpenTabletDriver.UX.Controls.Generic
 
         private const Orientation DEFAULT_ORIENTATION = Orientation.Vertical;
 
-        protected virtual Padding ContentPadding => SystemInterop.CurrentPlatform == PluginPlatform.Windows ? new Padding(5, 10, 5, 5) : new Padding(5);
+        protected virtual Padding ContentPadding =>
+            OperatingSystem.IsWindows() ? new Padding(5, 10, 5, 5) : new Padding(5);
 
         protected virtual Color HorizontalBackgroundColor => SystemColors.ControlBackground;
         protected virtual Color VerticalBackgroundColor => SystemColors.WindowBackground;
@@ -58,81 +57,75 @@ namespace OpenTabletDriver.UX.Controls.Generic
             if (!this.Loaded)
                 return;
 
-            switch (Orientation, SystemInterop.CurrentPlatform)
+            if (OperatingSystem.IsMacOS())
             {
-                case (_, PluginPlatform.MacOS):
+                base.Content = new GroupBox
                 {
-                    base.Content = new GroupBox
-                    {
-                        Text = this.Text,
-                        Padding = new Padding(0, 2, 0, 0),
-                        Content = this.Content
-                    };
-                    break;
-                }
-                case (Orientation.Horizontal, _):
+                    Text = this.Text,
+                    Padding = new Padding(0, 2, 0, 0),
+                    Content = this.Content
+                };
+            }
+            else if (Orientation == Orientation.Horizontal)
+            {
+                StackLayout contentLayout;
+                base.Content = new GroupBox
                 {
-                    StackLayout contentLayout;
-                    base.Content = new GroupBox
+                    BackgroundColor = HorizontalBackgroundColor,
+                    Content = contentLayout = new StackLayout
                     {
-                        BackgroundColor = HorizontalBackgroundColor,
-                        Content = contentLayout = new StackLayout
-                        {
-                            VerticalContentAlignment = VerticalAlignment.Stretch,
-                            Orientation = Orientation.Horizontal,
-                            Spacing = 5,
-                            Padding = ContentPadding,
-                            Items =
-                            {
-                                new StackLayoutItem
-                                {
-                                    VerticalAlignment = TitleVerticalAlignment,
-                                    Control = new Label
-                                    {
-                                        Text = this.Text
-                                    }
-                                },
-                                new StackLayoutItem(this.Content, ExpandContent)
-                            }
-                        }
-                    };
-                    if (!ExpandContent)
-                        contentLayout.Items.Insert(1, new StackLayoutItem(null, true));
-                    break;
-                }
-                case (Orientation.Vertical, _):
-                {
-                    base.Content = new StackLayout
-                    {
-                        HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                        VerticalContentAlignment = VerticalAlignment.Center,
+                        VerticalContentAlignment = VerticalAlignment.Stretch,
+                        Orientation = Orientation.Horizontal,
                         Spacing = 5,
                         Padding = ContentPadding,
                         Items =
                         {
                             new StackLayoutItem
                             {
-                                HorizontalAlignment = TitleHorizontalAlignment,
+                                VerticalAlignment = TitleVerticalAlignment,
                                 Control = new Label
                                 {
-                                    Text = this.Text,
-                                    Font = SystemFonts.Bold(9)
+                                    Text = this.Text
                                 }
                             },
-                            new StackLayoutItem
+                            new StackLayoutItem(this.Content, ExpandContent)
+                        }
+                    }
+                };
+                if (!ExpandContent)
+                    contentLayout.Items.Insert(1, new StackLayoutItem(null, true));
+            }
+            else if (Orientation == Orientation.Vertical)
+            {
+                base.Content = new StackLayout
+                {
+                    HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    Spacing = 5,
+                    Padding = ContentPadding,
+                    Items =
+                    {
+                        new StackLayoutItem
+                        {
+                            HorizontalAlignment = TitleHorizontalAlignment,
+                            Control = new Label
                             {
-                                Expand = true,
-                                Control = new GroupBox
-                                {
-                                    BackgroundColor = VerticalBackgroundColor,
-                                    Padding = ContentPadding,
-                                    Content = this.Content
-                                }
+                                Text = this.Text,
+                                Font = SystemFonts.Bold(9)
+                            }
+                        },
+                        new StackLayoutItem
+                        {
+                            Expand = true,
+                            Control = new GroupBox
+                            {
+                                BackgroundColor = VerticalBackgroundColor,
+                                Padding = ContentPadding,
+                                Content = this.Content
                             }
                         }
-                    };
-                    break;
-                }
+                    }
+                };
             }
         }
 

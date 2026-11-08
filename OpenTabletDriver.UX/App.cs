@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.UX.RPC;
 using OpenTabletDriver.UX.Windows;
@@ -157,8 +156,8 @@ namespace OpenTabletDriver.UX
         }
 
         private const string APPNAME = "OpenTabletDriver.UX";
-        public readonly static bool EnableTrayIcon = (PluginPlatform.Windows | PluginPlatform.MacOS).HasFlag(SystemInterop.CurrentPlatform);
-        public readonly static bool EnableDaemonWatchdog = (PluginPlatform.Windows | PluginPlatform.MacOS).HasFlag(SystemInterop.CurrentPlatform);
+        public readonly static bool EnableTrayIcon = (OperatingSystem.IsWindows() | OperatingSystem.IsMacOS());
+        public readonly static bool EnableDaemonWatchdog = (OperatingSystem.IsWindows() | OperatingSystem.IsMacOS());
         public static DaemonWatchdog? DaemonWatchdog;
 
         public WindowSingleton<StartupGreeterWindow> StartupGreeterWindow { get; } = new WindowSingleton<StartupGreeterWindow>();

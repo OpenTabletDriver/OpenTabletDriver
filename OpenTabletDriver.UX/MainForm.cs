@@ -13,7 +13,6 @@ using Newtonsoft.Json.Linq;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection;
-using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Tablet;
@@ -66,17 +65,18 @@ namespace OpenTabletDriver.UX
 
                     if (result != timeout || App.Driver.IsConnected)
                         break; // daemon connected
-
-                    var message = SystemInterop.CurrentPlatform switch
+                    var message = true switch
                     {
-                        PluginPlatform.Windows =>
+                        _ when OperatingSystem.IsWindows() =>
                             "Connecting to daemon has timed out.\nVerify that OpenTabletDriver.Daemon is running or is in the same folder as OpenTabletDriver.UX\nPress OK to retry",
-                        PluginPlatform.Linux =>
+
+                        _ when OperatingSystem.IsLinux() =>
                             """
                             Connecting to daemon has timed out.
                             Verify that OpenTabletDriver.Daemon is running, e.g. by starting the systemd user service (usually 'systemctl --user start opentabletdriver'), or by starting 'otd-daemon'.
                             Press OK to retry
                             """,
+
                         _ =>
                             "Connecting to daemon has timed out. Verify that OpenTabletDriver.Daemon is running.\nPress OK to retry"
                     };
@@ -128,7 +128,7 @@ namespace OpenTabletDriver.UX
 
                 this.Size = new Size((int)minWidth, (int)minHeight);
 
-                if (SystemInterop.CurrentPlatform == PluginPlatform.Windows)
+                if (OperatingSystem.IsWindows())
                 {
                     var x = Screen.WorkingArea.Center.X - (minWidth / 2);
                     var y = Screen.WorkingArea.Center.Y - (minHeight / 2);
@@ -139,22 +139,21 @@ namespace OpenTabletDriver.UX
 
         protected void InitializePlatform()
         {
-            switch (SystemInterop.CurrentPlatform)
+            if (OperatingSystem.IsWindows())
             {
-                case PluginPlatform.Windows:
-                    var programPath = AppInfo.ProgramDirectory;
-                    var tempPath = Regex.Escape(Path.GetTempPath());
-                    var regex = new Regex(@$"^{tempPath}Temp\d+.*?\.zip");
+                var programPath = AppInfo.ProgramDirectory;
+                var tempPath = Regex.Escape(Path.GetTempPath());
+                var regex = new Regex(@$"^{tempPath}Temp\d+.*?\.zip");
 
-                    if (regex.IsMatch(programPath))
-                    {
-                        MessageBox.Show(this, $"You are running OpenTabletDriver.UX from a zip file.\n\nPlease extract the zip file to a folder then run OpenTabletDriver.UX from there.", "Error", MessageBoxType.Error);
-                        Environment.Exit(1);
-                    }
-                    break;
-                case PluginPlatform.MacOS:
-                    this.Padding = 10;
-                    break;
+                if (regex.IsMatch(programPath))
+                {
+                    MessageBox.Show(this, $"You are running OpenTabletDriver.UX from a zip file.\n\nPlease extract the zip file to a folder then run OpenTabletDriver.UX from there.", "Error", MessageBoxType.Error);
+                    Environment.Exit(1);
+                }
+            }
+            else if (OperatingSystem.IsMacOS())
+            {
+                this.Padding = 10;
             }
 
             if (App.EnableTrayIcon)
@@ -382,14 +381,9 @@ namespace OpenTabletDriver.UX
                 AboutItem = aboutCommand
             };
 
-            switch (SystemInterop.CurrentPlatform)
+            if (OperatingSystem.IsWindows() || OperatingSystem.IsMacOS())
             {
-                case PluginPlatform.Windows:
-                case PluginPlatform.MacOS:
-                {
-                    menuBar.Items.GetSubmenu("&Help").Items.Add(updater);
-                    break;
-                }
+                menuBar.Items.GetSubmenu("&Help").Items.Add(updater);
             }
 
             return menuBar;

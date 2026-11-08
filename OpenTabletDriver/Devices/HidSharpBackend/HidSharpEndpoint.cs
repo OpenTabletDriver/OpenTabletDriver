@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using HidSharp;
 using HidSharp.Reports;
-using OpenTabletDriver.Interop;
-using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Devices;
 
 namespace OpenTabletDriver.Devices.HidSharpBackend
@@ -40,17 +38,17 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
         private static Dictionary<string, string> GetDeviceAttributes(string devicePath, Func<ReportDescriptor> reportDescriptorFunc)
         {
             var deviceAttributes = new Dictionary<string, string>();
-            switch (SystemInterop.CurrentPlatform)
+            if (OperatingSystem.IsWindows())
             {
-                case PluginPlatform.Windows:
-                    GetDeviceAttributesWindows(devicePath, deviceAttributes);
-                    break;
-                case PluginPlatform.Linux:
-                    GetDeviceAttributesLinux(devicePath, deviceAttributes);
-                    break;
-                case PluginPlatform.MacOS:
-                    GetDeviceAttributesMacOS(devicePath, deviceAttributes);
-                    break;
+                GetDeviceAttributesWindows(devicePath, deviceAttributes);
+            }
+            else if (OperatingSystem.IsLinux())
+            {
+                GetDeviceAttributesLinux(devicePath, deviceAttributes);
+            }
+            else if (OperatingSystem.IsMacOS())
+            {
+                GetDeviceAttributesMacOS(devicePath, deviceAttributes);
             }
 
             Extensions.ExtractHidUsages(deviceAttributes, reportDescriptorFunc);

@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using OpenTabletDriver.Interop;
-using OpenTabletDriver.Plugin;
+using System.Runtime.Versioning;
 
 namespace OpenTabletDriver.Desktop
 {
@@ -23,15 +22,19 @@ namespace OpenTabletDriver.Desktop
 
         public static OSInfo GetOSInfo()
         {
-            return SystemInterop.CurrentPlatform switch
-            {
-                PluginPlatform.Windows => ExtractFromOS(withServicePack: true),
-                PluginPlatform.Linux => GetLinuxOSInfo(),
-                PluginPlatform.MacOS => ExtractFromOS(withServicePack: false),
-                _ => throw new NotImplementedException()
-            };
+            if (OperatingSystem.IsWindows())
+                return ExtractFromOS(withServicePack: true);
+
+            if (OperatingSystem.IsLinux())
+                return GetLinuxOSInfo();
+
+            if (OperatingSystem.IsMacOS())
+                return ExtractFromOS(withServicePack: false);
+
+            throw new NotImplementedException();
         }
 
+        [SupportedOSPlatform("linux")]
         private static OSInfo GetLinuxOSInfo()
         {
             var osReleasePaths = new[] {

@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Interop;
-using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.UX
 {
@@ -88,7 +86,7 @@ namespace OpenTabletDriver.UX
             };
             close.Click += (sender, e) => window.Close();
 
-            if (DesktopInterop.CurrentPlatform == PluginPlatform.MacOS)
+            if (OperatingSystem.IsMacOS())
             {
                 // It's more idiomatic for macOS to include the name here
                 showWindow.Text = "Show OpenTabletDriver";
@@ -121,7 +119,7 @@ namespace OpenTabletDriver.UX
             items.Add(showWindow);
 
             // macOS doesn't present a menu bar for agent apps
-            if (DesktopInterop.CurrentPlatform == PluginPlatform.MacOS && window.Menu != null)
+            if (OperatingSystem.IsMacOS() && window.Menu != null)
             {
                 items.Add(new SeparatorMenuItem());
 
