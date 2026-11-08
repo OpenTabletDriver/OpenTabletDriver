@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using System.CommandLine;
 using System.ComponentModel;
 using System.IO;
@@ -11,6 +12,7 @@ using Eto.Forms;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.UX.RPC;
 using OpenTabletDriver.UX.Windows;
 using OpenTabletDriver.UX.Windows.Greeter;
@@ -148,6 +150,12 @@ namespace OpenTabletDriver.UX
 
         public static Uri Website { get; } = new Uri(@"https://github.com/OpenTabletDriver/OpenTabletDriver");
         public static string License { get; } = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.LICENSE")!).ReadToEnd();
+
+        public ReadOnlyCollection<SerializedDisplay> Displays
+        {
+            set => this.RaiseAndSetIfChanged(ref field, value);
+            get => field ?? throw new InvalidOperationException("Displays cannot be null");
+        }
 
         private Settings? settings;
         public Settings Settings

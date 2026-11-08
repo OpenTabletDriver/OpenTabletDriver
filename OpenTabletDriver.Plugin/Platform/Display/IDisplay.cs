@@ -15,9 +15,15 @@ namespace OpenTabletDriver.Plugin.Platform.Display
         int Index { get; }
         float Width { get; }
         float Height { get; }
+
         /// <summary>
         /// The position in relation to top left
         /// </summary>
         Vector2 Position { get; }
+
+        /// <summary>
+        /// The name for the display
+        /// </summary>
+        string? Name { get; }
     }
 }
