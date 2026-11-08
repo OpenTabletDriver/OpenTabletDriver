@@ -66,10 +66,11 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
             PluginDirectory = TrashDirectory = TemporaryDirectory = null!; // reset directories
 
+            ResetServices();
+
             foreach (var dir in PluginDirectory.GetDirectories())
                 LoadPlugin(dir);
 
-            AppInfo.PluginManager.ResetServices();
             AssembliesChanged?.Invoke(this, EventArgs.Empty);
         }
 

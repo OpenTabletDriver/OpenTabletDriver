@@ -12,7 +12,6 @@ using Eto.Forms;
 using Newtonsoft.Json.Linq;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Interop;
-using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
@@ -426,11 +425,9 @@ namespace OpenTabletDriver.UX
             // Load the application information from the daemon
             AppInfo.Current = await App.Driver.Instance.GetApplicationInfo();
 
-            AppInfo.PluginManager = new DesktopPluginManager();
-            AppInfo.PresetManager = new PresetManager();
-
-            // Load any new plugins
+            // Refresh managers with new information
             AppInfo.PluginManager.Load();
+            AppInfo.PresetManager.Refresh();
 
             // Show the startup greeter
             if (!File.Exists(AppInfo.Current.SettingsFile) && this.WindowState != WindowState.Minimized)
