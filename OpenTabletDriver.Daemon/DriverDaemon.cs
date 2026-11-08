@@ -187,10 +187,7 @@ namespace OpenTabletDriver.Daemon
         public async Task<IEnumerable<TabletReference>> DetectTablets()
         {
             Driver.Detect();
-            if (OperatingSystem.IsWindows())
-            {
-                await Task.Run(CheckForProblematicProcesses).ConfigureAwait(false);
-            }
+            await Task.Run(CheckForProblematicProcesses).ConfigureAwait(false);
 
             foreach (var tablet in Driver.InputDevices)
             {
@@ -479,7 +476,6 @@ namespace OpenTabletDriver.Daemon
         /// Checks for any problematic processes running on the user's computer that may
         /// impair function or detection of tablets, such as video game anti-cheat software.
         /// </summary>
-        [SupportedOSPlatform("windows")]
         private void CheckForProblematicProcesses()
         {
             if (OperatingSystem.IsWindows())
