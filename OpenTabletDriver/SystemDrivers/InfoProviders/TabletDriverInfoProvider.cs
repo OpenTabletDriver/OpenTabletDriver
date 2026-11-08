@@ -15,7 +15,7 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
         {
             if (OperatingSystem.IsWindows())
             {
-                var processes = DriverInfo.SystemProcesses.Where(p => Enumerable.Contains(ProcessNames, p.ProcessName)).ToArray();
+                var processes = DriverInfo.SystemProcesses.Where(p => ProcessNames.Contains(p.ProcessName)).ToArray();
                 if (processes.Any())
                 {
                     return new DriverInfo
