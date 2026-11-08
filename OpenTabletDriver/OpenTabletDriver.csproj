@@ -30,10 +30,4 @@
     <ProjectReference Include="..\OpenTabletDriver.Configurations\OpenTabletDriver.Configurations.csproj" />
   </ItemGroup>
 
-  <ItemGroup Label="Configurations">
-    <EmbeddedResource Include=".\Configurations\*\*.json">
-      <IncludeInPackage>true</IncludeInPackage>
-    </EmbeddedResource>
-  </ItemGroup>
-
 </Project>
