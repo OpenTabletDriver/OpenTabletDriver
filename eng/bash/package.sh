@@ -82,9 +82,16 @@ if [[ "${NET_RUNTIME}" =~ ^win-.*$ ]]; then
 fi
 
 if [[ "${NET_RUNTIME}" =~ ^osx-.*$ ]]; then
-  # signed builds must be single file, otherwise reduce package size by not using single file
-  SINGLE_FILE="${SIGNED}"
   SELF_CONTAINED="true"
+
+  # Use codesign when available, as it doesn't rely on an hardcoded structure
+  if hash codesign 2>/dev/null; then
+    SINGLE_FILE="${SINGLE_FILE}"
+  elif hash rcodesign 2>/dev/null; then
+    SINGLE_FILE="${SIGNED}"
+  else
+    SINGLE_FILE="false"
+  fi
 
   PACKAGE_GEN=${PACKAGE_GEN:-"macos"}
   PROJECTS+=('OpenTabletDriver.UX.MacOS')

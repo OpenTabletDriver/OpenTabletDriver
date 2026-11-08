@@ -7,6 +7,9 @@ inputs:
   package-name:
     description: 'The --package argument for package.sh'
     required: true
+  single-file:
+    description: 'Whether to pack the assemblies into larger binaries'
+    default: true
   signed:
     description: 'Whether the package should be signed'
     required: true
@@ -31,7 +34,7 @@ runs:
     - name: ${{ inputs.package-name }} ${{ inputs.runtime }} Publish
       id: build
       shell: bash
-      run: ./eng/bash/package.sh --signed "${{ inputs.signed }}" --package ${{ inputs.package-name }} -r ${{ inputs.runtime }} --output build-${{ inputs.package-name }}
+      run: ./eng/bash/package.sh --signed "${{ inputs.signed }}" --package ${{ inputs.package-name }} -r ${{ inputs.runtime }} --single-file "${{ inputs.single-file }}" --output build-${{ inputs.package-name }}
       # should output the following keys to GITHUB_OUTPUT:
       #  - output-file: artifact name
       #  - output-file-display-name: artifact display name
