@@ -5,7 +5,6 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using OpenTabletDriver.Desktop.Reflection;
-using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Desktop
@@ -37,7 +36,7 @@ namespace OpenTabletDriver.Desktop
         public AppInfo()
         {
             // on Linux, verify presence of necessary environment variables (as '~' expands to $HOME environment variable)
-            if (SystemInterop.CurrentPlatform == PluginPlatform.Linux && IsEnvVarUnset("HOME") && IsEnvVarUnset("XDG_DATA_HOME"))
+            if (OperatingSystem.IsLinux() && IsEnvVarUnset("HOME") && IsEnvVarUnset("XDG_DATA_HOME"))
             {
                 Log.Write(nameof(AppInfo),
                     "Unable to look up environment variable 'HOME' or 'XDG_DATA_HOME'. '~/.local/share/OpenTabletDriver' paths will not detect (such as configuration overrides).",
@@ -50,25 +49,25 @@ namespace OpenTabletDriver.Desktop
         public static AppInfo Current
         {
             set => current = value;
-            get => current ??= SystemInterop.CurrentPlatform switch
+            get => current ??= true switch
             {
-                PluginPlatform.Windows => new AppInfo
+                _ when OperatingSystem.IsWindows() => new AppInfo
                 {
                     AppDataDirectory = GetExistingPathOrLast(Path.Join(ProgramDirectory, "userdata"), "$LOCALAPPDATA\\OpenTabletDriver"),
                 },
-                PluginPlatform.Linux => new AppInfo
+                _ when OperatingSystem.IsLinux() => new AppInfo
                 {
                     AppDataDirectory = GetExistingPathOrLast(Path.Join(ProgramDirectory, "userdata"), Path.Join(UnixXdgPath.ConfigHome, "OpenTabletDriver")),
                     TemporaryDirectory = GetPath(Path.Join(UnixXdgPath.RuntimeDir, "OpenTabletDriver")),
                     CacheDirectory = GetPath(Path.Join(UnixXdgPath.CacheHome, "OpenTabletDriver")),
                 },
-                PluginPlatform.MacOS => new AppInfo()
+                _ when OperatingSystem.IsMacOS() => new AppInfo
                 {
                     AppDataDirectory = GetExistingPathOrLast(Path.Join(ProgramDirectory, "userdata"), "~/Library/Application Support/OpenTabletDriver"),
                     TemporaryDirectory = GetPath("$TMPDIR/OpenTabletDriver"),
                     CacheDirectory = GetPath("~/Library/Caches/OpenTabletDriver"),
                 },
-                _ => throw new InvalidOperationException($"Unsupported platform {SystemInterop.CurrentPlatform}"),
+                _ => throw new InvalidOperationException($"Unsupported platform")
             };
         }
 
@@ -181,7 +180,7 @@ namespace OpenTabletDriver.Desktop
                 Path.Join(ProgramDirectory, "Configurations"),
                 Path.Join(Environment.CurrentDirectory, "Configurations")
             ];
-            if (SystemInterop.CurrentPlatform == PluginPlatform.Linux)
+            if (OperatingSystem.IsLinux())
                 paths.Insert(0, Path.Join(UnixXdgPath.DataHome, "OpenTabletDriver/Configurations"));
             if (CommandLineConfigurationDirectory != null)
                 paths.Insert(0, CommandLineConfigurationDirectory);

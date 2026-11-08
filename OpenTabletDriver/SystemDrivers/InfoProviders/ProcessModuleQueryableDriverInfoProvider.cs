@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.Versioning;
 using System.Text.RegularExpressions;
-using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.SystemDrivers.InfoProviders
@@ -22,14 +22,15 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
 
         public DriverInfo? GetDriverInfo()
         {
-            return SystemInterop.CurrentPlatform switch
+            return true switch
             {
-                PluginPlatform.Windows => GetWinDriverInfo(),
-                PluginPlatform.Linux => GetLinuxDriverInfo(),
+                _ when OperatingSystem.IsWindows() => GetWinDriverInfo(),
+                _ when OperatingSystem.IsLinux() => GetLinuxDriverInfo(),
                 _ => null
             };
         }
 
+        [SupportedOSPlatform("windows")]
         protected virtual DriverInfo? GetWinDriverInfo()
         {
             if (pnpUtil == null) throw new InvalidOperationException($"pnpUtil is null. Run {nameof(Refresh)}() first");
@@ -57,6 +58,7 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
             return null;
         }
 
+        [SupportedOSPlatform("linux")]
         protected virtual DriverInfo? GetLinuxDriverInfo()
         {
             // short circuit if modules aren't filled
@@ -80,42 +82,38 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
 
         internal static void Refresh()
         {
-            switch (SystemInterop.CurrentPlatform)
+            if (OperatingSystem.IsWindows())
             {
-                case PluginPlatform.Windows:
+                var pnputilProc = new Process
                 {
-                    var pnputilProc = new Process
+                    StartInfo = new ProcessStartInfo
                     {
-                        StartInfo = new ProcessStartInfo
-                        {
-                            FileName = "pnputil.exe",
-                            Arguments = "-e",
-                            UseShellExecute = false,
-                            RedirectStandardOutput = true
-                        }
-                    };
-
-                    pnputilProc.Start();
-                    pnpUtil = pnputilProc.StandardOutput.ReadToEnd();
-                    break;
-                }
-                case PluginPlatform.Linux:
-                {
-                    if (File.Exists("/proc/modules"))
-                        linuxModules = File.ReadAllText("/proc/modules");
-                    else
-                    {
-                        // TODO: check /proc/config.gz for the following keys defined with the value 'y' or 'm'
-                        // |  module name  |    config.gz key    |
-                        // | ------------- | ------------------- |
-                        // |  hid_uclogic  | CONFIG_HID_UCLOGIC  |
-                        // |   wacom       |  CONFIG_HID_WACOM   |
-
-                        Log.Write(nameof(ProcessModuleQueryableDriverInfoProvider),
-                            "Unable to probe kernel modules. Foreign driver detection may be unavailable.");
+                        FileName = "pnputil.exe",
+                        Arguments = "-e",
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true
                     }
+                };
 
-                    break;
+                pnputilProc.Start();
+                pnpUtil = pnputilProc.StandardOutput.ReadToEnd();
+            }
+            else if (OperatingSystem.IsLinux())
+            {
+                if (File.Exists("/proc/modules"))
+                {
+                    linuxModules = File.ReadAllText("/proc/modules");
+                }
+                else
+                {
+                    // TODO: check /proc/config.gz for the following keys defined with the value 'y' or 'm'
+                    // |   module name   |   config.gz key   |
+                    // | ------------- | ------------------- |
+                    // |   hid_uclogic   | CONFIG_HID_UCLOGIC  |
+                    // |    wacom      |  CONFIG_HID_WACOM   |
+
+                    Log.Write(nameof(ProcessModuleQueryableDriverInfoProvider),
+                        "Unable to probe kernel modules. Foreign driver detection may be unavailable.");
                 }
             }
         }

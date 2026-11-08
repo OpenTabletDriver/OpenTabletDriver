@@ -8,7 +8,7 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Output
 {
-    [PluginName("Artist Mode"), SupportedPlatform(PluginPlatform.Linux)]
+    [PluginName("Artist Mode"), SupportedPlatform("linux")]
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
     public class LinuxArtistMode : AbsoluteOutputMode
     {

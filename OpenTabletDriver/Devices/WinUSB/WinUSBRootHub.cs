@@ -13,7 +13,7 @@ using static OpenTabletDriver.Native.Windows.SetupAPI;
 
 namespace OpenTabletDriver.Devices.WinUSB
 {
-    [DeviceHub, SupportedPlatform(PluginPlatform.Windows)]
+    [DeviceHub, SupportedPlatform("windows")]
     public class WinUSBRootHub : CriticalFinalizerObject, IDeviceHub
     {
         private static readonly Guid[] _winUsbGuids =

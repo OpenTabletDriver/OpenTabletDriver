@@ -8,7 +8,6 @@ using System.Reflection;
 using System.Threading.Tasks;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
-using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Desktop.Reflection
@@ -112,7 +111,15 @@ namespace OpenTabletDriver.Desktop.Reflection
             {
                 if (!IsPlatformSupported(type))
                 {
-                    Log.Write("Plugin", $"Plugin '{type.FullName}' is not supported on {SystemInterop.CurrentPlatform}");
+                    string currentPlatform = true switch
+                    {
+                        _ when OperatingSystem.IsWindows() => "Windows",
+                        _ when OperatingSystem.IsLinux() => "Linux",
+                        _ when OperatingSystem.IsMacOS() => "macOS",
+                        _ => "this platform"
+                    };
+
+                    Log.Write("Plugin", $"Plugin '{type.FullName}' is not supported on {currentPlatform}");
                     return;
                 }
                 if (IsPluginIgnored(type))
