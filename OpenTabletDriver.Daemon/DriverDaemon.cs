@@ -204,6 +204,8 @@ namespace OpenTabletDriver.Daemon
             return await GetTablets();
         }
 
+        private bool _recoveringFromFailedSettings;
+
         public Task SetSettings(Settings? settings)
         {
             try
@@ -274,18 +276,58 @@ namespace OpenTabletDriver.Daemon
                 lastValidSettings = settings;
                 return Task.CompletedTask;
             }
-            catch
+            catch (Exception ex)
             {
-                try
+                if (_recoveringFromFailedSettings)
+                    throw; // avoid recursing into error handler
+
+                _recoveringFromFailedSettings = true;
+
+                var exceptionToReturn = ex;
+
+                Log.Exception(ex);
+                Log.Write("Settings", "Failed to apply settings. Reverting...", LogLevel.Error);
+
+                bool revertSuccessful = false;
+
+                if (lastValidSettings != null)
                 {
-                    SetSettings(lastValidSettings);
-                    Log.Write("Settings", "Failed to apply settings. Reverted to last valid settings.", LogLevel.Error, true);
+                    try
+                    {
+                        Log.Debug("Settings", "Trying to revert...");
+                        SetSettings(lastValidSettings);
+                        Log.Write("Settings", "Reverted to last valid settings.");
+                        revertSuccessful = true;
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Write("Settings", "Failed to revert to last valid settings.", LogLevel.Error);
+                        exceptionToReturn = new AggregateException(ex, e);
+                    }
                 }
-                catch
+                else
+                    Log.Debug("Settings", "Unable to revert as no previous successful settings are cached.");
+
+                if (!revertSuccessful)
                 {
-                    RecoverSettings(settings);
-                    Log.Write("Settings", "Failed to apply settings. Attempted recovery. Some settings may have been lost.", LogLevel.Error, true);
+                    try
+                    {
+                        Log.Debug("Settings", "Trying to recover...");
+                        RecoverSettings(settings);
+                        Log.Write("Settings", "Recovered your settings on top of defaults. Some settings may have been lost.", LogLevel.Error, true);
+                        revertSuccessful = true;
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Write("Settings", "Failed to recover settings. Bailing out", LogLevel.Fatal);
+                        exceptionToReturn = new AggregateException(ex, e);
+                    }
                 }
+
+                if (!revertSuccessful)
+                    return Task.FromException(exceptionToReturn);
+
+                _recoveringFromFailedSettings = false; // reset canary so that further recoveries can proceed
 
                 Resynchronize?.Invoke(this, EventArgs.Empty);
                 return Task.CompletedTask;
