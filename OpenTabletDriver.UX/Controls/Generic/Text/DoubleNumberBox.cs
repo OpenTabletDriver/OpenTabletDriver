@@ -9,6 +9,7 @@ namespace OpenTabletDriver.UX.Controls.Generic.Text
         public DoubleNumberBox()
         {
             Provider = new DoubleTextProvider();
+            // TODO: Probably add mouse wheel handler like FloatNumberBox
         }
 
         private class DoubleTextProvider : NumberTextProvider<double>
