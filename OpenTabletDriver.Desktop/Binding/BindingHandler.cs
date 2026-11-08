@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Output;
@@ -47,6 +48,7 @@ namespace OpenTabletDriver.Desktop.Binding
             Emit?.Invoke(report);
         }
 
+        [SuppressMessage("ReSharper", "ConvertIfStatementToSwitchStatement")]
         public void HandleBinding(IDeviceReport report)
         {
             if (report is IEraserReport eraserReport)
