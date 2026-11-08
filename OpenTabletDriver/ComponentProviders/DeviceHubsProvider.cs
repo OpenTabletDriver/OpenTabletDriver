@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Versioning;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Components;
@@ -16,7 +17,8 @@ namespace OpenTabletDriver.ComponentProviders
             DeviceHubs = Assembly.GetExecutingAssembly().DefinedTypes
                 .Where(type => type.IsAssignableTo(typeof(IDeviceHub))
                     && type.GetCustomAttribute<DeviceHubAttribute>() != null
-                    && (type.GetCustomAttribute<SupportedPlatformAttribute>()?.IsCurrentPlatform ?? true))
+                    && (type.GetCustomAttribute<SupportedOSPlatformAttribute>()
+                        is not { } attr || OperatingSystem.IsOSPlatform(attr.PlatformName)))
                 .Select(type => (IDeviceHub)ActivatorUtilities.CreateInstance(serviceProvider, type))
                 .ToArray();
         }

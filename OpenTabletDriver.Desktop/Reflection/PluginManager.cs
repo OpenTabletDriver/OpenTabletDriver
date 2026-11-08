@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Versioning;
 using System.Reflection;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
@@ -159,8 +160,8 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         protected virtual bool IsPlatformSupported(Type type)
         {
-            var attr = (SupportedPlatformAttribute?)type.GetCustomAttribute(typeof(SupportedPlatformAttribute), false);
-            return attr?.IsCurrentPlatform ?? true;
+            var attr = type.GetCustomAttribute<SupportedOSPlatformAttribute>();
+            return attr == null || OperatingSystem.IsOSPlatform(attr.PlatformName);
         }
 
         protected virtual bool IsPluginIgnored(Type type)

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Versioning;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.DependencyInjection;
@@ -9,7 +10,7 @@ using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
 {
-    [PluginName(_PLUGIN_NAME), SupportedPlatform("linux")]
+    [PluginName(_PLUGIN_NAME), SupportedOSPlatform("linux")]
     public class LinuxArtistModePadBinding : IStateBinding
     {
         private const string _PLUGIN_NAME = "Linux Artist Mode Pad Binding";
