@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using HidSharp;
 using HidSharp.Reports;
-using OpenTabletDriver.Interop;
 
 namespace OpenTabletDriver.Devices.HidSharpBackend
 {
@@ -38,17 +37,17 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
             var deviceAttributes = new Dictionary<string, string>();
 
             // - USB_INTERFACE_NUMBER
-            switch (SystemInterop.CurrentPlatform)
+            if (OperatingSystem.IsWindows())
             {
-                case SystemPlatform.Windows:
-                    GetDeviceAttributesWindows(devicePath, deviceAttributes);
-                    break;
-                case SystemPlatform.Linux:
-                    GetDeviceAttributesLinux(devicePath, deviceAttributes);
-                    break;
-                case SystemPlatform.MacOS:
-                    GetDeviceAttributesMacOS(devicePath, deviceAttributes);
-                    break;
+                GetDeviceAttributesWindows(devicePath, deviceAttributes);
+            }
+            else if (OperatingSystem.IsLinux())
+            {
+                GetDeviceAttributesLinux(devicePath, deviceAttributes);
+            }
+            else if (OperatingSystem.IsMacOS())
+            {
+                GetDeviceAttributesMacOS(devicePath, deviceAttributes);
             }
 
             Extensions.ExtractHidUsages(deviceAttributes, reportDescriptorFunc);

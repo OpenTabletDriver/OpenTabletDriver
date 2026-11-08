@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
-using OpenTabletDriver.Interop;
 
 namespace OpenTabletDriver.Desktop.Interop.AppInfo
 {
@@ -85,25 +84,32 @@ namespace OpenTabletDriver.Desktop.Interop.AppInfo
             get => _trashDirectory ?? GetDefaultTrashDirectory();
         }
 
-        public static string ProgramDirectory => SystemInterop.CurrentPlatform switch
+        public static string ProgramDirectory
         {
-            SystemPlatform.MacOS => Regex.Match(AppContext.BaseDirectory, "^(.*)/[^/]+\\.app/Contents/MacOS/?$", RegexOptions.IgnoreCase) switch
+            get
             {
-                { Success: true } match => match.Groups[1].ToString(),
-                _ => AppContext.BaseDirectory
-            },
-            _ => AppContext.BaseDirectory
-        };
+                if (OperatingSystem.IsMacOS())
+                {
+                    var match = Regex.Match(AppContext.BaseDirectory, "^(.*)/[^/]+\\.app/Contents/MacOS/?$",
+                        RegexOptions.IgnoreCase);
+                    if (match.Success)
+                        return match.Groups[1].Value;
+                }
+
+                return AppContext.BaseDirectory;
+            }
+        }
 
         public static IAppInfo GetPlatformAppInfo()
         {
-            return SystemInterop.CurrentPlatform switch
-            {
-                SystemPlatform.Windows => new WindowsAppInfo(),
-                SystemPlatform.Linux => new LinuxAppInfo(),
-                SystemPlatform.MacOS => new MacOSAppInfo(),
-                _ => throw new PlatformNotSupportedException("This platform is not supported by OpenTabletDriver.")
-            };
+            if(OperatingSystem.IsWindows())
+                return new WindowsAppInfo();
+            if(OperatingSystem.IsLinux())
+                return new LinuxAppInfo();
+            if (OperatingSystem.IsMacOS())
+                return new MacOSAppInfo();
+
+            throw new PlatformNotSupportedException("This platform is not supported by OpenTabletDriver.");
         }
 
         private static string GetDefaultAppDataDirectory() => EnvironmentVariable("OTD_APPDATA");

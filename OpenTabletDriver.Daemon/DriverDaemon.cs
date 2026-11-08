@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.Versioning;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,7 +23,6 @@ using OpenTabletDriver.Desktop.Reflection.Metadata;
 using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Desktop.Updater;
 using OpenTabletDriver.Devices;
-using OpenTabletDriver.Interop;
 using OpenTabletDriver.Logging;
 using OpenTabletDriver.Native.Windows;
 using OpenTabletDriver.Output;
@@ -88,7 +88,8 @@ namespace OpenTabletDriver.Daemon
             };
 
             InitializePlatform();
-            _driver.InputDevicesChanged += (sender, e) => TabletsChanged?.Invoke(sender, e.Select(c => c.Configuration));
+            _driver.InputDevicesChanged +=
+                (sender, e) => TabletsChanged?.Invoke(sender, e.Select(c => c.Configuration));
             _deviceHub.DevicesChanged += (_, e) =>
             {
                 if (!e.Additions.Any())
@@ -106,13 +107,10 @@ namespace OpenTabletDriver.Daemon
 
             foreach (var driverInfo in DriverInfo.GetDriverInfos())
             {
-                var os = SystemInterop.CurrentPlatform switch
-                {
-                    SystemPlatform.Windows => "Windows",
-                    SystemPlatform.Linux => "Linux",
-                    SystemPlatform.MacOS => "MacOS",
-                    _ => null
-                };
+                var os = OperatingSystem.IsWindows() ? "Windows" :
+                    OperatingSystem.IsLinux() ? "Linux" :
+                    OperatingSystem.IsMacOS() ? "MacOS" :
+                    null;
                 var wikiUrl = $"https://opentabletdriver.net/Wiki/FAQ/{os}";
 
                 var message = new StringBuilder();
@@ -231,7 +229,7 @@ namespace OpenTabletDriver.Daemon
             {
                 // Dispose filters that implement IDisposable interface
                 foreach (var obj in _driver.InputDevices.SelectMany(d =>
-                            d.OutputMode?.Elements ?? (IEnumerable<object>)Array.Empty<object>()))
+                             d.OutputMode?.Elements ?? (IEnumerable<object>)Array.Empty<object>()))
                     if (obj is IDisposable disposable)
                         disposable.Dispose();
 
@@ -280,12 +278,14 @@ namespace OpenTabletDriver.Daemon
                 try
                 {
                     ApplySettings(_lastValidSettings);
-                    Log.WriteNotify("Settings", "Failed to apply settings. Reverted to last valid settings.", LogLevel.Warning);
+                    Log.WriteNotify("Settings", "Failed to apply settings. Reverted to last valid settings.",
+                        LogLevel.Warning);
                 }
                 catch
                 {
                     ApplySettings(null);
-                    Log.WriteNotify("Settings", "Failed to apply last valid settings. Forcibly applied defaults.", LogLevel.Warning);
+                    Log.WriteNotify("Settings", "Failed to apply last valid settings. Forcibly applied defaults.",
+                        LogLevel.Warning);
                 }
 
                 Resynchronize?.Invoke(this, EventArgs.Empty);
@@ -316,15 +316,16 @@ namespace OpenTabletDriver.Daemon
             await DetectTablets();
         }
 
-        private void SetOutputModeElements(InputDevice dev, IOutputMode outputMode, Profile profile, BindingHandler bindingHandler)
+        private void SetOutputModeElements(InputDevice dev, IOutputMode outputMode, Profile profile,
+            BindingHandler bindingHandler)
         {
             string group = dev.Configuration.Name;
 
             var elements = from store in profile.Filters
-                           where store.Enable
-                           let filter = _pluginFactory.Construct<IDevicePipelineElement>(store, dev)
-                           where filter != null
-                           select filter;
+                where store.Enable
+                let filter = _pluginFactory.Construct<IDevicePipelineElement>(store, dev)
+                where filter != null
+                select filter;
 
             outputMode.Elements = elements.Append(bindingHandler).ToList();
 
@@ -451,7 +452,7 @@ namespace OpenTabletDriver.Daemon
         {
             var baseType = _pluginManager.ExportedTypes.First(t => t.GetPath() == typeName);
             var matchingTypes = from type in _pluginFactory.GetMatchingTypes(baseType)
-                                select ActivatorUtilities.CreateInstance<TypeProxy>(_serviceProvider, type);
+                select ActivatorUtilities.CreateInstance<TypeProxy>(_serviceProvider, type);
             return Task.FromResult(matchingTypes);
         }
 
@@ -491,29 +492,29 @@ namespace OpenTabletDriver.Daemon
 
         private static void InitializePlatform()
         {
-            switch (SystemInterop.CurrentPlatform)
+            if (OperatingSystem.IsWindows())
             {
-                case SystemPlatform.Windows:
-                    System.Diagnostics.Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
+                System.Diagnostics.Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
 
-                    if (Environment.OSVersion.Version.Build >= 22000) // Windows 11
+                if (Environment.OSVersion.Version.Build >= 22000) // Windows 11
+                {
+                    unsafe
                     {
-                        unsafe
-                        {
-                            var state = Windows.PowerThrottlingState.Create();
-                            state.ControlMask = (int)Windows.PowerThrottlingStateMask.IgnoreTimerResolution;
+                        var state = Windows.PowerThrottlingState.Create();
+                        state.ControlMask = (int)Windows.PowerThrottlingStateMask.IgnoreTimerResolution;
 
-                            if (!Windows.SetProcessInformation(
+                        if (!Windows.SetProcessInformation(
                                 System.Diagnostics.Process.GetCurrentProcess().Handle,
                                 Windows.ProcessInformationClass.ProcessPowerThrottling,
                                 (IntPtr)Unsafe.AsPointer(ref state),
                                 Unsafe.SizeOf<Windows.PowerThrottlingState>()))
-                            {
-                                Log.Write("Platform", "Failed to allow management of timer resolution, asynchronous filters may have lower timing resolution when OTD is minimized.", LogLevel.Error);
-                            }
+                        {
+                            Log.Write("Platform",
+                                "Failed to allow management of timer resolution, asynchronous filters may have lower timing resolution when OTD is minimized.",
+                                LogLevel.Error);
                         }
                     }
-                    break;
+                }
             }
         }
     }

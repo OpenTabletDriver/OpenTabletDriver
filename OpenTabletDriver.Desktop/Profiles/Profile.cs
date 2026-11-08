@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop.Output;
 using OpenTabletDriver.Desktop.Reflection;
-using OpenTabletDriver.Interop;
 using OpenTabletDriver.Platform.Display;
 
 namespace OpenTabletDriver.Desktop.Profiles
@@ -44,11 +43,7 @@ namespace OpenTabletDriver.Desktop.Profiles
         }
 
         private static Type DefaultOutputModeType =>
-            SystemInterop.CurrentPlatform switch
-            {
-                SystemPlatform.Linux => typeof(LinuxArtistMode),
-                _ => typeof(AbsoluteMode)
-            };
+            OperatingSystem.IsLinux() ? typeof(LinuxArtistMode) : typeof(AbsoluteMode);
 
         public static Profile GetDefaults(IServiceProvider serviceProvider, InputDevice tablet)
         {

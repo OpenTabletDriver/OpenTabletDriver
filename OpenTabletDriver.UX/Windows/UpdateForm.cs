@@ -4,7 +4,6 @@ using Eto.Forms;
 using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.Interop.AppInfo;
 using OpenTabletDriver.Desktop.Updater;
-using OpenTabletDriver.Interop;
 using OpenTabletDriver.UX.Components;
 
 namespace OpenTabletDriver.UX.Windows
@@ -61,12 +60,11 @@ namespace OpenTabletDriver.UX.Windows
 
             var basePath = AppDomain.CurrentDomain.BaseDirectory;
             var path = Directory.EnumerateFiles(basePath, "OpenTabletDriver.UI*").FirstOrDefault(); // 0.7.x avalonia mirgration
-            path ??= SystemInterop.CurrentPlatform switch
-            {
-                SystemPlatform.Windows => Path.Join(basePath, "OpenTabletDriver.UX.Wpf.exe"),
-                SystemPlatform.MacOS => Path.Join(basePath, "OpenTabletDriver.UX.MacOS"),
-                _ => throw new NotSupportedException("Unsupported platform")
-            };
+
+            path ??= OperatingSystem.IsWindows() ? Path.Join(basePath, "OpenTabletDriver.UX.Wpf.exe")
+                : OperatingSystem.IsMacOS() ? Path.Join(basePath, "OpenTabletDriver.UX.MacOS")
+                : throw new NotSupportedException("Unsupported platform");
+
 
             _app.StopDaemon();
             Application.Instance.MainForm.Close();

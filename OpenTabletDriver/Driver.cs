@@ -5,12 +5,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
 using OpenTabletDriver.Components;
 using OpenTabletDriver.Devices;
 using OpenTabletDriver.Devices.HidSharpBackend;
-using OpenTabletDriver.Interop;
 using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver
@@ -136,7 +136,7 @@ namespace OpenTabletDriver
                         }
                     }
                     catch (IOException iex) when (iex.Message.Contains("Unable to open HID class device")
-                        && SystemInterop.CurrentPlatform == SystemPlatform.Linux)
+                        && OperatingSystem.IsLinux())
                     {
                         Log.Write(
                             "Driver",
@@ -146,7 +146,7 @@ namespace OpenTabletDriver
                         );
                     }
                     catch (ArgumentOutOfRangeException aex) when (aex.Message.Contains("Value range is [0, 15]")
-                        && SystemInterop.CurrentPlatform == SystemPlatform.Linux)
+                        && OperatingSystem.IsLinux())
                     {
                         Log.Write(
                             "Driver",
@@ -274,7 +274,7 @@ namespace OpenTabletDriver
             }
 
             // Windows only configuration attribute.
-            if (SystemInterop.CurrentPlatform == SystemPlatform.Windows)
+            if (OperatingSystem.IsWindows())
             {
                 if (device is HidSharpEndpoint
                     && attributes.TryGetValue("WinUsage", out var winUsage)

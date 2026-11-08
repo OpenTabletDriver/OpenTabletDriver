@@ -2,8 +2,8 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.Versioning;
 using System.Text.RegularExpressions;
-using OpenTabletDriver.Interop;
 
 namespace OpenTabletDriver.SystemDrivers.Providers
 {
@@ -20,14 +20,15 @@ namespace OpenTabletDriver.SystemDrivers.Providers
 
         public DriverInfo? GetDriverInfo()
         {
-            return SystemInterop.CurrentPlatform switch
-            {
-                SystemPlatform.Windows => GetWinDriverInfo(),
-                SystemPlatform.Linux => GetLinuxDriverInfo(),
-                _ => null
-            };
+            if (OperatingSystem.IsWindows())
+                return GetWinDriverInfo();
+            if (OperatingSystem.IsLinux())
+                return GetLinuxDriverInfo();
+
+            return null;
         }
 
+        [SupportedOSPlatform("windows")]
         protected virtual DriverInfo? GetWinDriverInfo()
         {
             if (pnpUtil == null)
@@ -55,6 +56,7 @@ namespace OpenTabletDriver.SystemDrivers.Providers
             return null;
         }
 
+        [SupportedOSPlatform("linux")]
         protected virtual DriverInfo? GetLinuxDriverInfo()
         {
             if (linuxModules == null)
@@ -74,30 +76,25 @@ namespace OpenTabletDriver.SystemDrivers.Providers
 
         internal static void Refresh()
         {
-            switch (SystemInterop.CurrentPlatform)
+            if (OperatingSystem.IsWindows())
             {
-                case SystemPlatform.Windows:
+                var pnputilProc = new Process
                 {
-                    var pnputilProc = new Process
+                    StartInfo = new ProcessStartInfo
                     {
-                        StartInfo = new ProcessStartInfo
-                        {
-                            FileName = "pnputil.exe",
-                            Arguments = "-e",
-                            UseShellExecute = false,
-                            RedirectStandardOutput = true
-                        }
-                    };
+                        FileName = "pnputil.exe",
+                        Arguments = "-e",
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true
+                    }
+                };
 
-                    pnputilProc.Start();
-                    pnpUtil = pnputilProc.StandardOutput.ReadToEnd();
-                    break;
-                }
-                case SystemPlatform.Linux:
-                {
-                    linuxModules = File.ReadAllText("/proc/modules");
-                    break;
-                }
+                pnputilProc.Start();
+                pnpUtil = pnputilProc.StandardOutput.ReadToEnd();
+            }
+            else if (OperatingSystem.IsLinux())
+            {
+                linuxModules = File.ReadAllText("/proc/modules");
             }
         }
     }

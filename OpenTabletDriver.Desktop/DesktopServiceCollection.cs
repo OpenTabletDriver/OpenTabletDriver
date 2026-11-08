@@ -12,7 +12,6 @@ using OpenTabletDriver.Desktop.Diagnostics;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Devices;
-using OpenTabletDriver.Interop;
 
 namespace OpenTabletDriver.Desktop
 {
@@ -46,13 +45,14 @@ namespace OpenTabletDriver.Desktop
 
         public static DesktopServiceCollection GetPlatformServiceCollection()
         {
-            return SystemInterop.CurrentPlatform switch
-            {
-                SystemPlatform.Windows => new DesktopWindowsServiceCollection(),
-                SystemPlatform.Linux => new DesktopLinuxServiceCollection(),
-                SystemPlatform.MacOS => new DesktopMacOSServiceCollection(),
-                _ => throw new PlatformNotSupportedException("This platform is not supported by OpenTabletDriver.")
-            };
+            if(OperatingSystem.IsWindows())
+                return new DesktopWindowsServiceCollection();
+            if(OperatingSystem.IsLinux())
+                return new DesktopLinuxServiceCollection();
+            if (OperatingSystem.IsMacOS())
+                return new DesktopMacOSServiceCollection();
+
+            throw new PlatformNotSupportedException("This platform is not supported by OpenTabletDriver.");
         }
     }
 }

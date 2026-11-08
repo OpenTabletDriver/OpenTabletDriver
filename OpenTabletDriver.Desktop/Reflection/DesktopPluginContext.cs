@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
-using OpenTabletDriver.Interop;
 
 namespace OpenTabletDriver.Desktop.Reflection
 {
@@ -79,13 +78,16 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         private static string ToDllName(string dllName)
         {
-            return SystemInterop.CurrentPlatform switch
-            {
-                SystemPlatform.Windows => $"{dllName}.dll",
-                SystemPlatform.Linux => $"lib{dllName}.so",
-                SystemPlatform.MacOS => $"lib{dllName}.dylib",
-                _ => throw new PlatformNotSupportedException()
-            };
+            if (OperatingSystem.IsWindows())
+                return $"{dllName}.dll";
+
+            if (OperatingSystem.IsLinux())
+                return $"lib{dllName}.so";
+
+            if (OperatingSystem.IsMacOS())
+                return $"lib{dllName}.dylib";
+
+            throw new PlatformNotSupportedException();
         }
     }
 }

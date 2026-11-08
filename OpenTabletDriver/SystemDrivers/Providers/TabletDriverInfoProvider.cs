@@ -1,5 +1,5 @@
+using System;
 using System.Linq;
-using OpenTabletDriver.Interop;
 
 namespace OpenTabletDriver.SystemDrivers.Providers
 {
@@ -13,9 +13,9 @@ namespace OpenTabletDriver.SystemDrivers.Providers
 
         public DriverInfo? GetDriverInfo()
         {
-            if (SystemInterop.CurrentPlatform == SystemPlatform.Windows)
+            if (OperatingSystem.IsWindows())
             {
-                var processes = DriverInfo.SystemProcesses.Where(p => ProcessNames.Contains(p.ProcessName)).ToArray();
+                var processes = DriverInfo.SystemProcesses.Where(p => Enumerable.Contains(ProcessNames, p.ProcessName)).ToArray();
                 if (processes.Any())
                 {
                     return new DriverInfo
