@@ -8,6 +8,7 @@
 | Artisul M0610                      |     Supported     |
 | Fansjoy FJ-S1                      |     Supported     | Rebranded XENX X1-640
 | Gaomon 1060 Pro                    |     Supported     |
+| Gaomon 1060 Pro (16K)              |     Supported     |
 | Gaomon GM116HD                     |     Supported     |
 | Gaomon GM156HD                     |     Supported     |
 | Gaomon GM156HD (16K)               |     Supported     |
