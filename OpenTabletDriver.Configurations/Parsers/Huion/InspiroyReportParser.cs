@@ -18,6 +18,8 @@ namespace OpenTabletDriver.Configurations.Parsers.Huion
                     return new UCLogicAuxReport(data);
                 case 0xf1:
                     return new InspiroyRelWheelReport(data);
+                case 0x00 when data[0] == 0x03:
+                    return new InspiroyAuxReport250616(data);
                 case 0x00:
                     return new OutOfRangeReport(data);
             }
