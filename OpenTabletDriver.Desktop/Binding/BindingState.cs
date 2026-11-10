@@ -30,6 +30,11 @@ namespace OpenTabletDriver.Desktop.Binding
                     stateBinding.Release(tablet, report);
             }
 
+            if (pressureThresholdIsMetOrUnneeded && Binding is IStatePositionBinding statePositionBinding && report is IAbsolutePositionReport absolutePositionReport)
+            {
+                statePositionBinding.SetPosition(absolutePositionReport.Position);
+            }
+
             if (!newState || pressureThresholdIsMetOrUnneeded) // don't update state to true without threshold
                 PreviousState = newState;
         }
