@@ -52,13 +52,6 @@ namespace OpenTabletDriver.Console
             settings ??= await GetSettings();
 
             var profile = settings.Profiles.FirstOrDefault(p => p.Tablet.Equals(profileName, comparer));
-            if (profile == null)
-            {
-                var tablets = await Driver.Instance!.GetTablets();
-                var tablet = tablets.FirstOrDefault(t => t.Properties.Name.Equals(profileName, comparer));
-                if (tablet != null)
-                    profile = Profile.GetDefaults(tablet);
-            }
 
             return profile ?? throw new ArgumentException($"Cannot find profile for tablet '{profileName}'");
         }
