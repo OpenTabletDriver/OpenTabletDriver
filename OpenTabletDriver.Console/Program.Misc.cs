@@ -67,11 +67,9 @@ namespace OpenTabletDriver.Console
         {
             if (!await EnsureDaemonReady()) return;
             var types = AppInfo.PluginManager.GetChildTypes<T>();
-            if (types.Count == 0)
-            {
-                await Out.WriteAsync("No types found\n");
-                return;
-            }
+
+            // use separate variable for tracking to ensure we only increment when the predicate (if any) is successful
+            int foundTypes = 0;
 
             foreach (var type in types)
             {
@@ -80,11 +78,16 @@ namespace OpenTabletDriver.Console
                     if (type.FullName == null)
                         throw new InvalidOperationException($"Could not look up name for type {type}");
 
+                    ++foundTypes;
+
                     var name = AppInfo.PluginManager.GetFriendlyName(type.FullName);
                     var output = string.IsNullOrWhiteSpace(name) ? type.FullName : $"{type.FullName} [{name}]";
                     await Out.WriteLineAsync(output);
                 }
             }
+
+            if (foundTypes == 0)
+                await Out.WriteAsync("No types found\n");
         }
 
         static string GetSHA256(string path)
