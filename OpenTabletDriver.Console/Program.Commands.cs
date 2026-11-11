@@ -405,7 +405,7 @@ namespace OpenTabletDriver.Console
 
             foreach (var tablet in await Driver.Instance!.GetTablets())
             {
-                var vidPid = tablet.Identifiers.Select(x
+                var vidPid = tablet.Identifiers.DistinctBy(x => (x.VendorID, x.ProductID)).Select(x
                     => $"{x.VendorID}/{x.ProductID} ({x.VendorID:x4}/{x.ProductID:x4})");
                 await Out.WriteAsync($"{tablet.Properties.Name} (Vendor/Product IDs: [{string.Join(", ", vidPid)}]");
             }
