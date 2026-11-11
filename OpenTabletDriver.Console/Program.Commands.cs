@@ -399,6 +399,18 @@ namespace OpenTabletDriver.Console
             await Out.WriteLineAsync("Tools: " + string.Join(", ", settings.Tools.Format()));
         }
 
+        private static async Task GetTablets()
+        {
+            if (!await EnsureDaemonReady()) return;
+
+            foreach (var tablet in await Driver.Instance!.GetTablets())
+            {
+                var vidPid = tablet.Identifiers.DistinctBy(x => (x.VendorID, x.ProductID)).Select(x
+                    => $"{x.VendorID}/{x.ProductID} ({x.VendorID:x4}/{x.ProductID:x4})");
+                await Out.WriteLineAsync($"{tablet.Properties.Name} (Vendor/Product IDs: [{string.Join(", ", vidPid)}]");
+            }
+        }
+
         #endregion
 
         #region Actions
