@@ -25,35 +25,47 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
         public void SetPosition(Vector2 pos)
         {
-            var newPos = pos - _offset;
-            _delta = newPos - _lastPos;
-            _lastPos = newPos;
+            lock (SyncRoot)
+            {
+                var newPos = pos - _offset;
+                _delta = newPos - _lastPos;
+                _lastPos = newPos;
 
-            QueuePendingPosition(newPos.X, newPos.Y);
+                QueuePendingPosition(newPos.X, newPos.Y);
+            }
         }
 
         protected override void SetPendingPosition(IntPtr mouseEvent, float x, float y)
         {
-            CGEventSetLocation(mouseEvent, new CGPoint(x, y));
-            if (_delta is not null)
+            lock (SyncRoot)
             {
-                CGEventSetDoubleValueField(mouseEvent, CGEventField.mouseEventDeltaX, _delta.Value.X);
-                CGEventSetDoubleValueField(mouseEvent, CGEventField.mouseEventDeltaY, _delta.Value.Y);
+                CGEventSetLocation(mouseEvent, new CGPoint(x, y));
+                if (_delta is { } delta)
+                {
+                    CGEventSetDoubleValueField(mouseEvent, CGEventField.mouseEventDeltaX, delta.X);
+                    CGEventSetDoubleValueField(mouseEvent, CGEventField.mouseEventDeltaY, delta.Y);
+                }
             }
         }
 
         protected override void QueuePendingPositionFromSystem()
         {
-            var eventRef = CGEventCreate(IntPtr.Zero);
-            var pos = CGEventGetLocation(eventRef);
-            CFRelease(eventRef);
-            QueuePendingPosition((float)pos.x, (float)pos.y);
+            lock (SyncRoot)
+            {
+                var eventRef = CGEventCreate(IntPtr.Zero);
+                var pos = CGEventGetLocation(eventRef);
+                CFRelease(eventRef);
+                QueuePendingPosition((float)pos.x, (float)pos.y);
+            }
         }
 
         protected override void ResetPendingPosition(IntPtr mouseEvent)
         {
-            _lastPos = null;
-            _delta = null;
+            lock (SyncRoot)
+            {
+                _lastPos = null;
+                _delta = null;
+            }
         }
     }
 }

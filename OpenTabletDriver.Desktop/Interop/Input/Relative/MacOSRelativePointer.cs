@@ -12,25 +12,37 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
     {
         public void SetPosition(Vector2 delta)
         {
-            QueuePendingPosition(delta.X, delta.Y);
+            lock (SyncRoot)
+            {
+                QueuePendingPosition(delta.X, delta.Y);
+            }
         }
 
         protected override void SetPendingPosition(IntPtr mouseEvent, float x, float y)
         {
-            CGEventSetLocation(mouseEvent, GetCursorPosition() + new CGPoint(x, y));
-            CGEventSetDoubleValueField(mouseEvent, CGEventField.mouseEventDeltaX, x);
-            CGEventSetDoubleValueField(mouseEvent, CGEventField.mouseEventDeltaY, y);
+            lock (SyncRoot)
+            {
+                CGEventSetLocation(mouseEvent, GetCursorPosition() + new CGPoint(x, y));
+                CGEventSetDoubleValueField(mouseEvent, CGEventField.mouseEventDeltaX, x);
+                CGEventSetDoubleValueField(mouseEvent, CGEventField.mouseEventDeltaY, y);
+            }
         }
 
         protected override void ResetPendingPosition(IntPtr mouseEvent)
         {
-            CGEventSetDoubleValueField(mouseEvent, CGEventField.mouseEventDeltaX, 0);
-            CGEventSetDoubleValueField(mouseEvent, CGEventField.mouseEventDeltaY, 0);
+            lock (SyncRoot)
+            {
+                CGEventSetDoubleValueField(mouseEvent, CGEventField.mouseEventDeltaX, 0);
+                CGEventSetDoubleValueField(mouseEvent, CGEventField.mouseEventDeltaY, 0);
+            }
         }
 
         protected override void QueuePendingPositionFromSystem()
         {
-            QueuePendingPosition(0, 0);
+            lock (SyncRoot)
+            {
+                QueuePendingPosition(0, 0);
+            }
         }
 
         private static CGPoint GetCursorPosition()
