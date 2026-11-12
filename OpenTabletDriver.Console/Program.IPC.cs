@@ -27,7 +27,7 @@ namespace OpenTabletDriver.Console
             if (!Driver.IsConnected)
                 await Driver.Connect();
 
-            if(Driver.IsConnected)
+            if (Driver.IsConnected)
                 AppInfo.Current = await Driver.Instance.GetApplicationInfo();
 
             if (!pluginsLoaded)
