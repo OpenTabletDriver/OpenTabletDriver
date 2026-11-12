@@ -1,0 +1,32 @@
+{
+  "Name": "Gaomon PD1900",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 408.96,
+      "Height": 230.03,
+      "MaxX": 81792,
+      "MaxY": 46008
+    },
+    "Pen": {
+      "MaxPressure": 16383,
+      "ButtonCount": 2
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 9580,
+      "ProductID": 8220,
+      "InputReportLength": 14,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.GianoReportParser",
+      "DeviceStrings": {
+        "201": "GM001_M244_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
