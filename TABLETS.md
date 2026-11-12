@@ -263,8 +263,8 @@
 | UC-Logic TWMNA62                   |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | UGEE M708                          |    Has Quirks     | Windows: Might need Zadig's WinUSB to be installed on interface 0
 | UGEE M808                          |    Has Quirks     | 16k pressure firmware is unsupported; will detect as 8k pressure
-| Wacom CTL-4100WL                   |    Has Quirks     | Center button reports as 5th aux button.
-| Wacom CTL-6100WL                   |    Has Quirks     | Center button reports as 5th aux button.
+| Wacom CTL-4100WL                   |    Has Quirks     | Center button reports as 5th aux button over USB only.
+| Wacom CTL-6100WL                   |    Has Quirks     | Center button reports as 5th aux button over USB only.
 | Wacom PTH-460                      |    Has Quirks     | Wheel reports in reverse direction.
 | Wacom PTH-660                      |    Has Quirks     | Wheel reports in reverse direction.
 | Wacom PTH-860                      |    Has Quirks     | Wheel reports in reverse direction.
