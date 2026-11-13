@@ -1,0 +1,32 @@
+{
+  "Name": "Huion Kamvas 22 (Gen 3)",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 475.392,
+      "Height": 267.408,
+      "MaxX": 95352,
+      "MaxY": 53629
+    },
+    "Pen": {
+      "MaxPressure": 16384,
+      "ButtonCount": 3
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 9580,
+      "ProductID": 8213,
+      "InputReportLength": 14,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.GianoReportParser",
+      "Device Strings": {
+        "201": "HUION_M19g_\\d{6}$"
+    },
+    "InitializationStrings": [
+      200
+      ]
+  }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
