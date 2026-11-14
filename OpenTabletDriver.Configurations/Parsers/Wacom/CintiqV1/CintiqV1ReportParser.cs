@@ -15,7 +15,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.CintiqV1
             {
                 0x02 => GetToolReport(report),
                 0x10 => GetToolReport(report),
-                0x0C => new CintiqV1AuxReport(report),
+                0x0C => new CintiqV1AuxReport(report, ParseTopButtons(report)),
                 _ => new DeviceReport(report)
             };
         }
@@ -34,6 +34,17 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.CintiqV1
                 return new IntuosV1ToolReport(report);
 
             return new DeviceReport(report);
+        }
+
+        private static bool[] ParseTopButtons(byte[] report)
+        {
+            var topButtons = report[9];
+
+            return
+            [
+                topButtons.IsBitSet(0), // i-button
+                topButtons.IsBitSet(1), // settings button
+            ];
         }
 
         private uint _prevPressure;
