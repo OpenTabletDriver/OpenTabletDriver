@@ -1,22 +1,24 @@
+using System;
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Plugin.Tablet.Wheel;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom.CintiqV1
 {
-    public struct CintiqV1AuxReport : IAuxReport
+    public struct CintiqV1AuxReport : IAuxReport, IAbsoluteWheelReport
     {
-        public CintiqV1AuxReport(byte[] report)
+        public CintiqV1AuxReport(byte[] report,
+                                 bool[] topButtons,
+                                 uint? firstWheelByte = null,
+                                 uint? secondWheelByte = null)
         {
             Raw = report;
 
             // TODO: Handle touch strips.
-            var leftRadialButton = report[5];
             var leftButtons = report[6];
-            var rightRadialButton = report[7];
             var rightButtons = report[8];
-            var topButtons = report[9];
+
             AuxButtons =
             [
-                leftRadialButton.IsBitSet(0),
                 leftButtons.IsBitSet(0),
                 leftButtons.IsBitSet(1),
                 leftButtons.IsBitSet(2),
@@ -25,8 +27,6 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.CintiqV1
                 leftButtons.IsBitSet(5),
                 leftButtons.IsBitSet(6),
                 leftButtons.IsBitSet(7),
-                leftButtons.IsBitSet(8),
-                rightRadialButton.IsBitSet(0),
                 rightButtons.IsBitSet(0),
                 rightButtons.IsBitSet(1),
                 rightButtons.IsBitSet(2),
@@ -35,13 +35,30 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.CintiqV1
                 rightButtons.IsBitSet(5),
                 rightButtons.IsBitSet(6),
                 rightButtons.IsBitSet(7),
-                rightButtons.IsBitSet(8),
-                topButtons.IsBitSet(0), // i-button
-                topButtons.IsBitSet(1), // wrench-button
+                false, // i-button
+                false, // wrench-button
+                false, // keyboard-button
             ];
+
+            var topButtonsCount = Math.Min(topButtons.Length, 3);
+
+            for (int i = 0; i < topButtonsCount; i++)
+                AuxButtons[i + 16] = topButtons[i];
+
+            AnalogPositions = [null, null];
+
+            // GetValueOrDefault is somehow faster than x.Value by more than 50 nanos somehow
+            if (firstWheelByte.HasValue)
+                AnalogPositions[0] = GetRingPosition(report[firstWheelByte.GetValueOrDefault()]);
+            if (secondWheelByte.HasValue)
+                AnalogPositions[1] = GetRingPosition(report[secondWheelByte.GetValueOrDefault()]);
         }
+
+        private static uint? GetRingPosition(byte ring)
+            => ring.IsBitSet(7) ? (uint)(ring & 0x7F) : null;
 
         public byte[] Raw { set; get; }
         public bool[] AuxButtons { set; get; }
+        public uint?[] AnalogPositions { set; get; }
     }
 }
