@@ -12,5 +12,12 @@ namespace OpenTabletDriver.Plugin.Platform.Display
         /// The individual displays contained within this virtual screen
         /// </summary>
         IEnumerable<IDisplay> Displays { get; }
+
+        /// <summary>
+        /// The name or context of the virtual screen.
+        /// If you can potentially have different virtual screens, it is recommended
+        /// that you override this with an appropriate string, e.g. <c>"Virtual Screen {Index}"</c>
+        /// </summary>
+        string IDisplay.Name => "Virtual Screen";
     }
 }

@@ -7,14 +7,14 @@ namespace OpenTabletDriver.Native.Linux.Xorg
     using IntPtr = IntPtr;
     using Window = IntPtr;
 
-    public class XLib
+    public partial class XLib
     {
         private const string libX11 = "libX11.so.6";
         private static object Lock = new object();
 
-        [DllImport(libX11, EntryPoint = "XOpenDisplay")]
-        private extern unsafe static IntPtr sys_XOpenDisplay(char* display);
-        public static unsafe IntPtr XOpenDisplay(char* display)
+        [LibraryImport(libX11, EntryPoint = "XOpenDisplay", StringMarshalling = StringMarshalling.Utf8)]
+        private static partial IntPtr sys_XOpenDisplay(string? display);
+        public static IntPtr XOpenDisplay(string? display)
         {
             lock (Lock)
                 return sys_XOpenDisplay(display);

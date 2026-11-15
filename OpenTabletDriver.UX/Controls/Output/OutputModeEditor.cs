@@ -7,7 +7,6 @@ using Eto.Forms;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin.Output;
-using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls.Generic.Reflection;
 
@@ -108,14 +107,6 @@ namespace OpenTabletDriver.UX.Controls.Output
             {
                 tabletAreaEditor.AreaBounds = null;
             }
-        }
-
-        public void SetDisplaySize(IEnumerable<IDisplay>? displays)
-        {
-            var bgs = from disp in displays
-                      where !(disp is IVirtualScreen)
-                      select new RectangleF(disp.Position.X, disp.Position.Y, disp.Width, disp.Height);
-            absoluteModeEditor.displayAreaEditor.AreaBounds = bgs;
         }
 
         private void UpdateOutputMode(PluginSettingStore? store)

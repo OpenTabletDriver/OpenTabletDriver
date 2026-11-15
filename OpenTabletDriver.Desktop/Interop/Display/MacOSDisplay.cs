@@ -50,14 +50,14 @@ namespace OpenTabletDriver.Desktop.Interop.Display
             var offsetY = displayBounds.Min(d => d.origin.y);
 
             return from display in displayBounds
-                   select new Display(
-                       (float)display.size.width,
-                       (float)display.size.height,
-                       new Vector2(
+                   select new SerializedDisplay(
+                       Width: (float)display.size.width,
+                       Height: (float)display.size.height,
+                       Position: new Vector2(
                            (float)(display.origin.x - offsetX),
                            (float)(display.origin.y - offsetY)
                        ),
-                       displayBounds.IndexOf(display)
+                       Index: displayBounds.IndexOf(display)
                    );
         });
 

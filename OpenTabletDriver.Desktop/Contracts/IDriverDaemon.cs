@@ -7,6 +7,7 @@ using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Desktop.Updater;
 using OpenTabletDriver.Plugin.Devices;
 using OpenTabletDriver.Plugin.Logging;
+using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Desktop.Contracts
@@ -26,6 +27,12 @@ namespace OpenTabletDriver.Desktop.Contracts
         Task<bool> DownloadPlugin(PluginMetadata metadata);
 
         Task<IEnumerable<SerializedDeviceEndpoint>> GetDevices();
+
+        /// <summary>
+        /// Get virtual screen and its displays
+        /// </summary>
+        /// <returns>An enumerable collection of the virtual screen, followed by its displays</returns>
+        Task<IEnumerable<SerializedDisplay>> GetDisplays();
 
         Task<IEnumerable<TabletReference>> GetTablets();
         Task<IEnumerable<TabletReference>> DetectTablets();

@@ -22,6 +22,7 @@ using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Devices;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Output;
+using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.SystemDrivers;
@@ -180,6 +181,17 @@ namespace OpenTabletDriver.Daemon
         public Task<bool> DownloadPlugin(PluginMetadata metadata)
         {
             return AppInfo.PluginManager.DownloadPlugin(metadata);
+        }
+
+        public Task<IEnumerable<SerializedDisplay>> GetDisplays()
+        {
+            var virtualScreen = AppInfo.PluginManager.GetService<IVirtualScreen>() ??
+                   throw new InvalidOperationException("Could not look up virtual screen");
+
+            // must contain the virtual screen
+            Debug.Assert(virtualScreen.Displays.Any(x => x is IVirtualScreen));
+
+            return Task.FromResult(virtualScreen.Displays.Select(x => new SerializedDisplay(x)));
         }
 
         public Task<IEnumerable<TabletReference>> GetTablets()

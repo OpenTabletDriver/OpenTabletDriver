@@ -12,9 +12,10 @@ namespace OpenTabletDriver.Desktop.Interop.Display
 
     public class XScreen : IVirtualScreen, IDisposable
     {
-        public unsafe XScreen()
+        public XScreen(string? xDisplay = null)
         {
-            Display = XOpenDisplay(null);
+            Display = XOpenDisplay(xDisplay);
+            _displayId = xDisplay ?? "0";
             RootWindow = XDefaultRootWindow(Display);
 
             var monitors = GetXRandrDisplays().ToList();
@@ -24,11 +25,11 @@ namespace OpenTabletDriver.Desktop.Interop.Display
             displays.Add(this);
             foreach (var monitor in monitors)
             {
-                var display = new Interop.Display.Display(
-                    monitor.Width,
-                    monitor.Height,
-                    new Vector2(monitor.X - primary.X, monitor.Y - primary.Y),
-                    monitors.IndexOf(monitor) + 1);
+                var display = new SerializedDisplay(
+                    Width: monitor.Width,
+                    Height: monitor.Height,
+                    Position: new Vector2(monitor.X - primary.X, monitor.Y - primary.Y),
+                    Index: monitors.IndexOf(monitor) + 1);
                 displays.Add(display);
             }
 
@@ -36,6 +37,7 @@ namespace OpenTabletDriver.Desktop.Interop.Display
             Position = new Vector2(primary.X, primary.Y);
         }
 
+        private readonly string _displayId;
         private IntPtr Display;
         private IntPtr RootWindow;
 
@@ -65,6 +67,8 @@ namespace OpenTabletDriver.Desktop.Interop.Display
         public IEnumerable<IDisplay> Displays { private set; get; }
 
         public int Index => 0;
+
+        string IDisplay.Name => $"X Screen {_displayId}";
 
         public override string ToString()
         {
