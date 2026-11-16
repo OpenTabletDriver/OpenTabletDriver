@@ -8,10 +8,13 @@ using OpenTabletDriver.Desktop.Updater;
 using OpenTabletDriver.Plugin.Devices;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Tablet;
+using PolyType;
+using StreamJsonRpc;
 
 namespace OpenTabletDriver.Desktop.Contracts
 {
-    public interface IDriverDaemon
+    [JsonRpcContract, GenerateShape(IncludeMethods = MethodShapeFlags.AllPublic)] // source-generate the JsonRpc proxy
+    public partial interface IDriverDaemon
     {
         event EventHandler<LogMessage>? Message;
         event EventHandler<DebugReportData>? DeviceReport;
