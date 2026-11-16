@@ -15,7 +15,6 @@ namespace OpenTabletDriver.Desktop.Binding
         {
             // Check if drag binding is needed or unnecessary
             // NOTE: report _must_ include pressure to work properly
-            // TODO: use relevant threshold instead of '0'
             bool pressureThresholdIsMetOrUnneeded =
                 !RequiresPenPressure || (RequiresPenPressure && report is ITabletReport { Pressure: > 0 });
 
