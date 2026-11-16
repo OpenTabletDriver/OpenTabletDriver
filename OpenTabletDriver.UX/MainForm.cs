@@ -595,6 +595,8 @@ namespace OpenTabletDriver.UX
 
         private CancellationTokenSource _disableApplySaveButtons = new();
 
+        private const int _BUTTON_DISABLEMENT_MILLISECONDS = 1000;
+
         /// <summary>
         /// Disable the save and apply buttons temporarily for <see cref="_BUTTON_DISABLEMENT_MILLISECONDS"/>.
         /// </summary>
@@ -611,7 +613,7 @@ namespace OpenTabletDriver.UX
                 applyButton.Enabled = false;
 
                 // debounce re-enabling task
-                await Task.Delay(1000, _disableApplySaveButtons.Token).ContinueWith(task =>
+                await Task.Delay(_BUTTON_DISABLEMENT_MILLISECONDS, _disableApplySaveButtons.Token).ContinueWith(task =>
                 {
                     if (task.IsCanceled) return;
 
