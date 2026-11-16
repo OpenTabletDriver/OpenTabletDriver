@@ -17,6 +17,7 @@ using OpenTabletDriver.UX.Windows.Greeter;
 using OpenTabletDriver.UX.Windows.Plugins;
 using OpenTabletDriver.UX.Windows.Tablet;
 using OpenTabletDriver.UX.Windows.Updater;
+using StreamJsonRpc;
 
 namespace OpenTabletDriver.UX
 {
@@ -183,6 +184,8 @@ namespace OpenTabletDriver.UX
 
         private static void ShowUnhandledException(object? sender, Eto.UnhandledExceptionEventArgs e)
         {
+            if (e.ExceptionObject is ConnectionLostException) return; // daemon disconnected, normal behavior likely handles this.
+
             try
             {
                 var exception = e.ExceptionObject as Exception;
