@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO.Pipes;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,7 +32,9 @@ namespace OpenTabletDriver.Desktop.RPC
         {
             try
             {
-                using var rpc = new JsonRpc(stream, stream, host);
+                using var rpc = new JsonRpc(Rpc.GetRpcHandler(stream), host);
+                rpc.TraceSource = new TraceSource(nameof(RpcHost<>), SourceLevels.All);
+                rpc.TraceSource.Listeners.Add(new ConsoleTraceListener());
                 rpc.ExceptionStrategy = ExceptionProcessing.ISerializable;
                 ConnectionStateChanged?.Invoke(this, true);
                 rpc.StartListening();

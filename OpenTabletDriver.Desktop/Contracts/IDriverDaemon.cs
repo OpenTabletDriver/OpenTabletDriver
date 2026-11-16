@@ -8,10 +8,20 @@ using OpenTabletDriver.Desktop.Updater;
 using OpenTabletDriver.Plugin.Devices;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Tablet;
+using PolyType;
+using StreamJsonRpc;
 
 namespace OpenTabletDriver.Desktop.Contracts
 {
-    public interface IDriverDaemon
+    [GenerateShapeFor<LogMessage>, GenerateShapeFor<DebugReportData>, GenerateShapeFor<TabletReference>]
+    [GenerateShapeFor<bool>, GenerateShapeFor<SerializedDeviceEndpoint>, GenerateShapeFor<Settings>]
+    [GenerateShapeFor<AppInfo>, GenerateShapeFor<string>, GenerateShapeFor<DiagnosticInfo>, GenerateShapeFor<SerializedUpdateInfo>]
+    partial class Witness;
+
+    [JsonRpcContract]
+    [GenerateShape(IncludeMethods = MethodShapeFlags.PublicInstance)]
+    [RpcMarshalable(CallScopedLifetime = true)]
+    public partial interface IDriverDaemon
     {
         event EventHandler<LogMessage>? Message;
         event EventHandler<DebugReportData>? DeviceReport;
