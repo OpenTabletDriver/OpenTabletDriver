@@ -14,7 +14,6 @@ jobs:
   nuget:
     runs-on: ubuntu-latest
     environment: nuget
-    if: ${{ github.event_name != 'workflow_dispatch' }}
     name: NuGet Deploy Release (Ubuntu Host)
     permissions:
       id-token: write # enable GitHub OIDC token issuance
