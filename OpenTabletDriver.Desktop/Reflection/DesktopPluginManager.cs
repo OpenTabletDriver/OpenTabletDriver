@@ -250,17 +250,21 @@ namespace OpenTabletDriver.Desktop.Reflection
             Log.Write("Plugin", $"Unloading plugin '{context.FriendlyName}'", LogLevel.Debug);
             Plugins.Remove(context);
             AssembliesChanged?.Invoke(this, EventArgs.Empty);
-            return context.Assemblies.All(RemoveAllTypesForAssembly);
+            return removeAllTypesForAssemblies(context.Assemblies);
         }
 
-        public bool RemoveAllTypesForAssembly(Assembly asm)
+        private bool removeAllTypesForAssemblies(IEnumerable<Assembly> assemblies)
         {
             try
             {
-                var types = pluginTypes.Where(t => t.Assembly == asm)
-                    .Select(t => t.GetTypeInfo());
+                // refilter pluginTypes into a list that doesn't include the provided assemblies
+                var types = from pluginType in pluginTypes
+                            join assembly in assemblies on pluginType.Assembly equals assembly into assembliesJoin
+                            from assemblyNull in assembliesJoin.DefaultIfEmpty()
+                            where assemblyNull == null
+                            select pluginType;
 
-                pluginTypes = new ConcurrentBag<TypeInfo>(pluginTypes.Except(types));
+                pluginTypes = [.. types];
                 return true;
             }
             catch (Exception ex)
