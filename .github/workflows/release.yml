@@ -30,7 +30,7 @@ jobs:
         env:
           SOURCE: https://api.nuget.org/v3/index.json
         run: |
-          dotnet pack
+          dotnet pack --version-suffix "${{ inputs.version_suffix }}"
           dotnet nuget push ./nupkg/*.nupkg -s "$SOURCE" -k "${{steps.login.outputs.NUGET_API_KEY}}"
 
   matrixpublish:
