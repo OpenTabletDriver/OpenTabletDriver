@@ -10,4 +10,8 @@
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2026.2.0" />
+  </ItemGroup>
+
 </Project>
