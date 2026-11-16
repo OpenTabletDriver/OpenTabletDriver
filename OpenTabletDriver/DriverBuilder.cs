@@ -1,4 +1,6 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Plugin;
 
@@ -33,7 +35,7 @@ namespace OpenTabletDriver
         /// </summary>
         /// <param name="serviceCollection">The final service collection associated to the driver.</param>
         /// <returns>The built Driver with its lifetime managed by <paramref name="serviceCollection"/>.</returns>
-        public T Build<T>(out IServiceCollection serviceCollection) where T : class, IDriver
+        public T Build<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors), MeansImplicitUse(ImplicitUseKindFlags.InstantiatedNoFixedConstructorSignature)] T>(out IServiceCollection serviceCollection) where T : class, IDriver
         {
             if (_hasBuilt)
                 throw new DriverAlreadyBuiltException();
