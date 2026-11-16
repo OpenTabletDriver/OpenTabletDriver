@@ -1,12 +1,13 @@
 using System;
 using System.Runtime.InteropServices;
+using JetBrains.Annotations;
 using OpenTabletDriver.Native.Linux;
 
 namespace OpenTabletDriver.Native.Posix
 {
     public static class Utility
     {
-        public static int HandleEintr(Func<int> func)
+        public static int HandleEintr([InstantHandle] Func<int> func)
         {
             int ret, count = 0;
 
