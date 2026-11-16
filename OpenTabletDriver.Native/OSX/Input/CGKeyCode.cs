@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace OpenTabletDriver.Native.OSX.Input
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum CGKeyCode : short
     {
         kVK_ANSI_A = 0x00,
