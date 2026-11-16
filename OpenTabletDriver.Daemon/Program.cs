@@ -25,6 +25,7 @@ namespace OpenTabletDriver.Daemon
         private static bool s_writeLineFailed;
 
         // A garbage-collected registration unregisters its handler, so keep them for the process lifetime
+        // ReSharper disable once CollectionNeverQueried.Local
         private static readonly List<PosixSignalRegistration> s_signalRegistrations = [];
 
         static async Task Main(string[] args)
