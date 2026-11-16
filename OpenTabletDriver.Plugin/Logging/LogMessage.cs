@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace OpenTabletDriver.Plugin.Logging
 {
-    public class LogMessage
+    public record LogMessage // record rather than class to help test for equality
     {
         public LogMessage()
         {
@@ -29,6 +29,12 @@ namespace OpenTabletDriver.Plugin.Logging
         public required string Group { set; get; }
 
         /// <summary>
+        /// The source that logged this message.
+        /// Intended to be set by the log handler to either <c>UX</c>, <c>Console</c>, or <c>Daemon</c>.
+        /// </summary>
+        public string? Source { get; set; }
+
+        /// <summary>
         /// The content of the log message.
         /// </summary>
         public required string Message { set; get; }
@@ -46,16 +52,11 @@ namespace OpenTabletDriver.Plugin.Logging
         /// <summary>
         /// True if the log message should create a notification in the user's desktop environment.
         /// </summary>
-        public bool Notification { set; get; } = false;
+        public bool Notification { set; get; }
 
-        public override string ToString()
-        {
-            return string.Format(
-                "[{0}:{1}]\t{2}",
-                this.Group,
-                Enum.GetName(this.Level),
-                this.Message
-            );
-        }
+        public override string ToString() =>
+            this.Source == null
+                ? $"[{this.Group,20}:{Enum.GetName(this.Level),-7}] {this.Message}"
+                : $"[{this.Group,20}:{Enum.GetName(this.Level),-7}] {this.Source,6}: {this.Message}";
     }
 }
