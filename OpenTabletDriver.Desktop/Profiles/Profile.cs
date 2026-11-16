@@ -64,6 +64,11 @@ namespace OpenTabletDriver.Desktop.Profiles
                 _ => typeof(AbsoluteMode)
             };
 
+        /// <summary>
+        /// Gets the default profile for the provided tablet reference.
+        /// </summary>
+        /// <param name="tablet">The tablet reference to build defaults from (particularly <see cref="BindingSettings"/>).</param>
+        /// <returns>The default profile associated with the tablet.</returns>
         public static Profile GetDefaults(TabletReference tablet)
         {
             return new Profile

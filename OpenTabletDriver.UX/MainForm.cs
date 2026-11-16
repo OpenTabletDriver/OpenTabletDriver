@@ -201,6 +201,9 @@ namespace OpenTabletDriver.UX
             }
         }
 
+        /// <summary>
+        /// Starts the Daemon watchdog if the daemon isn't already running, and if the platform can execute daemon watchdogs.
+        /// </summary>
         private static void StartDaemonWatchdog()
         {
             if (Instance.Exists("OpenTabletDriver.Daemon") || !DaemonWatchdog.CanExecute) return;
@@ -592,6 +595,10 @@ namespace OpenTabletDriver.UX
 
         private CancellationTokenSource _disableApplySaveButtons = new();
 
+        /// <summary>
+        /// Disable the save and apply buttons temporarily for <see cref="_BUTTON_DISABLEMENT_MILLISECONDS"/>.
+        /// </summary>
+        /// <param name="disableSave">Whether the save button should also be disabled</param>
         private void DisableApplySaveButtons(bool disableSave = true)
         {
             Application.Instance.InvokeAsync(async () =>
