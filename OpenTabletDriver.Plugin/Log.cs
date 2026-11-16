@@ -120,7 +120,7 @@ namespace OpenTabletDriver.Plugin
             Write(message);
 
             if (ex.InnerException != null)
-                Exception(ex.InnerException);
+                Exception(ex.InnerException, level);
         }
 
         private static void WriteBacklog(LogMessage message)
