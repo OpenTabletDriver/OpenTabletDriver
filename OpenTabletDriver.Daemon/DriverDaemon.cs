@@ -517,7 +517,7 @@ namespace OpenTabletDriver.Daemon
             if (pointer is IPenActionHandler penActionHandler)
                 bindingServiceProvider.AddService(() => penActionHandler);
 
-            var tip = bindingHandler.Tip = new ThresholdBindingState
+            var tip = bindingHandler.Tip = new BindingState
             {
                 Binding = settings.TipButton?.Construct<IBinding>(bindingServiceProvider, tabletReference),
             };
@@ -527,7 +527,7 @@ namespace OpenTabletDriver.Daemon
                 Log.Write(group, $"Tip Binding: [{tip.Binding}]@{settings.TipActivationThreshold}%");
             }
 
-            var eraser = bindingHandler.Eraser = new ThresholdBindingState
+            var eraser = bindingHandler.Eraser = new BindingState
             {
                 Binding = settings.EraserButton?.Construct<IBinding>(bindingServiceProvider, tabletReference),
             };

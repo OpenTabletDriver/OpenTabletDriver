@@ -12,7 +12,6 @@ namespace OpenTabletDriver.Desktop
     public class Settings : ViewModel
     {
         private ProfileCollection profiles = new ProfileCollection();
-        private bool lockUsableAreaDisplay, lockUsableAreaTablet;
         private PluginSettingStoreCollection tools = new PluginSettingStoreCollection();
         private string revision = GetVersion();
 
@@ -33,16 +32,16 @@ namespace OpenTabletDriver.Desktop
         [JsonProperty(nameof(LockUsableAreaDisplay))]
         public bool LockUsableAreaDisplay
         {
-            set => this.RaiseAndSetIfChanged(ref this.lockUsableAreaDisplay, value);
-            get => this.lockUsableAreaDisplay;
-        }
+            get;
+            set => this.RaiseAndSetIfChanged(ref field, value);
+        } = true;
 
         [JsonProperty(nameof(LockUsableAreaTablet))]
         public bool LockUsableAreaTablet
         {
-            set => this.RaiseAndSetIfChanged(ref this.lockUsableAreaTablet, value);
-            get => this.lockUsableAreaTablet;
-        }
+            get;
+            set => this.RaiseAndSetIfChanged(ref field, value);
+        } = true;
 
         [JsonProperty(nameof(Tools))]
         public PluginSettingStoreCollection Tools
@@ -56,8 +55,6 @@ namespace OpenTabletDriver.Desktop
             return new Settings
             {
                 Profiles = GetDefaultProfiles(),
-                LockUsableAreaDisplay = true,
-                LockUsableAreaTablet = true
             };
         }
 

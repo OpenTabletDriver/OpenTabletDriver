@@ -67,7 +67,7 @@ body:
       description: |
         If you have anything else to add that could help diagnose the bug
       placeholder: |
-        This bug prevents me from getting a diagnostics file, but I am using OpenTabletDriver v0.6.8 on Windows 11.
+        This bug prevents me from getting a diagnostics file, but I am using OpenTabletDriver v0.6.8.1 on Windows 11.
         -or-
         This started happening after updating my operating system.
         -or-

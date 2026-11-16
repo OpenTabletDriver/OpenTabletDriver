@@ -13,18 +13,25 @@ on:
 jobs:
   nuget:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name != 'workflow_dispatch' }}
+    environment: nuget
     name: NuGet Deploy Release (Ubuntu Host)
+    permissions:
+      id-token: write # enable GitHub OIDC token issuance
     steps:
       - uses: actions/checkout@v6
 
+      - name: NuGet login via OIDC / temp key
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
       - name: Publish NuGet package
         env:
-          NUGET_AUTH_TOKEN: ${{ secrets.NUGET_AUTH_TOKEN }}
           SOURCE: https://api.nuget.org/v3/index.json
         run: |
-          dotnet pack
-          dotnet nuget push ./nupkg/*.nupkg -s "$SOURCE" -k "$NUGET_AUTH_TOKEN"
+          dotnet pack --version-suffix "${{ inputs.version_suffix }}"
+          dotnet nuget push ./nupkg/*.nupkg -s "$SOURCE" -k "${{steps.login.outputs.NUGET_API_KEY}}"
 
   matrixpublish:
     name: Build all supported platforms

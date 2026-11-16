@@ -90,6 +90,7 @@ namespace OpenTabletDriver.Console
             CreateCommand<string>(GetFilters, "Gets the currently enabled filters"),
             CreateCommand(GetTools, "Gets the currently enabled tools"),
             CreateCommand(ListPlugins, $"Gets the folder names of installed plugins for use in {nameof(UninstallPlugin)}"),
+            CreateCommand(GetTablets, "Gets all available tablets"),
         ];
 
         private static readonly IEnumerable<Command> UpdateCommands =
