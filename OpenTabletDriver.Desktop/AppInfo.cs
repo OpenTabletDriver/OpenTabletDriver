@@ -34,19 +34,11 @@ namespace OpenTabletDriver.Desktop
             trashDirectory,
             recordingDirectory;
 
-        public AppInfo()
-        {
-            // on Linux, verify presence of necessary environment variables (as '~' expands to $HOME environment variable)
-            if (SystemInterop.CurrentPlatform == PluginPlatform.Linux && IsEnvVarUnset("HOME") && IsEnvVarUnset("XDG_DATA_HOME"))
-            {
-                Log.Write(nameof(AppInfo),
-                    "Unable to look up environment variable 'HOME' or 'XDG_DATA_HOME'. '~/.local/share/OpenTabletDriver' paths will not detect (such as configuration overrides).",
-                    LogLevel.Warning);
-            }
-        }
+        private AppInfo() { }
 
         private static AppInfo? current;
 
+        // TODO: move initializers to constructor
         public static AppInfo Current
         {
             set => current = value;
@@ -198,9 +190,6 @@ namespace OpenTabletDriver.Desktop
         private string GetDefaultBackupDirectory() => Path.Join(AppDataDirectory, "Backup");
         private string GetDefaultTrashDirectory() => Path.Join(AppDataDirectory, "Trash");
         private string GetDefaultRecordingDirectory() => Path.Join(AppDataDirectory, "Recording");
-
-        private static bool IsEnvVarUnset(string envVar) =>
-            string.IsNullOrEmpty(Environment.GetEnvironmentVariable(envVar));
 
         [return: NotNullIfNotNull("path")]
         private static string? EnsureDirectoryExists(string? path, [CallerMemberName] string memberName = "")
