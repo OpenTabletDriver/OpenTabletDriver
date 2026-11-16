@@ -46,6 +46,22 @@ namespace OpenTabletDriver.Desktop.Interop.Input
         private bool _mouseMovedSinceLastDown;
 
         private int _clickState;
+
+        // macOS 27 correlates mouse-down/drag/up sequences by kCGMouseEventNumber
+        // and won't focus/raise a window when a synthetic click doesn't carry one
+        // or its number changes mid-sequence. See deskflow#9852,
+        // JBR-10539 and chromium/chromium@4e33c97.
+        //
+        // Each button tracks its own number so every down pairs with its own up,
+        // taken from a plain in-memory counter starting at 1 — no system query
+        // on any path. Event numbers are not one global ledger (Apple Pencil
+        // events carry their own smaller sequence), so there is no system
+        // counter to beat; chromium/chromium@4e33c97 and deskflow's d082157f
+        // both ship this exact start-at-1 scheme (the latter verified working
+        // on macOS 27), and starting at 1 means 0 — the broken value — is
+        // never sent.
+        private long _eventNumberCounter = 1;
+        private readonly long[] _buttonEventNumbers = new long[5];
         private readonly Stopwatch _stopWatch;
         private readonly Stopwatch _doubleClickStopWatch;
         private readonly IntPtr _eventSource;
@@ -104,6 +120,12 @@ namespace OpenTabletDriver.Desktop.Interop.Input
                 var cgEventType = ToDragCGEventType(_lastButton, lastButtonSet);
                 CGEventSetType(_mouseEvent, cgEventType);
                 SetPendingPosition(_mouseEvent, position.X, position.Y);
+                if (lastButtonSet)
+                {
+                    // drags must carry the same event number as the
+                    // mouse down that started them
+                    CGEventSetIntegerValueField(_mouseEvent, CGEventField.mouseEventNumber, _buttonEventNumbers[(int)_lastButton]);
+                }
                 ApplyTabletValues();
                 PostEvent();
             }
@@ -248,6 +270,13 @@ namespace OpenTabletDriver.Desktop.Interop.Input
                     }
                     CGEventSetIntegerValueField(_mouseEvent, CGEventField.mouseEventButtonNumber, i);
                     CGEventSetIntegerValueField(_mouseEvent, CGEventField.mouseEventClickState, _clickState); // clickState should be set to 1 (or more) during up, down, and drag events
+                    if (currState)
+                    {
+                        // each press takes a fresh event number; its release and
+                        // any drags reuse it so AppKit sees one click sequence
+                        _buttonEventNumbers[i] = _eventNumberCounter++;
+                    }
+                    CGEventSetIntegerValueField(_mouseEvent, CGEventField.mouseEventNumber, _buttonEventNumbers[i]);
                     ApplyTabletValues();
                     PostEvent();
                     _lastButton = button;
