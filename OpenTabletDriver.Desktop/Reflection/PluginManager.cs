@@ -162,10 +162,7 @@ namespace OpenTabletDriver.Desktop.Reflection
         protected virtual bool IsPluginType(Type type) => type.IsPluginType();
 
         protected virtual bool IsPlatformSupported(Type type)
-        {
-            var attr = (SupportedPlatformAttribute?)type.GetCustomAttribute(typeof(SupportedPlatformAttribute), false);
-            return attr?.IsCurrentPlatform ?? true;
-        }
+            => type.GetCustomAttribute<SupportedPlatformAttribute>(false)?.IsCurrentPlatform ?? true;
 
         protected virtual bool IsPluginIgnored(Type type)
         {
