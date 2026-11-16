@@ -86,5 +86,28 @@ namespace OpenTabletDriver.Desktop
                        select type
                 ]);
         }
+
+        public static bool IsSupportedBy(this Version subjectVersion, Version appVersion, Version? maxSupported = null)
+        {
+            // Always return false when major and minor is not equal (x.y.0.0).
+            if (subjectVersion.Major != appVersion.Major)
+                return false;
+            if (subjectVersion.Minor != appVersion.Minor)
+                return false;
+
+            // Always return false when driver's version is older than plugin's declared support version (0.0.x.0).
+            // We do this because the driver will bump build version when a non-breaking feature is introduced.
+            // Newer plugins may start using these new features not available in older drivers.
+            if (subjectVersion.Build > appVersion.Build)
+                return false;
+
+            // Always return false when driver's version is newer than plugin's declared upper support version.
+            // We do this as some plugins may be integrated into the driver in the future.
+            // We also do this as breaking changes may be introduced.
+            if (maxSupported != null && maxSupported < appVersion)
+                return false;
+
+            return true;
+        }
     }
 }
