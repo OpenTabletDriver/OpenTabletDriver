@@ -719,7 +719,7 @@ namespace OpenTabletDriver.Daemon
         public async Task<DiagnosticInfo> GetDiagnosticInfo()
         {
             var log = await GetCurrentLog();
-            return new DiagnosticInfo(log, await GetDevices());
+            return new DiagnosticInfo(log, await GetDevices(), Settings);
         }
 
         private void PostDebugReport(TabletReference tablet, IDeviceReport report)
