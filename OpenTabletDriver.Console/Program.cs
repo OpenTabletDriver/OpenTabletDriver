@@ -49,7 +49,7 @@ namespace OpenTabletDriver.Console
         [
             CreateCommand(Detect, "Detects tablets"),
             CreateCommand<string>(InstallPlugin, "Install plugin from specified file path"),
-            CreateCommand<string>(UninstallPlugin, "Uninstall plugin with specified plugin name"),
+            CreateCommand<string>(UninstallPlugin, "Uninstall plugin with specified plugin folder name"),
         ];
 
         private static readonly IEnumerable<Command> DebugCommands =
