@@ -85,6 +85,11 @@ namespace OpenTabletDriver.Desktop.Reflection
             return null;
         }
 
+        /// <summary>
+        /// Get a <see cref="TypeInfo"/> collection of registered plugins implementing type <typeparamref name="T"/>
+        /// </summary>
+        /// <typeparam name="T">The type implemented by the plugin</typeparam>
+        /// <returns>A collection of <see cref="TypeInfo"/></returns>
         public virtual IReadOnlyCollection<TypeInfo> GetChildTypes<T>()
         {
             var children = from type in PluginTypes
@@ -95,6 +100,12 @@ namespace OpenTabletDriver.Desktop.Reflection
             return children.ToArray();
         }
 
+        /// <summary>
+        /// Gets the associated <see cref="PluginNameAttribute.Name"/> for a plugin.
+        /// </summary>
+        /// <param name="path">The path of the plugin (typically FullName of the type)</param>
+        /// <returns>The plugins name if the plugin path was found in the registered plugin types</returns>
+        /// <remarks>This is somewhat slow, as it first looks up the plugin type in the local cache, and then it reflects the <see cref="PluginNameAttribute"/> out of the type.</remarks>
         public virtual string? GetFriendlyName(string path)
         {
             if (PluginTypes.FirstOrDefault(t => t.FullName == path) is TypeInfo plugin)
@@ -159,14 +170,28 @@ namespace OpenTabletDriver.Desktop.Reflection
             return true;
         }
 
+
+        /// <summary>
+        /// Redirect for <see cref="M:OpenTabletDriver.Desktop.Extensions.IsPluginType(System.Type)"/>
+        /// </summary>
         protected virtual bool IsPluginType(Type type) => type.IsPluginType();
 
+        /// <summary>
+        /// Check if plugin type has <see cref="SupportedPlatformAttribute"/> and filter based on the current platform.
+        /// </summary>
+        /// <param name="type">Type of the plugin.</param>
+        /// <returns><c>true</c> if current platform is supported, or if the plugin does not define <see cref="SupportedPlatformAttribute"/></returns>
         protected virtual bool IsPlatformSupported(Type type)
         {
             var attr = (SupportedPlatformAttribute?)type.GetCustomAttribute(typeof(SupportedPlatformAttribute), false);
             return attr?.IsCurrentPlatform ?? true;
         }
 
+        /// <summary>
+        /// Check for whether the provided type implements <see cref="PluginIgnoreAttribute"/>.
+        /// </summary>
+        /// <param name="type">Type of the plugin.</param>
+        /// <returns><c>true</c> if the plugin is ignored.</returns>
         protected virtual bool IsPluginIgnored(Type type)
         {
             return type.GetCustomAttributes(false).Any(a => a.GetType() == typeof(PluginIgnoreAttribute));

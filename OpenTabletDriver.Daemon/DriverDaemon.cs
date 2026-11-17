@@ -28,6 +28,9 @@ using OpenTabletDriver.SystemDrivers;
 
 namespace OpenTabletDriver.Daemon
 {
+    /// <summary>
+    /// Reference implementation of <see cref="IDriverDaemon"/> which builds on top of <see cref="OpenTabletDriver.Driver"/>.
+    /// </summary>
     public class DriverDaemon : IDriverDaemon
     {
         private const string AVALONIA_REVISION = "0.7.0.0";
