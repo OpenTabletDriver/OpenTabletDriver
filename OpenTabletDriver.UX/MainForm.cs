@@ -477,7 +477,7 @@ namespace OpenTabletDriver.UX
                 if (App.Driver.IsConnected)
                     await App.Driver.Instance.WriteMessage(message);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Console.WriteLine($"ERR: Unable to log message to driver: {message}");
             }
