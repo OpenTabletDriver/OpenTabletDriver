@@ -91,7 +91,7 @@ namespace OpenTabletDriver.Console
         {
             var data = File.ReadAllBytes(path);
             var hash = sha256.ComputeHash(data);
-            return string.Join(null, hash.Select(b => b.ToString("X")));
+            return Convert.ToHexString(hash);
         }
 
         static void AppendPluginStoreSettingsCollectionByPaths<T>(PluginSettingStoreCollection pssc, params string[] paths) where T : class
