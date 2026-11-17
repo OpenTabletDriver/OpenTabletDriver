@@ -126,7 +126,7 @@ namespace OpenTabletDriver.Console
 
             var displays = DesktopInterop.VirtualScreen.Displays.ToArray();
 
-            ArgumentOutOfRangeException.ThrowIfGreaterThan(index, (uint)displays.Length);
+            ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(index, (uint)displays.Length);
 
             var display = displays[index];
 
