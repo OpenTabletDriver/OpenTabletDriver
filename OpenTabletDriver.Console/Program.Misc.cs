@@ -87,7 +87,7 @@ namespace OpenTabletDriver.Console
         {
             var data = File.ReadAllBytes(path);
             var hash = sha256.ComputeHash(data);
-            return string.Join(null, hash.Select(b => b.ToString("X")));
+            return Convert.ToHexString(hash);
         }
 
         static void AppendPluginStoreSettingsCollectionByPaths<T>(PluginSettingStoreCollection pssc, params string[] paths) where T : class
@@ -115,7 +115,7 @@ namespace OpenTabletDriver.Console
                     pssc.Where(x => x != null && x.Path == path).Cast<PluginSettingStore>().ToArray();
 
                 if (plugins.Length == 0)
-                    Out.WriteLineAsync("No plugins found matching path");
+                    Out.WriteLine($"No plugins found matching path '{path}'");
 
                 foreach (var plugin in plugins)
                     plugin.Enable = false;
