@@ -1,9 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using OpenTabletDriver.Plugin.Logging;
 
 namespace OpenTabletDriver.Plugin
 {
+    // TODO: Consider adding 'DisableBacklog' which /dev/null's the debug output
+    // TODO: Add opt-in(?) backlog escape hatch if e.g. application is terminating and there are still logs.
     public static class Log
     {
         private static List<LogMessage>? _backlog = new();
@@ -38,12 +42,22 @@ namespace OpenTabletDriver.Plugin
             }
         }
 
+        private static string[] checkStrings = ["Daemon", "UX", "Console"]; // TODO: pls can we name it GUI and CLI soon
+        private static string? s_entryAssemblyName = getEntryAssemblyNameShorthand();
+        private static string? getEntryAssemblyNameShorthand()
+        {
+            var assemblyName = Assembly.GetEntryAssembly()?.FullName;
+            return assemblyName == null ? null : checkStrings.FirstOrDefault(assemblyName.Contains);
+        }
+
         /// <summary>
         /// Invoke sending a log message.
         /// </summary>
         /// <param name="message">The message to be passed to the <see cref="Output"/> event.</param>
         public static void Write(LogMessage message)
         {
+            if (!string.IsNullOrEmpty(s_entryAssemblyName))
+                message.Source ??= s_entryAssemblyName;
             _logAction(message);
         }
 
@@ -70,7 +84,7 @@ namespace OpenTabletDriver.Plugin
         /// <param name="text">Text for the <see cref="LogMessage"/>.</param>
         /// <param name="level">The severity level of the <see cref="LogMessage"/>.</param>
         /// <param name="createStackTrace">Whether to include stack trace in the log message</param>
-        /// <param name="notify">Whether the log message should create a notification in the user's desktop environment. BUG: only works when GUI is handling log messages</param>
+        /// <param name="notify">Whether the log message should create a notification in the user's desktop environment. BUG: only works when GUI is actively handling log messages.</param>
         public static void Write(string group, string text, LogLevel level = LogLevel.Info, bool createStackTrace = false, bool notify = false)
         {
             var message = new LogMessage
@@ -79,7 +93,7 @@ namespace OpenTabletDriver.Plugin
                 Message = text,
                 Level = level,
                 StackTrace = createStackTrace ? Environment.StackTrace : null,
-                Notification = notify
+                Notification = notify,
             };
             Write(message);
         }
@@ -91,6 +105,7 @@ namespace OpenTabletDriver.Plugin
         /// <param name="group">The group in which the <see cref="LogMessage"/> belongs to.</param>
         /// <param name="text">Text for the <see cref="LogMessage"/>.</param>
         /// <param name="level">Level of severity for the message, see <see cref="LogLevel"/>. Defaults to Info.</param>
+        /// <remarks>BUG: Notifications will only emerge if an active notification handler is running, since there is no way to track the handling of a notification yet.</remarks>
         public static void WriteNotify(string group, string text, LogLevel level = LogLevel.Info)
         {
             Write(group, text, level, false, true);
