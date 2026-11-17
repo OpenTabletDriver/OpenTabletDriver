@@ -10,18 +10,10 @@ namespace OpenTabletDriver.Configurations.Parsers.TenMoon
 
             AuxButtons =
             [
-                report[12] == 0x31, // First
-                report[12] == 0x33 && !report[11].IsBitSet(7), // Second
-                report[12] == 0x33 && !report[11].IsBitSet(6), // Third
-                report[12] == 0x33 && !report[11].IsBitSet(5), // Fourth
-                report[12] == 0x33 && !report[11].IsBitSet(4), // Fifth
-                report[12] == 0x33 && !report[11].IsBitSet(3), // Sixth
-                report[12] == 0x23, // Seventh
-                report[12] == 0x32, // Eightth
-                report[12] == 0x13, // Nineth
-                report[12] == 0x33 && !report[11].IsBitSet(0), // Tenth
-                report[12] == 0x33 && !report[11].IsBitSet(1), // Eleventh
-                report[12] == 0x33 && !report[11].IsBitSet(2), // Twelveth
+                !report[12].IsBitSet(0), !report[12].IsBitSet(5),
+                !report[12].IsBitSet(1), !report[12].IsBitSet(4),
+                !report[11].IsBitSet(6), !report[11].IsBitSet(7),
+                !report[11].IsBitSet(5), !report[11].IsBitSet(4),
             ];
         }
 
