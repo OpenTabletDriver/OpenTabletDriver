@@ -37,7 +37,8 @@ namespace OpenTabletDriver.Plugin.Output
         Pixels = PostTransform,
 
         /// <summary>
-        /// Rawest option, prior to fixing up tablet data with tablet specifications and settings (e.g. unmangled pressure)
+        /// Rawest option, prior to fixing up tablet data with tablet specifications and settings (e.g. unmangled pressure).
+        /// This is almost never necessary, and you should prefer using <see cref="PreTransform"/> instead.
         /// </summary>
         /// <remarks>You may want to assign a <see cref="TabletReference"/> property with <see cref="Attributes.TabletReferenceAttribute"/>
         ///    so that you can look up the tablet specifications and e.g. normalize position to millimeters.</remarks>
