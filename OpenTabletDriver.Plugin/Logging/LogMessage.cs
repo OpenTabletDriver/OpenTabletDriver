@@ -55,8 +55,6 @@ namespace OpenTabletDriver.Plugin.Logging
         public bool Notification { set; get; }
 
         public override string ToString() =>
-            this.Source == null
-                ? $"[{this.Group,20}:{Enum.GetName(this.Level),-7}] {this.Message}"
-                : $"[{this.Group,20}:{Enum.GetName(this.Level),-7}] {this.Source,6}: {this.Message}";
+            $"{Time:s} {Enum.GetName(Level),-7} [{Source ?? "?"}: {Group}]: {Message}";
     }
 }
