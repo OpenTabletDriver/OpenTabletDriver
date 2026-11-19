@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using OpenTabletDriver.Configurations.Parsers.UCLogic;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.Bosto
@@ -8,10 +9,12 @@ namespace OpenTabletDriver.Configurations.Parsers.Bosto
     {
         public IDeviceReport Parse(byte[] data)
         {
-            if (data[1] == 0x00)
-                return new OutOfRangeReport(data);
-
-            return new BostoTabletReport(data);
+            return data[0] switch
+            {
+                0x01 when data[1].IsBitSet(4) => new BostoTabletReport(data),
+                0x04 => new UCLogicAuxReport(data),
+                _ => new OutOfRangeReport(data)
+            };
         }
     }
 }
