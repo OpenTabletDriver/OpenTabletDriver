@@ -1,10 +1,11 @@
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Plugin.Tablet.Wheel;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom.Graphire
 {
-    public struct GraphireTabletReport : ITabletReport, IAuxReport, IEraserReport, IProximityReport
+    public struct GraphireTabletReport : ITabletReport, IAuxReport, IEraserReport, IProximityReport, IRelativeWheelReport
     {
         public GraphireTabletReport(byte[] report)
         {
@@ -33,6 +34,10 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Graphire
             ];
 
             // wheel = report[7][5:3]
+            AnalogDeltas =
+            [
+                GraphireWheel.GetDelta(auxByte),
+            ];
 
             NearProximity = report[1].IsBitSet(7);
             HoverDistance = 0;
@@ -43,6 +48,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Graphire
         public uint Pressure { set; get; }
         public bool[] PenButtons { set; get; }
         public bool[] AuxButtons { set; get; }
+        public int[] AnalogDeltas { set; get; }
         public bool Eraser { set; get; }
         public bool NearProximity { get; set; }
         public uint HoverDistance { get; set; }
