@@ -18,7 +18,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Bamboo
                 auxByte.IsBitSet(6),
             ];
 
-            AnalogPositions = [report[8].IsBitSet(7) ? (uint)(report[8] & 0x7f) : null];
+            AnalogPositions = report.Length > 8 ? [report[8].IsBitSet(7) ? (uint)(report[8] & 0x7f) : null] : [null];
         }
 
         public byte[] Raw { set; get; }
