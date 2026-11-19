@@ -1,10 +1,11 @@
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Plugin.Tablet.Wheel;
 
 namespace OpenTabletDriver.Configurations.Parsers.UCLogic
 {
-    public struct UCLogicAuxReport : IAuxReport
+    public struct UCLogicAuxReport : IAuxReport, IWheelButtonReport
     {
-        public UCLogicAuxReport(byte[] report)
+        public UCLogicAuxReport(byte[] report, bool handleWheel = false, int wheelByteIndex = 5, int wheelBitIndex = 4)
         {
             Raw = report;
 
@@ -22,7 +23,6 @@ namespace OpenTabletDriver.Configurations.Parsers.UCLogic
                 report[5].IsBitSet(1),
                 report[5].IsBitSet(2),
                 report[5].IsBitSet(3),
-                report[5].IsBitSet(4),
                 report[5].IsBitSet(5),
                 report[5].IsBitSet(6),
                 report[5].IsBitSet(7),
@@ -31,9 +31,14 @@ namespace OpenTabletDriver.Configurations.Parsers.UCLogic
                 report[6].IsBitSet(2),
                 report[6].IsBitSet(3),
             ];
+
+            // Note : Moved report[5].IsBitSet(4) from AuxButtons to WheelButtons
+            // First introduced in https://github.com/OpenTabletDriver/OpenTabletDriver/pull/2203
+            WheelButtons = handleWheel ? [[report[wheelByteIndex].IsBitSet(wheelBitIndex)]] : [[false]];
         }
 
         public bool[] AuxButtons { set; get; }
+        public bool[][] WheelButtons { set; get; }
         public byte[] Raw { set; get; }
     }
 }
