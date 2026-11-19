@@ -41,11 +41,18 @@ namespace OpenTabletDriver.Desktop.Reflection
         // TODO: make non-nullable or similar fix, since it never makes sense to have a null/empty path? -gonX
         public string? Path { set; get; }
 
+        /// <remarks>Somewhat slow, see <see cref="PluginManager.GetFriendlyName"/>.</remarks>
         [JsonIgnore]
         public string? Name => Path != null ? AppInfo.PluginManager.GetFriendlyName(Path) : null;
 
+        /// <summary>
+        /// The properties for the underlying type.
+        /// </summary>
         public ObservableCollection<PluginSetting> Settings { set; get; }
 
+        /// <summary>
+        /// Whether this plugin be considered for inclusion into the pipeline.
+        /// </summary>
         public bool Enable { set; get; }
 
         public T? Construct<T>(TabletReference? tabletReference = null, bool trigger = true) where T : class

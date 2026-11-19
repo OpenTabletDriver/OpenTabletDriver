@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using OpenTabletDriver.Plugin;
@@ -20,25 +21,22 @@ namespace OpenTabletDriver.Desktop.Reflection
                 Assembly.Load("OpenTabletDriver.Plugin")
             };
 
-#pragma warning disable CS0618 // Type or member is obsolete
-            libTypes = OpenTabletDriver.Desktop.Extensions.GetLibTypes().ToArray();
-#pragma warning restore CS0618 // Type or member is obsolete
-
-            var internalTypes = from asm in assemblies
+            _internalTypes = [.. from asm in assemblies
                                 from type in asm.DefinedTypes
                                 where type.IsPublic && !(type.IsInterface || type.IsAbstract)
                                 where IsPluginType(type)
                                 where IsPlatformSupported(type)
-                                select type;
+                                select type];
 
-            pluginTypes = new ConcurrentBag<TypeInfo>(internalTypes);
+            ResetPluginTypes();
         }
 
         public IReadOnlyCollection<TypeInfo> PluginTypes => pluginTypes;
         protected ConcurrentBag<TypeInfo> pluginTypes;
+        private readonly IReadOnlyCollection<TypeInfo> _internalTypes;
 
-        [Obsolete($"Use {nameof(OpenTabletDriver.Desktop.Extensions.GetLibTypes)} from OpenTabletDriver.Desktop.Extensions")]
-        protected readonly Type[] libTypes;
+        [MemberNotNull(nameof(pluginTypes))]
+        private void ResetPluginTypes() => pluginTypes = [.. _internalTypes];
 
         public virtual T? ConstructObject<T>(string name, object[]? args = null) where T : class
         {
@@ -87,6 +85,11 @@ namespace OpenTabletDriver.Desktop.Reflection
             return null;
         }
 
+        /// <summary>
+        /// Get a <see cref="TypeInfo"/> collection of registered plugins implementing type <typeparamref name="T"/>
+        /// </summary>
+        /// <typeparam name="T">The type implemented by the plugin</typeparam>
+        /// <returns>A collection of <see cref="TypeInfo"/></returns>
         public virtual IReadOnlyCollection<TypeInfo> GetChildTypes<T>()
         {
             var children = from type in PluginTypes
@@ -97,9 +100,15 @@ namespace OpenTabletDriver.Desktop.Reflection
             return children.ToArray();
         }
 
+        /// <summary>
+        /// Gets the associated <see cref="PluginNameAttribute.Name"/> for a plugin.
+        /// </summary>
+        /// <param name="path">The path of the plugin (typically FullName of the type)</param>
+        /// <returns>The plugins name if the plugin path was found in the registered plugin types</returns>
+        /// <remarks>This is somewhat slow, as it first looks up the plugin type in the local cache, and then it reflects the <see cref="PluginNameAttribute"/> out of the type.</remarks>
         public virtual string? GetFriendlyName(string path)
         {
-            if (AppInfo.PluginManager.PluginTypes.FirstOrDefault(t => t.FullName == path) is TypeInfo plugin)
+            if (PluginTypes.FirstOrDefault(t => t.FullName == path) is TypeInfo plugin)
             {
                 var attrs = plugin.GetCustomAttributes(true);
                 var nameattr = attrs.FirstOrDefault(t => t.GetType() == typeof(PluginNameAttribute));
@@ -143,6 +152,12 @@ namespace OpenTabletDriver.Desktop.Reflection
             }
         }
 
+        public override void ResetServices()
+        {
+            ResetPluginTypes();
+            base.ResetServices();
+        }
+
         protected virtual bool IsValidParameterFor(object[] args, ParameterInfo[] parameters)
         {
             for (int i = 0; i < parameters.Length; i++)
@@ -155,14 +170,28 @@ namespace OpenTabletDriver.Desktop.Reflection
             return true;
         }
 
+
+        /// <summary>
+        /// Redirect for <see cref="M:OpenTabletDriver.Desktop.Extensions.IsPluginType(System.Type)"/>
+        /// </summary>
         protected virtual bool IsPluginType(Type type) => type.IsPluginType();
 
+        /// <summary>
+        /// Check if plugin type has <see cref="SupportedPlatformAttribute"/> and filter based on the current platform.
+        /// </summary>
+        /// <param name="type">Type of the plugin.</param>
+        /// <returns><c>true</c> if current platform is supported, or if the plugin does not define <see cref="SupportedPlatformAttribute"/></returns>
         protected virtual bool IsPlatformSupported(Type type)
         {
             var attr = (SupportedPlatformAttribute?)type.GetCustomAttribute(typeof(SupportedPlatformAttribute), false);
             return attr?.IsCurrentPlatform ?? true;
         }
 
+        /// <summary>
+        /// Check for whether the provided type implements <see cref="PluginIgnoreAttribute"/>.
+        /// </summary>
+        /// <param name="type">Type of the plugin.</param>
+        /// <returns><c>true</c> if the plugin is ignored.</returns>
         protected virtual bool IsPluginIgnored(Type type)
         {
             return type.GetCustomAttributes(false).Any(a => a.GetType() == typeof(PluginIgnoreAttribute));

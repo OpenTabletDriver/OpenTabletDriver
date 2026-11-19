@@ -12,7 +12,6 @@ using Eto.Forms;
 using Newtonsoft.Json.Linq;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Interop;
-using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
@@ -202,6 +201,9 @@ namespace OpenTabletDriver.UX
             }
         }
 
+        /// <summary>
+        /// Starts the Daemon watchdog if the daemon isn't already running, and if the platform can execute daemon watchdogs.
+        /// </summary>
         private static void StartDaemonWatchdog()
         {
             if (Instance.Exists("OpenTabletDriver.Daemon") || !DaemonWatchdog.CanExecute) return;
@@ -426,11 +428,9 @@ namespace OpenTabletDriver.UX
             // Load the application information from the daemon
             AppInfo.Current = await App.Driver.Instance.GetApplicationInfo();
 
-            AppInfo.PluginManager = new DesktopPluginManager();
-            AppInfo.PresetManager = new PresetManager();
-
-            // Load any new plugins
+            // Refresh managers with new information
             AppInfo.PluginManager.Load();
+            AppInfo.PresetManager.Refresh();
 
             // Show the startup greeter
             if (!File.Exists(AppInfo.Current.SettingsFile) && this.WindowState != WindowState.Minimized)
@@ -595,6 +595,12 @@ namespace OpenTabletDriver.UX
 
         private CancellationTokenSource _disableApplySaveButtons = new();
 
+        private const int _BUTTON_DISABLEMENT_MILLISECONDS = 1000;
+
+        /// <summary>
+        /// Disable the save and apply buttons temporarily for <see cref="_BUTTON_DISABLEMENT_MILLISECONDS"/>.
+        /// </summary>
+        /// <param name="disableSave">Whether the save button should also be disabled</param>
         private void DisableApplySaveButtons(bool disableSave = true)
         {
             Application.Instance.InvokeAsync(async () =>
@@ -607,7 +613,7 @@ namespace OpenTabletDriver.UX
                 applyButton.Enabled = false;
 
                 // debounce re-enabling task
-                await Task.Delay(1000, _disableApplySaveButtons.Token).ContinueWith(task =>
+                await Task.Delay(_BUTTON_DISABLEMENT_MILLISECONDS, _disableApplySaveButtons.Token).ContinueWith(task =>
                 {
                     if (task.IsCanceled) return;
 

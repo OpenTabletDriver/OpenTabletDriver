@@ -22,8 +22,10 @@
   </ItemGroup>
 
   <ItemGroup Label="Configurations">
-    <EmbeddedResource Include=".\Configurations\*\*.json">
+    <EmbeddedResource Include="Configurations\**\*.json">
       <IncludeInPackage>true</IncludeInPackage>
+      <!-- e.g. "TabletConfigurations/Wacom/CTL-472.json" -->
+      <LogicalName>Tablet%(Identity)</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
 

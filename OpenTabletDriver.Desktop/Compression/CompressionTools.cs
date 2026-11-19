@@ -5,6 +5,7 @@ using ICSharpCode.SharpZipLib.GZip;
 using ICSharpCode.SharpZipLib.Tar;
 using ICSharpCode.SharpZipLib.Zip;
 
+// TODO: Replace ICSharpCode with System.IO.Compression for less external dependencies?
 namespace OpenTabletDriver.Desktop.Compression
 {
     public static class CompressionTools

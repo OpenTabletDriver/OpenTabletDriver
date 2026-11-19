@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using JetBrains.Annotations;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 
@@ -10,8 +11,13 @@ namespace OpenTabletDriver.Desktop
 {
     public class OSInfo
     {
+        [UsedImplicitly(ImplicitUseKindFlags.Access)]
         public string Name { get; }
+
+        [UsedImplicitly(ImplicitUseKindFlags.Access)]
         public string Version { get; }
+
+        [UsedImplicitly(ImplicitUseKindFlags.Access)]
         public IDictionary<string, string>? Attributes { get; }
 
         public OSInfo(string name, string version, IDictionary<string, string>? attributes)
@@ -28,7 +34,7 @@ namespace OpenTabletDriver.Desktop
                 PluginPlatform.Windows => ExtractFromOS(withServicePack: true),
                 PluginPlatform.Linux => GetLinuxOSInfo(),
                 PluginPlatform.MacOS => ExtractFromOS(withServicePack: false),
-                _ => throw new NotImplementedException()
+                _ => throw new ArgumentOutOfRangeException($"{SystemInterop.CurrentPlatform}"),
             };
         }
 

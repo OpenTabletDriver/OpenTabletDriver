@@ -39,6 +39,10 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public event EventHandler? AssembliesChanged;
 
+        /// <summary>
+        /// Verify installation of plugins and clean up trash and temporary directories.
+        /// This is expected but not always necessary to be run at some point after class initialization but before loading plugins.
+        /// </summary>
         public void Clean()
         {
             try
@@ -66,13 +70,18 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
             PluginDirectory = TrashDirectory = TemporaryDirectory = null!; // reset directories
 
+            ResetServices();
+
             foreach (var dir in PluginDirectory.GetDirectories())
                 LoadPlugin(dir);
 
-            AppInfo.PluginManager.ResetServices();
             AssembliesChanged?.Invoke(this, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// Load a plugin associated with a directory.
+        /// </summary>
+        /// <param name="directory">The directory containing the plugin files.</param>
         protected void LoadPlugin(DirectoryInfo directory)
         {
             // "Plugins" are directories that contain managed and unmanaged dll
@@ -131,6 +140,12 @@ namespace OpenTabletDriver.Desktop.Reflection
             });
         }
 
+        /// <summary>
+        /// Install a plugin from a file (.zip or .dll)
+        /// </summary>
+        /// <param name="filePath">The absolute path to the plugin</param>
+        /// <returns>Whether installing the plugin succeeded</returns>
+        /// <exception cref="InvalidOperationException">Thrown if the file extension is unsupported (supports <c>.zip</c> and <c>.dll</c>)</exception>
         public bool InstallPlugin(string filePath)
         {
             var file = new FileInfo(filePath);
@@ -176,8 +191,6 @@ namespace OpenTabletDriver.Desktop.Reflection
             if (!TemporaryDirectory.GetFileSystemInfos().Any())
                 Directory.Delete(TemporaryDirectory.FullName, true);
 
-            if (result)
-                LoadPlugin(pluginDir);
             return result;
         }
 
@@ -214,6 +227,12 @@ namespace OpenTabletDriver.Desktop.Reflection
             return result;
         }
 
+        /// <summary>
+        /// Install and load plugin from a source folder to a target folder.
+        /// </summary>
+        /// <param name="target">The folder to install a plugin into.</param>
+        /// <param name="source">The folder to install the plugin from.</param>
+        /// <returns><c>true</c> if loading the plugin succeeded.</returns>
         public bool InstallPlugin(DirectoryInfo target, DirectoryInfo source)
         {
             Log.Write("Plugin", $"Installing plugin '{target.Name}'");
@@ -222,6 +241,11 @@ namespace OpenTabletDriver.Desktop.Reflection
             return true;
         }
 
+        /// <summary>
+        /// Uninstall and unload a plugin by its <see cref="DesktopPluginContext"/>.
+        /// </summary>
+        /// <param name="plugin">The plugin to uninstall and unload.</param>
+        /// <returns><c>true</c> if unloading the plugin succeeded. Uninstalling the files will always succeed (unless an exception is thrown).</returns>
         public bool UninstallPlugin(DesktopPluginContext plugin)
         {
             var random = new Random();
@@ -236,6 +260,13 @@ namespace OpenTabletDriver.Desktop.Reflection
             return UnloadPlugin(plugin);
         }
 
+        /// <summary>
+        /// Update and load a plugin with contents from a non-plugin directory.
+        /// </summary>
+        /// <param name="plugin">The plugin context of the old plugin.</param>
+        /// <param name="source">The directory info of the new plugin</param>
+        /// <returns><c>false</c> if uninstalling or installing the plugin failed, <c>true</c> otherwise.</returns>
+        /// <remarks>This does not verify that the new plugin matches the old one.</remarks>
         public bool UpdatePlugin(DesktopPluginContext plugin, DirectoryInfo source)
         {
             var targetDir = new DirectoryInfo(plugin.Directory.FullName);
@@ -244,6 +275,11 @@ namespace OpenTabletDriver.Desktop.Reflection
             return false;
         }
 
+        /// <summary>
+        /// Unload a currently loaded plugin based on its <see cref="DesktopPluginContext"/>.
+        /// </summary>
+        /// <param name="context">The currently loaded plugin</param>
+        /// <returns><c>true</c> if unloading all relevant assemblies succeeded. If not, you may need to restart the application to unload them entirely.</returns>
         public bool UnloadPlugin(DesktopPluginContext context)
         {
             Log.Write("Plugin", $"Unloading plugin '{context.FriendlyName}'", LogLevel.Debug);

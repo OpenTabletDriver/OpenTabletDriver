@@ -117,6 +117,15 @@ namespace OpenTabletDriver.UX.Controls
                 },
                 new GridColumn
                 {
+                    HeaderText = "Source",
+                    DataCell = new TextBoxCell
+                    {
+                        Binding = Binding.Property<LogMessage, string?>(m => m.Source)
+                            .Convert<string>(x => x ?? "<unknown>"),
+                    },
+                },
+                new GridColumn
+                {
                     HeaderText = "Group",
                     DataCell = new TextBoxCell
                     {

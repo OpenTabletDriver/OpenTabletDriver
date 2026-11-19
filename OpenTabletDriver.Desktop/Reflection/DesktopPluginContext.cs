@@ -10,6 +10,9 @@ namespace OpenTabletDriver.Desktop.Reflection
 {
     public class DesktopPluginContext : PluginContext
     {
+        /// <summary>
+        /// A context associated with a user-provided plugin.
+        /// </summary>
         public DesktopPluginContext(DirectoryInfo directory)
         {
             Directory = directory;

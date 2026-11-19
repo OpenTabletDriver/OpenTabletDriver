@@ -14,7 +14,7 @@
 
   <ItemGroup Label="NuGet Packages">
     <PackageReference Include="Eto.Forms" Version="2.5.10" />
-    <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
+    <PackageReference Include="JetBrains.Annotations" Version="2026.2.0" />
   </ItemGroup>
   
   <ItemGroup Label="Project References">

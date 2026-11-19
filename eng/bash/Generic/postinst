@@ -6,6 +6,10 @@ if lsmod | grep hid_uclogic > /dev/null; then
     rmmod hid_uclogic || true
 fi
 
+if lsmod | grep hid_digimend_uclogic > /dev/null; then
+    rmmod hid_digimend_uclogic || true
+fi
+
 if lsmod | grep wacom > /dev/null; then
     rmmod wacom || true
 fi

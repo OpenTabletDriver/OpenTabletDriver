@@ -65,7 +65,7 @@ namespace OpenTabletDriver.Desktop.Interop
             }
         }
 
-        public static IGitHubClient GitHubClient => new GitHubClient(new ProductHeaderValue("OpenTabletDriver"));
+        private static IGitHubClient GitHubClient => new GitHubClient(new ProductHeaderValue("OpenTabletDriver"));
 
         public static IUpdater? Updater => CurrentPlatform switch
         {
@@ -126,15 +126,15 @@ namespace OpenTabletDriver.Desktop.Interop
             _ => null
         };
 
-        private static IVirtualScreen ConstructLinuxDisplay()
+        private static IVirtualScreen? ConstructLinuxDisplay()
         {
             if (Environment.GetEnvironmentVariable("WAYLAND_DISPLAY") != null)
                 return new WaylandDisplay();
             else if (Environment.GetEnvironmentVariable("DISPLAY") != null)
                 return new XScreen();
 
-            Log.Write("Display", "Neither Wayland nor X11 were detected, defaulting to X11.", LogLevel.Warning);
-            return new XScreen();
+            Log.Write("Display", "Neither Wayland nor X11 were detected, returning a null virtual screen", LogLevel.Warning);
+            return null;
         }
     }
 }

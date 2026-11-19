@@ -9,14 +9,28 @@ using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.UX.RPC
 {
+    /// <summary>
+    /// The RPC client for <see cref="IDriverDaemon"/>.
+    /// </summary>
     public class DaemonRpcClient : RpcClient<IDriverDaemon>
     {
         public DaemonRpcClient(string pipeName) : base(pipeName)
         {
         }
 
+        /// <summary>
+        /// Client-side <see cref="IDriverDaemon.Message"/> event.
+        /// </summary>
         public event EventHandler<LogMessage>? Message;
+
+        /// <summary>
+        /// Client-side <see cref="IDriverDaemon.DeviceReport"/> event.
+        /// </summary>
         public event EventHandler<DebugReportData>? DeviceReport;
+
+        /// <summary>
+        /// Client-side <see cref="IDriverDaemon.TabletsChanged"/> event.
+        /// </summary>
         public event EventHandler<IEnumerable<TabletReference>>? TabletsChanged;
         public event EventHandler? Resynchronize;
 
@@ -34,5 +48,7 @@ namespace OpenTabletDriver.UX.RPC
             Instance.Resynchronize += (sender, e) =>
                 Application.Instance.AsyncInvoke(() => Resynchronize?.Invoke(sender, e));
         }
+
+        // No OnDisconnected() needed, StreamJsonRpc automatically unsubscribes events on disconnect, see https://microsoft.github.io/vs-streamjsonrpc/docs/disconnecting.html
     }
 }
