@@ -239,6 +239,7 @@
 | Genius i405x                       |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
 | Genius i608x                       |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
 | Huion 420                          |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
+| Huion DWH69                        |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | Huion H420                         |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | Huion H580X                        |    Has Quirks     | User may have to replug their tablet until it is detected.
 | Huion H690                         |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
