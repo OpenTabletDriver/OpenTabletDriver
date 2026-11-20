@@ -18,18 +18,6 @@
   "DigitizerIdentifiers": [
     {
       "VendorID": 9580,
-      "ProductID": 100,
-      "InputReportLength": 12,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicV2ReportParser",
-      "DeviceStrings": {
-        "201": "(OEM02_T183|GM001_T223)_\\d{6}$"
-      },
-      "InitializationStrings": [
-        200
-      ]
-    },
-    {
-      "VendorID": 9580,
       "ProductID": 109,
       "InputReportLength": 12,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicV2ReportParser",
