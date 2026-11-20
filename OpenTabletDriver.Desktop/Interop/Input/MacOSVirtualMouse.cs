@@ -103,6 +103,9 @@ namespace OpenTabletDriver.Desktop.Interop.Input
                 var lastButtonSet = IsButtonSet(_currButtonStates, _lastButton);
                 var cgEventType = ToDragCGEventType(_lastButton, lastButtonSet);
                 CGEventSetType(_mouseEvent, cgEventType);
+                // PostEvent creates a fresh event, so drag metadata must be set on every report.
+                CGEventSetIntegerValueField(_mouseEvent, CGEventField.mouseEventButtonNumber, lastButtonSet ? (long)_lastButton : 0);
+                CGEventSetIntegerValueField(_mouseEvent, CGEventField.mouseEventClickState, lastButtonSet ? _clickState : 0);
                 SetPendingPosition(_mouseEvent, position.X, position.Y);
                 ApplyTabletValues();
                 PostEvent();
