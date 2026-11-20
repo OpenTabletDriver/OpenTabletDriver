@@ -1,10 +1,11 @@
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Plugin.Tablet.Wheel;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom.Graphire
 {
-    public struct GraphireMouseReport : IMouseReport, IAuxReport
+    public struct GraphireMouseReport : IMouseReport, IAuxReport, IRelativeWheelReport
     {
         public GraphireMouseReport(byte[] report)
         {
@@ -36,6 +37,10 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Graphire
             ];
 
             // wheel = report[7][5:3]
+            AnalogDeltas =
+            [
+                GraphireWheel.GetDelta(auxByte),
+            ];
 
             // Models using Graphire WACOM_MO protocol also reports mouse hover distance
         }
@@ -45,5 +50,6 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Graphire
         public Vector2 Position { get; set; }
         public Vector2 Scroll { get; set; }
         public bool[] AuxButtons { get; set; }
+        public int[] AnalogDeltas { get; set; }
     }
 }
