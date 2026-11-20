@@ -182,10 +182,7 @@ namespace OpenTabletDriver.Desktop.Reflection
         /// <param name="type">Type of the plugin.</param>
         /// <returns><c>true</c> if current platform is supported, or if the plugin does not define <see cref="SupportedPlatformAttribute"/></returns>
         protected virtual bool IsPlatformSupported(Type type)
-        {
-            var attr = (SupportedPlatformAttribute?)type.GetCustomAttribute(typeof(SupportedPlatformAttribute), false);
-            return attr?.IsCurrentPlatform ?? true;
-        }
+            => type.GetCustomAttribute<SupportedPlatformAttribute>(false)?.IsCurrentPlatform ?? true;
 
         /// <summary>
         /// Check for whether the provided type implements <see cref="PluginIgnoreAttribute"/>.
