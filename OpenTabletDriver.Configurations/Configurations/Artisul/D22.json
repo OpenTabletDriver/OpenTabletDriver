@@ -1,0 +1,45 @@
+{
+  "Name": "Artisul D22",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 480.512,
+      "Height": 268.8,
+      "MaxX": 37540,
+      "MaxY": 21100
+    },
+    "Pen": {
+      "MaxPressure": 2047,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 7
+    },
+    "Wheels": [
+      {
+        "RelativeWheelSteps": 24,
+        "ButtonCount": 0
+      }
+    ]
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 21827,
+      "ProductID": 72,
+      "InputReportLength": 8,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicV0ReportParser",
+      "DeviceStrings": {
+        "6": "^ARTISUL D22$"
+      },
+      "InitializationStrings": [
+        100,
+        123
+      ],
+      "Attributes": {
+        "Interface": "0"
+      }
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
