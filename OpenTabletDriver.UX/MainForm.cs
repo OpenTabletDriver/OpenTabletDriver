@@ -575,7 +575,8 @@ namespace OpenTabletDriver.UX
                 case DialogResult.Ok:
                 case DialogResult.Yes:
                     await ApplySettings();
-                    await App.Driver.Instance.SaveSettings(filePath: fileDialog.FileName);
+                    var settings = await App.Driver.Instance.GetSettings();
+                    settings.Serialize(new FileInfo(fileDialog.FileName));
                     break;
             }
         }
