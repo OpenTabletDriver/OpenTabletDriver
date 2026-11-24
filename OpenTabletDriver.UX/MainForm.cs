@@ -534,26 +534,12 @@ namespace OpenTabletDriver.UX
                 case DialogResult.Ok:
                 case DialogResult.Yes:
                     var file = new FileInfo(fileDialog.FileName);
-                    if (file.Exists)
+                    if (file.Exists && Settings.TryDeserialize(file, out var settings))
                     {
-                        bool isValidSettingsFile = false;
-                        var initialSettings = App.Current.Settings;
-                        if (Settings.TryDeserialize(file, out var settings))
-                        {
+                        if (await ApplySettings(settings: settings))
                             App.Current.Settings = settings;
-                            isValidSettingsFile = await ApplySettings();
-                        }
-
-                        if (!isValidSettingsFile)
-                        {
-                            if (App.Current.Settings != initialSettings)
-                                App.Current.Settings = initialSettings; // restore if we loaded something useless
-
-                            MessageBox.Show(
-                                "Invalid settings file.",
-                                MessageBoxType.Error
-                            );
-                        }
+                        else
+                            MessageBox.Show("Invalid settings file.", MessageBoxType.Error);
                     }
                     break;
             }
@@ -636,8 +622,9 @@ namespace OpenTabletDriver.UX
         /// Apply (and optionally save) the currently set client settings into the daemon
         /// </summary>
         /// <param name="save">If the set settings should also be saved</param>
+        /// <param name="settings">(optional) The settings to save. Will use current <see cref="App.Settings"/> if <c>null</c>.</param>
         /// <returns>Whether the settings applied (and saved) successfully or not</returns>
-        private async Task<bool> ApplySettings(bool save = false)
+        private async Task<bool> ApplySettings(bool save = false, Settings? settings = null)
         {
             DisableApplySaveButtons(false);
 
@@ -645,7 +632,7 @@ namespace OpenTabletDriver.UX
 
             try
             {
-                await App.Driver.Instance.SetSettings(App.Current.Settings);
+                await App.Driver.Instance.SetSettings(settings ?? App.Current.Settings);
 
                 if (save)
                     await App.Driver.Instance.SaveSettings();
