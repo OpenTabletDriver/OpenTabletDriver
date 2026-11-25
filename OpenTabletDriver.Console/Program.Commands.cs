@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -8,6 +9,7 @@ using Newtonsoft.Json;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection;
+using OpenTabletDriver.Desktop.ViewModels;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Platform.Display;
@@ -571,6 +573,52 @@ namespace OpenTabletDriver.Console
             {
                 await Out.WriteLineAsync(ex.ToString());
             }
+        }
+
+        /// <summary>
+        /// pseudo-tablet debugger with only statistics, no visualizations
+        /// </summary>
+        private static async Task TabletDebuggerDump()
+        {
+            if (!await EnsureDaemonReady()) return;
+
+            await Error.WriteLineAsync("Configuring tablet debugging for the following connected tablets:");
+
+            foreach (var tablet in await Driver.Instance!.GetTablets())
+                await Error.WriteLineAsync($"    {tablet.Properties.Name}");
+
+            await Error.WriteLineAsync("Press 'Escape' or 'Ctrl+D' to stop debugging");
+
+            using var tabletDebuggerViewModel = new TabletDebuggerViewModel(Out, Error);
+            tabletDebuggerViewModel.DataRecordingEnabled = true;
+
+            // does nothing when not in GUI at the time of this code being written, but the intention is that if this isn't enabled then statistics aren't displayed/logged.
+            tabletDebuggerViewModel.ShowAdditionalStatistics = true;
+
+            Driver.Instance!.DeviceReport += tabletDebuggerViewModel.HandleReport;
+            Driver.Instance!.TabletsChanged += EmitNewTablets;
+
+            // keep debug active until users wants to escape
+            var reading = true;
+            using var _ = await Driver.Instance!.EnableTabletDebug();
+            while (reading)
+            {
+                var key = ReadKey(true);
+
+                // exit with Escape key or Ctrl+D
+                reading = !(key.Key == ConsoleKey.Escape ||
+                            ((key.Modifiers & ConsoleModifiers.Control) != 0 && key.Key == ConsoleKey.D));
+            }
+
+            Driver.Instance!.TabletsChanged -= EmitNewTablets;
+            Driver.Instance!.DeviceReport -= tabletDebuggerViewModel.HandleReport;
+        }
+
+        private static void EmitNewTablets(object? sender, IEnumerable<TabletReference> tabletReferences)
+        {
+            Error.WriteLine("Tablets changed:");
+            foreach (var tablet in tabletReferences)
+                Error.Write($"    {tablet.Properties.Name}");
         }
 
         private static async Task STDIO()

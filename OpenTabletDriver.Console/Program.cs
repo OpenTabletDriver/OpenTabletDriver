@@ -111,6 +111,7 @@ namespace OpenTabletDriver.Console
 
         private static readonly IEnumerable<Command> ScriptingCommands =
         [
+            CreateCommand(TabletDebuggerDump, "Debug the emitted reports for the connected tablets. Outputs per-line reports to STDOUT, and finalizes report statistics from STDERR."),
             CreateCommand(GetDiagnostics, "Gets diagnostic information", "diag"),
             CreateCommand(STDIO, "Open with standard input and output"),
             CreateCommand(EditSettings, "Opens the settings file with the editor defined in the EDITOR environment variable.", "edit"),
