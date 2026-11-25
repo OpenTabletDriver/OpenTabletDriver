@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
+using JetBrains.Annotations;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.RPC;
@@ -231,19 +232,53 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                 this.AdditionalStatColumnsPerRow = newValue;
                 await UpdateAdditionalStatisticsFields().ConfigureAwait(false);
             };
-
-            App.Driver.DeviceReport += viewmodel.HandleReport;
-            App.Driver.TabletsChanged += HandleTabletsChanged;
-            if (App.Driver.IsConnected)
-                App.Driver.Instance.SetTabletDebug(true);
-            App.Driver.Connected += SetTabletDebug;
         }
 
-        private static void SetTabletDebug(object? sender, EventArgs e)
+        #region Overrides of Container
+
+        /// <inheritdoc />
+        protected override void OnLoad(EventArgs e)
+        {
+            if (this.DataContext is TabletDebuggerViewModel viewmodel)
+            {
+                App.Driver.DeviceReport += viewmodel.HandleReport;
+                App.Driver.TabletsChanged += HandleTabletsChanged;
+                if (App.Driver.IsConnected)
+                    SetTabletDebug(null, EventArgs.Empty);
+                App.Driver.Connected += SetTabletDebug;
+            }
+
+            base.OnLoad(e);
+        }
+
+        /// <inheritdoc />
+        protected override void OnUnLoad(EventArgs e)
+        {
+            base.OnUnLoad(e);
+
+            _tabletDebuggingSubscription?.Dispose();
+            _tabletDebuggingSubscription = null;
+
+            if (this.DataContext is not TabletDebuggerViewModel viewmodel) return;
+
+            App.Driver.DeviceReport -= viewmodel.HandleReport;
+            App.Driver.TabletsChanged -= HandleTabletsChanged;
+            App.Driver.Connected -= SetTabletDebug;
+        }
+
+        #endregion
+
+        private void SetTabletDebug(object? sender, EventArgs e)
         {
             Debug.Assert(App.Driver.IsConnected);
-            App.Driver.Instance.SetTabletDebug(true);
+            // ReSharper disable once AsyncVoidMethod
+            Application.Instance.AsyncInvoke(async void () =>
+            {
+                _tabletDebuggingSubscription = await App.Driver.Instance.EnableTabletDebug();
+            });
         }
+
+        private IDisposable? _tabletDebuggingSubscription;
 
         private void SetupBindings()
         {
@@ -517,17 +552,8 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                 _ => throw new ArgumentOutOfRangeException(nameof(decodingMode)),
             };
 
-        protected override async void OnClosing(CancelEventArgs e)
+        protected override void OnClosing(CancelEventArgs e)
         {
-            var viewmodel = DataContext as TDVM ?? throw new InvalidOperationException("Invalid data context");
-
-            if (App.Driver.IsConnected)
-                await App.Driver.Instance.SetTabletDebug(false);
-
-            App.Driver.DeviceReport -= viewmodel.HandleReport;
-            App.Driver.TabletsChanged -= HandleTabletsChanged;
-            App.Driver.Connected -= SetTabletDebug;
-
             if (DataContext is IDisposable disposable)
                 disposable.Dispose();
 
