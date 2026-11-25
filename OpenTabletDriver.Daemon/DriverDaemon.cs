@@ -727,7 +727,17 @@ namespace OpenTabletDriver.Daemon
 
         private void PostDebugReport(TabletReference tablet, IDeviceReport report)
         {
-            DeviceReport?.Invoke(this, new DebugReportData(tablet, report));
+            if (DeviceReport == null) return;
+
+            try
+            {
+                DeviceReport.Invoke(this, new DebugReportData(tablet, report));
+            }
+            catch (Exception e)
+            {
+                Log.Write(tablet.Properties.Name, "Failed sending debug report:", LogLevel.Warning);
+                Log.Exception(e, LogLevel.Debug);
+            }
         }
 
         public async Task<SerializedUpdateInfo?> CheckForUpdates()
