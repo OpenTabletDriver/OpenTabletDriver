@@ -11,7 +11,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
-using JetBrains.Annotations;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.RPC;
