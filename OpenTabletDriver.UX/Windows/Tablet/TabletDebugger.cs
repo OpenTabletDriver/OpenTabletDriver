@@ -256,7 +256,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
 
             _tabletVisualizer.BindDataContext(x => x.Enabled, (TDVM vm) => vm.IsVisualizerEnabled);
             _tabletVisualizerGroup.BindDataContext(x => x.Visible, (TDVM vm) => vm.IsVisualizerEnabled);
-            _reportsRecordedGroup.BindDataContext(x => x.Visible, (TDVM vm) => vm.HasReportsRecorded);
+            _reportsRecordedGroup.BindDataContext(x => x.Visible, Binding.Property((TDVM vm) => vm.ReportsRecorded).Convert(x => x > 0));
             _additionalStatsGroup.BindDataContext(x => x.Visible, (TDVM vm) => vm.ShowAdditionalStatistics);
         }
 
