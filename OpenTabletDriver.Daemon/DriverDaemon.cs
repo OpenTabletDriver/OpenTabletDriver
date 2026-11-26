@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Binding;
@@ -672,16 +673,41 @@ namespace OpenTabletDriver.Daemon
             return Task.FromResult(AppInfo.Current);
         }
 
-        public Task SetTabletDebug(bool enabled)
+        public Task<IDisposable> EnableTabletDebug()
         {
-            debugging = enabled;
-            foreach (var dev in Driver.InputDevices.SelectMany(d => d.InputDevices))
-                dev.RawClone = debugging;
+            ++TabletDebugSubscribers;
 
-            Log.Debug("Tablet", $"Tablet debugging is {(debugging ? "enabled" : "disabled")}");
-
-            return Task.CompletedTask;
+            return Task.FromResult<IDisposable>(new DisposeAction(() => --TabletDebugSubscribers));
         }
+
+        #region Tablet Debugging Subscriber Tracking Internals
+        private Lock _tabletDebugSubscriberLock = new();
+
+        private int TabletDebugSubscribers
+        {
+            get;
+            set
+            {
+                ArgumentOutOfRangeException.ThrowIfNegative(value);
+                Debug.Assert(Math.Abs(field - value) is 1, "Only increment or decrement is supported");
+
+                lock (_tabletDebugSubscriberLock)
+                {
+                    field = value;
+                    if (value is 0 or 1) // only handle active<->inactive transitions
+                    {
+                        debugging = value == 1;
+                        foreach (var dev in Driver.InputDevices.SelectMany(d => d.InputDevices))
+                            dev.RawClone = debugging;
+
+                        Log.Debug("Tablet", $"Tablet debugging is {(debugging ? "enabled" : "disabled")}");
+                    }
+
+                    Log.Debug("Tablet", $"Tablet debug subscribers is now {TabletDebugSubscribers}");
+                }
+            }
+        }
+        #endregion
 
         public Task<string> RequestDeviceString(int vid, int pid, int index)
         {

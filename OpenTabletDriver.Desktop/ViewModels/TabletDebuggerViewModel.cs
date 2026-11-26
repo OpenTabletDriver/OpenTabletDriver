@@ -15,6 +15,10 @@ using OpenTabletDriver.Plugin.Timing;
 
 namespace OpenTabletDriver.Desktop.ViewModels;
 
+/// <summary>
+/// Tablet debugger view model for visualizing and/or pulling statistics from <see cref="DebugReportData"/>, a JSON-RPC compatible aggregate class of <see cref="TabletReference"/> and an <see cref="IDeviceReport"/>.
+/// Inject your report data into <see cref="ReportData"/> (or use the <see cref="HandleReport"/> event handler) to enable visualizing and collecting statistics.
+/// </summary>
 public sealed class TabletDebuggerViewModel : ViewModel, IDisposable
 {
     private const DecodingMode _DEFAULT_DECODING_MODE = DecodingMode.Hex;
@@ -23,13 +27,35 @@ public sealed class TabletDebuggerViewModel : ViewModel, IDisposable
     private readonly HashSet<string> _seenReports = [];
 
     private FileStream? _tabletRecordingFileStream;
-    private StreamWriter? _tabletRecordingStreamWriter;
+    private TextWriter? _tabletRecordingStreamWriter;
+    private TextWriter? _tabletRecordingDetailsStreamWriter;
 
     public NotifyCollectionChangedEventHandler? StatisticsCollectionChanged;
 
+    // disable warning telling us to dispose these - these are provided directly by the user (e.g. stdout) and is undesirable to dispose.
+#pragma warning disable CA2213
+    private readonly TextWriter? _userDefinedTabletRecordingTextWriter;
+    private readonly TextWriter? _userDefinedTabletRecordingTextDetailsWriter;
+#pragma warning restore CA2213
+
+    /// <summary>
+    /// Tablet debugger view model with the default data recording writer (into <see cref="AppInfo.RecordingDirectory"/>).
+    /// </summary>
     public TabletDebuggerViewModel()
     {
-        _additionalStatistics.ChildCollectionChanged += (sender, args) => StatisticsCollectionChanged?.Invoke(sender, args);
+        AdditionalStatistics.ChildCollectionChanged += (sender, args) => StatisticsCollectionChanged?.Invoke(sender, args);
+    }
+
+    /// <summary>
+    /// Tablet debugger view model with a custom data recording writer.
+    /// </summary>
+    /// <param name="tabletRecordingWriter">The writer to write decoded per-line tablet data output to.</param>
+    /// <param name="tabletRecordingDetailsWriter">(optional) The writer to write finalized statistics to. If <c>null</c>, no finalized statistics will be emitted.</param>
+    /// <remarks>Don't forget to enable <see cref="DataRecordingEnabled"/> to emit events. The class will NOT dispose your supplied <paramref name="tabletRecordingWriter"/> nor <paramref name="tabletRecordingDetailsWriter"/>.</remarks>
+    public TabletDebuggerViewModel(TextWriter tabletRecordingWriter, TextWriter? tabletRecordingDetailsWriter = null) : this()
+    {
+        _userDefinedTabletRecordingTextWriter = tabletRecordingWriter;
+        _userDefinedTabletRecordingTextDetailsWriter = tabletRecordingDetailsWriter;
     }
 
     public void HandleReport(object? sender, DebugReportData data) => ReportData = data;
@@ -168,13 +194,7 @@ public sealed class TabletDebuggerViewModel : ViewModel, IDisposable
         RaiseChanged(nameof(ReportRateString));
     }
 
-    private readonly Statistic _additionalStatistics = new("Additional Statistics");
-
-    public Statistic AdditionalStatistics
-    {
-        get => _additionalStatistics;
-        init => RaiseAndSetIfChanged(ref _additionalStatistics, value);
-    }
+    public Statistic AdditionalStatistics { get; } = new("Additional Statistics");
 
     private double ReportRateAverage => 1000 / (_reportRates.Count > 0 ? _reportRates.Average() : 0);
     public string ReportRateString => $"{ReportRateAverage:0.00}";
@@ -196,80 +216,77 @@ public sealed class TabletDebuggerViewModel : ViewModel, IDisposable
         }
     }
 
-    private string _decodedTabletData = string.Empty;
     public string DecodedTabletData
     {
-        get => _decodedTabletData;
-        private set => RaiseAndSetIfChanged(ref _decodedTabletData, value);
-    }
+        get;
+        private set => RaiseAndSetIfChanged(ref field, value);
+    } = string.Empty;
 
-    private DecodingMode _decodingMode = _DEFAULT_DECODING_MODE;
     public DecodingMode DecodingMode
     {
-        get => _decodingMode;
+        get;
+        [PublicAPI]
         set
         {
-            RaiseAndSetIfChanged(ref _decodingMode, value);
+            RaiseAndSetIfChanged(ref field, value);
             RaiseChanged(nameof(RawTabletData));
         }
-    }
+    } = _DEFAULT_DECODING_MODE;
 
-    private int _reportsRecorded;
     public int ReportsRecorded
     {
-        get => _reportsRecorded;
-        private set
-        {
-            RaiseAndSetIfChanged(ref _reportsRecorded, value);
-
-            if (value > 0 && !HasReportsRecorded)
-                HasReportsRecorded = true;
-        }
-    }
-
-    private bool _hasReportsRecorded;
-    public bool HasReportsRecorded
-    {
-        get => _hasReportsRecorded;
-        private set => RaiseAndSetIfChanged(ref _hasReportsRecorded, value);
+        get;
+        private set => RaiseAndSetIfChanged(ref field, value);
     }
 
     private bool _dataRecordingEnabled;
     public bool DataRecordingEnabled
     {
         get => _dataRecordingEnabled;
-        [UsedImplicitly]
         set
         {
+            if (!(value ^ _dataRecordingEnabled)) return; // only handle state changes, avoids recreating files
+
             RaiseAndSetIfChanged(ref _dataRecordingEnabled, value);
 
             if (value)
             {
-                ReportsRecorded = 0;
                 ResetStatistics();
 
-                string fileName = $"tablet-data_{DateTimeOffset.UtcNow:yyyy-MM-dd_HH-mm-ss}.txt";
-                _tabletRecordingFileStream = File.OpenWrite(Path.Join(AppInfo.Current.RecordingDirectory, fileName));
-                _tabletRecordingStreamWriter = new StreamWriter(_tabletRecordingFileStream);
+                if (_userDefinedTabletRecordingTextWriter == null)
+                {
+                    string fileName = $"tablet-data_{DateTimeOffset.UtcNow:yyyy-MM-dd_HH-mm-ss}.txt";
+                    _tabletRecordingFileStream =
+                        File.OpenWrite(Path.Join(AppInfo.Current.RecordingDirectory, fileName));
+                    _tabletRecordingDetailsStreamWriter =
+                        _tabletRecordingStreamWriter = new StreamWriter(_tabletRecordingFileStream);
+                }
+                else
+                {
+                    _tabletRecordingStreamWriter = _userDefinedTabletRecordingTextWriter;
+                    _tabletRecordingDetailsStreamWriter = _userDefinedTabletRecordingTextDetailsWriter;
+                }
             }
             else
                 StopDataRecordingAsNeeded();
         }
     }
 
-    private bool _isVisualizerEnabled = true;
+    // TODO: move into Eto, only used in Eto GUI
     public bool IsVisualizerEnabled
     {
-        get => _isVisualizerEnabled;
-        set => RaiseAndSetIfChanged(ref _isVisualizerEnabled, value);
-    }
+        get;
+        [PublicAPI]
+        set => RaiseAndSetIfChanged(ref field, value);
+    } = true;
 
-    private bool _showAdditionalStatistics = true;
+    // TODO: move into Eto, only practically used in Eto GUI. Or repurpose so that disabling skips statistics parsing?
     public bool ShowAdditionalStatistics
     {
-        get => _showAdditionalStatistics;
-        set => RaiseAndSetIfChanged(ref _showAdditionalStatistics, value);
-    }
+        get;
+        [PublicAPI]
+        set => RaiseAndSetIfChanged(ref field, value);
+    } = true;
 
     public ReadOnlyCollection<string> SeenReports => _seenReports.ToArray().AsReadOnly();
     // TODO: make this an ObservableHashSet so that we can reset AdditionalStats on changes
@@ -306,25 +323,37 @@ public sealed class TabletDebuggerViewModel : ViewModel, IDisposable
 
     #region Cleanup/Management
 
-    public void ResetStatistics()
+    private void ResetStatistics()
     {
-        _additionalStatistics.Children.Clear();
+        ReportsRecorded = 0;
+        AdditionalStatistics.Children.Clear();
     }
 
     private void StopDataRecordingAsNeeded()
     {
-        // dump stats
-        if (_tabletRecordingStreamWriter != null && _additionalStatistics.Children.Count > 0)
-            foreach (string s in _additionalStatistics.DumpTreeAsStrings())
-                _tabletRecordingStreamWriter?.WriteLine(s);
+        if (_tabletRecordingDetailsStreamWriter != null && AdditionalStatistics.Children.Count > 0)
+            foreach (string s in AdditionalStatistics.DumpTreeAsStrings())
+                _tabletRecordingDetailsStreamWriter.WriteLine(s);
 
-        _tabletRecordingStreamWriter?.Dispose();
+        // we don't own the user-defined writers, skip disposal if the writers matches the users defined writers
+        if (_userDefinedTabletRecordingTextDetailsWriter != _tabletRecordingDetailsStreamWriter)
+            _tabletRecordingDetailsStreamWriter?.Dispose();
+        if (_userDefinedTabletRecordingTextWriter != _tabletRecordingStreamWriter)
+            _tabletRecordingStreamWriter?.Dispose();
+
+        _tabletRecordingDetailsStreamWriter = null;
         _tabletRecordingStreamWriter = null;
+
         _tabletRecordingFileStream?.Dispose();
         _tabletRecordingFileStream = null;
     }
 
-    public void Dispose() => StopDataRecordingAsNeeded();
+    public void Dispose()
+    {
+        StopDataRecordingAsNeeded();
+        _dataRecordingEnabled = false;
+        ResetStatistics();
+    }
 
     #endregion
 }

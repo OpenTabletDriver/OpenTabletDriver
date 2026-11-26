@@ -114,11 +114,10 @@ namespace OpenTabletDriver.Desktop.Contracts
         Task<AppInfo> GetApplicationInfo();
 
         /// <summary>
-        /// Toggle emitting debug reports via <see cref="DeviceReport"/>
+        /// Enable emitting debug reports via <see cref="DeviceReport"/>.
         /// </summary>
-        /// <param name="isEnabled"><c>true</c> if subscribers should get notified of debug reports.</param>
-        // TODO: consider retiring this and simply having the subscription be the request for enabling tablet debugging?
-        Task SetTabletDebug(bool isEnabled);
+        /// <returns>A disposable that you must dispose when you're no longer interested in receiving tablet reports.</returns>
+        Task<IDisposable> EnableTabletDebug();
 
         /// <summary>
         /// Request a USB Device String Descriptor from the specified device and index.
