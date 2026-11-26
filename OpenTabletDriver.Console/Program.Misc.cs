@@ -58,7 +58,6 @@ namespace OpenTabletDriver.Console
 
         static async Task ListTypes<T>(Func<Type, bool>? predicate = null)
         {
-            if (!await EnsureDaemonReady()) return;
             var types = AppInfo.PluginManager.GetChildTypes<T>();
 
             // use separate variable for tracking to ensure we only increment when the predicate (if any) is successful
