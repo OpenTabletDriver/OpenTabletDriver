@@ -17,7 +17,7 @@ namespace OpenTabletDriver.Desktop.Interop.Display
             Display = XOpenDisplay(null);
             RootWindow = XDefaultRootWindow(Display);
 
-            var monitors = GetXRandrDisplays().ToList();
+            var monitors = XRRGetMonitors(Display, RootWindow, true);
             var primary = monitors.FirstOrDefault(d => d.Primary != 0);
 
             var displays = new List<IDisplay>();
@@ -50,17 +50,6 @@ namespace OpenTabletDriver.Desktop.Interop.Display
         }
 
         public Vector2 Position { private set; get; } = new Vector2(0, 0);
-
-        private unsafe XRRMonitorInfo[] GetXRandrDisplays()
-        {
-            var xRandrMonitors = XRRGetMonitors(Display, RootWindow, true, out var count);
-            var monitors = new XRRMonitorInfo[count];
-
-            for (int i = 0; i < count; i++)
-                monitors[i] = xRandrMonitors[i];
-
-            return monitors;
-        }
 
         public IEnumerable<IDisplay> Displays { private set; get; }
 
