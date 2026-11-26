@@ -198,6 +198,7 @@ namespace OpenTabletDriver.Console
             });
         }
 
+        // TODO: SetEraserBinding
         private static async Task SetTipBinding(string tablet, string name, float threshold)
         {
             await ModifyProfile(tablet, p =>
