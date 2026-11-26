@@ -152,6 +152,9 @@ namespace OpenTabletDriver.Desktop.Reflection
             }
         }
 
+        /// <summary>
+        /// Resets <see cref="PluginTypes"/> to it's initial state and resets the <see cref="ServiceManager"/>'s services.
+        /// </summary>
         public override void ResetServices()
         {
             ResetPluginTypes();

@@ -312,6 +312,8 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
             base.ResetServices();
 
+            Plugins.Clear();
+
             // These services will always be provided on the desktop
             AddService<IServiceProvider>(() => this);
             AddService(() => DesktopInterop.Timer);
