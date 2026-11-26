@@ -13,6 +13,7 @@ namespace OpenTabletDriver.Desktop.Reflection
         /// <summary>
         /// A context associated with a user-provided plugin.
         /// </summary>
+        /// <exception cref="ArgumentException">If the directory does not contain any valid plugin files.</exception>
         public DesktopPluginContext(DirectoryInfo directory)
         {
             Directory = directory;
@@ -27,6 +28,9 @@ namespace OpenTabletDriver.Desktop.Reflection
 
                 LoadAssemblyFromFile(plugin);
             }
+
+            if (!_loadedAtLeastOneAssembly)
+                throw new ArgumentException("The folder did not contain at least 1 valid plugin DLL.", nameof(directory));
         }
 
         public DirectoryInfo Directory { get; }
@@ -56,6 +60,8 @@ namespace OpenTabletDriver.Desktop.Reflection
             }
         }
 
+        private bool _loadedAtLeastOneAssembly = false;
+
         protected Assembly? LoadAssemblyFromFile(FileInfo file)
         {
             try
@@ -63,6 +69,7 @@ namespace OpenTabletDriver.Desktop.Reflection
                 var stream = file.OpenRead();
                 var asm = LoadFromStream(stream);
                 stream.Close();
+                _loadedAtLeastOneAssembly = true;
                 return asm;
             }
             catch
