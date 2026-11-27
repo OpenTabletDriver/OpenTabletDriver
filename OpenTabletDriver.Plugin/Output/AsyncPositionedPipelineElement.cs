@@ -74,7 +74,15 @@ namespace OpenTabletDriver.Plugin.Output
             if (!FilterState(value))
             {
                 if (value != null)
-                    Emit?.Invoke(value);
+                {
+                    // Filtered reports still run the downstream pipeline. Serialize
+                    // them with UpdateState so an unparsed DeviceReport/ITouchReport
+                    // or another filtered report cannot interleave with a timer-driven frame.
+                    lock (synchronizationObject)
+                    {
+                        Emit?.Invoke(value);
+                    }
+                }
                 return;
             }
 

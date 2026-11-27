@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using OpenTabletDriver.Native.OSX;
 using OpenTabletDriver.Native.OSX.Input;
 using OpenTabletDriver.Plugin.Platform.Keyboard;
+using Lock = System.Threading.Lock;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
 {
@@ -11,27 +12,34 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
     public class MacOSVirtualKeyboard : IVirtualKeyboard
     {
         // Keep track of current modifier flags, as CGEventSourceFlagsState does not return updated flags immediately after an event is posted.
+        // Bindings can issue key events from multiple threads, so flag updates,
+        // posting and getCurrentFlags() must share one monitor.
+        private readonly Lock _sync = new();
         private ulong _currentFlags;
+
         private void KeyEvent(string key, bool isPress)
         {
-            if (EtoKeysymToVK.TryGetValue(key, out var code))
+            lock (_sync)
             {
-                var keyEvent = CGEventCreateKeyboardEvent(IntPtr.Zero, code, isPress);
-                var flag = fromCGKeyCode((CGKeyCode)code);
-                if (flag != 0)
+                if (EtoKeysymToVK.TryGetValue(key, out var code))
                 {
-                    if (!isPress)
+                    var keyEvent = CGEventCreateKeyboardEvent(IntPtr.Zero, code, isPress);
+                    var flag = fromCGKeyCode((CGKeyCode)code);
+                    if (flag != 0)
                     {
-                        _currentFlags &= ~(ulong)flag;
+                        if (!isPress)
+                        {
+                            _currentFlags &= ~(ulong)flag;
+                        }
+                        else
+                        {
+                            _currentFlags |= (ulong)flag;
+                        }
                     }
-                    else
-                    {
-                        _currentFlags |= (ulong)flag;
-                    }
+                    CGEventSetFlags(keyEvent, _currentFlags);
+                    CGEventPost(CGEventTapLocation.kCGHIDEventTap, keyEvent);
+                    CFRelease(keyEvent);
                 }
-                CGEventSetFlags(keyEvent, _currentFlags);
-                CGEventPost(CGEventTapLocation.kCGHIDEventTap, keyEvent);
-                CFRelease(keyEvent);
             }
         }
 
@@ -47,17 +55,27 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
 
         public void Press(IEnumerable<string> keys)
         {
-            foreach (var key in keys)
-                KeyEvent(key, true);
+            lock (_sync)
+            {
+                foreach (var key in keys)
+                    KeyEvent(key, true);
+            }
         }
 
         public void Release(IEnumerable<string> keys)
         {
-            foreach (var key in keys)
-                KeyEvent(key, false);
+            lock (_sync)
+            {
+                foreach (var key in keys)
+                    KeyEvent(key, false);
+            }
         }
 
-        public ulong getCurrentFlags() => _currentFlags;
+        public ulong getCurrentFlags()
+        {
+            lock (_sync)
+                return _currentFlags;
+        }
 
         public IEnumerable<string> SupportedKeys => EtoKeysymToVK.Keys;
 

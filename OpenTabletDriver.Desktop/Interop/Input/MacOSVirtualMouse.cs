@@ -5,6 +5,7 @@ using OpenTabletDriver.Desktop.Interop.Input.Keyboard;
 using OpenTabletDriver.Native.OSX;
 using OpenTabletDriver.Native.OSX.Input;
 using OpenTabletDriver.Plugin.Platform.Pointer;
+using Lock = System.Threading.Lock;
 
 namespace OpenTabletDriver.Desktop.Interop.Input
 {
@@ -12,6 +13,11 @@ namespace OpenTabletDriver.Desktop.Interop.Input
 
     public abstract class MacOSVirtualMouse : IMouseButtonHandler, IMouseScrollHandler, ISynchronousPointer, ITiltHandler, IEraserHandler, IPressureHandler
     {
+        // Guards every field accessed by the pointer. Public entry points,
+        // subclass overrides and QueuePendingPosition take this lock; private
+        // helpers assume it is held.
+        protected Lock SyncRoot { get; } = new();
+
         private const int DoubleClickMoveTolerance = 8;
         private const int ProximityExpiresDurationInMs = 200;
 
@@ -67,85 +73,109 @@ namespace OpenTabletDriver.Desktop.Interop.Input
 
         public void MouseDown(MouseButton button)
         {
-            if (!_pendingX.HasValue)
-                QueuePendingPositionFromSystem();
-            SetButtonState(ref _currButtonStates, ToCGMouseButton(button), true);
+            lock (SyncRoot)
+            {
+                if (!_pendingX.HasValue)
+                    QueuePendingPositionFromSystem();
+                SetButtonState(ref _currButtonStates, ToCGMouseButton(button), true);
+            }
         }
 
         public void MouseUp(MouseButton button)
         {
-            if (!_pendingX.HasValue)
-                QueuePendingPositionFromSystem();
-            SetButtonState(ref _currButtonStates, ToCGMouseButton(button), false);
+            lock (SyncRoot)
+            {
+                if (!_pendingX.HasValue)
+                    QueuePendingPositionFromSystem();
+                SetButtonState(ref _currButtonStates, ToCGMouseButton(button), false);
+            }
         }
 
         public void ScrollVertically(int amount)
         {
-            _scrollDeltaX = -amount;
+            lock (SyncRoot)
+            {
+                _scrollDeltaX = -amount;
+            }
         }
 
         public void ScrollHorizontally(int amount)
         {
-            _scrollDeltaY = -amount;
+            lock (SyncRoot)
+            {
+                _scrollDeltaY = -amount;
+            }
         }
 
         public void Flush()
         {
-            if (_currButtonStates != _prevButtonStates)
+            lock (SyncRoot)
             {
-                // keys here just changed, no drag event should be sent
-                ProcessKeyStates(_prevButtonStates, _currButtonStates);
-                _prevButtonStates = _currButtonStates;
-            }
-            else if (DrainPendingPosition() is { } position)
-            {
-                // can send drag here
-                var lastButtonSet = IsButtonSet(_currButtonStates, _lastButton);
-                var cgEventType = ToDragCGEventType(_lastButton, lastButtonSet);
-                CGEventSetType(_mouseEvent, cgEventType);
-                SetPendingPosition(_mouseEvent, position.X, position.Y);
-                ApplyTabletValues();
-                PostEvent();
-            }
-            if (_scrollDeltaX.HasValue || _scrollDeltaY.HasValue)
-            {
-                var scrollEventRef = CGEventCreateScrollWheelEvent2(IntPtr.Zero, CGScrollEventUnit.kCGScrollEventUnitPixel, 2, _scrollDeltaX ?? 0, _scrollDeltaY ?? 0, 0);
-                CGEventPost(CGEventTapLocation.kCGHIDEventTap, scrollEventRef);
-                CFRelease(scrollEventRef);
-                _scrollDeltaX = _scrollDeltaY = null;
+                if (_currButtonStates != _prevButtonStates)
+                {
+                    // keys here just changed, no drag event should be sent
+                    ProcessKeyStates(_prevButtonStates, _currButtonStates);
+                    _prevButtonStates = _currButtonStates;
+                }
+                else if (DrainPendingPosition() is { } position)
+                {
+                    // can send drag here
+                    var lastButtonSet = IsButtonSet(_currButtonStates, _lastButton);
+                    var cgEventType = ToDragCGEventType(_lastButton, lastButtonSet);
+                    CGEventSetType(_mouseEvent, cgEventType);
+                    SetPendingPosition(_mouseEvent, position.X, position.Y);
+                    ApplyTabletValues();
+                    PostEvent();
+                }
+                if (_scrollDeltaX.HasValue || _scrollDeltaY.HasValue)
+                {
+                    var scrollEventRef = CGEventCreateScrollWheelEvent2(IntPtr.Zero, CGScrollEventUnit.kCGScrollEventUnitPixel, 2, _scrollDeltaX ?? 0, _scrollDeltaY ?? 0, 0);
+                    CGEventPost(CGEventTapLocation.kCGHIDEventTap, scrollEventRef);
+                    CFRelease(scrollEventRef);
+                    _scrollDeltaX = _scrollDeltaY = null;
+                }
             }
         }
 
         public void Reset()
         {
-            // send a key up for all currently held keys
-            if (_currButtonStates > 0)
+            lock (SyncRoot)
             {
-                ProcessKeyStates(_currButtonStates, 0);
-                _prevButtonStates = 0;
-                _currButtonStates = 0;
+                // send a key up for all currently held keys
+                if (_currButtonStates > 0)
+                {
+                    ProcessKeyStates(_currButtonStates, 0);
+                    _prevButtonStates = 0;
+                    _currButtonStates = 0;
+                }
             }
         }
 
         public void SetEraser(bool isEraser)
         {
-            if (_isEraser.HasValue && _isEraser.Value == isEraser)
-                return;
+            lock (SyncRoot)
+            {
+                if (_isEraser.HasValue && _isEraser.Value == isEraser)
+                    return;
 
-            _isEraser = isEraser;
+                _isEraser = isEraser;
 
-            // Immediately post a proximity event to notify applications of the tool change,
-            // mirroring how Linux EvdevVirtualTablet sends the tool switch event right away.
-            PostProximityEvent();
+                // Immediately post a proximity event to notify applications of the tool change,
+                // mirroring how Linux EvdevVirtualTablet sends the tool switch event right away.
+                PostProximityEvent();
 
-            // Reset the stopwatch so ApplyTabletValues doesn't redundantly re-send
-            // a proximity event on the next frame.
-            _stopWatch.Restart();
+                // Reset the stopwatch so ApplyTabletValues doesn't redundantly re-send
+                // a proximity event on the next frame.
+                _stopWatch.Restart();
+            }
         }
 
         public void SetTilt(Vector2 tilt)
         {
-            _tilt = tilt;
+            lock (SyncRoot)
+            {
+                _tilt = tilt;
+            }
         }
 
         protected abstract void SetPendingPosition(IntPtr mouseEvent, float x, float y);
@@ -157,17 +187,23 @@ namespace OpenTabletDriver.Desktop.Interop.Input
 
         protected void QueuePendingPosition(float x, float y)
         {
-            _pendingX = x;
-            _pendingY = y;
-            if (Vector2.Distance(_lastMouseDownPosition, new Vector2(x, y)) > DoubleClickMoveTolerance)
+            lock (SyncRoot)
             {
-                _mouseMovedSinceLastDown = true;
+                _pendingX = x;
+                _pendingY = y;
+                if (Vector2.Distance(_lastMouseDownPosition, new Vector2(x, y)) > DoubleClickMoveTolerance)
+                {
+                    _mouseMovedSinceLastDown = true;
+                }
             }
         }
 
         public void SetPressure(float percentage)
         {
-            _pressure = percentage;
+            lock (SyncRoot)
+            {
+                _pressure = percentage;
+            }
         }
 
         private void PostProximityEvent()
@@ -190,9 +226,9 @@ namespace OpenTabletDriver.Desktop.Interop.Input
 
         private Vector2? DrainPendingPosition()
         {
-            if (_pendingX.HasValue && _pendingY.HasValue)
+            if (_pendingX is { } x && _pendingY is { } y)
             {
-                var vector2 = new Vector2(_pendingX.Value, _pendingY.Value);
+                var vector2 = new Vector2(x, y);
                 _pendingX = null;
                 _pendingY = null;
                 return vector2;
@@ -215,10 +251,10 @@ namespace OpenTabletDriver.Desktop.Interop.Input
 
                     if (currState)
                     {
-                        if (_pendingX.HasValue && (_clickState == 0 || doubleClickInvalidated))
+                        if (_pendingX is { } x && _pendingY is { } y && (_clickState == 0 || doubleClickInvalidated))
                         {
                             _doubleClickStopWatch.Restart();
-                            _lastMouseDownPosition = new Vector2(_pendingX.Value, _pendingY!.Value);
+                            _lastMouseDownPosition = new Vector2(x, y);
                             _mouseMovedSinceLastDown = false;
                             _clickState = 1;
                         }
@@ -355,12 +391,12 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             CGEventSetIntegerValueField(_mouseEvent, CGEventField.tabletEventDeviceID, DeviceId);
             CGEventSetDoubleValueField(_mouseEvent, CGEventField.tabletEventPointPressure, _pressure ?? 1.0);
 
-            if (_tilt != null)
+            if (_tilt is { } tilt)
             {
-                CGEventSetDoubleValueField(_mouseEvent, CGEventField.tabletEventTiltX, _tilt.Value.X / 90.0);
+                CGEventSetDoubleValueField(_mouseEvent, CGEventField.tabletEventTiltX, tilt.X / 90.0);
                 // TiltY is inverted on MacOS
                 // see https://github.com/chromium/chromium/blob/62f1a92b04c1172431a64d581be9e64742c81576/content/browser/renderer_host/input/web_input_event_builders_mac.mm#L431
-                CGEventSetDoubleValueField(_mouseEvent, CGEventField.tabletEventTiltY, -_tilt.Value.Y / 90.0);
+                CGEventSetDoubleValueField(_mouseEvent, CGEventField.tabletEventTiltY, -tilt.Y / 90.0);
             }
 
             // This uses an undocumented flag that tells the system to automatically include the event flags in the event.
@@ -368,8 +404,9 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             // (e.g., if a modifier key is released after we check its status but before the event is posted).
             // However, this flag has not effects for synthetic keyboard events, so we manually set the flags if there are modifiers bindings.
 
-            if (_keyboard.getCurrentFlags() != 0)
-                CGEventSetFlags(_mouseEvent, _keyboard.getCurrentFlags());
+            var currentFlags = _keyboard.getCurrentFlags();
+            if (currentFlags != 0)
+                CGEventSetFlags(_mouseEvent, currentFlags);
             else
                 CGEventSetFlags(_mouseEvent, ~0U);
         }
