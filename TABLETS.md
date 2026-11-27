@@ -55,6 +55,7 @@
 | Huion Kamvas 22 Plus               |     Supported     |
 | Huion Kamvas 24                    |     Supported     |
 | Huion Kamvas 24 Plus               |     Supported     |
+| Huion Kamvas Pro 13                |     Supported     |
 | Huion Kamvas Pro 13 (2.5k)         |     Supported     |
 | Huion Kamvas Pro 16 (2.5k)         |     Supported     |
 | Huion Kamvas Pro 16 (4k)           |     Supported     |
@@ -300,7 +301,6 @@
 | Huion HC16 (Variant 2)             |  Missing Features | Wheel is not yet supported.
 | Huion HS611                        |  Missing Features | Touch bar is not yet supported.
 | Huion Kamvas Pro 12                |  Missing Features | Touch bar is not yet supported.
-| Huion Kamvas Pro 13                |  Missing Features | Touch bar is not yet supported.
 | Huion Kamvas Pro 16                |  Missing Features | Touch bar is not yet supported.
 | Huion Kamvas Pro 16 V2             |  Missing Features | Touch bar is not yet supported.
 | Huion Kamvas Pro 20                |  Missing Features | Touch bar is not yet supported.
