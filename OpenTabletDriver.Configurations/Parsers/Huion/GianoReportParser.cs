@@ -16,7 +16,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Huion
             if (data[1].IsBitSet(5) && data[1].IsBitSet(6))
                 return new UCLogicAuxReport(data);
             else
-                return new GianoReport(data);
+                return new TiltTabletReport(data, true, true);
         }
     }
 }
