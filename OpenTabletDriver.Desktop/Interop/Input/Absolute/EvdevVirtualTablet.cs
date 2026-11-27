@@ -41,7 +41,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             var xAbs = new input_absinfo
             {
                 maximum = (int)(virtualScreen.Width * RESOLUTION),
-                resolution = 100000
+                resolution = RESOLUTION
             };
             input_absinfo* xPtr = &xAbs;
             Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_X, (IntPtr)xPtr);
@@ -49,7 +49,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             var yAbs = new input_absinfo
             {
                 maximum = (int)(virtualScreen.Height * RESOLUTION),
-                resolution = 100000
+                resolution = RESOLUTION
             };
             input_absinfo* yPtr = &yAbs;
             Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_Y, (IntPtr)yPtr);
