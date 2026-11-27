@@ -1,0 +1,78 @@
+{
+  "Name": "Waltop Sirius Battery Free Tablet",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 254,
+      "Height": 152.4,
+      "MaxX": 40000,
+      "MaxY": 24000
+    },
+    "Pen": {
+      "MaxPressure": 1023,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 32
+    },
+    "Wheels": [
+      {
+        "AbsoluteWheelMax": 7,
+        "AngleOfZeroReading": 90.0,
+        "ButtonCount": 0
+      },
+      {
+        "AbsoluteWheelMax": 7,
+        "AngleOfZeroReading": 90.0,
+        "ButtonCount": 0
+      },
+      {
+        "AbsoluteWheelMax": 7,
+        "AngleOfZeroReading": 90.0,
+        "ButtonCount": 0
+      },
+      {
+        "AbsoluteWheelMax": 7,
+        "AngleOfZeroReading": 90.0,
+        "ButtonCount": 0
+      },
+      {
+        "AbsoluteWheelMax": 7,
+        "AngleOfZeroReading": 90.0,
+        "ButtonCount": 0
+      },
+      {
+        "AbsoluteWheelMax": 7,
+        "AngleOfZeroReading": 90.0,
+        "ButtonCount": 0
+      },
+      {
+        "AbsoluteWheelMax": 7,
+        "AngleOfZeroReading": 90.0,
+        "ButtonCount": 0
+      },
+      {
+        "AbsoluteWheelMax": 7,
+        "AngleOfZeroReading": 90.0,
+        "ButtonCount": 0
+      }
+    ]
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 5935,
+      "ProductID": 1282,
+      "InputReportLength": 10,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Waltop.WaltopSiriusReportParser",
+      "FeatureInitReport": [
+        "AhAB",
+        "AhEP",
+        "AhgE",
+        "AhL/",
+        "AhcA"
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
