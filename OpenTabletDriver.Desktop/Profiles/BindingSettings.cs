@@ -173,9 +173,16 @@ namespace OpenTabletDriver.Desktop.Profiles
                 WheelBindings.RemoveAt(WheelBindings.Count - 1);
             }
 
+            // Wheels the profile doesn't have yet, e.g. when a tablet configuration gains wheel support,
+            // start with the same one-step thresholds as new profiles get from SetupWheelDefaults
             for (int i = WheelBindings.Count; i < wheelCount; i++)
             {
-                var wheelBindingSettings = new WheelBindingSettings();
+                float stepSize = (float)GetDegreesPerStep(tabletSpecifications, i);
+                var wheelBindingSettings = new WheelBindingSettings
+                {
+                    ClockwiseActivationThreshold = stepSize,
+                    CounterClockwiseActivationThreshold = stepSize,
+                };
                 WheelBindings.Add(wheelBindingSettings);
             }
 
