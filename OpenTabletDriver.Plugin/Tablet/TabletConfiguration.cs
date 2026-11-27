@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
+using OpenTabletDriver.Plugin.Tablet.Wheel;
 
 namespace OpenTabletDriver.Plugin.Tablet
 {
@@ -38,7 +39,12 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// Other information about the tablet that can be used in tools or other applications.
         /// </summary>
         public Dictionary<string, string>? Attributes { set; get; }
-
+    
+        /// <summary>
+        /// Wheel mode configuration for tablets with wheels.
+        /// </summary>
+        public WheelModeSlot[]? WheelModes { set; get; }
+        
         #region Legacy Properties
 
         // ReSharper disable twice IdentifierTypo
