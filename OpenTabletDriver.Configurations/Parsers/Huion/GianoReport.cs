@@ -4,11 +4,12 @@ using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.Huion
 {
-    public struct GianoReport : ITabletReport, ITiltReport
+    public struct GianoReport : ITabletReport, ITiltReport, IEraserReport
     {
         internal GianoReport(byte[] report)
         {
             Raw = report;
+            Eraser = report[1].IsBitSet(5);
 
             Position = new Vector2
             {
@@ -31,6 +32,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Huion
         }
 
         public byte[] Raw { set; get; }
+        public bool Eraser { set; get; }
         public Vector2 Position { set; get; }
         public Vector2 Tilt { set; get; }
         public uint Pressure { set; get; }
