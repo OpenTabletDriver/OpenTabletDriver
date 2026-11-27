@@ -38,8 +38,9 @@ jobs:
             signed: false
           - build: macos
             runtime-suffix: arm64
-            os: ubuntu-latest
+            os: macos-latest
             runtime-prefix: osx-
+            single-file: false
             signed: true
           - build: windows
             os: windows-latest
@@ -61,4 +62,5 @@ jobs:
           runtime: ${{ matrix.runtime-prefix }}${{ matrix.runtime-suffix }}
           package-name: ${{ matrix.build }}
           container: ${{ matrix.container }}
+          single-file: ${{ matrix.single-file }}
           signed: ${{ matrix.signed }}

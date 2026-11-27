@@ -1,0 +1,8 @@
+name: 'Setup bash (MacOS)'
+description: 'Installs a newer version of bash, required to run the macOS packaging script'
+runs:
+  using: "composite"
+  steps:
+    - name: Install bash
+      shell: bash
+      run: brew install coreutils bash; echo "$(brew --prefix coreutils)/libexec/gnubin" >> $GITHUB_PATH
