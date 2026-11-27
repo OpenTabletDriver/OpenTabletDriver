@@ -7,7 +7,7 @@ namespace OpenTabletDriver.UX.Controls.Generic.Text.Providers
         protected override bool Allow(ref char character, ref int position)
         {
             bool allow = false;
-            if (!allow && character == DECIMAL_CHAR)
+            if (!allow && (character == DECIMAL_CHAR || character == ','))
             {
                 character = DECIMAL_CHAR;
                 var decimalIndex = Text.IndexOf(DECIMAL_CHAR);
