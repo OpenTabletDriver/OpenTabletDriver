@@ -8,8 +8,9 @@ namespace OpenTabletDriver.Plugin.Devices
     {
         public DevicesChangedEventArgs(IEnumerable<IDeviceEndpoint> oldList, IEnumerable<IDeviceEndpoint> newList)
         {
-            Previous = oldList;
-            Current = newList;
+            // Publishers must synchronize access while these snapshots are taken.
+            Previous = oldList.ToArray();
+            Current = newList.ToArray();
         }
 
         public IEnumerable<IDeviceEndpoint> Previous { get; }
