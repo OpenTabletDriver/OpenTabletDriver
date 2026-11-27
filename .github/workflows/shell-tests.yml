@@ -40,3 +40,28 @@ jobs:
           VERBOSE: y
         run: |
           ./tests/test_tabletconfigs_present_in_tabletsmd.sh
+
+  test_tabletconfigs_name_matches_path:
+    runs-on: ubuntu-latest
+    name: Test for tablet name in file matching directory + filename in path
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Full git history is needed to get a proper list of changed files
+          fetch-depth: 0
+
+      - name: Compare names of changed tablet configs
+        if: github.event_name != 'workflow_dispatch'
+        env:
+          GET_CONFIGS_FROM_CI: defined
+          VERBOSE: y
+        run: |
+          ./tests/test_tabletconfigs_name_matches_path.sh
+
+      - name: Compare all names in tablet configs
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          VERBOSE: y
+        run: |
+          ./tests/test_tabletconfigs_name_matches_path.sh
