@@ -1,0 +1,26 @@
+{
+    "Name": "Hanvon ESP2210",
+    "Specifications": {
+        "Digitizer": {
+            "Width": 476.64,
+            "Height": 268.11,
+            "MaxX": 112594,
+            "MaxY": 63336
+        },
+        "Pen": {
+            "MaxPressure": 2047,
+            "ButtonCount": 1
+        }
+    },
+    "DigitizerIdentifiers": [
+        {
+            "VendorID": 2903,
+            "ProductID": 36886,
+            "InputReportLength": 10,
+            "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1.IntuosV1ReportParser"
+        }
+    ],
+    "Attributes": {
+        "libinputoverride": "1"
+    }
+}
