@@ -1,0 +1,36 @@
+{
+  "Name": "Xencelabs Pen Tablet Medium v2",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 261.62,
+      "Height": 148,
+      "MaxX": 52324,
+      "MaxY": 29600
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "ButtonCount": 3
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 3
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 10429,
+      "ProductID": 21009,
+      "InputReportLength": 10,
+      "OutputReportLength": 33,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XenceLabs.XenceLabsReportParser",
+      "OutputInitReport": [
+        "ArAE"
+      ],
+      "Attributes": {
+        "Interface": "0"
+      }
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

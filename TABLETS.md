@@ -352,6 +352,7 @@
 | Wacom PTZ-630                      |  Missing Features | Touch bars are not yet supported.
 | Wacom PTZ-631W                     |  Missing Features | Touch bars are not yet supported.
 | Wacom PTZ-930                      |  Missing Features | Touch bars are not yet supported.
+| Xencelabs Pen Tablet Medium v2 |  Missing Features | USB pen input tested on macOS; on-tablet buttons and wireless are unverified. Bundled Quick Keys remote is outside scope.
 | XP-Pen Artist 12                   |  Missing Features | Touch bar is not yet supported
 | XP-Pen Artist 12 Pro               |  Missing Features | Tilt and wheel are not yet supported.
 | XP-Pen Artist 16 Pro               |  Missing Features | Wheel is not yet supported.
