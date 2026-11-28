@@ -7,6 +7,7 @@
 | Artisul D22S                       |     Supported     |
 | Artisul M0610                      |     Supported     |
 | Fansjoy FJ-S1                      |     Supported     | Rebranded XENX X1-640
+| Fansjoy S2                         |     Supported     | Rebranded XENX P1-640
 | Gaomon 1060 Pro                    |     Supported     |
 | Gaomon GM116HD                     |     Supported     |
 | Gaomon GM156HD                     |     Supported     |
