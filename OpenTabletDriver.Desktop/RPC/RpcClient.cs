@@ -1,45 +1,54 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO.Pipes;
+using System.Threading;
 using System.Threading.Tasks;
 using StreamJsonRpc;
 
 namespace OpenTabletDriver.Desktop.RPC
 {
-    public class RpcClient<T> where T : class
+    /// <summary>
+    /// Handles a single RPC client connection to <typeparamref name="T"/>.
+    /// </summary>
+    /// <param name="pipeName">The name of the <see cref="NamedPipeServerStream"/> to connect to.</param>
+    /// <typeparam name="T">An RPC-compatible interface, e.g. <see cref="Contracts.IDriverDaemon"/>.</typeparam>
+    public class RpcClient<T>(string pipeName)
+        where T : class
     {
-        private readonly string pipeName;
-        private NamedPipeClientStream? stream;
-        private JsonRpc? rpc;
-
         public T? Instance { private set; get; }
 
         [MemberNotNullWhen(true, nameof(Instance))]
-        public bool IsConnected => Instance != null && rpc is { IsDisposed: false };
+        public bool IsConnected => Instance != null;
 
         public event EventHandler? Connected;
         public event EventHandler? Disconnected;
 
-        public RpcClient(string pipeName)
+        /// <exception cref="InvalidOperationException">
+        /// If attempting to reconnect while an existing instance was active.
+        /// Check <see cref="IsConnected"/> for <c>false</c> before invoking this.
+        /// </exception>
+        public async Task ConnectAsync(CancellationToken ct = default)
         {
-            this.pipeName = pipeName;
-        }
+            if (IsConnected)
+                throw new InvalidOperationException("Cannot connect when already connected.");
 
-        public async Task Connect()
-        {
-            this.stream = GetStream();
-            await this.stream.ConnectAsync();
+            var stream = GetStream();
+            await stream.ConnectAsync(ct).ConfigureAwait(false);
 
-            rpc = new JsonRpc(this.stream);
+            var rpc = new JsonRpc(stream);
+
             rpc.Disconnected += (_, _) =>
             {
-                this.stream.Dispose();
-                OnDisconnected();
+                Instance = null;
                 rpc.Dispose();
+                stream.Dispose();
+
+                // emit disconnected event only when we're fully ready to handle a new connection
+                OnDisconnected();
             };
             rpc.ExceptionStrategy = ExceptionProcessing.ISerializable;
 
-            this.Instance = this.rpc.Attach<T>();
+            this.Instance = rpc.Attach<T>();
             rpc.StartListening();
 
             OnConnected();
@@ -59,7 +68,7 @@ namespace OpenTabletDriver.Desktop.RPC
         {
             return new NamedPipeClientStream(
                 ".",
-                this.pipeName,
+                pipeName,
                 PipeDirection.InOut,
                 PipeOptions.Asynchronous | PipeOptions.WriteThrough | PipeOptions.CurrentUserOnly
             );

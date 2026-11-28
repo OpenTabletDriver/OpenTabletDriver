@@ -61,7 +61,7 @@ namespace OpenTabletDriver.UX
                 while (true)
                 {
                     var timeout = Task.Delay(TimeSpan.FromSeconds(15));
-                    var result = await Task.WhenAny(App.Driver.Connect(), timeout);
+                    var result = await Task.WhenAny(App.Driver.ConnectAsync(), timeout);
 
                     if (result != timeout || App.Driver.IsConnected)
                         break; // daemon connected
