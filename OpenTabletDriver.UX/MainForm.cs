@@ -521,6 +521,8 @@ namespace OpenTabletDriver.UX
 
         private async Task LoadSettingsDialog()
         {
+            Debug.Assert(App.Driver.IsConnected, "Load dialog should be unavailable when no driver is connected");
+
             var fileDialog = Extensions.OpenFileDialog(
                 "Load OpenTabletDriver settings...",
                 Eto.EtoEnvironment.GetFolderPath(Eto.EtoSpecialFolder.Documents),
@@ -532,20 +534,12 @@ namespace OpenTabletDriver.UX
                 case DialogResult.Ok:
                 case DialogResult.Yes:
                     var file = new FileInfo(fileDialog.FileName);
-                    if (file.Exists)
+                    if (file.Exists && Settings.TryDeserialize(file, out var settings))
                     {
-                        if (Settings.TryDeserialize(file, out var settings))
-                        {
+                        if (await ApplySettings(settings: settings))
                             App.Current.Settings = settings;
-                            await App.Driver.Instance!.SetSettings(settings);
-                        }
                         else
-                        {
-                            MessageBox.Show(
-                                "Invalid settings file.",
-                                MessageBoxType.Error
-                            );
-                        }
+                            MessageBox.Show("Invalid settings file.", MessageBoxType.Error);
                     }
                     break;
             }
@@ -553,6 +547,8 @@ namespace OpenTabletDriver.UX
 
         private async Task SaveSettingsDialog()
         {
+            Debug.Assert(App.Driver.IsConnected, "Save dialog should be unavailable when no driver is connected");
+
             var fileDialog = Extensions.SaveFileDialog(
                 "Save OpenTabletDriver settings...",
                 Eto.EtoEnvironment.GetFolderPath(Eto.EtoSpecialFolder.Documents),
@@ -564,12 +560,9 @@ namespace OpenTabletDriver.UX
             {
                 case DialogResult.Ok:
                 case DialogResult.Yes:
-                    var file = new FileInfo(fileDialog.FileName);
-                    if (App.Current.Settings is Settings settings)
-                    {
-                        settings.Serialize(file);
-                        await ApplySettings();
-                    }
+                    await ApplySettings();
+                    var settings = await App.Driver.Instance.GetSettings();
+                    settings.Serialize(new FileInfo(fileDialog.FileName));
                     break;
             }
         }
@@ -580,24 +573,19 @@ namespace OpenTabletDriver.UX
 
             Debug.Assert(App.Driver.IsConnected, "Save should be disabled when no driver is connected");
 
-            if (App.Current.Settings is Settings settings)
+            if (App.Current.Settings.Profiles.Any(p => p.AbsoluteModeSettings?.Tablet.Width + p.AbsoluteModeSettings?.Tablet.Height == 0))
             {
-                if (settings.Profiles.Any(p => p.AbsoluteModeSettings?.Tablet.Width + p.AbsoluteModeSettings?.Tablet.Height == 0))
-                {
-                    var result = MessageBox.Show(
-                        "Warning: Your tablet area is invalid. Saving this configuration may cause problems." + Environment.NewLine +
-                        "Are you sure you want to save your configuration?",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxType.Warning
-                    );
-                    if (result != DialogResult.Yes)
-                        return;
-                }
-
-                var appInfo = await App.Driver.Instance.GetApplicationInfo();
-                settings.Serialize(new FileInfo(appInfo.SettingsFile));
-                await ApplySettings();
+                var result = MessageBox.Show(
+                    "Warning: Your tablet area is invalid. Saving this configuration may cause problems." + Environment.NewLine +
+                    "Are you sure you want to save your configuration?",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxType.Warning
+                );
+                if (result != DialogResult.Yes)
+                    return;
             }
+
+            await ApplySettings(save: true);
         }
 
         private CancellationTokenSource _disableApplySaveButtons = new();
@@ -630,7 +618,13 @@ namespace OpenTabletDriver.UX
             }).ConfigureAwait(false);
         }
 
-        private async Task ApplySettings()
+        /// <summary>
+        /// Apply (and optionally save) the currently set client settings into the daemon
+        /// </summary>
+        /// <param name="save">If the set settings should also be saved</param>
+        /// <param name="settings">(optional) The settings to save. Will use current <see cref="App.Settings"/> if <c>null</c>.</param>
+        /// <returns>Whether the settings applied (and saved) successfully or not</returns>
+        private async Task<bool> ApplySettings(bool save = false, Settings? settings = null)
         {
             DisableApplySaveButtons(false);
 
@@ -638,8 +632,12 @@ namespace OpenTabletDriver.UX
 
             try
             {
-                if (App.Current.Settings is Settings settings)
-                    await App.Driver.Instance.SetSettings(settings);
+                await App.Driver.Instance.SetSettings(settings ?? App.Current.Settings);
+
+                if (save)
+                    await App.Driver.Instance.SaveSettings();
+
+                return true;
             }
             catch (StreamJsonRpc.RemoteInvocationException riex) when (riex.ErrorData is JObject err)
             {
@@ -654,6 +652,8 @@ namespace OpenTabletDriver.UX
                 };
                 Log.Write(logMessage);
             }
+
+            return false;
         }
 
         private static void LoadPresets() => AppInfo.PresetManager.Refresh();

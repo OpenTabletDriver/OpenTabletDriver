@@ -90,6 +90,13 @@ namespace OpenTabletDriver.Desktop.Contracts
         Task<IEnumerable<TabletReference>> DetectTablets();
 
         /// <summary>
+        /// Serialize settings to configuration file without applying them
+        /// </summary>
+        /// <param name="settings">(optional) Settings to save, if null, use last settings set with <see cref="SetSettings"/></param>
+        /// <param name="filePath">(optional) Path to save settings to. Will save to the default configuration file if not specified.</param>
+        Task SaveSettings(Settings? settings = null, string? filePath = null);
+
+        /// <summary>
         /// Reconfigure the driver pipeline with new settings.
         /// </summary>
         /// <param name="settings">The new settings to set.</param>
