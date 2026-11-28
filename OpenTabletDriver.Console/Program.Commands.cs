@@ -115,6 +115,8 @@ namespace OpenTabletDriver.Console
                 p.AbsoluteModeSettings.Display.Height = height;
                 p.AbsoluteModeSettings.Display.X = x;
                 p.AbsoluteModeSettings.Display.Y = y;
+
+                return Task.CompletedTask;
             });
         }
 
@@ -166,6 +168,7 @@ namespace OpenTabletDriver.Console
                 p.AbsoluteModeSettings.Tablet.X = x;
                 p.AbsoluteModeSettings.Tablet.Y = y;
                 p.AbsoluteModeSettings.Tablet.Rotation = rotation;
+                return Task.CompletedTask;
             });
         }
 
@@ -179,6 +182,7 @@ namespace OpenTabletDriver.Console
                 p.RelativeModeSettings.XSensitivity = xSens;
                 p.RelativeModeSettings.YSensitivity = ySens;
                 p.RelativeModeSettings.RelativeRotation = rotation;
+                return Task.CompletedTask;
             });
         }
 
@@ -190,9 +194,11 @@ namespace OpenTabletDriver.Console
                     throw new InvalidOperationException($"Could not find {nameof(p.RelativeModeSettings)} in profile");
 
                 p.RelativeModeSettings.ResetTime = TimeSpan.FromMilliseconds(ms);
+                return Task.CompletedTask;
             });
         }
 
+        // TODO: SetEraserBinding
         private static async Task SetTipBinding(string tablet, string name, float threshold)
         {
             await ModifyProfile(tablet, p =>
@@ -201,6 +207,7 @@ namespace OpenTabletDriver.Console
 
                 p.BindingSettings.TipButton = new PluginSettingStore(tipBinding);
                 p.BindingSettings.TipActivationThreshold = threshold;
+                return Task.CompletedTask;
             });
         }
 
@@ -211,6 +218,7 @@ namespace OpenTabletDriver.Console
                 var binding = AppInfo.PluginManager.ConstructObject<IBinding>(name) ?? throw new InvalidOperationException($"Could not construct binding with name {name}");
 
                 p.BindingSettings.PenButtons[index] = new PluginSettingStore(binding);
+                return Task.CompletedTask;
             });
         }
 
@@ -221,6 +229,7 @@ namespace OpenTabletDriver.Console
                 var binding = AppInfo.PluginManager.ConstructObject<IBinding>(name) ?? throw new InvalidOperationException($"Could not construct binding with name {name}");
 
                 p.BindingSettings.AuxButtons[index] = new PluginSettingStore(binding);
+                return Task.CompletedTask;
             });
         }
 
@@ -232,6 +241,7 @@ namespace OpenTabletDriver.Console
                     throw new InvalidOperationException($"Could not find {nameof(p.AbsoluteModeSettings)} in profile");
 
                 p.AbsoluteModeSettings.EnableClipping = isEnabled;
+                return Task.CompletedTask;
             });
         }
 
@@ -243,6 +253,7 @@ namespace OpenTabletDriver.Console
                     throw new InvalidOperationException($"Could not find {nameof(p.AbsoluteModeSettings)} in profile");
 
                 p.AbsoluteModeSettings.EnableAreaLimiting = isEnabled;
+                return Task.CompletedTask;
             });
         }
 
@@ -254,6 +265,7 @@ namespace OpenTabletDriver.Console
                     throw new InvalidOperationException($"Could not find {nameof(p.AbsoluteModeSettings)} in profile");
 
                 p.AbsoluteModeSettings.LockAspectRatio = isEnabled;
+                return Task.CompletedTask;
             });
         }
 
@@ -263,7 +275,11 @@ namespace OpenTabletDriver.Console
             if (outputMode == null)
                 await Out.WriteLineAsync($"Invalid output mode '{path}'. Use paths like in '{nameof(ListOutputModes).ToLower()}'");
             else
-                await ModifyProfile(tablet, p => p.OutputMode = outputMode);
+                await ModifyProfile(tablet, p =>
+                {
+                    p.OutputMode = outputMode;
+                    return Task.CompletedTask;
+                });
         }
 
         private static async Task EnableTabletFilters(string tablet, params string[] filters)
@@ -280,17 +296,13 @@ namespace OpenTabletDriver.Console
         private static async Task DisableTabletFilters(string tablet, params string[] filters)
         {
             await ModifyProfile(tablet, s =>
-            {
-                DisableAllInPluginStoreSettingsCollectionByPaths(s.Filters, filters);
-            });
+                DisableAllInPluginStoreSettingsCollectionByPaths(s.Filters, filters));
         }
 
         private static async Task DisableTools(string[] tools)
         {
             await ModifySettings(s =>
-            {
-                DisableAllInPluginStoreSettingsCollectionByPaths(s.Tools, tools);
-            });
+                DisableAllInPluginStoreSettingsCollectionByPaths(s.Tools, tools));
         }
 
         private static async Task ResetTabletFilters(string tablet, params string[] filtersToReset)
@@ -299,7 +311,7 @@ namespace OpenTabletDriver.Console
             {
                 foreach (var filterToReset in filtersToReset)
                     s.Filters = new PluginSettingStoreCollection(s.Filters.Where(filter => filter?.Path != filterToReset)!);
-                AppendPluginStoreSettingsCollectionByPaths<IPositionedPipelineElement<IDeviceReport>>(s.Filters, filtersToReset);
+                return AppendPluginStoreSettingsCollectionByPaths<IPositionedPipelineElement<IDeviceReport>>(s.Filters, filtersToReset);
             });
         }
 
