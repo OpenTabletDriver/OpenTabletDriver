@@ -17,21 +17,26 @@ namespace OpenTabletDriver.Desktop.RPC
         {
             while (!ct.IsCancellationRequested)
             {
-                // nothing happened yet, or we just handled a client, create new stream (other client's streams already saved their JsonRpc instance)
-                // ...and not creating a new stream gives an InvalidOperationException with the message "Already in a connected state."
                 var stream = CreateStream(); // disposal manually handled in responder, no 'using' is intentional here
                 try
                 {
-                    await stream.WaitForConnectionAsync(ct);
+                    await stream.WaitForConnectionAsync(ct).ConfigureAwait(false);
+                    _ = respondToRpcRequestAsync(host, stream, ct);
+                    stream = null; // successfully passed to responder, stream disposal is no longer our responsibility
                 }
                 catch (OperationCanceledException) { } // ignore exceptions caused by daemon shutting down
-
-                _ = RespondToRpcRequestAsync(host, stream, ct);
+                finally
+                {
+                    if (stream != null) // stream unhandled, we must dispose
+                        await stream.DisposeAsync().ConfigureAwait(false);
+                }
             }
         }
 
-        private async Task RespondToRpcRequestAsync(T host, NamedPipeServerStream stream, CancellationToken ct = default)
+        private async Task respondToRpcRequestAsync(T host, NamedPipeServerStream clientStream, CancellationToken ct = default)
         {
+            await using var stream = clientStream; // ensure disposal
+
             try
             {
                 using var rpc = new JsonRpc(stream, stream, host);
@@ -43,16 +48,15 @@ namespace OpenTabletDriver.Desktop.RPC
                 rpc.StartListening();
 
                 // Wait for completion or cancellation token
-                await rpc.Completion.WaitAsync(ct);
+                await rpc.Completion.WaitAsync(ct).ConfigureAwait(false);
             }
-            catch (TaskCanceledException) { } // ignore exceptions caused by daemon shutting down
+            catch (OperationCanceledException) { } // ignore exceptions caused by daemon shutting down
             catch (Exception ex)
             {
                 Log.Exception(ex);
             }
 
             ConnectionStateChanged?.Invoke(this, false);
-            await stream.DisposeAsync();
         }
 
         private NamedPipeServerStream CreateStream()
