@@ -1,0 +1,33 @@
+{
+  "Name": "Fansjoy S1 Pro",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 210,
+      "Height": 130,
+      "MaxX": 21000,
+      "MaxY": 13000
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 18
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 11648,
+      "ProductID": 32785,
+      "InputReportLength": 64,
+      "OutputReportLength": 0,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XENX.FansjoyS1ProReportParser",
+      "FeatureInitReport": [
+        "IAE="
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
