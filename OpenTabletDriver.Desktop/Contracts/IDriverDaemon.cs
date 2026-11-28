@@ -8,6 +8,8 @@ using OpenTabletDriver.Desktop.Updater;
 using OpenTabletDriver.Plugin.Devices;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Tablet;
+using PolyType;
+using StreamJsonRpc;
 
 namespace OpenTabletDriver.Desktop.Contracts
 {
@@ -16,8 +18,8 @@ namespace OpenTabletDriver.Desktop.Contracts
     /// Handles savable user-configurable settings and connects the driver to the final output handler and allows for
     /// plugins and a user-configurable processing pipeline, while allowing clients to inspect parsed reports via <see cref="DeviceReport"/>
     /// </summary>
-    /// <remarks>
-    public interface IDriverDaemon
+    [JsonRpcContract, GenerateShape(IncludeMethods = MethodShapeFlags.AllPublic)] // source-generate the JsonRpc proxy
+    public partial interface IDriverDaemon
     {
         /// <summary>
         /// Event for log messages that are intended to be displayed in a client log view.
