@@ -150,27 +150,7 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
         }
 
         public bool IsSupportedBy(Version appVersion)
-        {
-            // Always return false when major and minor is not equal (x.y.0.0).
-            if (SupportedDriverVersion.Major != appVersion.Major)
-                return false;
-            if (SupportedDriverVersion.Minor != appVersion.Minor)
-                return false;
-
-            // Always return false when driver's version is older than plugin's declared support version (0.0.x.0).
-            // We do this because the driver will bump build version when a non-breaking feature is introduced.
-            // Newer plugins may start using these new features not available in older drivers.
-            if (SupportedDriverVersion.Build > appVersion.Build)
-                return false;
-
-            // Always return false when driver's version is newer than plugin's declared upper support version.
-            // We do this as some plugins may be integrated into the driver in the future.
-            // We also do this as breaking changes may be introduced.
-            if (MaxSupportedDriverVersion != null && MaxSupportedDriverVersion < appVersion)
-                return false;
-
-            return true;
-        }
+            => SupportedDriverVersion.IsSupportedBy(appVersion, MaxSupportedDriverVersion);
 
         public static bool Match(PluginMetadata? primary, PluginMetadata? secondary)
         {
